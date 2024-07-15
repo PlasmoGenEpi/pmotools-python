@@ -1,0 +1,8 @@
+name: pmotools
+channels:
+- bioconda
+- conda-forge
+dependencies:
+- pandas=2.2.2
+- openpyxl=3.1.4
+- biopython=1.83
