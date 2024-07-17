@@ -6,13 +6,14 @@ import sys, os, argparse, json
 import pandas as pd
 sys.path.append(os.path.join(os.path.dirname(__file__), "convertors"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "extractors"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "utils"))
 
 from text_meta_to_json_meta import text_meta_to_json_meta
 from excel_meta_to_json_meta import excel_meta_to_json_meta
 from extractor_microhapseq_with_selected_meta import extractor_microhapseq_with_selected_meta
+from microhaplotype_table_to_json_file import microhaplotype_table_to_json_file
 
-from color_text import ColorText as CT
+
+from pmotools.utils.color_text import ColorText as CT
 
 class pmofunction:
     def __init__(self, func, shortDescription):
@@ -25,6 +26,7 @@ class pmotools_runner   :
             "convertors" : {
                 "text_meta_to_json_meta": pmofunction(text_meta_to_json_meta, "Convert text file meta to JSON Meta"),
                 "excel_meta_to_json_meta": pmofunction(excel_meta_to_json_meta, "Convert excel file meta to JSON Meta"),
+                "microhaplotype_table_to_json_file": pmofunction(microhaplotype_table_to_json_file, "Convert microhaplotype table to JSON Meta"),
             },
             "extractors" : {
                 "extractor_microhapseq_with_selected_meta": pmofunction(extractor_microhapseq_with_selected_meta, "Extract microhaplotype sequence with selected meta"),
