@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os, argparse, json
 import pandas as pd
+from pmotools.json_convertors.metatable_to_json_meta import pandas_table_to_json
+from pmotools.utils.small_utils import Utils
 
 def parse_args_excel_meta_to_json_meta():
     parser = argparse.ArgumentParser()
@@ -14,14 +16,10 @@ def parse_args_excel_meta_to_json_meta():
 
 def excel_meta_to_json_meta():
     args = parse_args_excel_meta_to_json_meta()
-    if not args.output.endswith('.json'):
-        args.output += '.json'
-    # make sure file exists
-    if not os.path.exists(args.file):
-        raise FileNotFoundError(args.file)
-    # only overwrite an existing file if --overwrite is on
-    if os.path.exists(args.output) and not args.overwrite:
-        raise Exception("Output file already exists, use --overWrite to overwrite it")
+    args.output = Utils.appendStrAsNeeded(args.output, ".json")
+    # check if input file exists and if output file exists check if --overwrite flag is set
+    Utils.inputOutputFileCheck(args)
+
     sheet = 1
     index_col_name = None
     if args.sheet is not None:
@@ -30,16 +28,7 @@ def excel_meta_to_json_meta():
         index_col_name = args.index_col_name
     contents = pd.read_excel(args.file, sheet_name=sheet, index_col=index_col_name)
 
-    # Custom object_hook to replace None with an empty string
-    def custom_object_hook(d):
-        return {k: ("" if v is None else v) for k, v in d.items()}
-    if args.index_col_name is not None:
-        contents_json = json.loads(contents.to_json(orient="index",
-                                                   index= True,
-                                                    date_format="iso"),
-                                   object_hook=custom_object_hook)
-    else:
-        contents_json = json.loads(contents.to_json(orient="records", date_format = "iso"), object_hook=custom_object_hook )
+    contents_json = pandas_table_to_json(contents, args.index_col_name)
 
     json.dump(contents_json, open(args.output, 'w'), indent=4)
 

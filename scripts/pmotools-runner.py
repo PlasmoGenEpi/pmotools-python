@@ -74,3 +74,4 @@ if __name__ == "__main__":
     sys.argv.remove(funcName)
     sys.argv[0] = sys.argv[0] + " " + funcName
     runner.getFunction(funcName).func()
+

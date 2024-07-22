@@ -7,7 +7,8 @@ setup(
     install_requires=[
         'pandas==2.2.2',
         'openpyxl==3.1.4',
-        'biopython==1.83'
+        'biopython==1.83',
+        'plotly==5.22.0'
     ],
     entry_points={
         'console_scripts': [

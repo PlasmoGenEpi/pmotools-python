@@ -1,0 +1,7 @@
+sphinx==6.2.1
+sphinx_rtd_theme==2.0.0
+sphinx_copybutton==0.5.2 # copy button
+sphinx-toolbox==3.7.0 # many useful tools for sphinx
+sphinx-licenseinfo==0.5.0 # license info
+sphinx-notfound-page==1.0.2 # 404 page
+sphinx-autodoc-typehints==1.23.0 # auto type hinting

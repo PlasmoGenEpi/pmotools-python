@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 class ColorText:
+    """
+    A class used to generate colored text on the terminal
+    """
     # Reset
     reset = '\033[0m'  # Text Reset
 
@@ -53,43 +56,96 @@ class ColorText:
     on_IWhite = '\033[107m'  # White
 
     @staticmethod
-    def boldText(t):
+    def boldText(t : str)  -> str:
+        """
+        Create a bolded text
+
+        :param t: the text
+        :return: the text but with terminal escape characters to bold the text
+        """
         return ColorText.bold + t + ColorText.reset
 
     @staticmethod
-    def boldRed(t):
+    def boldRed(t : str)  -> str:
+        """
+        Create a bolded red text
+
+        :param t: the text
+        :return: the text but with terminal escape characters to bold and make the text red
+        """
+
         return ColorText.red + ColorText.bold + t + ColorText.reset
 
     @staticmethod
-    def boldGreen(t):
+    def boldGreen(t : str)  -> str:
+        """
+        Create a bolded green text
+
+        :param t: the text
+        :return: the text but with terminal escape characters to bold and make the text green
+        """
         return ColorText.green + ColorText.bold + t + ColorText.reset
 
     @staticmethod
-    def boldBlue(t):
+    def boldBlue(t : str) -> str:
+        """
+        Create a bolded blue text
+
+        :param t: the text
+        :return: the text but with terminal escape characters to bold and make the text blue
+        """
         return ColorText.blue + ColorText.bold + t + ColorText.reset
 
     @staticmethod
-    def boldWhite(t):
+    def boldWhite(t : str) -> str:
+        """
+        Create a bolded blue text
+
+        :param t: the text
+        :return: the text but with terminal escape characters to bold and make the text white
+        """
         return ColorText.white + ColorText.bold + t + ColorText.reset
 
     @staticmethod
-    def boldBlack(t):
+    def boldBlack(t : str) -> str:
+        """
+        Create a bolded black text
+
+        :param t: the text
+        :return: the text but with terminal escape characters to bold and make the text black
+        """
         return ColorText.black + ColorText.bold + t + ColorText.reset
 
     @staticmethod
-    def addColor(colorCode):
-        """Takes a number between 16 and 231 to change text color, gives a bigger range of colors than the regular offered ones
-        @todo: Put a check to make sure it's a number between 16 and 231"""
-        return "\033[38;5;" + str(colorCode) + "m"
+    def addColor(color_code : int) -> str:
+        """
+        Takes a number between 16 and 231 to change text color, gives a bigger range of colors than the regular offered ones
+
+        :param color_code: a code between 16 and 231
+        :return: change the text to the color code given
+        @todo: Put a check to make sure it's a number between 16 and 231
+        """
+
+        return "\033[38;5;" + str(color_code) + "m"
 
     @staticmethod
-    def addBGColor(colorCode):
-        """Takes a number between 16 and 231 to change background color, gives a bigger range of colors than the regular offered ones
-        @todo: Put a check to make sure it's a number between 16 and 231"""
-        return "\033[48;5;" + str(colorCode) + "m"
+    def addBGColor(color_code : int) -> str:
+        """
+        Takes a number between 16 and 231 to change background color of text, gives a bigger range of colors than the regular offered ones
+
+        :param color_code: a code between 16 and 231
+        :return: generates the
+        @todo: Put a check to make sure it's a number between 16 and 231
+        """
+
+        return "\033[48;5;" + str(color_code) + "m"
 
     @staticmethod
     def outputColors():
+        """
+        prints out to stdout the colors with their backgrounds those colors so you can see
+
+        :return: nothing
+        """
         for i in range(16, 232):
             print(ColorText.addBGColor(i) + str(i) + ColorText.reset)
-
