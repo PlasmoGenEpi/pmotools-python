@@ -11,6 +11,7 @@ from text_meta_to_json_meta import text_meta_to_json_meta
 from excel_meta_to_json_meta import excel_meta_to_json_meta
 from extractor_microhapseq_with_selected_meta import extractor_microhapseq_with_selected_meta
 from microhaplotype_table_to_json_file import microhaplotype_table_to_json_file
+from extract_for_dcifer import extract_for_dcifer
 
 
 from pmotools.utils.color_text import ColorText as CT
@@ -29,7 +30,9 @@ class pmotools_runner   :
                 "microhaplotype_table_to_json_file": pmofunction(microhaplotype_table_to_json_file, "Convert microhaplotype table to JSON Meta"),
             },
             "extractors" : {
-                "extractor_microhapseq_with_selected_meta": pmofunction(extractor_microhapseq_with_selected_meta, "Extract microhaplotype sequence with selected meta"),
+#                "extractor_microhapseq_with_selected_meta": pmofunction(extractor_microhapseq_with_selected_meta, "Extract microhaplotype sequence with selected meta"),
+                "extract_for_dcifer": pmofunction(extract_for_dcifer,
+                                                                        "Extract tables for input to dcifer"),
             }
         }
         self.version = "1.0.0"

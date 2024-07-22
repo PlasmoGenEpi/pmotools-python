@@ -17,18 +17,16 @@ pmotools-python documentation
   :caption: Contents
   :maxdepth: 2
 
-Scripts
---------
+
 
 .. toctree::
-   :caption: Usages
+   :caption: Scripts
    :maxdepth: 3
 
    scripts/Converting_data_into_PMO.rst
 
 
-Usages
---------
+
 
 .. toctree::
    :caption: Usages
@@ -36,15 +34,3 @@ Usages
 
    usages/json_convertors
    usages/python_utilities
-
-
-
-Api
---------
-
-.. toctree::
-   :caption: All
-   :maxdepth: 2
-
-   api/api
-
