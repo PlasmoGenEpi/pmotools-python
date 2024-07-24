@@ -19,8 +19,7 @@ def extractor_microhapseq_with_selected_meta():
     outputExtension = ".tsv"
     if args.delim == "tab":
         args.delim = "\t"
-        outputExtension = ".tsv"
-    elif args.delim == "comma":
+    elif args.delim == "comma" or args.delim == ",":
         args.delim = ","
         outputExtension = ".csv"
 

@@ -27,8 +27,9 @@ def microhaplotype_table_to_pmo_dict(file : str, bioinfo_id : str, sampleID_col 
                                                              mhap_col, reads_col, representative_microhaplotype_dict,
                                                              additional_hap_detected_cols)
 
-    output_data = {"haplotypes_detected": {'bioinformatics_id': bioinfo_id, 'samples': detected_mhap_dict},
-                   "representative_haplotype_sequences": representative_microhaplotype_dict}
+    output_data = {"microhaplotypes_detected": {'bioinformatics_id': bioinfo_id, 'samples': detected_mhap_dict},
+                   "representative_microhaplotype_sequences": {'bioinformatics_id': bioinfo_id, 'targets':representative_microhaplotype_dict}
+                   }
     return output_data
 
 
