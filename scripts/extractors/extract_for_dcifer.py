@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import pandas as pd
 from pmotools.utils.small_utils import Utils
-
+from pmotools.utils.pmo_checker import PMOChecker
 
 
 
@@ -36,8 +36,14 @@ def extract_for_dcifer():
     Utils.inputOutputFileCheck(args.file, allele_freq_output, args.overwrite)
     Utils.inputOutputFileCheck(args.file, allele_per_sample_table, args.overwrite)
 
+    checker = PMOChecker()
+
     with open(args.file) as f:
         pmodata = json.load(f)
+
+    checker.check_for_required_base_fields(pmodata)
+    if args.bioid not in pmodata["taramp_bioinformatics_infos"]:
+        raise Exception("Bioid ID {bioid} not found in PMO file, options are {avail_bioids}".format(bioid = args.bioid, avail_bioids = ",".join(pmodata["taramp_bioinformatics_infos"].keys())))
 
     allele_counts, allele_freqs, target_totals = extract_allele_counts_freq_from_pmo(pmodata, args.bioid)
     if args.meta_fields is not None:
