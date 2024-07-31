@@ -27,6 +27,38 @@ class PMOChecker:
             "postprocessing_bioinformatics_infos"
         ]
 
+        self.required_specimen_infos_fields = [
+            "specimen_id",
+            "samp_taxon_id",
+            "collection_date",
+            "collection_country",
+            "collector",
+            "samp_store_loc"
+            "samp_collect_device",
+            "project_name"
+        ]
+
+        self.required_experiment_infos_fields = [
+            "experiment_sample_id",
+            "sequencing_info_id",
+            "panel_id",
+            "specimen_id"
+        ]
+
+        self.required_experiment_infos_fields = [
+            "sequencing_info_id",
+            "seq_instrument",
+            "seq_date",
+            "nucl_acid_ext",
+            "nucl_acid_amp",
+            "nucl_acid_ext_date",
+            "nucl_acid_amp_date",
+            "pcr_cond",
+            "lib_screen",
+            "lib_layout",
+            "lib_kit"
+        ]
+
 
     def check_for_required_base_fields(self, pmo_object):
         missing_base_fields = []

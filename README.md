@@ -13,7 +13,9 @@ git clone git@github.com:PlasmoGenEpi/pmotools-python.git
 Recommend using the conda environment file to ensure all python modules tested with tool are installed 
 ```bash
 cd pmotools-python
-conda env activate -f envs/pmotools-env.yml 
+conda env create -f envs/pmotools-env.yml 
+
+conda active pmotools
 ```
 
 Install using pip 
