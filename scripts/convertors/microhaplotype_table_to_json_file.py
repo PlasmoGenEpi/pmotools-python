@@ -12,6 +12,8 @@ def parse_args_microhaplotype_table_to_json_file():
                         help='Input excel file path')
     parser.add_argument('--bioinfo_id', type=str, required=True,
                         help='Identifier of bioinformatics processing run')
+    parser.add_argument('--representative_haps_id', type=str, required=True,
+                        help='Identifier of the representative microhaplotypes processing run')
     parser.add_argument('--sampleID_col', type=str,
                         default='sampleID', help='Column name containing sampleIDs')
     parser.add_argument('--locus_col', type=str, default='locus',
@@ -54,7 +56,8 @@ def microhaplotype_table_to_json_file():
     Utils.inputOutputFileCheckFromArgParse(args)
 
 
-    output_data = microhaplotype_table_to_pmo_dict(args.file, args.bioinfo_id, args.sampleID_col, args.locus_col,
+    output_data = microhaplotype_table_to_pmo_dict(args.file, args.bioinfo_id, args.representative_haps_id,
+                                                   args.sampleID_col, args.locus_col,
                                                    args.mhap_col, args.reads_col, args.delim,
                                                    addCols)
     # Write output as json

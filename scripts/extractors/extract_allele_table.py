@@ -44,7 +44,7 @@ def extract_for_allele_table():
         pmodata = json.load(f)
 
     checker.check_for_required_base_fields(pmodata)
-    checker.check_bioinformatics_ids(pmodata)
+    checker.check_bioinformatics_ids_consistency(pmodata)
     checker.check_for_bioinformatics_id(pmodata, args.bioid)
 
     if args.specimen_info_meta_fields is not None:

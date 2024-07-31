@@ -22,7 +22,7 @@ class PMOExtractor:
         # check input
         checker = PMOChecker()
         checker.check_for_required_base_fields(pmodata)
-        checker.check_bioinformatics_ids(pmodata)
+        checker.check_bioinformatics_ids_consistency(pmodata)
         checker.check_for_bioinformatics_id(pmodata, bioid)
 
         # prepare output data with defaultdicts so values default to 0 when adding to them
@@ -77,7 +77,7 @@ class PMOExtractor:
         # check input
         checker = PMOChecker()
         checker.check_for_required_base_fields(pmodata)
-        checker.check_bioinformatics_ids(pmodata)
+        checker.check_bioinformatics_ids_consistency(pmodata)
         checker.check_for_bioinformatics_id(pmodata, bioid)
 
         # Check to see if at least 1 sample has supplied meta field
@@ -172,7 +172,7 @@ class PMOExtractor:
             specimen_infos = pmodata["specimen_infos"]
             experiment_infos = pmodata["experiment_infos"]
             detected_samples = pmodata["microhaplotypes_detected"][bioid]["experiment_samples"]
-            rep_haps = pmodata["representative_microhaplotype_sequences"][bioid]["targets"]
+            rep_haps = pmodata["representative_microhaplotype_sequences"][pmodata["microhaplotypes_detected"][bioid].get("representative_microhaplotype_id")]["targets"]
 
             for sample, sample_data in detected_samples.items():
                 specimen_id = experiment_infos[sample]["specimen_id"]

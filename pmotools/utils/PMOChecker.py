@@ -69,7 +69,7 @@ class PMOChecker:
             raise Exception("Missing required base fields: {}".format(missing_base_fields))
 
     @staticmethod
-    def check_bioinformatics_ids(pmo_object):
+    def check_bioinformatics_ids_consistency(pmo_object):
         """
         Check that all bio ids match
 
@@ -80,8 +80,22 @@ class PMOChecker:
         for bioid in pmo_object["taramp_bioinformatics_infos"].keys():
             if bioid not in pmo_object["microhaplotypes_detected"]:
                 warnings.append("Missing " + bioid + " from " + "microhaplotypes_detected")
-            if bioid not in pmo_object["representative_microhaplotype_sequences"]:
-                warnings.append("Missing " + bioid + " from " + "representative_microhaplotype_sequences")
+        if len(warnings) > 0:
+            raise Exception("\n".join(warnings))
+
+    @staticmethod
+    def check_representative_ids_consistency(pmo_object):
+        """
+        Check that all representative_microhaplotype_id ids from the detected microhaplotypes_detected exist
+
+        :param pmo_object: the file to check
+        :return: none, will raise exception if not consistent
+        """
+
+        warnings = []
+        for microhaps_detected in pmo_object["microhaplotypes_detected"].values():
+            if microhaps_detected.get("representative_microhaplotype_id") not in pmo_object["representative_microhaplotype_sequences"]:
+                warnings.append("Missing " + microhaps_detected.get("representative_microhaplotype_id") + " from " + "representative_microhaplotype_sequences")
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
 

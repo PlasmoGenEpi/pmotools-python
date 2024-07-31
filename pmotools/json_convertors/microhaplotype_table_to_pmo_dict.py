@@ -2,13 +2,15 @@
 import pandas as pd
 
 
-def microhaplotype_table_to_pmo_dict(file : str, bioinfo_id : str, sampleID_col : str, locus_col : str, mhap_col : str, reads_col : str, delim : str, additional_hap_detected_cols : dict | None = None):
+def microhaplotype_table_to_pmo_dict(file : str, bioinfo_id : str, representative_haps_id : str, sampleID_col : str, locus_col : str, mhap_col : str, reads_col : str, delim : str, additional_hap_detected_cols : dict | None = None):
     """
     Convert a delimited file of a microhaplotype calls into a dictionary containing a dictionary for the haplotypes_detected and a dictionary for the representative_haplotype_sequences
 
 
+
     :param file: The name of the microhaplotype table file
     :param bioinfo_id: the bioinformatics ID of the microhaplotype table
+    :param representative_haps_id: an identifier for the representative haplotype table
     :param sampleID_col: the name of the column containing the sample IDs
     :param locus_col: the name of the column containing the locus IDs
     :param mhap_col: the name of the column containing the microhaplotype sequence
@@ -27,8 +29,12 @@ def microhaplotype_table_to_pmo_dict(file : str, bioinfo_id : str, sampleID_col 
                                                              mhap_col, reads_col, representative_microhaplotype_dict,
                                                              additional_hap_detected_cols)
 
-    output_data = {"microhaplotypes_detected": {'bioinformatics_id': bioinfo_id, 'samples': detected_mhap_dict},
-                   "representative_microhaplotype_sequences": {'bioinformatics_id': bioinfo_id, 'targets':representative_microhaplotype_dict}
+    output_data = {"microhaplotypes_detected": { bioinfo_id: {'bioinformatics_id': bioinfo_id,
+                                                 'representative_microhaplotype_id' :representative_haps_id,
+                                                 'samples': detected_mhap_dict}},
+                   "representative_microhaplotype_sequences": {representative_haps_id:
+                                                              {'representative_microhaplotype_id': representative_haps_id,
+                                                               'targets':representative_microhaplotype_dict}}
                    }
     return output_data
 
@@ -60,11 +66,8 @@ def create_representative_microhaplotype_dict(microhaplotype_table : pd.DataFram
                 "seq": row[mhap_col]
             }
             microhaplotype_index += 1
-        json_data[locus] = {
-            "seqs": microhaplotypes}
+        json_data[locus] = {"seqs": microhaplotypes}
     return json_data
-
-# TODO: add on additional columns
 
 
 def create_detected_microhaplotype_dict(microhaplotype_table : pd.DataFrame, sampleID_col : str,
