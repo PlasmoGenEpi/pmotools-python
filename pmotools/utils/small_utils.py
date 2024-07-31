@@ -174,6 +174,13 @@ class Utils:
 
     @staticmethod
     def appendStrAsNeeded(input : str, ending : str):
+        """
+        if a string doesn't end with a specific ending, append it, this is useful for ensuring file extensions are in output names without accidentally doubling it
+
+        :param input: the string to be appended
+        :param ending: the desired ending
+        :return: the string with eh ending appended if it doesn't already end with it
+        """
         if not input.endswith(ending):
             return input + ending
         return input
@@ -197,6 +204,13 @@ class Utils:
 
     @staticmethod
     def process_delimiter_and_output_extension(delim : str, output_extension : str = ".txt"):
+        """
+        Process delimiter and extension, this allows for delim to be listed as tab or comma and it will replace appropriately the
+
+        :param delim: the delimiter to process
+        :param output_extension: the output extension
+        :return: delimiter, extension
+        """
         out_delim = delim
         out_output_extension = output_extension
 

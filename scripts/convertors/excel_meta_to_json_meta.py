@@ -18,7 +18,7 @@ def excel_meta_to_json_meta():
     args = parse_args_excel_meta_to_json_meta()
     args.output = Utils.appendStrAsNeeded(args.output, ".json")
     # check if input file exists and if output file exists check if --overwrite flag is set
-    Utils.inputOutputFileCheck(args)
+    Utils.inputOutputFileCheckFromArgParse(args)
 
     sheet = 1
     index_col_name = None

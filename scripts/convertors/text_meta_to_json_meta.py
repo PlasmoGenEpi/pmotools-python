@@ -22,7 +22,7 @@ def text_meta_to_json_meta():
         args.delim = ","
     args.output = Utils.appendStrAsNeeded(args.output, ".json")
     # check if input file exists and if output file exists check if --overwrite flag is set
-    Utils.inputOutputFileCheck(args)
+    Utils.inputOutputFileCheckFromArgParse(args)
     index_col_name = None
     if args.index_col_name is not None:
         index_col_name = args.index_col_name

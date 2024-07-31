@@ -70,6 +70,12 @@ class PMOChecker:
 
     @staticmethod
     def check_bioinformatics_ids(pmo_object):
+        """
+        Check that all bio ids match
+
+        :param pmo_object: the file to check
+        :return: none, will raise exception if not consistent
+        """
         warnings = []
         for bioid in pmo_object["taramp_bioinformatics_infos"].keys():
             if bioid not in pmo_object["microhaplotypes_detected"]:
