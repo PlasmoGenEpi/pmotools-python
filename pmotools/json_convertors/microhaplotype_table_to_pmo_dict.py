@@ -51,13 +51,14 @@ def create_representative_microhaplotype_dict(microhaplotype_table : pd.DataFram
     json_data = {}
     # Populate the dictionary
     for locus, group in grouped:
-        microhaplotypes = []
+        microhaplotypes = dict()
         microhaplotype_index = 0
         for _, row in group.iterrows():
-            microhaplotypes.append({
-                "microhaplotype_id": '.'.join([locus, str(microhaplotype_index)]),
+            micro_id = '.'.join([locus, str(microhaplotype_index)])
+            microhaplotypes[micro_id] = {
+                "microhaplotype_id": micro_id,
                 "seq": row[mhap_col]
-            })
+            }
             microhaplotype_index += 1
         json_data[locus] = {
             "seqs": microhaplotypes}
@@ -101,7 +102,7 @@ def create_detected_microhaplotype_dict(microhaplotype_table : pd.DataFrame, sam
         for locus, locus_group in locus_grouped:
             microhaplotypes = []
             representative_microhaplotype_for_locus = representative_microhaplotype_dict[
-                locus]['seqs']
+                locus]['seqs'].values()
             for _, row in locus_group.iterrows():
                 matching_ids = [item['microhaplotype_id']
                                 for item in representative_microhaplotype_for_locus if item['seq'] == row[mhap_col]]

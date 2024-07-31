@@ -2,6 +2,7 @@
 
 
 import json
+from turtledemo.penrose import start
 
 
 class PMOChecker:
@@ -35,7 +36,8 @@ class PMOChecker:
         if len(missing_base_fields) > 0:
             raise Exception("Missing required base fields: {}".format(missing_base_fields))
 
-    def check_bioinformatics_ids(self, pmo_object):
+    @staticmethod
+    def check_bioinformatics_ids(pmo_object):
         warnings = []
         for bioid in pmo_object["taramp_bioinformatics_infos"].keys():
             if bioid not in pmo_object["microhaplotypes_detected"]:
@@ -44,4 +46,14 @@ class PMOChecker:
                 warnings.append("Missing " + bioid + " from " + "representative_microhaplotype_sequences")
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
+
+    @staticmethod
+    def check_for_bioinformatics_id(pmo_object, bioid):
+        if bioid not in pmo_object["taramp_bioinformatics_infos"]:
+            raise Exception(
+                "Bioid ID {bioid} not found in PMO file, options are {avail_bioids}".format(bioid=bioid,
+                                                                                            avail_bioids=",".join(
+                                                                                                pmo_object[
+                                                                                                    "taramp_bioinformatics_infos"].keys())))
+
 

@@ -179,6 +179,38 @@ class Utils:
         return input
 
     @staticmethod
+    def parse_delimited_input_or_file(input : str, delim : str = ",") -> list[str]:
+        """
+        If the input is a file name then read in each line of the file for the argument, otherwise return a list of items delimited by delimiter
+
+        :param input: the argument to parse or a name of a file to read in
+        :param delim: the delimiter to split on
+        :return: a list of strings
+        """
+        ret = []
+        if len(input) <=255 and os.path.exists(input):
+            with open(input) as file:
+                ret = [line.rstrip() for line in file]
+        else:
+            ret = input.split(delim)
+        return ret
+
+    @staticmethod
+    def process_delimiter_and_output_extension(delim : str, output_extension : str = ".txt"):
+        out_delim = delim
+        out_output_extension = output_extension
+
+        output_extension = ".txt"
+        if delim == "tab" or delim == "\t":
+            out_delim = "\t"
+            out_output_extension = ".tsv"
+        elif delim == "comma" or delim == ",":
+            out_delim = ","
+            out_output_extension = ".csv"
+        return out_delim, out_output_extension
+
+
+    @staticmethod
     def inputOutputFileCheck(inputFile : str, outputFile : str, overwrite : bool = False):
         """
         Check to see if an input file exists and if the output file exists if overwrite is turned on or not

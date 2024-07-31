@@ -11,7 +11,7 @@ from text_meta_to_json_meta import text_meta_to_json_meta
 from excel_meta_to_json_meta import excel_meta_to_json_meta
 from extractor_microhapseq_with_selected_meta import extractor_microhapseq_with_selected_meta
 from microhaplotype_table_to_json_file import microhaplotype_table_to_json_file
-from extract_for_dcifer import extract_for_dcifer
+from extract_allele_table import extract_for_allele_table
 
 
 from pmotools.utils.color_text import ColorText as CT
@@ -31,8 +31,8 @@ class pmotools_runner   :
             },
             "extractors" : {
 #                "extractor_microhapseq_with_selected_meta": pmofunction(extractor_microhapseq_with_selected_meta, "Extract microhaplotype sequence with selected meta"),
-                "extract_for_dcifer": pmofunction(extract_for_dcifer,
-                                                                        "Extract tables for input to dcifer"),
+                "extract_allele_table": pmofunction(extract_for_allele_table,
+                                                                        "Extract allele tables which can be as used as input to dcifer or moire"),
             }
         }
         self.version = "1.0.0"
@@ -44,7 +44,7 @@ class pmotools_runner   :
         for functionClass in self.functions:
             sys.stdout.write(CT.boldBlue(functionClass) + "\n")
             for functionName in self.functions[functionClass]:
-                sys.stdout.write("\t" + CT.boldWhite(functionName) + " - " + self.functions[functionClass][functionName].shortDescription + "\n")
+                sys.stdout.write("\t" + functionName + " - " + self.functions[functionClass][functionName].shortDescription + "\n")
 
     def hasFunction(self, funcName):
         hasFunction = False
