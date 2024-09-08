@@ -7,7 +7,7 @@ from turtledemo.penrose import start
 
 class PMOChecker:
     """
-    A class to house utilites to help check the formatting of read in PMO files.
+    A class to house utilities to help check the formatting of read in PMO files.
     """
 
     def __init__(self):
@@ -45,7 +45,7 @@ class PMOChecker:
             "specimen_id"
         ]
 
-        self.required_experiment_infos_fields = [
+        self.required_sequencing_infos_fields = [
             "sequencing_info_id",
             "seq_instrument",
             "seq_date",
@@ -61,6 +61,12 @@ class PMOChecker:
 
 
     def check_for_required_base_fields(self, pmo_object):
+        """
+        Check that all required base fields are present in object
+
+        :param pmo_object: the pmo object to check
+        :return: return void if passes, otherwise raises an exception
+        """
         missing_base_fields = []
         for base_field in self.all_required_base_fields:
             if base_field not in pmo_object:

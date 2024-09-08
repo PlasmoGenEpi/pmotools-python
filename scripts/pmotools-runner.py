@@ -4,8 +4,8 @@
 
 import sys, os, argparse, json
 import pandas as pd
-sys.path.append(os.path.join(os.path.dirname(__file__), "convertors"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "extractors"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "convertors_to_pmo"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "extractors_from_pmo"))
 
 from text_meta_to_json_meta import text_meta_to_json_meta
 from excel_meta_to_json_meta import excel_meta_to_json_meta
