@@ -53,7 +53,7 @@ def create_representative_microhaplotype_dict(microhaplotype_table : pd.DataFram
     microhaplotype_table.reset_index(inplace=True, drop=True)
 
     # Group the dataframe by 'locus'
-    grouped = microhaplotype_table.groupby('locus')
+    grouped = microhaplotype_table.groupby(locus_col)
     json_data = {}
     # Populate the dictionary
     for locus, group in grouped:
