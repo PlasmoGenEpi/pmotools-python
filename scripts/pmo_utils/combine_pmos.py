@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import gzip
 import os, argparse, json
+from collections import defaultdict
+
 import pandas as pd
 from pmotools.utils.small_utils import Utils
 from pmotools.extract_from_pmo.PMOReader import PMOReader
@@ -97,10 +99,60 @@ def combine_pmos():
         pmo_out["sequencing_infos"].update(pmo["sequencing_infos"])
 
     # combine representative microhaplotypes
+    def default_int_value():
+        return defaultdict(int)
+    def default_str_value():
+        return defaultdict(str)
+    rep_seq_counts = defaultdict(default_int_value)
+    all_representative_haps_ids = []
+    # rep_seq_id_key = defaultdict(default_int_value)
 
+    for pmo in pmos:
+        for rep_haps in pmo["representative_microhaplotype_sequences"].values():
+            all_representative_haps_ids.append(rep_haps["representative_microhaplotype_id"])
+            for tar in rep_haps["targets"].values():
+                for seq in tar["seqs"].values():
+                    rep_seq_counts[tar["target_id"]][seq["seq"]] +=1
+
+    representative_haps_id = ";".join([str(key) for key in all_representative_haps_ids] )
+    # create a key for the old IDs
+    new_rep_seq_ids = defaultdict(default_str_value)
+    rep_targets = dict()
+    for tar_name, tar_seqs in rep_seq_counts.items():
+        microhaplotypes = dict()
+        tar_seq_count = 0
+        for seq in tar_seqs.keys():
+            new_name = tar_name + "." + str(tar_seq_count).zfill(len(str(len(tar_seqs))))
+            new_rep_seq_ids[tar_name][seq] = new_name
+            tar_seq_count += 1
+            microhaplotypes[new_name] =  {
+                "microhaplotype_id": new_name,
+                "seq": seq
+            }
+        rep_targets[tar_name] = microhaplotypes
+
+    pmo_out["representative_microhaplotype_sequences"] = {
+        representative_haps_id : {
+            "representative_microhaplotype_id" : representative_haps_id,
+            "targets" : rep_targets
+        }
+    }
     # rename the microhaplotypes detected
+    pmo_out["microhaplotypes_detected"] = {}
 
 
+    for pmo in pmos:
+        pmo_out["microhaplotypes_detected"].update(pmo["microhaplotypes_detected"])
+        for microhaplotypes_detected_id,microhaplotypes_detected_val in pmo["microhaplotypes_detected"].items():
+            old_rep_haps_id = microhaplotypes_detected_val["representative_microhaplotype_id"]
+            microhaplotypes_detected_val["representative_microhaplotype_id"] = representative_haps_id
+            for exp_samples in pmo_out["microhaplotypes_detected"][microhaplotypes_detected_id]["experiment_samples"].values():
+                for tar_name, tar_haps in exp_samples["target_results"].items():
+                    for micro_hap in tar_haps["microhaplotypes"]:
+                        old_micro_id = micro_hap["microhaplotype_id"]
+                        # print(pmo["representative_microhaplotype_sequences"][old_rep_haps_id]["targets"][tar_name])
+                        new_micro_id = new_rep_seq_ids[tar_name][pmo["representative_microhaplotype_sequences"][old_rep_haps_id]["targets"][tar_name]["seqs"][old_micro_id]["seq"]]
+                        micro_hap["microhaplotype_id"] = new_micro_id
     # write
     if args.output.endswith('.gz'):
         with gzip.open(args.output, 'wt', encoding="utf-8") as zipfile:
