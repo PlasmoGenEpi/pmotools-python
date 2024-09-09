@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
+import gzip
 import os, argparse, json
 from collections import defaultdict
 from os import utime
 from tabnanny import check
 
 import pandas as pd
+
+from pmotools.extract_from_pmo.PMOReader import PMOReader
 from pmotools.utils.small_utils import Utils
 from pmotools.utils.PMOChecker import PMOChecker
 from pmotools.extract_from_pmo.PMOExtractor import PMOExtractor
@@ -39,9 +42,8 @@ def extract_for_allele_table():
     Utils.inputOutputFileCheck(args.file, allele_per_sample_table_out_fnp, args.overwrite)
 
     checker = PMOChecker()
+    pmodata = PMOReader.read_in_pmo(args.file)
 
-    with open(args.file) as f:
-        pmodata = json.load(f)
 
     checker.check_for_required_base_fields(pmodata)
     checker.check_bioinformatics_ids_consistency(pmodata)

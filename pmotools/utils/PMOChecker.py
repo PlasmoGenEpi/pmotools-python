@@ -87,6 +87,7 @@ class PMOChecker:
             if bioid not in pmo_object["microhaplotypes_detected"]:
                 warnings.append("Missing " + bioid + " from " + "microhaplotypes_detected")
         if len(warnings) > 0:
+            warnings.append("Available bioid(s) are {}".format(", ".join(pmo_object["microhaplotypes_detected"].keys())))
             raise Exception("\n".join(warnings))
 
     @staticmethod

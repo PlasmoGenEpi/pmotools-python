@@ -223,6 +223,19 @@ class Utils:
             out_output_extension = ".csv"
         return out_delim, out_output_extension
 
+    @staticmethod
+    def outputfile_check(output_file : str, overwrite : bool = False):
+        """
+        Check to see if the output file exists if overwrite is turned on or not
+
+        :param output_file: the output file that will be written to
+        :param overwrite: whether or not the output file can be overwritten
+        :return: None
+        """
+        # only overwrite an existing file if --overwrite is on
+        if os.path.exists(output_file) and not overwrite:
+            raise Exception(
+                "Output file " + output_file + " already exists, use --overwrite to overwrite it")
 
     @staticmethod
     def inputOutputFileCheck(inputFile : str, outputFile : str, overwrite : bool = False):
@@ -238,10 +251,7 @@ class Utils:
         if not os.path.exists(inputFile):
             raise FileNotFoundError(inputFile)
 
-        # only overwrite an existing file if --overwrite is on
-        if os.path.exists(outputFile) and not overwrite:
-            raise Exception(
-                "Output file " + outputFile + " already exists, use --overwrite to overwrite it")
+        Utils.outputfile_check(outputFile, overwrite)
 
     @staticmethod
     def inputOutputFileCheckFromArgParse(args):
