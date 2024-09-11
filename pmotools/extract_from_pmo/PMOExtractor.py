@@ -265,3 +265,74 @@ class PMOExtractor:
             for target, freq_data in allele_freqs.items():
                 for microhapid, freq in freq_data.items():
                     f.write(f"{target}{output_delimiter}{microhapid}{output_delimiter}{freq}\n")
+
+    @staticmethod
+    def extract_from_pmo_select_specimens(pmo, specimen_ids: list[str]):
+        # create a new pmo out
+        # analysis_name, panel_info, sequencing_infos, taramp_bioinformatics_infos will stay the same
+        # specimen_infos, experiment_infos, microhaplotypes_detected, representative_microhaplotype_sequences will be
+        # created based on the supplied specimens
+
+        # check to make sure the supplied specimens actually exist within the data
+        warnings = []
+        for specimen_id in specimen_ids:
+            if specimen_id not in pmo["specimen_infos"]:
+                warnings.append(f"{specimen_id} not in specimen_infos")
+        if len(warnings) > 0:
+            raise Exception("\n".join(warnings))
+
+        pmo_out = {"analysis_name": pmo["analysis_name"],
+                   "panel_info": pmo["panel_info"],
+                   "sequencing_infos": pmo["sequencing_infos"],
+                   "taramp_bioinformatics_infos": pmo["taramp_bioinformatics_infos"],
+                   "specimen_infos": {},
+                   "experiment_infos": {},
+                   "microhaplotypes_detected": {},
+                   "representative_microhaplotype_sequences": {}}
+
+        # specimen_infos
+        for specimen in pmo["specimen_infos"].values():
+            if specimen["specimen_id"] in specimen_ids:
+                pmo_out["specimen_infos"].update({specimen["specimen_id"]: specimen})
+        # experiment_infos
+
+        all_experiment_sample_ids = []
+        for experiment in pmo["experiment_infos"].values():
+            if experiment["specimen_id"] in specimen_ids:
+                experiment_sample_id = experiment["experiment_sample_id"]
+                all_experiment_sample_ids.append(experiment_sample_id)
+                pmo_out["experiment_infos"].update({experiment_sample_id: experiment})
+
+        # microhaplotypes_detected
+
+        microhapids_for_tar = defaultdict(lambda: defaultdict(set))
+
+        for id, microhaplotypes_detected in pmo["microhaplotypes_detected"].items():
+            extracted_microhaps_for_id = {
+                "tar_amp_bioinformatics_info_id": id,
+                "representative_microhaplotype_id": microhaplotypes_detected["representative_microhaplotype_id"],
+                "experiment_samples": {}}
+            for experiment_sample_id, experiment in microhaplotypes_detected["experiment_samples"].items():
+                if experiment_sample_id in all_experiment_sample_ids:
+                    extracted_microhaps_for_id["experiment_samples"].update({experiment_sample_id: experiment})
+                    for target_id, target in experiment["target_results"].items():
+                        for microhap in target["microhaplotypes"]:
+                            microhapids_for_tar[microhaplotypes_detected["representative_microhaplotype_id"]][target_id].add(microhap["microhaplotype_id"])
+            pmo_out["microhaplotypes_detected"].update({id: extracted_microhaps_for_id})
+        # representative_microhaplotype_sequences
+
+        for rep_id, rep_haps in pmo["representative_microhaplotype_sequences"].items():
+            rep_haps_for_id = {
+                "representative_microhaplotype_id": rep_id,
+                "targets": {}
+            }
+            for target_id, target in rep_haps["targets"].items():
+                added_micro_haps = 0
+                target_haps = {"target_id": target_id, "seqs": {}}
+                for seq in target["seqs"].values():
+                    if seq["microhaplotype_id"] in microhapids_for_tar[rep_id][target_id]:
+                        target_haps["seqs"].update({seq["microhaplotype_id"]: seq})
+                        added_micro_haps += 1
+                if added_micro_haps > 0:
+                    rep_haps_for_id["targets"].update({target_id: target_haps})
+        return pmo_out

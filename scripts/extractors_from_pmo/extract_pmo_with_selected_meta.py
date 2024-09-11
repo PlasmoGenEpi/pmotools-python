@@ -73,18 +73,9 @@ def extract_pmo_with_selected_meta():
     if len(warnings) > 0:
         raise Exception("\n".join(warnings))
 
-    # create a new pmo out
-    # analysis_name, panel_info, sequencing_infos, taramp_bioinformatics_infos will stay the same
-    pmo_out = {"analysis_name": pmo["analysis_name"],
-               "panel_info": pmo["panel_info"],
-               "sequencing_infos": pmo["sequencing_infos"],
-               "taramp_bioinformatics_infos": pmo["taramp_bioinformatics_infos"]
-               }
-    group_counts = defaultdict(int)
 
-    #specimen_infos
+    group_counts = defaultdict(int)
     all_specimen_ids = []
-    pmo_out["specimen_infos"] = {}
     for specimen in pmo["specimen_infos"].values():
         for group_name, meta in selected_meta_groups.items():
             passes_criteria = True
@@ -96,57 +87,15 @@ def extract_pmo_with_selected_meta():
                 group_counts[group_name] += 1
                 specimen_id = specimen["specimen_id"]
                 all_specimen_ids.append(specimen_id)
-                pmo_out["specimen_infos"].update({specimen_id: specimen})
 
 
-    #experiment_infos
-    pmo_out["experiment_infos"] = {}
-    all_experiment_sample_ids = []
-    for experiment in pmo["experiment_infos"].values():
-        if experiment["specimen_id"] in all_specimen_ids:
-            experiment_sample_id = experiment["experiment_sample_id"]
-            all_experiment_sample_ids.append(experiment_sample_id)
-            pmo_out["experiment_infos"].update({experiment_sample_id: experiment})
-
-    #microhaplotypes_detected
-    pmo_out["microhaplotypes_detected"] = {}
-    microhapids_for_tar = defaultdict(lambda: defaultdict(set))
-
-    for id, microhaplotypes_detected in pmo["microhaplotypes_detected"].items():
-        extracted_microhaps_for_id = {
-            "tar_amp_bioinformatics_info_id": id,
-            "representative_microhaplotype_id": microhaplotypes_detected["representative_microhaplotype_id"],
-            "experiment_samples": {}}
-        for experiment_sample_id, experiment in microhaplotypes_detected["experiment_samples"].items():
-            if experiment_sample_id in all_experiment_sample_ids:
-                extracted_microhaps_for_id["experiment_samples"].update({experiment_sample_id: experiment})
-                for target_id, target in experiment["target_results"].items():
-                    for microhap in target["microhaplotypes"]:
-                        microhapids_for_tar[microhaplotypes_detected["representative_microhaplotype_id"]][target_id].add(microhap["microhaplotype_id"])
-        pmo_out["microhaplotypes_detected"].update({id: extracted_microhaps_for_id})
-    #representative_microhaplotype_sequences
-    pmo_out["representative_microhaplotype_sequences"] = {}
-    for rep_id, rep_haps in pmo["representative_microhaplotype_sequences"].items():
-        rep_haps_for_id = {
-            "representative_microhaplotype_id": rep_id,
-            "targets": {}
-        }
-        for target_id, target in rep_haps["targets"].items():
-            added_micro_haps = 0
-            target_haps = {"target_id": target_id, "seqs": {}}
-            for seq in target["seqs"].values():
-                if seq["microhaplotype_id"] in microhapids_for_tar[rep_id][target_id]:
-                    target_haps["seqs"].update({seq["microhaplotype_id"]: seq})
-                    added_micro_haps += 1
-            if added_micro_haps > 0:
-                rep_haps_for_id["targets"].update({target_id: target_haps})
+    pmo_out = PMOExtractor.extract_from_pmo_select_specimens(pmo, all_specimen_ids)
 
     # write out the extracted
     PMOWriter.write_out_pmo(pmo_out, args.output, args.overwrite)
 
     if args.verbose:
         sys.stdout.write("Extracted the following number of specimens per group:" + "\n")
-
         group_counts_df = pd.DataFrame(list(group_counts.items()), columns=["group", "counts"])
         group_counts_df.to_csv(sys.stdout, sep = "\t", index = False)
 

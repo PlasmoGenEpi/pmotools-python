@@ -12,6 +12,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "extract_info_from_pmo")
 from text_meta_to_json_meta import text_meta_to_json_meta
 from excel_meta_to_json_meta import excel_meta_to_json_meta
 from extract_pmo_with_selected_meta import extract_pmo_with_selected_meta
+from extract_pmo_with_select_specimens import extract_pmo_with_select_specimens
+from extract_pmo_with_select_targets import extract_pmo_with_select_targets
 from microhaplotype_table_to_json_file import microhaplotype_table_to_json_file
 from extract_allele_table import extract_for_allele_table
 from combine_pmos import combine_pmos
@@ -36,6 +38,8 @@ class pmotools_runner   :
             },
             "extractors_from_pmo" : {
                 "extract_pmo_with_selected_meta": pmofunction(extract_pmo_with_selected_meta, "Extract from PMO samples and associated haplotypes with selected meta"),
+                "extract_pmo_with_select_specimens": pmofunction(extract_pmo_with_select_specimens,"Extract from PMO specific samples"),
+                "extract_pmo_with_select_targets" : pmofunction(extract_pmo_with_select_targets,"Extract from PMO specific targets"),
                 "extract_allele_table": pmofunction(extract_for_allele_table,
                                                                         "Extract allele tables which can be as used as input to dcifer or moire"),
             },
