@@ -233,7 +233,7 @@ class Utils:
         :return: None
         """
         # only overwrite an existing file if --overwrite is on
-        if os.path.exists(output_file) and not overwrite:
+        if "STDOUT" != output_file and os.path.exists(output_file) and not overwrite:
             raise Exception(
                 "Output file " + output_file + " already exists, use --overwrite to overwrite it")
 

@@ -9,6 +9,57 @@ from pmotools.utils.PMOChecker import PMOChecker
 class PMOExtractor:
 
     @staticmethod
+    def count_specimen_meta_subfields(pmo, meta_fields : list[str])-> pd.DataFrame:
+        """
+        Count the values of the meta fields, if a specimen doesn't have the field it will be entered as NA
+
+        :param pmo: the pmo to count from
+        :param meta_fields: the fields to get the counts for, if more than 1 field supplied will group the counts (e.g. will count field2 for all field1 values to get counts per sub-field gropsings)
+        :return: counts for all sub-fields groups with column names being the meta fields plus the following: specimensCount, specimensFreq, totalSpecimenCount
+        """
+        field_counts = defaultdict(int)
+        for specimen in pmo["specimen_infos"].values():
+            value = ""
+            for field in meta_fields:
+                if "" != value:
+                    value += "GOING_TO_SPLIT_ON_THIS_LATER"
+                if field in specimen:
+                    value += str(specimen[field])
+                else:
+                    value += "NA"
+            field_counts[value] += 1
+
+        counts_df = pd.DataFrame(columns=meta_fields + ["specimensCount", "specimensFreq", "totalSpecimenCount"])
+        for field_name, field_count in field_counts.items():
+            field_toks = field_name.split("GOING_TO_SPLIT_ON_THIS_LATER")
+            new_row = {}
+            for idx, meta_field in enumerate(meta_fields):
+                new_row[meta_field] = field_toks[idx]
+            new_row.update({"specimensCount": field_count,
+                            "specimensFreq": field_count / len(pmo["specimen_infos"].values()),
+                            "totalSpecimenCount": len(pmo["specimen_infos"].values())})
+            counts_df.loc[len(counts_df)] = new_row
+        counts_df.sort_values(by=meta_fields, inplace=True)
+        return counts_df
+    @staticmethod
+    def count_specimen_meta_fields(pmo) -> pd.DataFrame:
+        """
+        Get a pandas dataframe of counts of the meta fields within the specimen_info section
+
+        :param pmo: the pmo to count from
+        :return: a pandas dataframe of counts with the following columns: field, presentInSpecimensCount, totalSpecimenCount
+        """
+        field_counts = defaultdict(int)
+        for specimen in pmo["specimen_infos"].values():
+            for meta_field in specimen:
+                field_counts[meta_field] += 1
+        counts_df = pd.DataFrame(columns=["field", "presentInSpecimensCount", "totalSpecimenCount"])
+        for field_name, field_count in field_counts.items():
+            counts_df.loc[len(counts_df)] = {"field": field_name, "presentInSpecimensCount": field_count,
+                                             "totalSpecimenCount": len(pmo["specimen_infos"].values())}
+        return counts_df
+
+    @staticmethod
     def extract_allele_counts_freq_from_pmo(pmodata, bioid, select_samples : list[str] = None, select_targets : list[str] = None):
         """
         Extract the allele counts from pmo for the bioinfomratics id. Can optionally only count for a subset of samples and targets

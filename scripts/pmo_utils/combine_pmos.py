@@ -4,6 +4,8 @@ import os, argparse, json
 from collections import defaultdict
 
 import pandas as pd
+
+from pmotools.extract_from_pmo.PMOWriter import PMOWriter
 from pmotools.utils.small_utils import Utils
 from pmotools.extract_from_pmo.PMOReader import PMOReader
 
@@ -105,7 +107,6 @@ def combine_pmos():
         return defaultdict(str)
     rep_seq_counts = defaultdict(default_int_value)
     all_representative_haps_ids = []
-    # rep_seq_id_key = defaultdict(default_int_value)
 
     for pmo in pmos:
         for rep_haps in pmo["representative_microhaplotype_sequences"].values():
@@ -150,15 +151,11 @@ def combine_pmos():
                 for tar_name, tar_haps in exp_samples["target_results"].items():
                     for micro_hap in tar_haps["microhaplotypes"]:
                         old_micro_id = micro_hap["microhaplotype_id"]
-                        # print(pmo["representative_microhaplotype_sequences"][old_rep_haps_id]["targets"][tar_name])
                         new_micro_id = new_rep_seq_ids[tar_name][pmo["representative_microhaplotype_sequences"][old_rep_haps_id]["targets"][tar_name]["seqs"][old_micro_id]["seq"]]
                         micro_hap["microhaplotype_id"] = new_micro_id
+
     # write
-    if args.output.endswith('.gz'):
-        with gzip.open(args.output, 'wt', encoding="utf-8") as zipfile:
-            json.dump(pmo_out, zipfile, indent=2)
-    else:
-        json.dump(pmo_out, open(args.output, 'w'), indent=2)
+    PMOWriter.write_out_pmo(pmo_out, args.output, args.overwrite)
 
 
 if __name__ == "__main__":

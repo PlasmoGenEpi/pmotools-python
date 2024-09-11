@@ -7,13 +7,16 @@ import pandas as pd
 sys.path.append(os.path.join(os.path.dirname(__file__), "convertors_to_pmo"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "extractors_from_pmo"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "pmo_utils"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "extract_info_from_pmo"))
 
 from text_meta_to_json_meta import text_meta_to_json_meta
 from excel_meta_to_json_meta import excel_meta_to_json_meta
-from extractor_microhapseq_with_selected_meta import extractor_microhapseq_with_selected_meta
+from extract_pmo_with_selected_meta import extract_pmo_with_selected_meta
 from microhaplotype_table_to_json_file import microhaplotype_table_to_json_file
 from extract_allele_table import extract_for_allele_table
 from combine_pmos import combine_pmos
+from list_specimen_meta_fields import list_specimen_meta_fields
+from count_specimen_meta import count_specimen_meta
 
 
 from pmotools.utils.color_text import ColorText as CT
@@ -32,13 +35,19 @@ class pmotools_runner   :
                 "microhaplotype_table_to_json_file": pmofunction(microhaplotype_table_to_json_file, "Convert microhaplotype table to JSON Meta"),
             },
             "extractors_from_pmo" : {
-#                "extractor_microhapseq_with_selected_meta": pmofunction(extractor_microhapseq_with_selected_meta, "Extract microhaplotype sequence with selected meta"),
+                "extract_pmo_with_selected_meta": pmofunction(extract_pmo_with_selected_meta, "Extract from PMO samples and associated haplotypes with selected meta"),
                 "extract_allele_table": pmofunction(extract_for_allele_table,
                                                                         "Extract allele tables which can be as used as input to dcifer or moire"),
             },
             "working_with_multiple_pmos" : {
                 "combine_pmos": pmofunction(combine_pmos,
                                                     "Combine multiple pmos of the same panel into a single pmo"),
+            },
+            "extract_basic_info_from_pmo" : {
+                "list_specimen_meta_fields": pmofunction(list_specimen_meta_fields,
+                                                    "List out the specimen meta fields in the specimen_info section"),
+                "count_specimen_meta": pmofunction(count_specimen_meta,
+                                                         "Count the values of specific specimen meta fields in the specimen_info section"),
             }
         }
         self.version = "1.0.0"
