@@ -35,12 +35,12 @@ def combine_pmos():
 
     pmo_out = {}
     # create new output name
-    analysis_name = ""
+    pmo_name = ""
     for pmo in pmos:
-        if "" != analysis_name:
-            analysis_name += ";"
-        analysis_name += pmo["analysis_name"]
-    pmo_out["analysis_name"] = analysis_name
+        if "" != pmo_name:
+            pmo_name += ";"
+        pmo_name += pmo["pmo_name"]
+    pmo_out["pmo_name"] = pmo_name
     # add in blank objects for default bases
     pmo_out["panel_info"] = {}
     pmo_out["experiment_infos"] = {}

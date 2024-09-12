@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 
 import pandas as pd
 import json
@@ -269,7 +270,7 @@ class PMOExtractor:
     @staticmethod
     def extract_from_pmo_select_specimens(pmo, specimen_ids: list[str]):
         # create a new pmo out
-        # analysis_name, panel_info, sequencing_infos, taramp_bioinformatics_infos will stay the same
+        # pmo_name, panel_info, sequencing_infos, taramp_bioinformatics_infos will stay the same
         # specimen_infos, experiment_infos, microhaplotypes_detected, representative_microhaplotype_sequences will be
         # created based on the supplied specimens
 
@@ -281,7 +282,7 @@ class PMOExtractor:
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
 
-        pmo_out = {"analysis_name": pmo["analysis_name"],
+        pmo_out = {"pmo_name": pmo["pmo_name"],
                    "panel_info": pmo["panel_info"],
                    "sequencing_infos": pmo["sequencing_infos"],
                    "taramp_bioinformatics_infos": pmo["taramp_bioinformatics_infos"],
@@ -302,6 +303,16 @@ class PMOExtractor:
                 experiment_sample_id = experiment["experiment_sample_id"]
                 all_experiment_sample_ids.append(experiment_sample_id)
                 pmo_out["experiment_infos"].update({experiment_sample_id: experiment})
+
+        # target_demultiplexed_experiment_samples
+        if "target_demultiplexed_experiment_samples" in pmo:
+            pmo_out["target_demultiplexed_experiment_samples"] = {}
+            for bioid, demux_samples in pmo["target_demultiplexed_experiment_samples"].items():
+                new_demux_samples = {"tar_amp_bioinformatics_info_id": bioid, "demultiplexed_experiment_samples" : {}}
+                for exp_sample_id, sample in demux_samples.items():
+                    if exp_sample_id in all_experiment_sample_ids:
+                        new_demux_samples.update({exp_sample_id: sample})
+                pmo_out["target_demultiplexed_experiment_samples"].update({bioid: new_demux_samples})
 
         # microhaplotypes_detected
 
@@ -336,3 +347,147 @@ class PMOExtractor:
                 if added_micro_haps > 0:
                     rep_haps_for_id["targets"].update({target_id: target_haps})
         return pmo_out
+
+    @staticmethod
+    def extract_from_pmo_select_targets(pmo, target_ids: list[str]):
+        """
+        Extract out data from the PMO for only select target IDs
+        :param pmo: the pmo to extract data from
+        :param target_ids: the target_ids to extract
+        :return: a new pmo with the data for only the targets supplied
+        """
+        # create a new pmo out
+        # pmo_name, panel_info, sequencing_infos, taramp_bioinformatics_infos will stay the same
+        # specimen_infos, experiment_infos, microhaplotypes_detected, representative_microhaplotype_sequences will be
+        # created based on the supplied specimens
+
+        # check to make sure the supplied specimens actually exist within the data
+        global target_id
+        warnings = []
+        for target_id in target_ids:
+            found_in_rep_haps = False
+            for rep_haps in pmo["representative_microhaplotype_sequences"].values():
+                if target_id in rep_haps["targets"]:
+                    found_in_rep_haps = True
+                    break
+            if not found_in_rep_haps:
+                warnings.append(f"{target_id} not in representative_microhaplotype_sequences")
+        if len(warnings) > 0:
+            raise Exception("\n".join(warnings))
+
+        pmo_out = {"pmo_name": pmo["pmo_name"],
+                   "panel_info": pmo["panel_info"],
+                   "sequencing_infos": pmo["sequencing_infos"],
+                   "taramp_bioinformatics_infos": pmo["taramp_bioinformatics_infos"],
+                   "specimen_infos": pmo["specimen_infos"],
+                   "experiment_infos": pmo["experiment_infos"],
+                   "microhaplotypes_detected": {},
+                   "representative_microhaplotype_sequences": {}}
+
+        # target_demultiplexed_experiment_samples
+        if "target_demultiplexed_experiment_samples" in pmo:
+            pmo_out["target_demultiplexed_experiment_samples"] = {}
+            for bioid, demux_samples in pmo["target_demultiplexed_experiment_samples"].items():
+                new_demux_samples = {"tar_amp_bioinformatics_info_id": bioid, "demultiplexed_experiment_samples" : {}}
+                for sample_id, sample in demux_samples["demultiplexed_experiment_samples"].items():
+                    targets_for_samples = {"experiment_sample_id": sample_id, "demultiplexed_targets": {}}
+                    for target_id, target in sample.items():
+                        if target_id in target_ids:
+                            targets_for_samples["demultiplexed_targets"].update({target_id: target})
+                    new_demux_samples.update({sample_id: targets_for_samples})
+                pmo_out["target_demultiplexed_experiment_samples"].update({bioid: new_demux_samples})
+
+        # microhaplotypes_detected
+        for id, microhaplotypes_detected in pmo["microhaplotypes_detected"].items():
+            extracted_microhaps_for_id = {
+                "tar_amp_bioinformatics_info_id": id,
+                "representative_microhaplotype_id": microhaplotypes_detected["representative_microhaplotype_id"],
+                "experiment_samples": {}}
+            for experiment_sample_id, experiment in microhaplotypes_detected["experiment_samples"].items():
+                targets_for_samples = {"experiment_sample_id": experiment_sample_id, "target_results": {}}
+                for target_id, target in experiment["target_results"].items():
+                    if target_id in target_ids:
+                        targets_for_samples["target_results"].update({target_id: target})
+                extracted_microhaps_for_id["experiment_samples"].update({experiment_sample_id: targets_for_samples})
+            pmo_out["microhaplotypes_detected"].update({id: extracted_microhaps_for_id})
+        # representative_microhaplotype_sequences
+
+        for rep_id, rep_haps in pmo["representative_microhaplotype_sequences"].items():
+            rep_haps_for_id = {
+                "representative_microhaplotype_id": rep_id,
+                "targets": {}
+            }
+            for target_id, target in rep_haps["targets"].items():
+                if target_id in target_ids:
+                    rep_haps_for_id["targets"].update({target_id: target})
+        return pmo_out
+
+    @staticmethod
+    def extract_from_pmo_samples_with_meta_groupings(pmo, meta_fields_values: str):
+        """
+        Extract out of a PMO the data associated with specimens that belong to specific meta data groupings
+        :param pmo: the PMO to extract from
+        :param meta_fields_values: Meta Fields to include, should either be a table with columns field, values (comma separated values) (and optionally group) or supplied command line as field1=value1,value2,value3:field2=value1,value2;field1=value5,value6, where each group is separated by a semicolon
+        :return:
+        """
+        selected_meta_groups = {}
+        # parse meta values
+        if os.path.exists(meta_fields_values):
+            selected_meta_groups = defaultdict(dict)
+            meta_tab = pd.read_csv(meta_fields_values, sep='\t')
+            if "field" not in meta_tab or "values" not in meta_tab:
+                raise Exception(
+                    meta_fields_values + " doesn't have columns field and values, has " + ",".join(meta_tab.columns))
+            if "group" in meta_tab:
+                for index, row in meta_tab.iterrows():
+                    values_toks = row["values"].split(",")
+                    selected_meta_groups[row["group"]][row["field"]] = values_toks
+            else:
+                group_criteria = {}
+                for index, row in meta_tab.iterrows():
+                    values_toks = row["values"].split(",")
+                    group_criteria[row["field"]] = values_toks
+                selected_meta_groups[0] = group_criteria
+        else:
+            group_toks = meta_fields_values.split(";")
+            for idx, group_tok in enumerate(group_toks):
+                group_criteria = {}
+                field_with_values_toks = group_tok.split(":")
+                for field_with_values_tok in field_with_values_toks:
+                    field_values_toks = field_with_values_tok.split("=")
+                    if len(field_values_toks) != 2:
+                        raise Exception("error processing " + group_tok, " should be field and values separated by =")
+                    values_toks = field_values_toks[1].split(",")
+                    group_criteria[field_values_toks[0]] = values_toks
+                selected_meta_groups[idx] = group_criteria
+
+        # get count of fields
+        fields_counts = PMOExtractor.count_specimen_meta_fields(pmo)
+
+        # check to see if the fields supplied actually exit
+        warnings = []
+        fields_found = fields_counts["field"].tolist()
+        for group in selected_meta_groups.values():
+            for field in group.keys():
+                if field not in fields_found:
+                    warnings.append("missing the field: " + field + " in pmo")
+        if len(warnings) > 0:
+            raise Exception("\n".join(warnings))
+
+        group_counts = defaultdict(int)
+        all_specimen_ids = []
+        for specimen in pmo["specimen_infos"].values():
+            for group_name, meta in selected_meta_groups.items():
+                passes_criteria = True
+                for field, values in meta.items():
+                    if not (field in specimen and str(specimen[field]) in values):
+                        passes_criteria = False
+                        break
+                if passes_criteria:
+                    group_counts[group_name] += 1
+                    specimen_id = specimen["specimen_id"]
+                    all_specimen_ids.append(specimen_id)
+
+        pmo_out = PMOExtractor.extract_from_pmo_select_specimens(pmo, all_specimen_ids)
+
+        return pmo_out, group_counts

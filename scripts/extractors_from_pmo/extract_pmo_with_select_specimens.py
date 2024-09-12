@@ -36,6 +36,7 @@ def extract_pmo_with_select_specimens():
     pmo_out = PMOExtractor.extract_from_pmo_select_specimens(pmo, all_specimen_ids)
 
     # write out the extracted
+    args.output = PMOWriter.add_pmo_extension_as_needed(args.output, args.file.endswith('.gz'))
     PMOWriter.write_out_pmo(pmo_out, args.output, args.overwrite)
 
 

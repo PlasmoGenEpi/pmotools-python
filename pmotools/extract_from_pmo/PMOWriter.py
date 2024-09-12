@@ -25,3 +25,17 @@ class PMOWriter:
                 json.dump(pmo, zipfile, indent=2)
         else:
             json.dump(pmo, open(fnp, 'w'), indent=2)
+
+    @staticmethod
+    def add_pmo_extension_as_needed(output_fnp, gzip : bool = True):
+        """
+        Add on json or json.gz as needed to output pmo file
+
+        :param output_fnp: the original output filename path
+        :param gzip: whether or not to gzip the output file
+        :return: the output filename path with the extension added if needed
+        """
+        pmo_extension = ".json"
+        if gzip:
+            pmo_extension += ".gz"
+        return Utils.appendStrAsNeeded(output_fnp, pmo_extension)

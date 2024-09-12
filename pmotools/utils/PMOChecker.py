@@ -12,7 +12,7 @@ class PMOChecker:
 
     def __init__(self):
         self.all_required_base_fields = [
-            "analysis_name",
+            "pmo_name",
             "panel_info",
             "experiment_infos",
             "specimen_infos",

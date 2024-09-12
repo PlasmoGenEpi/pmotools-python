@@ -26,16 +26,17 @@ def extract_pmo_with_select_targets():
     # check files
     Utils.inputOutputFileCheck(args.file, args.output, args.overwrite)
 
-    # parse specimen ids
-    all_specimen_ids = Utils.parse_delimited_input_or_file(args.specimens)
+    # parse target ids
+    all_target_ids = Utils.parse_delimited_input_or_file(args.targets)
 
     # read in pmo
     pmo = PMOReader.read_in_pmo(args.file)
 
     # extract
-    pmo_out = PMOExtractor.extract_from_pmo_select_specimens(pmo, all_specimen_ids)
+    pmo_out = PMOExtractor.extract_from_pmo_select_targets(pmo, all_target_ids)
 
     # write out the extracted
+    args.output = PMOWriter.add_pmo_extension_as_needed(args.output, args.file.endswith('.gz'))
     PMOWriter.write_out_pmo(pmo_out, args.output, args.overwrite)
 
 

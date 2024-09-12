@@ -40,8 +40,7 @@ class pmotools_runner   :
                 "extract_pmo_with_selected_meta": pmofunction(extract_pmo_with_selected_meta, "Extract from PMO samples and associated haplotypes with selected meta"),
                 "extract_pmo_with_select_specimens": pmofunction(extract_pmo_with_select_specimens,"Extract from PMO specific samples"),
                 "extract_pmo_with_select_targets" : pmofunction(extract_pmo_with_select_targets,"Extract from PMO specific targets"),
-                "extract_allele_table": pmofunction(extract_for_allele_table,
-                                                                        "Extract allele tables which can be as used as input to dcifer or moire"),
+                "extract_allele_table": pmofunction(extract_for_allele_table,"Extract allele tables which can be as used as input to dcifer or moire"),
             },
             "working_with_multiple_pmos" : {
                 "combine_pmos": pmofunction(combine_pmos,
