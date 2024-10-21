@@ -35,7 +35,7 @@ class pmofunction:
 class pmotools_runner   :
     def __init__(self) :
         self.functions = {
-            "convertors_to_pmo" : {
+            "convertors_to_json" : {
                 "text_meta_to_json_meta": pmofunction(text_meta_to_json_meta, "Convert text file meta to JSON Meta"),
                 "excel_meta_to_json_meta": pmofunction(excel_meta_to_json_meta, "Convert excel file meta to JSON Meta"),
                 "microhaplotype_table_to_json_file": pmofunction(microhaplotype_table_to_json_file, "Convert microhaplotype table to JSON Meta"),

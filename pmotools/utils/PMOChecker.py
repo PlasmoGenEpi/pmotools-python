@@ -2,7 +2,6 @@
 
 
 import json
-from turtledemo.penrose import start
 
 
 class PMOChecker:

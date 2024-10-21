@@ -8,9 +8,17 @@ from pmotools.utils.PMOChecker import PMOChecker
 
 
 class PMOExtractor:
-
+    """
+    A class to extract info out of a loaded PMO object
+    """
     @staticmethod
     def count_targets_per_sample(pmo, minimum_total_target_read_sum: float = 0.0):
+        """
+        Count the number of targets per each experimental sample
+        :param pmo: the loaded PMO
+        :param minimum_total_target_read_sum: a minimum number of reads for a target in order for it to be counted
+        :return: a pandas dataframe with 3 columns, the tar_amp_bioinformatics_info_id, experiment_sample_id, and target_number(with number of targets for the samples)
+        """
         targets_per_sample_Count = defaultdict(lambda: defaultdict(int))
         for tar_amp_bioinformatics_info_id, results in pmo["microhaplotypes_detected"].items():
 
@@ -32,6 +40,12 @@ class PMOExtractor:
 
     @staticmethod
     def count_samples_per_target(pmo, minimum_total_target_read_sum: float = 0.0):
+        """
+        Count the number of experimental sample per each target
+        :param pmo: the loaded PMO
+        :param minimum_total_target_read_sum: the minimum number of reads for a target in order for it to be counted
+        :return: a pandas dataframe with 3 columns, tar_amp_bioinformatics_info_id, target_id, sample_number (the number of samples for each target)
+        """
         samples_per_target_count = defaultdict(lambda: defaultdict(int))
         for tar_amp_bioinformatics_info_id, results in pmo["microhaplotypes_detected"].items():
 
@@ -311,6 +325,13 @@ class PMOExtractor:
 
     @staticmethod
     def extract_from_pmo_select_specimens(pmo, specimen_ids: list[str]):
+        """
+        Extract out of a load PMO the data associated with select specimen_ids
+        :param pmo:the loaded PMO
+        :param specimen_ids: the specimen_ids to extract the info for
+        :return: a new PMO with only the data associated with the supplied specimen_ids
+        """
+
         # create a new pmo out
         # pmo_name, panel_info, sequencing_infos, taramp_bioinformatics_infos will stay the same
         # specimen_infos, experiment_infos, microhaplotypes_detected, representative_microhaplotype_sequences will be

@@ -32,5 +32,6 @@ pmotools-python documentation
    :caption: Usages
    :maxdepth: 3
 
+   usages/extract_from_pmo
    usages/json_convertors
-   usages/python_utilities
+   usages/utils

@@ -9,7 +9,9 @@ from pmotools.utils.small_utils import Utils
 
 
 class PMOWriter:
-
+    """
+    A class for writing a PMO to file
+    """
     @staticmethod
     def write_out_pmo(pmo, fnp : str | os.PathLike[str], overwrite : bool = False):
         """

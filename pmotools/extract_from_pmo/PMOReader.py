@@ -8,7 +8,9 @@ from pmotools.utils.PMOChecker import PMOChecker
 
 
 class PMOReader:
-
+    """
+    A class for reading in PMO from files
+    """
     @staticmethod
     def read_in_pmo(fnp : str | os.PathLike[str]):
         """
@@ -33,7 +35,7 @@ class PMOReader:
         """
         Read in a PMO file, can either be compressed(.gz) or uncompressed
         :param fnps: the file name path of the PMO file to read in
-        :return: a PMO like object
+        :return: a list of PMO like object
         """
         ret = []
         for fnp in fnps:
