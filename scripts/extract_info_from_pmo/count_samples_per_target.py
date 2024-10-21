@@ -10,34 +10,30 @@ from pmotools.extract_from_pmo.PMOReader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_count_specimen_meta():
+def parse_args_count_samples_per_target():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', type=str, required=True, help='PMO file')
     parser.add_argument('--output', type=str, default="STDOUT", required=False, help='output file')
     parser.add_argument('--delim', default="tab", type=str, required=False, help='the delimiter of the output text file, examples input tab,comma but can also be the actual delimiter')
-
     parser.add_argument('--overwrite', action='store_true', help='If output file exists, overwrite it')
-    parser.add_argument('--meta_fields', type=str, required=True, help='the fields to count the subfields of, can supply multiple separated by commas, e.g. --meta_fields collection_country,collection_date')
+    parser.add_argument('--read_count_minimum', default=0.0, type=float, required=False, help='the minimum read count (inclusive) to be counted as covered by sample')
 
     return parser.parse_args()
 
 
-def count_specimen_meta():
-    args = parse_args_count_specimen_meta()
+def count_samples_per_target():
+    args = parse_args_count_samples_per_target()
 
     output_delim, output_extension = Utils.process_delimiter_and_output_extension(args.delim)
 
     # check files
     Utils.inputOutputFileCheck(args.file, args.output, args.overwrite)
 
-    # process the meta_fields argument
-    meta_fields_toks = args.meta_fields.split(',')
-
     # read in PMO
     pmo = PMOReader.read_in_pmo(args.file)
 
-    # count sub-fields
-    counts_df = PMOExtractor.count_specimen_meta_subfields(pmo, meta_fields_toks)
+    # count
+    counts_df = PMOExtractor.count_samples_per_target(pmo, args.read_count_minimum)
 
     if "STDOUT" == args.output:
         counts_df.to_csv(sys.stdout, sep=output_delim, index=False)
@@ -46,5 +42,5 @@ def count_specimen_meta():
 
 
 if __name__ == "__main__":
-    count_specimen_meta()
+    count_samples_per_target()
 

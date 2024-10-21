@@ -10,6 +10,48 @@ from pmotools.utils.PMOChecker import PMOChecker
 class PMOExtractor:
 
     @staticmethod
+    def count_targets_per_sample(pmo, minimum_total_target_read_sum: float = 0.0):
+        targets_per_sample_Count = defaultdict(lambda: defaultdict(int))
+        for tar_amp_bioinformatics_info_id, results in pmo["microhaplotypes_detected"].items():
+
+            for sample_id, sample in results["experiment_samples"].items():
+                for target_id, targets in sample["target_results"].items():
+                    read_count_sum = 0.0
+                    for microhap in targets["microhaplotypes"]:
+                        read_count_sum += microhap["read_count"]
+                    if read_count_sum >= minimum_total_target_read_sum:
+                        targets_per_sample_Count[tar_amp_bioinformatics_info_id][sample_id] += 1
+        counts_df = pd.DataFrame(columns=["tar_amp_bioinformatics_info_id", "experiment_sample_id", "target_number"])
+        for tar_amp_bioinformatics_info_id, sample_counts in targets_per_sample_Count.items():
+            for sample_id, target_count in sample_counts.items():
+                counts_df = pd.concat([counts_df, pd.DataFrame(
+                    {"tar_amp_bioinformatics_info_id": tar_amp_bioinformatics_info_id,
+                     "experiment_sample_id": sample_id,
+                     "target_number": target_count}, index=[0])])
+        return counts_df
+
+    @staticmethod
+    def count_samples_per_target(pmo, minimum_total_target_read_sum: float = 0.0):
+        samples_per_target_count = defaultdict(lambda: defaultdict(int))
+        for tar_amp_bioinformatics_info_id, results in pmo["microhaplotypes_detected"].items():
+
+            for sample_id, sample in results["experiment_samples"].items():
+                for target_id, targets in sample["target_results"].items():
+                    read_count_sum = 0.0
+                    for microhap in targets["microhaplotypes"]:
+                        read_count_sum += microhap["read_count"]
+                    if read_count_sum >= minimum_total_target_read_sum:
+                        samples_per_target_count[tar_amp_bioinformatics_info_id][target_id] += 1
+        counts_df = pd.DataFrame(columns=["tar_amp_bioinformatics_info_id", "target_id", "sample_number"])
+        for tar_amp_bioinformatics_info_id, target_counts in samples_per_target_count.items():
+            for target_id, target_count in target_counts.items():
+                counts_df = pd.concat([counts_df, pd.DataFrame(
+                    {"tar_amp_bioinformatics_info_id": tar_amp_bioinformatics_info_id,
+                     "target_id": target_id,
+                     "sample_number": target_count}, index=[0])])
+        return counts_df
+
+    @staticmethod
     def count_specimen_meta_subfields(pmo, meta_fields : list[str])-> pd.DataFrame:
         """
         Count the values of the meta fields, if a specimen doesn't have the field it will be entered as NA

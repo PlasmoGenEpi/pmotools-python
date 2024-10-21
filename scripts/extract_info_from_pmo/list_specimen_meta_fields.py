@@ -14,7 +14,7 @@ def parse_args_list_specimen_meta_fields():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', type=str, required=True, help='PMO file')
     parser.add_argument('--output', type=str, default="STDOUT", required=False, help='output file')
-    parser.add_argument('--delim', default="tab", type=str, required=False, help='the delimiter of the input text file, examples tab,comma')
+    parser.add_argument('--delim', default="tab", type=str, required=False, help='the delimiter of the output text file, examples input tab,comma but can also be the actual delimiter')
 
     parser.add_argument('--overwrite', action = 'store_true', help='If output file exists, overwrite it')
 

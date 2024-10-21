@@ -19,6 +19,10 @@ from extract_allele_table import extract_for_allele_table
 from combine_pmos import combine_pmos
 from list_specimen_meta_fields import list_specimen_meta_fields
 from count_specimen_meta import count_specimen_meta
+from count_targets_per_sample import count_targets_per_sample
+from count_samples_per_target import count_samples_per_target
+from terra_amp_output_to_json import terra_amp_output_to_json
+
 
 
 from pmotools.utils.color_text import ColorText as CT
@@ -35,6 +39,10 @@ class pmotools_runner   :
                 "text_meta_to_json_meta": pmofunction(text_meta_to_json_meta, "Convert text file meta to JSON Meta"),
                 "excel_meta_to_json_meta": pmofunction(excel_meta_to_json_meta, "Convert excel file meta to JSON Meta"),
                 "microhaplotype_table_to_json_file": pmofunction(microhaplotype_table_to_json_file, "Convert microhaplotype table to JSON Meta"),
+                "terra_amp_output_to_json": pmofunction(terra_amp_output_to_json,
+                                                                 "Convert terra output table to JSON seq table"),
+
+
             },
             "extractors_from_pmo" : {
                 "extract_pmo_with_selected_meta": pmofunction(extract_pmo_with_selected_meta, "Extract from PMO samples and associated haplotypes with selected meta"),
@@ -51,6 +59,11 @@ class pmotools_runner   :
                                                     "List out the specimen meta fields in the specimen_info section"),
                 "count_specimen_meta": pmofunction(count_specimen_meta,
                                                          "Count the values of specific specimen meta fields in the specimen_info section"),
+                "count_targets_per_sample": pmofunction(count_targets_per_sample,
+                                                   "Count the number of targets per sample"),
+                "count_samples_per_target": pmofunction(count_samples_per_target,
+                                                        "Count the number of samples per target"),
+
             }
         }
         self.version = "1.0.0"
