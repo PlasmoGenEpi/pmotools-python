@@ -18,6 +18,7 @@ from microhaplotype_table_to_json_file import microhaplotype_table_to_json_file
 from extract_allele_table import extract_for_allele_table
 from combine_pmos import combine_pmos
 from list_specimen_meta_fields import list_specimen_meta_fields
+from list_tar_amp_bioinformatics_info_ids import list_tar_amp_bioinformatics_info_ids
 from count_specimen_meta import count_specimen_meta
 from count_targets_per_sample import count_targets_per_sample
 from count_samples_per_target import count_samples_per_target
@@ -57,6 +58,8 @@ class pmotools_runner   :
             "extract_basic_info_from_pmo" : {
                 "list_specimen_meta_fields": pmofunction(list_specimen_meta_fields,
                                                     "List out the specimen meta fields in the specimen_info section"),
+                "list_tar_amp_bioinformatics_info_ids": pmofunction(list_tar_amp_bioinformatics_info_ids,
+                                                         "List out all the tar_amp_bioinformatics_info_ids in a PMO file"),
                 "count_specimen_meta": pmofunction(count_specimen_meta,
                                                          "Count the values of specific specimen meta fields in the specimen_info section"),
                 "count_targets_per_sample": pmofunction(count_targets_per_sample,

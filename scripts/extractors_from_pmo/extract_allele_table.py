@@ -27,6 +27,8 @@ def parse_args_extract_for_allele_table():
     parser.add_argument('--experiment_info_meta_fields', type=str, required=False, help='Meta Fields if any to include from the experiment table')
     parser.add_argument('--microhap_fields', type=str, required=False, help='additional optional fields from the detected microhaplotype object to include')
     parser.add_argument('--representative_haps_fields', type=str, required=False, help='additional optional fields from the detected representative object to include')
+    parser.add_argument('--default_base_col_names', type=str, required=False, default="sampleID,locus,allele", help='default base column names, must be length 3')
+
 
     return parser.parse_args()
 
@@ -63,7 +65,8 @@ def extract_for_allele_table():
                                                  additional_experiment_infos_fields = args.experiment_info_meta_fields,
                                                  additional_microhap_fields = args.microhap_fields,
                                                  additional_representative_infos_fields = args.representative_haps_fields,
-                                                 output_delimiter=output_delim)
+                                                 output_delimiter=output_delim,
+                                                 default_base_col_names=args.default_base_col_names.split(","))
     if args.write_allele_freqs:
         allele_counts, allele_freqs, target_totals = PMOExtractor.extract_allele_counts_freq_from_pmo(pmodata, args.bioid)
         PMOExtractor.write_allele_freq_output(allele_freq_output, allele_freqs, output_delimiter=output_delim)
