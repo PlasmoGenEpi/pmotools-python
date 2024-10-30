@@ -4,7 +4,8 @@
 import json
 import gzip
 import os
-from pmotools.utils.PMOChecker import PMOChecker
+import sys
+
 from pmotools.utils.small_utils import Utils
 
 
@@ -22,7 +23,9 @@ class PMOWriter:
         :return: nothing
         """
         Utils.outputfile_check(fnp, overwrite)
-        if fnp.endswith('.gz'):
+        if fnp == "STDOUT":
+            json.dump(pmo, sys.stdout, indent=2)
+        elif fnp.endswith('.gz'):
             with gzip.open(fnp, 'wt', encoding="utf-8") as zipfile:
                 json.dump(pmo, zipfile, indent=2)
         else:
@@ -40,4 +43,7 @@ class PMOWriter:
         pmo_extension = ".json"
         if gzip:
             pmo_extension += ".gz"
-        return Utils.appendStrAsNeeded(output_fnp, pmo_extension)
+        if output_fnp == "STDOUT":
+            return output_fnp
+        else:
+            return Utils.appendStrAsNeeded(output_fnp, pmo_extension)

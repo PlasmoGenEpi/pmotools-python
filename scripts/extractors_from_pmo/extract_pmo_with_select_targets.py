@@ -5,9 +5,9 @@ from collections import defaultdict
 
 import pandas as pd
 
-from pmotools.extract_from_pmo.PMOExtractor import PMOExtractor
-from pmotools.extract_from_pmo.PMOReader import PMOReader
-from pmotools.extract_from_pmo.PMOWriter import PMOWriter
+from pmotools.pmo_utils.PMOExtractor import PMOExtractor
+from pmotools.pmo_utils.PMOReader import PMOReader
+from pmotools.pmo_utils.PMOWriter import PMOWriter
 from pmotools.utils.small_utils import Utils
 
 
@@ -36,7 +36,7 @@ def extract_pmo_with_select_targets():
     pmo_out = PMOExtractor.extract_from_pmo_select_targets(pmo, all_target_ids)
 
     # write out the extracted
-    args.output = PMOWriter.add_pmo_extension_as_needed(args.output, args.file.endswith('.gz'))
+    args.output = PMOWriter.add_pmo_extension_as_needed(args.output, args.file.endswith('.gz') or args.output.endswith(".gz"))
     PMOWriter.write_out_pmo(pmo_out, args.output, args.overwrite)
 
 

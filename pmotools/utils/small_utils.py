@@ -186,41 +186,49 @@ class Utils:
         return input
 
     @staticmethod
-    def parse_delimited_input_or_file(input : str, delim : str = ",") -> list[str]:
+    def parse_delimited_input_or_file(input_args : str, delim : str = ",") -> list[str]:
         """
         If the input is a file name then read in each line of the file for the argument, otherwise return a list of items delimited by delimiter
 
-        :param input: the argument to parse or a name of a file to read in
+        :param input_args: the argument to parse or a name of a file to read in
         :param delim: the delimiter to split on
         :return: a list of strings
         """
         ret = []
-        if len(input) <=255 and os.path.exists(input):
-            with open(input) as file:
-                ret = [line.rstrip() for line in file]
+        if len(input_args) <=255 and os.path.exists(input_args):
+            with open(input_args) as file:
+                ret = [line.rstrip() for line in file if line.strip()]
+        elif "STDIN" == input_args:
+            ret = [line.rstrip() for line in sys.stdin if line.strip()]
         else:
-            ret = input.split(delim)
+            ret = input_args.split(delim)
         return ret
 
+
+
     @staticmethod
-    def process_delimiter_and_output_extension(delim : str, output_extension : str = ".txt"):
+    def process_delimiter_and_output_extension(delim : str, output_extension : str = ".txt", gzip : bool = False) -> tuple[str, str]:
         """
         Process delimiter and extension, this allows for delim to be listed as tab or comma and it will replace appropriately the
 
         :param delim: the delimiter to process
         :param output_extension: the output extension
+        :param gzip: whether or not to add .gz to the output extension as well
         :return: delimiter, extension
         """
         out_delim = delim
         out_output_extension = output_extension
 
         output_extension = ".txt"
+
         if delim == "tab" or delim == "\t":
             out_delim = "\t"
             out_output_extension = ".tsv"
         elif delim == "comma" or delim == ",":
             out_delim = ","
             out_output_extension = ".csv"
+        if gzip:
+            out_output_extension += ".gz"
         return out_delim, out_output_extension
 
     @staticmethod
@@ -248,7 +256,7 @@ class Utils:
         :return: None
         """
         # make sure file exists
-        if not os.path.exists(inputFile):
+        if "STDIN" != inputFile and not os.path.exists(inputFile):
             raise FileNotFoundError(inputFile)
 
         Utils.outputfile_check(outputFile, overwrite)

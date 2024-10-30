@@ -5,8 +5,8 @@ from collections import defaultdict
 
 import pandas as pd
 
-from pmotools.extract_from_pmo.PMOExtractor import PMOExtractor
-from pmotools.extract_from_pmo.PMOReader import PMOReader
+from pmotools.pmo_utils.PMOExtractor import PMOExtractor
+from pmotools.pmo_utils.PMOReader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
@@ -20,14 +20,17 @@ def parse_args_list_tar_amp_bioinformatics_info_ids():
 
 def list_tar_amp_bioinformatics_info_ids():
     args = parse_args_list_tar_amp_bioinformatics_info_ids()
+
     # check files
     Utils.inputOutputFileCheck(args.file, args.output, args.overwrite)
 
     # read in PMO
     pmo = PMOReader.read_in_pmo(args.file)
 
+    # extract all taramp_bioinformatics_ids
     bioids = pmo["taramp_bioinformatics_infos"].keys()
 
+    # write
     if "STDOUT" == args.output:
         sys.stdout.write("\n".join(bioids) + "\n")
     else:
