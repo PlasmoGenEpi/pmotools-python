@@ -118,7 +118,7 @@ def terra_amp_output_to_json():
         raise Exception("\n".join(warnings))
     output_json  = {
         "microhaplotypes_detected": {tar_amp_bioinformatics_info_id : microhaplotypes_detected},
-        "representative_ref_seqs" : {representative_microhaplotype_id : representative_ref_seqs}
+        "representative_microhaplotype_sequences" : {representative_microhaplotype_id : representative_ref_seqs}
     }
 
     json.dump(output_json, open(args.output, 'w'), indent=4)
