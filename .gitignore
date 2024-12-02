@@ -162,3 +162,4 @@ cython_debug/
 #.idea/
 .idea
 docs/api/generated
+*.DS_Store*
