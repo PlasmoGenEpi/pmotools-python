@@ -4,8 +4,6 @@ Converting data into PMO format
 The data for the input into the portable microhaoplotype object is often in several files which can either be text file or excel (especially for meta data). pmotools comes with several tools to help convert this input into the various parts of the pmo format and a function to wrap them all together.
 
 
-
-
 Sample Metadata
 --------------------------------
 Sample metadata can often be in either text files or excel sheets. There two tools that can convert either one into json.
