@@ -4,56 +4,6 @@ import json
 from .json_convert_utils import check_additional_columns_exist
 
 
-# def demultiplexed_targets_to_pmo_dict(
-#     contents: pd.DataFrame,
-#     bioinfo_id: str,
-#     sampleID_col: str = 'sampleID',
-#     target_id_col: str = 'target_id',
-#     read_count_col: str = 'reads',
-#     additional_hap_detected_cols: dict | None = None
-# ):
-#     """
-#     Convert a dataframe of a microhaplotype calls into a dictionary containing a dictionary for the haplotypes_detected and a dictionary for the representative_haplotype_sequences
-
-#     :param contents: The dataframe containing demultiplexed sample information
-#     :param bioinfo_id: the bioinformatics ID of the demultiplexed targets
-#     :param sampleID_col: the name of the column containing the sample IDs
-#     :param target_id_col: the name of the column containing the locus IDs
-#     :param read_count_col: the name of the column containing the microhaplotype sequence
-#     :param additional_hap_detected_cols: optional additional columns to add to the microhaplotype detected dictionary, the key is the pandas column and the value is what to name it in the output
-#     :return: a dict of both the haplotypes_detected and representative_haplotype_sequences
-#     """
-#     check_additional_columns_exist(contents, additional_hap_detected_cols)
-
-#     demultiplexed_targets_dict = {}
-
-#     for _, row in contents.iterrows():
-#         sample = row[sampleID_col]
-#         target = row[target_id_col]
-#         reads = row[read_count_col]
-
-#         if sample not in demultiplexed_targets_dict:
-#             demultiplexed_targets_dict[sample] = {"demultiplexed_targets": {}}
-#             demultiplexed_targets_dict[sample]["demultiplexed_targets"]["experiment_sample_id"] = sample
-
-#         demultiplexed_targets_dict[sample]["demultiplexed_targets"][target] = {
-#             "raw_read_count": int(reads),
-#             "target_id": target
-#         }
-
-#         if additional_hap_detected_cols is not None:
-#             for col in additional_hap_detected_cols:
-#                 demultiplexed_targets_dict[sample]["demultiplexed_targets"][
-#                     target][additional_hap_detected_cols[col]] = row[col]
-
-#     output_data = {"target_demultiplexed_experiment_samples": {bioinfo_id:
-#                                                                {"demultiplexed_experiment_samples": demultiplexed_targets_dict,
-#                                                                 "tar_amp_bioinformatics_info_id": bioinfo_id}}}
-
-#     serialized_output = json.dumps(output_data, indent=4)
-#     return serialized_output
-
-
 def demultiplexed_targets_to_pmo_dict_new(
     contents: pd.DataFrame,
     bioinfo_id: str,
