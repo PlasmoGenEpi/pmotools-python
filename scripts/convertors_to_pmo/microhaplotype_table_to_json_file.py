@@ -54,7 +54,7 @@ def microhaplotype_table_to_json_file():
                 addCols[addCol] = addCol
 
     # check if input file exists and if output file exists check if --overwrite flag is set
-    Utils.inputOutputFileCheck(args)
+    Utils.inputOutputFileCheckFromArgParse(args)
 
     contents = pd.read_csv(args.file, sep=args.delim)
     output_data = microhaplotype_table_to_pmo_dict(
