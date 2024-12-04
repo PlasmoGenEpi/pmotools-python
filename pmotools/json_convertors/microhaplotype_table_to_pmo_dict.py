@@ -1,26 +1,30 @@
 #!/usr/bin/env python3
 import pandas as pd
+import json
+from .json_convert_utils import check_additional_columns_exist
 
 
-def microhaplotype_table_to_pmo_dict(file : str, bioinfo_id : str, representative_haps_id : str, sampleID_col : str, locus_col : str, mhap_col : str, reads_col : str, delim : str, additional_hap_detected_cols : dict | None = None):
+def microhaplotype_table_to_pmo_dict(
+    contents: pd.DataFrame,
+    bioinfo_id: str,
+    sampleID_col: str = 'sampleID',
+    locus_col: str = 'locus',
+    mhap_col: str = 'asv',
+    reads_col: str = 'reads',
+    additional_hap_detected_cols: list | None = None
+):
     """
-    Convert a delimited file of a microhaplotype calls into a dictionary containing a dictionary for the haplotypes_detected and a dictionary for the representative_haplotype_sequences
+    Convert a dataframe of a microhaplotype calls into a dictionary containing a dictionary for the haplotypes_detected and a dictionary for the representative_haplotype_sequences.
 
-
-
-    :param file: The name of the microhaplotype table file
+    :param contents: The dataframe containing microhaplotype calls
     :param bioinfo_id: the bioinformatics ID of the microhaplotype table
-    :param representative_haps_id: an identifier for the representative haplotype table
     :param sampleID_col: the name of the column containing the sample IDs
     :param locus_col: the name of the column containing the locus IDs
     :param mhap_col: the name of the column containing the microhaplotype sequence
     :param reads_col: the name of the column containing the reads counts
-    :param delim: the delimiter character of the input file
     :param additional_hap_detected_cols: optional additional columns to add to the microhaplotype detected dictionary, the key is the pandas column and the value is what to name it in the output
     :return: a dict of both the haplotypes_detected and representative_haplotype_sequences
     """
-
-    contents = pd.read_csv(file, sep=delim)
 
     representative_microhaplotype_dict = create_representative_microhaplotype_dict(
         contents, locus_col, mhap_col)
@@ -29,102 +33,115 @@ def microhaplotype_table_to_pmo_dict(file : str, bioinfo_id : str, representativ
                                                              mhap_col, reads_col, representative_microhaplotype_dict,
                                                              additional_hap_detected_cols)
 
-    output_data = {"microhaplotypes_detected": { bioinfo_id: {'bioinformatics_id': bioinfo_id,
-                                                 'representative_microhaplotype_id' :representative_haps_id,
-                                                 'samples': detected_mhap_dict}},
-                   "representative_microhaplotype_sequences": {representative_haps_id:
-                                                              {'representative_microhaplotype_id': representative_haps_id,
-                                                               'targets':representative_microhaplotype_dict}}
+    output_data = {"microhaplotypes_detected": {bioinfo_id: {'experiment_samples': detected_mhap_dict}},
+                   "representative_microhaplotype_sequences": {bioinfo_id: {"representative_microhaplotype_id": bioinfo_id, 'targets': representative_microhaplotype_dict}}
                    }
+    output_data = json.dumps(output_data, indent=4)
     return output_data
 
 
-def create_representative_microhaplotype_dict(microhaplotype_table : pd.DataFrame, locus_col : str, mhap_col : str):
+def create_representative_microhaplotype_dict(
+        microhaplotype_table: pd.DataFrame,
+        locus_col: str,
+        mhap_col: str
+):
     """
-    Convert the read in microhaplotype calls table into the representative microhaplotype dictionary
+    Convert the read-in microhaplotype calls table into a representative microhaplotype JSON-like dictionary.
 
-    :param microhaplotype_table: the parsed microhaplotype calls table
-    :param locus_col: the name of the column containing the locus IDs
-    :param mhap_col: the name of the column containing the microhaplotype sequence
-    :return: a dictionary of the representative microhaplotype sequences
+    :param microhaplotype_table: The parsed microhaplotype calls table.
+    :param locus_col: The name of the column containing the locus IDs.
+    :param mhap_col: The name of the column containing the microhaplotype sequence.
+    :return: A dictionary formatted for JSON output with representative microhaplotype sequences.
     """
-    microhaplotype_table = microhaplotype_table[[locus_col,
-                                                 mhap_col]].drop_duplicates()
-    microhaplotype_table.reset_index(inplace=True, drop=True)
+    # Drop duplicates and reset index
+    unique_table = microhaplotype_table[[
+        locus_col, mhap_col]].drop_duplicates().reset_index(drop=True)
 
-    # Group the dataframe by 'locus'
-    grouped = microhaplotype_table.groupby(locus_col)
-    json_data = {}
-    # Populate the dictionary
-    for locus, group in grouped:
-        microhaplotypes = dict()
-        microhaplotype_index = 0
-        for _, row in group.iterrows():
-            micro_id = '.'.join([locus, str(microhaplotype_index)])
-            microhaplotypes[micro_id] = {
-                "microhaplotype_id": micro_id,
-                "seq": row[mhap_col]
+    json_data = {
+        locus: {
+            "seqs": {
+                f"{locus}.{idx}": {
+                    "microhaplotype_id": f"{locus}.{idx}",
+                    "seq": seq
+                }
+                for idx, seq in enumerate(group[mhap_col])
             }
-            microhaplotype_index += 1
-        json_data[locus] = {"seqs": microhaplotypes}
+        }
+        for locus, group in unique_table.groupby(locus_col)
+    }
+
     return json_data
 
 
-def create_detected_microhaplotype_dict(microhaplotype_table : pd.DataFrame, sampleID_col : str,
-                                        locus_col : str, mhap_col : str,
-                                        reads_col : str, representative_microhaplotype_dict : dict,
-                                        additional_hap_detected_cols : dict | None = None):
+def create_detected_microhaplotype_dict(
+    microhaplotype_table: pd.DataFrame,
+    sampleID_col: str,
+    locus_col: str,
+    mhap_col: str,
+    reads_col: str,
+    representative_microhaplotype_dict: dict,
+    additional_hap_detected_cols: list | None = None
+):
     """
-    Convert the read in microhaplotype calls table into the detected microhaplotype dictionary
+    Convert the read-in microhaplotype calls table into the detected microhaplotype dictionary.
 
-
-    :param microhaplotype_table: the parsed microhaplotype calls table
-    :param sampleID_col: the name of the column containing the sample IDs
-    :param locus_col: the name of the column containing the locus IDs
-    :param mhap_col: the name of the column containing the microhaplotype sequence
-    :param reads_col: the name of the column containing the reads counts
-    :param representative_microhaplotype_dict: the representative microhaplotype dictionary created by the function create_representative_microhaplotype_dict
-    :param additional_hap_detected_cols: optional additional columns to add to the microhaplotype detected dictionary, the key is the pandas column and the value is what to name it in the output
-    :return: a dictionary of the detected microhaplotype results
+    :param microhaplotype_table: Parsed microhaplotype calls table.
+    :param sampleID_col: Column containing the sample IDs.
+    :param locus_col: Column containing the locus IDs.
+    :param mhap_col: Column containing the microhaplotype sequences.
+    :param reads_col: Column containing the read counts.
+    :param representative_microhaplotype_dict: Dictionary of representative microhaplotypes.
+    :param additional_hap_detected_cols: Optional additional columns to add to the microhaplotypes detected, the key is the pandas column and the value is what to name it in the output.
+    :return: A dictionary of detected microhaplotype results.
     """
-    json_data = {}
-    sample_grouped = microhaplotype_table.groupby(sampleID_col)
+    # Validate additional columns if provided
+    if additional_hap_detected_cols:
+        check_additional_columns_exist(
+            microhaplotype_table, additional_hap_detected_cols)
 
-    # check if adding additional columns and if you are then make sure the data table has them
-    if additional_hap_detected_cols is not None:
-        not_found_cols = []
-        for col in additional_hap_detected_cols:
-            if col not in microhaplotype_table.columns:
-                not_found_cols.append(col)
-        if len(not_found_cols) > 0:
-            raise ValueError("Could not find the following columns: " + ",".join(not_found_cols), " when trying to add additional columns")
+    # Map sequences to representative haplotype IDs for fast lookup
+    rep_hap_map = {
+        (locus, seq["seq"]): seq["microhaplotype_id"]
+        for locus, reps in representative_microhaplotype_dict.items()
+        for seq in reps["seqs"].values()
+    }
 
-    for sample_id, sample_group in sample_grouped:
-        target_results = {}
-        locus_grouped = sample_group.groupby(locus_col)
-        for locus, locus_group in locus_grouped:
-            microhaplotypes = []
-            representative_microhaplotype_for_locus = representative_microhaplotype_dict[
-                locus]['seqs'].values()
-            for _, row in locus_group.iterrows():
-                matching_ids = [item['microhaplotype_id']
-                                for item in representative_microhaplotype_for_locus if item['seq'] == row[mhap_col]]
-                if len(matching_ids) != 1:
-                    raise Exception(
-                        "Representative microhaplotype ids are not unique")
-                else:
-                    matching_id = matching_ids[0]
-                haplotype_info = {"haplotype_id": matching_id, "read_count": row[reads_col]}
+    def build_haplotype_info(row):
+        """Helper to construct haplotype info for each row."""
+        locus, seq = row[locus_col], row[mhap_col]
+        matching_id = rep_hap_map.get((locus, seq))
+        if not matching_id:
+            raise ValueError(
+                f"No representative haplotype ID found for {seq} at locus {locus}")
 
-                if additional_hap_detected_cols is not None:
-                    for col in additional_hap_detected_cols:
-                        haplotype_info[additional_hap_detected_cols[col]] = row[col]
-                microhaplotypes.append(haplotype_info)
-            target_results[locus] = {
-                "microhaplotypes": microhaplotypes,
-            }
-        json_data[sample_id] = {
-            "sample_id": sample_id,
-            "target_results": target_results
+        haplotype_info = {
+            "haplotype_id": matching_id,
+            "read_count": row[reads_col],
         }
+
+        if additional_hap_detected_cols:
+            haplotype_info.update({input_col: row[input_col]
+                                   for input_col in additional_hap_detected_cols})
+
+        return matching_id, haplotype_info
+
+    # Build the JSON-like structure
+    json_data = (
+        microhaplotype_table
+        .groupby(sampleID_col)
+        .apply(lambda sample_group: {
+            "sample_id": sample_group[sampleID_col].iloc[0],
+            "target_results": {
+                locus: {
+                    "microhaplotypes": {
+                        hap_id: hap_info
+                        for _, row in locus_group.iterrows()
+                        for hap_id, hap_info in [build_haplotype_info(row)]
+                    }
+                }
+                for locus, locus_group in sample_group.groupby(locus_col)
+            }
+        })
+        .to_dict()
+    )
     return json_data

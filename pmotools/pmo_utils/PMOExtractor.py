@@ -345,7 +345,7 @@ class PMOExtractor:
                                 f.write(f"{output_delimiter}{microhapid.get(additional_microhap_field, 'NA')}")
                         if additional_representative_infos_fields is not None:
                             for representative_infos_field in additional_representative_infos_fields:
-                                f.write(f"{output_delimiter}{rep_haps[target]["seqs"][allele_id].get(representative_infos_field, 'NA')}")
+                                f.write(f"{output_delimiter}{rep_haps[target]['seqs'][allele_id].get(representative_infos_field, 'NA')}")
                         f.write("\n")
 
     @staticmethod

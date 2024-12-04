@@ -2,9 +2,11 @@
 import argparse
 import json
 import os
+import pandas as pd
 
 from pmotools.json_convertors.microhaplotype_table_to_pmo_dict import microhaplotype_table_to_pmo_dict
 from pmotools.utils.small_utils import Utils
+
 
 def parse_args_microhaplotype_table_to_json_file():
     parser = argparse.ArgumentParser()
@@ -12,8 +14,6 @@ def parse_args_microhaplotype_table_to_json_file():
                         help='Input excel file path')
     parser.add_argument('--bioinfo_id', type=str, required=True,
                         help='Identifier of bioinformatics processing run')
-    parser.add_argument('--representative_haps_id', type=str, required=True,
-                        help='Identifier of the representative microhaplotypes processing run')
     parser.add_argument('--sampleID_col', type=str,
                         default='sampleID', help='Column name containing sampleIDs')
     parser.add_argument('--locus_col', type=str, default='locus',
@@ -48,18 +48,17 @@ def microhaplotype_table_to_json_file():
                 if len(addColTok) == 2:
                     addCols[addColTok[0]] = addColTok[1]
                 else:
-                    raise Exception("should have only 1 :, found more than 1 while parsing: " + addCol)
+                    raise Exception(
+                        "should have only 1 :, found more than 1 while parsing: " + addCol)
             else:
                 addCols[addCol] = addCol
 
     # check if input file exists and if output file exists check if --overwrite flag is set
     Utils.inputOutputFileCheckFromArgParse(args)
 
-
-    output_data = microhaplotype_table_to_pmo_dict(args.file, args.bioinfo_id, args.representative_haps_id,
-                                                   args.sampleID_col, args.locus_col,
-                                                   args.mhap_col, args.reads_col, args.delim,
-                                                   addCols)
+    contents = pd.read_csv(args.file, sep=args.delim)
+    output_data = microhaplotype_table_to_pmo_dict(
+        contents, args.bioinfo_id, args.sampleID_col, args.locus_col, args.mhap_col, args.reads_col, addCols)
     # Write output as json
     json_str = json.dumps(output_data, indent=4)
     with open(args.output, 'w') as json_file:
