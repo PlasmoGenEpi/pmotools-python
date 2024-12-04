@@ -281,7 +281,7 @@ class PMOExtractor:
             additional_microhap_fields_with_data = {
                 additional_microhap_field
                 for additional_microhap_field in additional_representative_infos_fields
-                for target_data in pmodata["representative_microhaplotype_sequences"][bioid]["targets"].values()
+                for target_data in pmodata["representative_microhaplotype_sequences"]["targets"].values()
                 for microhap_data in target_data["seqs"].values()
                 if additional_microhap_field in microhap_data
             }
@@ -323,7 +323,7 @@ class PMOExtractor:
             specimen_infos = pmodata["specimen_infos"]
             experiment_infos = pmodata["experiment_infos"]
             detected_samples = pmodata["microhaplotypes_detected"][bioid]["experiment_samples"]
-            rep_haps = pmodata["representative_microhaplotype_sequences"][pmodata["microhaplotypes_detected"][bioid].get("representative_microhaplotype_id")]["targets"]
+            rep_haps = pmodata["representative_microhaplotype_sequences"]["targets"]
 
             for sample, sample_data in detected_samples.items():
                 specimen_id = experiment_infos[sample]["specimen_id"]
@@ -395,7 +395,9 @@ class PMOExtractor:
                    "specimen_infos": {},
                    "experiment_infos": {},
                    "microhaplotypes_detected": {},
-                   "representative_microhaplotype_sequences": {}}
+                   "representative_microhaplotype_sequences": {
+                       "targets" : {}
+                   }}
 
         # specimen_infos
         for specimen in pmo["specimen_infos"].values():
@@ -420,37 +422,30 @@ class PMOExtractor:
                 pmo_out["target_demultiplexed_experiment_samples"].update({bioid: new_demux_samples})
         # microhaplotypes_detected
 
-        microhapids_for_tar = defaultdict(lambda: defaultdict(set))
+        microhapids_for_tar = defaultdict(set)
 
         for id, microhaplotypes_detected in pmo["microhaplotypes_detected"].items():
             extracted_microhaps_for_id = {
                 "tar_amp_bioinformatics_info_id": id,
-                "representative_microhaplotype_id": microhaplotypes_detected["representative_microhaplotype_id"],
                 "experiment_samples": {}}
             for experiment_sample_id, experiment in microhaplotypes_detected["experiment_samples"].items():
                 if experiment_sample_id in all_experiment_sample_ids:
                     extracted_microhaps_for_id["experiment_samples"].update({experiment_sample_id: experiment})
-                    for target_id, target in experiment["target_results"].items():
+                    for target_id_for_res, target in experiment["target_results"].items():
                         for microhap in target["microhaplotypes"]:
-                            microhapids_for_tar[microhaplotypes_detected["representative_microhaplotype_id"]][target_id].add(microhap["microhaplotype_id"])
+                            microhapids_for_tar[target_id_for_res].add(microhap["microhaplotype_id"])
             pmo_out["microhaplotypes_detected"].update({id: extracted_microhaps_for_id})
-        # representative_microhaplotype_sequences
 
-        for rep_id, rep_haps in pmo["representative_microhaplotype_sequences"].items():
-            rep_haps_for_id = {
-                "representative_microhaplotype_id": rep_id,
-                "targets": {}
-            }
-            for target_id, target in rep_haps["targets"].items():
-                added_micro_haps = 0
-                target_haps = {"target_id": target_id, "seqs": {}}
-                for seq in target["seqs"].values():
-                    if seq["microhaplotype_id"] in microhapids_for_tar[rep_id][target_id]:
-                        target_haps["seqs"].update({seq["microhaplotype_id"]: seq})
-                        added_micro_haps += 1
-                if added_micro_haps > 0:
-                    rep_haps_for_id["targets"].update({target_id: target_haps})
-            pmo_out["representative_microhaplotype_sequences"].update({rep_id: rep_haps_for_id})
+        # representative_microhaplotype_sequences
+        for target_id_for_reps, target in pmo["representative_microhaplotype_sequences"]["targets"].items():
+            added_micro_haps = 0
+            target_haps = {"target_id": target_id_for_reps, "seqs": {}}
+            for seq in target["seqs"].values():
+                if seq["microhaplotype_id"] in microhapids_for_tar[target_id_for_reps]:
+                    target_haps["seqs"].update({seq["microhaplotype_id"]: seq})
+                    added_micro_haps += 1
+            if added_micro_haps > 0:
+                pmo_out["representative_microhaplotype_sequences"]["targets"].update({target_id_for_reps: target_haps})
         return pmo_out
 
     @staticmethod
@@ -482,7 +477,9 @@ class PMOExtractor:
                    "specimen_infos": {},
                    "experiment_infos": {},
                    "microhaplotypes_detected": {},
-                   "representative_microhaplotype_sequences": {}}
+                   "representative_microhaplotype_sequences": {
+                       "targets" : {}
+                   }}
 
 
         # experiment_infos
@@ -509,36 +506,31 @@ class PMOExtractor:
 
         # microhaplotypes_detected
 
-        microhapids_for_tar = defaultdict(lambda: defaultdict(set))
+        microhapids_for_tar = defaultdict(set)
 
         for id, microhaplotypes_detected in pmo["microhaplotypes_detected"].items():
             extracted_microhaps_for_id = {
                 "tar_amp_bioinformatics_info_id": id,
-                "representative_microhaplotype_id": microhaplotypes_detected["representative_microhaplotype_id"],
                 "experiment_samples": {}}
             for experiment_sample_id, experiment in microhaplotypes_detected["experiment_samples"].items():
                 if experiment_sample_id in experiment_sample_ids:
                     extracted_microhaps_for_id["experiment_samples"].update({experiment_sample_id: experiment})
-                    for target_id, target in experiment["target_results"].items():
+                    for target_id_for_res, target in experiment["target_results"].items():
                         for microhap in target["microhaplotypes"]:
-                            microhapids_for_tar[microhaplotypes_detected["representative_microhaplotype_id"]][target_id].add(microhap["microhaplotype_id"])
+                            microhapids_for_tar[target_id_for_res].add(microhap["microhaplotype_id"])
             pmo_out["microhaplotypes_detected"].update({id: extracted_microhaps_for_id})
+
         # representative_microhaplotype_sequences
-        for rep_id, rep_haps in pmo["representative_microhaplotype_sequences"].items():
-            rep_haps_for_id = {
-                "representative_microhaplotype_id": rep_id,
-                "targets": {}
-            }
-            for target_id, target in rep_haps["targets"].items():
-                added_micro_haps = 0
-                target_haps = {"target_id": target_id, "seqs": {}}
-                for seq in target["seqs"].values():
-                    if seq["microhaplotype_id"] in microhapids_for_tar[rep_id][target_id]:
-                        target_haps["seqs"].update({seq["microhaplotype_id"]: seq})
-                        added_micro_haps += 1
-                if added_micro_haps > 0:
-                    rep_haps_for_id["targets"].update({target_id: target_haps})
-            pmo_out["representative_microhaplotype_sequences"].update({rep_id: rep_haps_for_id})
+        for target_id_for_rep, target in pmo["representative_microhaplotype_sequences"]["targets"].items():
+            added_micro_haps = 0
+            target_haps = {"target_id": target_id_for_rep, "seqs": {}}
+            for seq in target["seqs"].values():
+                if seq["microhaplotype_id"] in microhapids_for_tar[target_id_for_rep]:
+                    target_haps["seqs"].update({seq["microhaplotype_id"]: seq})
+                    added_micro_haps += 1
+            if added_micro_haps > 0:
+                pmo_out["representative_microhaplotype_sequences"]["targets"].update({target_id_for_rep: target_haps})
+
         return pmo_out
 
     @staticmethod
@@ -558,12 +550,7 @@ class PMOExtractor:
         global target_id
         warnings = []
         for target_id in target_ids:
-            found_in_rep_haps = False
-            for rep_haps in pmo["representative_microhaplotype_sequences"].values():
-                if target_id in rep_haps["targets"]:
-                    found_in_rep_haps = True
-                    break
-            if not found_in_rep_haps:
+            if not target_id in pmo["representative_microhaplotype_sequences"]["targets"]:
                 warnings.append(f"{target_id} not in representative_microhaplotype_sequences")
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
@@ -575,7 +562,9 @@ class PMOExtractor:
                    "specimen_infos": pmo["specimen_infos"],
                    "experiment_infos": pmo["experiment_infos"],
                    "microhaplotypes_detected": {},
-                   "representative_microhaplotype_sequences": {}}
+                   "representative_microhaplotype_sequences": {
+                       "targets": {}
+                   }}
 
         # target_demultiplexed_experiment_samples
         if "target_demultiplexed_experiment_samples" in pmo:
@@ -594,7 +583,6 @@ class PMOExtractor:
         for id, microhaplotypes_detected in pmo["microhaplotypes_detected"].items():
             extracted_microhaps_for_id = {
                 "tar_amp_bioinformatics_info_id": id,
-                "representative_microhaplotype_id": microhaplotypes_detected["representative_microhaplotype_id"],
                 "experiment_samples": {}}
             for experiment_sample_id, experiment in microhaplotypes_detected["experiment_samples"].items():
                 targets_for_samples = {"experiment_sample_id": experiment_sample_id, "target_results": {}}
@@ -604,15 +592,9 @@ class PMOExtractor:
                 extracted_microhaps_for_id["experiment_samples"].update({experiment_sample_id: targets_for_samples})
             pmo_out["microhaplotypes_detected"].update({id: extracted_microhaps_for_id})
         # representative_microhaplotype_sequences
-        for rep_id, rep_haps in pmo["representative_microhaplotype_sequences"].items():
-            rep_haps_for_id = {
-                "representative_microhaplotype_id": rep_id,
-                "targets": {}
-            }
-            for target_id, target in rep_haps["targets"].items():
-                if target_id in target_ids:
-                    rep_haps_for_id["targets"].update({target_id: target})
-            pmo_out["representative_microhaplotype_sequences"].update({rep_id: rep_haps_for_id})
+        for target_id, target in pmo["representative_microhaplotype_sequences"]["targets"].items():
+            if target_id in target_ids:
+                pmo_out["representative_microhaplotype_sequences"]["targets"].update({target_id: target})
         return pmo_out
 
     @staticmethod

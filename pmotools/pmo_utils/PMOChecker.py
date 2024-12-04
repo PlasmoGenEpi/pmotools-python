@@ -90,22 +90,6 @@ class PMOChecker:
             raise Exception("\n".join(warnings))
 
     @staticmethod
-    def check_representative_ids_consistency(pmo_object):
-        """
-        Check that all representative_microhaplotype_id ids from the detected microhaplotypes_detected exist
-
-        :param pmo_object: the file to check
-        :return: none, will raise exception if not consistent
-        """
-
-        warnings = []
-        for microhaps_detected in pmo_object["microhaplotypes_detected"].values():
-            if microhaps_detected.get("representative_microhaplotype_id") not in pmo_object["representative_microhaplotype_sequences"]:
-                warnings.append("Missing " + microhaps_detected.get("representative_microhaplotype_id") + " from " + "representative_microhaplotype_sequences")
-        if len(warnings) > 0:
-            raise Exception("\n".join(warnings))
-
-    @staticmethod
     def check_for_bioinformatics_id(pmo_object, bioid):
         if bioid not in pmo_object["taramp_bioinformatics_infos"]:
             raise Exception(

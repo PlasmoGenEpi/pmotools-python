@@ -135,13 +135,10 @@ class PMOReader:
         all_representative_haps_ids = []
 
         for pmo in pmos:
-            for rep_haps in pmo["representative_microhaplotype_sequences"].values():
-                all_representative_haps_ids.append(rep_haps["representative_microhaplotype_id"])
-                for tar in rep_haps["targets"].values():
-                    for seq in tar["seqs"].values():
-                        rep_seq_counts[tar["target_id"]][seq["seq"]] += 1
+            for tar in pmo["representative_microhaplotype_sequences"]["targets"].values():
+                for seq in tar["seqs"].values():
+                    rep_seq_counts[tar["target_id"]][seq["seq"]] += 1
 
-        representative_haps_id = ";".join([str(key) for key in all_representative_haps_ids])
         # create a key for the old IDs
         new_rep_seq_ids = defaultdict(default_str_value)
         rep_targets = dict()
@@ -159,10 +156,7 @@ class PMOReader:
             rep_targets[tar_name] = microhaplotypes
 
         pmo_out["representative_microhaplotype_sequences"] = {
-            representative_haps_id: {
-                "representative_microhaplotype_id": representative_haps_id,
-                "targets": rep_targets
-            }
+            "targets": rep_targets
         }
         # rename the microhaplotypes detected
         pmo_out["microhaplotypes_detected"] = {}
@@ -170,16 +164,14 @@ class PMOReader:
         for pmo in pmos:
             pmo_out["microhaplotypes_detected"].update(pmo["microhaplotypes_detected"])
             for microhaplotypes_detected_id, microhaplotypes_detected_val in pmo["microhaplotypes_detected"].items():
-                old_rep_haps_id = microhaplotypes_detected_val["representative_microhaplotype_id"]
-                microhaplotypes_detected_val["representative_microhaplotype_id"] = representative_haps_id
+
                 for exp_samples in pmo_out["microhaplotypes_detected"][microhaplotypes_detected_id][
                     "experiment_samples"].values():
                     for tar_name, tar_haps in exp_samples["target_results"].items():
                         for micro_hap in tar_haps["microhaplotypes"]:
                             old_micro_id = micro_hap["microhaplotype_id"]
                             new_micro_id = new_rep_seq_ids[tar_name][
-                                pmo["representative_microhaplotype_sequences"][old_rep_haps_id]["targets"][tar_name][
-                                    "seqs"][old_micro_id]["seq"]]
+                                pmo["representative_microhaplotype_sequences"]["targets"][tar_name]["seqs"][old_micro_id]["seq"]]
                             micro_hap["microhaplotype_id"] = new_micro_id
         return pmo_out
 
