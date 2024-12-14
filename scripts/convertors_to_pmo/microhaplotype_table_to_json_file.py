@@ -23,7 +23,7 @@ def parse_args_microhaplotype_table_to_json_file():
     parser.add_argument('--reads_col', type=str, default='reads',
                         help='Column name containing reads per microhaplotype')
     parser.add_argument('--additional_cols', type=str,
-                        help='Additional column name to add to detected haplotypes table, comma separated, can rename if given with a :, e.g. --additional_cols addCol,adddCol2:addCol2NewName')
+                        help='Additional column name to add to detected haplotypes table, comma separated e.g. --additional_cols addCol,adddCol2')
     parser.add_argument('--delim', type=str, default='\t',
                         help='Delimiter of input file')
     parser.add_argument('--output', type=str, required=True,

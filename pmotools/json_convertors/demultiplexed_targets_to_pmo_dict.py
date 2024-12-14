@@ -4,7 +4,7 @@ import json
 from .json_convert_utils import check_additional_columns_exist
 
 
-def demultiplexed_targets_to_pmo_dict_new(
+def demultiplexed_targets_to_pmo_dict(
     contents: pd.DataFrame,
     bioinfo_id: str,
     sampleID_col: str = 'sampleID',
