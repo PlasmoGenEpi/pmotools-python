@@ -66,9 +66,8 @@ def panel_info_table_to_pmo_dict(target_table: pd.DataFrame,
     # Put together components
     panel_info_dict = {"panel_info": {panel_id: {"panel_id": panel_id,
                        "target_genome": genome_info, "targets": targets_dict}}}
-    # Convert to json format
-    panel_info_json = json.dumps(panel_info_dict, indent=4)
-    return panel_info_json
+
+    return panel_info_dict
 
 
 def create_targets_dict(

@@ -36,7 +36,6 @@ def microhaplotype_table_to_pmo_dict(
     output_data = {"microhaplotypes_detected": {bioinfo_id: {'experiment_samples': detected_mhap_dict}},
                    "representative_microhaplotype_sequences": {bioinfo_id: {"representative_microhaplotype_id": bioinfo_id, 'targets': representative_microhaplotype_dict}}
                    }
-    output_data = json.dumps(output_data, indent=4)
     return output_data
 
 
