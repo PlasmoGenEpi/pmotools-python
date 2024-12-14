@@ -76,7 +76,7 @@ def experiment_info_table_to_json(
     # Convert to JSON
     copy_contents.set_index(experiment_sample_id_col, drop=False, inplace=True)
     meta_json = pandas_table_to_json(copy_contents, return_indexed_dict=True)
-    return json.dumps(meta_json, indent=4)
+    return meta_json
 
 
 def specimen_info_table_to_json(
@@ -156,4 +156,4 @@ def specimen_info_table_to_json(
 
     copy_contents.set_index(specimen_id_col, drop=False, inplace=True)
     meta_json = pandas_table_to_json(copy_contents, return_indexed_dict=True)
-    return json.dumps(meta_json, indent=4)
+    return meta_json

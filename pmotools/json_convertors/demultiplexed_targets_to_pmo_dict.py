@@ -71,4 +71,4 @@ def demultiplexed_targets_to_pmo_dict(
     }
 
     # Serialize and return the result
-    return json.dumps(output_data, indent=4)
+    return output_data
