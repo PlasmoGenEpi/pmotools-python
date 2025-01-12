@@ -3,6 +3,7 @@ import contextlib
 import gzip
 import os
 import sys
+from typing import NamedTuple
 
 import pandas
 import pandas as pd
@@ -133,6 +134,7 @@ class PMOExtractor:
             counts_df.loc[len(counts_df)] = new_row
         counts_df.sort_values(by=meta_fields, inplace=True)
         return counts_df
+
     @staticmethod
     def count_specimen_meta_fields(pmo) -> pd.DataFrame:
         """
@@ -403,6 +405,7 @@ class PMOExtractor:
         for specimen in pmo["specimen_infos"].values():
             if specimen["specimen_id"] in specimen_ids:
                 pmo_out["specimen_infos"].update({specimen["specimen_id"]: specimen})
+
         # experiment_infos
         all_experiment_sample_ids = []
         for experiment in pmo["experiment_infos"].values():
@@ -420,8 +423,8 @@ class PMOExtractor:
                     if exp_sample_id in all_experiment_sample_ids:
                         new_demux_samples["demultiplexed_experiment_samples"].update({exp_sample_id: sample})
                 pmo_out["target_demultiplexed_experiment_samples"].update({bioid: new_demux_samples})
-        # microhaplotypes_detected
 
+        # microhaplotypes_detected
         microhapids_for_tar = defaultdict(set)
 
         for id, microhaplotypes_detected in pmo["microhaplotypes_detected"].items():
@@ -547,7 +550,6 @@ class PMOExtractor:
         # created based on the supplied specimens
 
         # check to make sure the supplied specimens actually exist within the data
-        global target_id
         warnings = []
         for target_id in target_ids:
             if not target_id in pmo["representative_microhaplotype_sequences"]["targets"]:
@@ -598,12 +600,59 @@ class PMOExtractor:
         return pmo_out
 
     @staticmethod
+    def extract_from_pmo_with_read_filter(pmo, read_filter: float):
+        """
+        Extract out data from the PMO with inconclusive read filter
+        :param pmo: the pmo to extract data from
+        :param read_filter: the read filter to use, inconclusive filter
+        :return: a new pmo with the data only with detected microhaplotypes above this read filter
+        """
+        # create a new pmo out
+        # pmo_name, panel_info, sequencing_infos, taramp_bioinformatics_infos will stay the same
+        # specimen_infos, experiment_infos, microhaplotypes_detected, representative_microhaplotype_sequences will be
+        # created based on the supplied specimens
+        pmo_out = {"pmo_name": pmo["pmo_name"],
+                   "panel_info": pmo["panel_info"],
+                   "sequencing_infos": pmo["sequencing_infos"],
+                   "taramp_bioinformatics_infos": pmo["taramp_bioinformatics_infos"],
+                   "specimen_infos": pmo["specimen_infos"],
+                   "experiment_infos": pmo["experiment_infos"],
+                   "microhaplotypes_detected": {},
+                   "representative_microhaplotype_sequences":  pmo["representative_microhaplotype_sequences"]
+                   }
+
+        # target_demultiplexed_experiment_samples
+        if "target_demultiplexed_experiment_samples" in pmo:
+            pmo_out["target_demultiplexed_experiment_samples"] = pmo["target_demultiplexed_experiment_samples"]
+
+        # microhaplotypes_detected
+        for id, microhaplotypes_detected in pmo["microhaplotypes_detected"].items():
+            extracted_microhaps_for_id = {
+                "tar_amp_bioinformatics_info_id": id,
+                "experiment_samples": {}}
+            for experiment_sample_id, experiment in microhaplotypes_detected["experiment_samples"].items():
+                targets_for_samples = {"experiment_sample_id": experiment_sample_id, "target_results": {}}
+                for target_id, target in experiment["target_results"].items():
+                    microhaps_for_target = []
+                    for microhap in target["microhaplotypes"]:
+                        if microhap["read_count"] >= read_filter:
+                            microhaps_for_target.append(microhap)
+                    if len(microhaps_for_target) > 0:
+                        targets_for_samples["target_results"].update({target_id: {
+                            "target_id" : target_id,
+                            "microhaplotypes": microhaps_for_target}})
+                if len(targets_for_samples["target_results"]) > 0:
+                    extracted_microhaps_for_id["experiment_samples"].update({experiment_sample_id: targets_for_samples})
+            pmo_out["microhaplotypes_detected"].update({id: extracted_microhaps_for_id})
+        return pmo_out
+
+    @staticmethod
     def extract_from_pmo_samples_with_meta_groupings(pmo, meta_fields_values: str):
         """
         Extract out of a PMO the data associated with specimens that belong to specific meta data groupings
         :param pmo: the PMO to extract from
         :param meta_fields_values: Meta Fields to include, should either be a table with columns field, values (comma separated values) (and optionally group) or supplied command line as field1=value1,value2,value3:field2=value1,value2;field1=value5,value6, where each group is separated by a semicolon
-        :return:
+        :return: a pmo with the input meta
         """
         selected_meta_groups = {}
         # parse meta values
@@ -676,3 +725,25 @@ class PMOExtractor:
         pmo_out = PMOExtractor.extract_from_pmo_select_specimen_ids(pmo, all_specimen_ids)
 
         return pmo_out, group_counts_df
+
+    @staticmethod
+    def extract_panels_insert_bed_loc(pmo):
+        """
+        Extract out of a PMO the insert location from the panel info
+        :param pmo: the PMO to extract from
+        :return: a dictionary with the insert location for all panel infos
+        """
+        bed_loc = NamedTuple("bed_loc", [("chrom", str), ("start", int), ("end", int), ("name", str), ("score", float), ("strand", str), ("extra_info", str), ("ref_seq", str)])
+        bed_loc_out = {}
+        for panel_info in pmo["panel_info"].values():
+            bed_loc_for_panel = []
+            genome_name_version = panel_info["target_genome"]["name"]  + "_" + panel_info["target_genome"]["version"]
+            panel_id = panel_info["panel_id"]
+            extra_info = str("[") + str("genome_name_version=") + genome_name_version + ";" + str("panel_id=") + panel_id + ";" + str("]")
+            for tar in panel_info["targets"].values():
+                strand = "+" if "strand" not in tar["insert_location"] else tar["insert_location"]["strand"]
+                ref_seq =  "" if "ref_seq" not in tar["insert_location"] else tar["insert_location"]["ref_seq"]
+                bed_loc_for_panel.append(bed_loc(tar["insert_location"]["chrom"], tar["insert_location"]["start"], tar["insert_location"]["end"], tar["target_id"], tar["insert_location"]["end"] - tar["insert_location"]["start"], strand, extra_info, ref_seq))
+            bed_loc_out[panel_id] = bed_loc_for_panel
+        return bed_loc_out
+

@@ -25,7 +25,9 @@ from count_targets_per_sample import count_targets_per_sample
 from count_samples_per_target import count_samples_per_target
 from terra_amp_output_to_json import terra_amp_output_to_json
 from list_experiment_sample_ids_per_specimen_id import list_experiment_sample_ids_per_specimen_id
-
+from extract_insert_of_panels import extract_insert_of_panels
+from extract_refseq_of_inserts_of_panels import extract_refseq_of_inserts_of_panels
+from extract_pmo_with_read_filter import extract_pmo_with_read_filter
 
 from pmotools.utils.color_text import ColorText as CT
 
@@ -50,7 +52,10 @@ class pmotools_runner   :
                 "extract_pmo_with_select_experiment_sample_ids": pmofunction(extract_pmo_with_select_experiment_sample_ids,
                                                                     "Extract from PMO specific experiment sample ids from the experiment_info table"),
                 "extract_pmo_with_select_targets" : pmofunction(extract_pmo_with_select_targets,"Extract from PMO specific targets"),
+                "extract_pmo_with_read_filter": pmofunction(extract_pmo_with_read_filter,
+                                                            "Extract from PMO with a read filter"),
                 "extract_allele_table": pmofunction(extract_for_allele_table,"Extract allele tables which can be as used as input to such tools as dcifer or moire"),
+
             },
             "working_with_multiple_pmos" : {
                 "combine_pmos": pmofunction(combine_pmos,
@@ -69,6 +74,14 @@ class pmotools_runner   :
                                                    "Count the number of targets per sample"),
                 "count_samples_per_target": pmofunction(count_samples_per_target,
                                                         "Count the number of samples per target"),
+            },
+            "extract_panel_info_from_pmo" : {
+
+                "extract_insert_of_panels": pmofunction(extract_insert_of_panels,
+                                                        "Extract the insert of panels from a PMO"),
+                "extract_refseq_of_inserts_of_panels": pmofunction(extract_refseq_of_inserts_of_panels,
+                                                        "Extract the ref_seq of panels from a PMO")
+
             }
         }
         self.version = "1.0.0"
@@ -76,11 +89,12 @@ class pmotools_runner   :
     def printAvailableFunctions(self):
         sys.stdout.write("pmotools v" + self.version + " - A suite of tools for interacting with " + CT.boldGreen("Portable Microhaplotype Object (pmo)") + " file format" + "\n\n")
 
-        sys.stdout.write("Available functions are" + "\n")
+        sys.stdout.write("Available functions organized by groups are" + "\n")
         for functionClass in self.functions:
             sys.stdout.write(CT.boldBlue(functionClass) + "\n")
             for functionName in self.functions[functionClass]:
                 sys.stdout.write("\t" + functionName + " - " + self.functions[functionClass][functionName].shortDescription + "\n")
+            sys.stdout.write("\n")
 
     def hasFunction(self, funcName):
         hasFunction = False
