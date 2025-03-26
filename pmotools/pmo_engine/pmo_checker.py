@@ -2,6 +2,8 @@
 
 
 import json
+import jsonschema
+from jsonschema import validate
 
 
 class PMOChecker:
@@ -9,7 +11,11 @@ class PMOChecker:
     A class to house utilities to help check the formatting of read in PMO files.
     """
 
-    def __init__(self):
+    def __init__(self, pmo_jsonschema : dict):
+
+        self.pmo_jsonschema = pmo_jsonschema
+        self.pmo_validator = jsonschema.Draft7Validator(pmo_jsonschema)
+
         self.all_required_base_fields = [
             "pmo_name",
             "panel_info",
@@ -58,6 +64,11 @@ class PMOChecker:
             "lib_kit"
         ]
 
+    def validate_pmo_json(self, pmo_json):
+        """
+        Validate the PMO json file with loaded schema
+        """
+        jsonschema.validate(pmo_json, self.pmo_jsonschema)
 
     def check_for_required_base_fields(self, pmo_object):
         """
