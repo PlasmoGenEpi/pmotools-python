@@ -12,57 +12,32 @@ class PMOChecker:
     """
 
     def __init__(self, pmo_jsonschema : dict):
+        """
+        Constructor for PMOChecker with the json read from the json schema file
 
+        for example:
+        with open("../etc/portable_microhaplotype_object.schema.json") as f: pmo_jsonschema_data = json.load(f)
+        PMOChecker checker(pmo_jsonschema_data)
+        """
         self.pmo_jsonschema = pmo_jsonschema
         self.pmo_validator = jsonschema.Draft7Validator(pmo_jsonschema)
+        # below assumes the jsonschema loaded is a specific pmo jsonschema and assumes these fields exist
+        # might be a challenge to validate the validating schema
+        self.all_required_base_fields = self.pmo_jsonschema["required"]
+        # to find the required fields of a specific class use the following:
+        # self.pmo_jsonschema["$defs"]["CLASS_NAME"]["required"],
+        # e.g. for SpecimenInfo class self.pmo_jsonschema["$defs"]["SpecimenInfo"]["required"]
 
-        self.all_required_base_fields = [
-            "pmo_name",
-            "panel_info",
-            "experiment_infos",
-            "specimen_infos",
-            "sequencing_infos",
-            "microhaplotypes_detected",
-            "representative_microhaplotype_sequences",
-            "taramp_bioinformatics_infos"
-        ]
+    def get_required_fields_for_pmo_class(self, pmo_class):
+        """
+        Get the required fields for the pmo_class from the pmo_jsonschema
+        :param pmo_class: the class to get a required fields for, will throw an exception if class is not found within the schema
+        :return: the required fields for the pmo_class
+        """
 
-        self.optional_base_fields = [
-            "target_demultiplexed_experiment_samples",
-            "postprocessing_bioinformatics_infos"
-        ]
-
-        self.required_specimen_infos_fields = [
-            "specimen_id",
-            "samp_taxon_id",
-            "collection_date",
-            "collection_country",
-            "collector",
-            "samp_store_loc"
-            "samp_collect_device",
-            "project_name"
-        ]
-
-        self.required_experiment_infos_fields = [
-            "experiment_sample_id",
-            "sequencing_info_id",
-            "panel_id",
-            "specimen_id"
-        ]
-
-        self.required_sequencing_infos_fields = [
-            "sequencing_info_id",
-            "seq_instrument",
-            "seq_date",
-            "nucl_acid_ext",
-            "nucl_acid_amp",
-            "nucl_acid_ext_date",
-            "nucl_acid_amp_date",
-            "pcr_cond",
-            "lib_screen",
-            "lib_layout",
-            "lib_kit"
-        ]
+        if pmo_class not in self.pmo_jsonschema["$defs"]:
+            raise Exception(f"PMO class {pmo_class} is not found in pmo_jsonschema, available fields are {', '.join(self.pmo_jsonschema['$defs'].keys())}")
+        return self.pmo_jsonschema["$defs"][pmo_class]["required"]
 
     def validate_pmo_json(self, pmo_json):
         """
@@ -72,7 +47,7 @@ class PMOChecker:
 
     def check_for_required_base_fields(self, pmo_object):
         """
-        Check that all required base fields are present in object
+        Check that all required base fields are present in a pmo object
 
         :param pmo_object: the pmo object to check
         :return: return void if passes, otherwise raises an exception
@@ -83,30 +58,3 @@ class PMOChecker:
                 missing_base_fields.append(base_field)
         if len(missing_base_fields) > 0:
             raise Exception("Missing required base fields: {}".format(missing_base_fields))
-
-    @staticmethod
-    def check_bioinformatics_ids_consistency(pmo_object):
-        """
-        Check that all bio ids match
-
-        :param pmo_object: the file to check
-        :return: none, will raise exception if not consistent
-        """
-        warnings = []
-        for bioid in pmo_object["taramp_bioinformatics_infos"].keys():
-            if bioid not in pmo_object["microhaplotypes_detected"]:
-                warnings.append("Missing " + bioid + " from " + "microhaplotypes_detected")
-        if len(warnings) > 0:
-            warnings.append("Available bioid(s) are {}".format(", ".join(pmo_object["microhaplotypes_detected"].keys())))
-            raise Exception("\n".join(warnings))
-
-    @staticmethod
-    def check_for_bioinformatics_id(pmo_object, bioid):
-        if bioid not in pmo_object["taramp_bioinformatics_infos"]:
-            raise Exception(
-                "Bioid ID {bioid} not found in PMO file, options are {avail_bioids}".format(bioid=bioid,
-                                                                                            avail_bioids=",".join(
-                                                                                                pmo_object[
-                                                                                                    "taramp_bioinformatics_infos"].keys())))
-
-

@@ -43,4 +43,3 @@ def extract_pmo_with_selected_meta():
 
 if __name__ == "__main__":
     extract_pmo_with_selected_meta()
-
