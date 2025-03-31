@@ -1,0 +1,34 @@
+name: Run Tests
+
+on:
+  push:
+    branches: 
+      - main
+      - develop 
+  pull_request:
+    branches: 
+      - main 
+      - develop 
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: pmotools
+          environment-file: envs/pmotools-env.yml
+          python-version: 3.11
+          auto-activate-base: false
+
+      - name: Verify Conda Environment
+        run: conda info --envs
+
+      - name: Run Unittests
+        shell: bash -l {0}
+        run: python -m unittest discover -s tests -p "*.py"
