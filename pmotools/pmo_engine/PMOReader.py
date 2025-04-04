@@ -7,7 +7,7 @@ import os
 import sys
 from collections import defaultdict
 
-from pmotools.pmo_utils.PMOChecker import PMOChecker
+from pmotools.pmo_engine.pmo_checker import PMOChecker
 
 
 class PMOReader:

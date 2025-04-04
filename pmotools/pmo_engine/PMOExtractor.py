@@ -8,7 +8,7 @@ from typing import NamedTuple
 import pandas
 import pandas as pd
 from collections import defaultdict
-from pmotools.pmo_utils.PMOChecker import PMOChecker
+from pmotools.pmo_engine.pmo_checker import PMOChecker
 
 
 class PMOExtractor:

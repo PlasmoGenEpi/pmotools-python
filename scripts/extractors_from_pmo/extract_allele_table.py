@@ -3,7 +3,7 @@ import argparse
 
 from pmotools.pmo_utils.PMOReader import PMOReader
 from pmotools.utils.small_utils import Utils
-from pmotools.pmo_utils.PMOChecker import PMOChecker
+from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.pmo_utils.PMOExtractor import PMOExtractor
 
 
