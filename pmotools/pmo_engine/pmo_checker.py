@@ -2,8 +2,7 @@
 
 
 import json
-import jsonschema
-from jsonschema import validate
+from jsonschema import Draft7Validator, validate
 
 
 class PMOChecker:
@@ -20,7 +19,7 @@ class PMOChecker:
         PMOChecker checker(pmo_jsonschema_data)
         """
         self.pmo_jsonschema = pmo_jsonschema
-        self.pmo_validator = jsonschema.Draft7Validator(pmo_jsonschema)
+        self.pmo_validator = Draft7Validator(pmo_jsonschema)
         # below assumes the jsonschema loaded is a specific pmo jsonschema and assumes these fields exist
         # might be a challenge to validate the validating schema
         self.all_required_base_fields = self.pmo_jsonschema["required"]
@@ -43,7 +42,7 @@ class PMOChecker:
         """
         Validate the PMO json file with loaded schema
         """
-        jsonschema.validate(pmo_json, self.pmo_jsonschema)
+        validate(pmo_json, self.pmo_jsonschema)
 
     def check_for_required_base_fields(self, pmo_object):
         """
