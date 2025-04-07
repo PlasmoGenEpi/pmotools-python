@@ -16,13 +16,13 @@ class TestPMOReader(unittest.TestCase):
         pmo_data_2_gz = PMOReader.read_in_pmo(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json.gz"))
 
     def test_read_in_pmos(self):
-        pmo_datas = PMOReader.read_in_pmos([os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json"),
+        pmo_data_list = PMOReader.read_in_pmos([os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json"),
                                             os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json")])
 
-        pmo_datas_gz = PMOReader.read_in_pmos([os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json.gz"),
+        pmo_data_list_gz = PMOReader.read_in_pmos([os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json.gz"),
                                             os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json.gz")])
 
-        pmo_datas_mix = PMOReader.read_in_pmos([os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json.gz"),
+        pmo_data_list_mix = PMOReader.read_in_pmos([os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json.gz"),
                                             os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json")])
 
 
