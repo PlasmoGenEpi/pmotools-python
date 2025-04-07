@@ -5,8 +5,8 @@ from collections import defaultdict
 
 import pandas as pd
 
-from pmotools.pmo_utils.PMOExtractor import PMOExtractor
-from pmotools.pmo_utils.PMOReader import PMOReader
+from pmotools.pmo_engine.PMOExtractor import PMOExtractor
+from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 

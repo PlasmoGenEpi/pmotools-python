@@ -21,8 +21,6 @@ class PMOReader:
         :param fnp: the file name path of the PMO file to read in
         :return: a PMO like object
         """
-        # check input
-        checker = PMOChecker()
         if "STDIN" == fnp:
             pmo_data = json.load(sys.stdin)
         else:
@@ -32,8 +30,6 @@ class PMOReader:
             else:
                 with open(fnp) as f:
                     pmo_data = json.load(f)
-
-        checker.check_for_required_base_fields(pmo_data)
         return pmo_data
 
     @staticmethod
