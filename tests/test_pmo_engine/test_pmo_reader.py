@@ -43,6 +43,10 @@ class TestPMOReader(unittest.TestCase):
         # check against expected
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             expected_pmo = json.load(f)
+        # remove the pmo_header as the generation date will be new each time it's created
+        expected_pmo.pop("pmo_header")
+        combined_pmo.pop("pmo_header")
+
         self.assertEqual(expected_pmo, combined_pmo)
 
 
