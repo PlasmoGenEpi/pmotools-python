@@ -18,6 +18,7 @@ from extract_pmo_with_select_targets import extract_pmo_with_select_targets
 from microhaplotype_table_to_json_file import microhaplotype_table_to_json_file
 from extract_allele_table import extract_for_allele_table
 from combine_pmos import combine_pmos
+from validate_pmo import validate_pmo
 from list_specimen_meta_fields import list_specimen_meta_fields
 from list_tar_amp_bioinformatics_info_ids import list_tar_amp_bioinformatics_info_ids
 from count_specimen_meta import count_specimen_meta
@@ -81,6 +82,12 @@ class pmotools_runner   :
                                                         "Extract the insert of panels from a PMO"),
                 "extract_refseq_of_inserts_of_panels": pmofunction(extract_refseq_of_inserts_of_panels,
                                                         "Extract the ref_seq of panels from a PMO")
+
+            },
+            "validation" : {
+
+                "validate_pmo": pmofunction(validate_pmo,
+                                                        "validate a PMO file against a jsonschema file")
 
             }
         }
