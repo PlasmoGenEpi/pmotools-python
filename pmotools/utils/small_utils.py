@@ -186,6 +186,24 @@ class Utils:
         return input
 
     @staticmethod
+    def appendStrAsNeededDoubleEnding(input : str, ending1 : str, ending2 : str):
+        """
+        if a string doesn't end with a specific combination of endings (e.g. if ending of input does not equal ending1 + ending2), append it, this is useful for ensuring file extensions plus .gz for zipped files are in output names without accidentally doubling it
+
+        :param input: the string to be appended
+        :param ending1: the first part of the desired ending
+        :param ending2: the second part of the desired ending
+        :return: the string with the ending1 + ending2 appended if it doesn't already end with it
+        """
+        full_ending = ending1 + ending2
+        if not input.endswith(full_ending):
+            if input.endswith(ending1):
+                return input + ending2
+            else:
+                return input + full_ending
+        return input
+
+    @staticmethod
     def parse_delimited_input_or_file(input_args : str, delim : str = ",") -> list[str]:
         """
         If the input is a file name then read in each line of the file for the argument, otherwise return a list of items delimited by delimiter

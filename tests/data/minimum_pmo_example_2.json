@@ -7,37 +7,49 @@
 				{
 					"additional_argument" : 
 					[
-						"--strictErrors",
-						"--illumina",
-						"--removeOneSampOnlyOneOffHaps",
-						"--excludeCommonlyLowFreqHaplotypes",
-						"--excludeLowFreqOneOffs",
-						"--rescueExcludedOneOffLowFreqHaplotypes"
+						"--overWriteDir",
+						"--fracCutOff 0.005",
+						"--dout popClusteringTrimmedParagon",
+						"--replicateMinTotalReadCutOff 10",
+						"--clusterCutOff 5",
+						"--pat _heome1",
+						"--numThreads 10",
+						"--groupingsFile /tank/data/plasmodium/falciparum/pfdata/metadata/meta.tab.txt",
+						"--genome2bit /tank/data/genomes/plasmodium/genomes/pf/genomes/Pf3D7.2bit",
+						"--trimBedFnp /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_inserts_trimmed1.bed"
 					],
-					"program" : "SeekDeep processClusters",
+					"program" : "PathWeaver runProcessClustersOnRecon",
 					"program_description" : "Compare across samples for each target to create population level identifiers and do post artifact cleanup",
-					"program_version" : "v2.6.5"
+					"program_version" : "1.0.0-dev"
 				}
 			],
-			"bioinformatics_method_name" : "SeekDeep",
 			"demultiplexing_method" : 
 			{
-				"program" : "SeekDeep extractorPairedEnd",
-				"program_description" : "Takes raw paired-end reads and demultiplexes on primers and does QC filtering",
-				"program_version" : "v2.6.5"
+				"additional_argument" : 
+				[
+					"--bamExtractTrimToRegion",
+					"--bed /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_withPrimers.bed",
+					"--genomeDir /tank/data/genomes/plasmodium/genomes/pf/genomes/",
+					"--primaryGenome Pf3D7",
+					"--bam bams/{SAMPLE}.sorted.bam"
+				],
+				"program" : "PathWeaver BamExtractPathwaysFromRegion",
+				"program_description" : "Extract reads from a bam file for a specific genomic locatioon and then assembles local haplotypes for that region",
+				"program_version" : "1.0.0-dev"
 			},
 			"denoising_method" : 
 			{
 				"additional_argument" : 
 				[
-					"--illumina",
-					"--qualThres 25,20",
-					"--trimFront 1",
-					"--trimBack 1"
+					"--bamExtractTrimToRegion",
+					"--bed /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_withPrimers.bed",
+					"--genomeDir /tank/data/genomes/plasmodium/genomes/pf/genomes/",
+					"--primaryGenome Pf3D7",
+					"--bam bams/{SAMPLE}.sorted.bam"
 				],
-				"program" : "SeekDeep qluster",
-				"program_description" : "Takes sequences per sample per target and clusters them",
-				"program_version" : "v2.6.5"
+				"program" : "PathWeaver BamExtractPathwaysFromRegion",
+				"program_description" : "Extract reads from a bam file for a specific genomic locatioon and then assembles local haplotypes for that region",
+				"program_version" : "1.0.0-dev"
 			}
 		}
 	],
@@ -45,34 +57,22 @@
 	[
 		{
 			"bioinformatics_methods_id" : 0,
-			"bioinformatics_run_name" : "Mozambique2018-SeekDeep",
-			"run_date" : "2022-04-01"
+			"bioinformatics_run_name" : "PathWeaver-Heome1",
+			"run_date" : "2024-09-03"
 		}
 	],
 	"experiment_info" : 
 	[
 		{
-			"experiment_sample_name" : "8025874217",
+			"experiment_sample_name" : "5tbx",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
-			"sequencing_prep_plate_info" : 
-			{
-				"plate_col" : 12,
-				"plate_name" : "8",
-				"plate_row" : "C"
-			},
 			"specimen_id" : 0
 		},
 		{
-			"experiment_sample_name" : "8025874266",
+			"experiment_sample_name" : "XUC009",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
-			"sequencing_prep_plate_info" : 
-			{
-				"plate_col" : 7,
-				"plate_name" : "8",
-				"plate_row" : "B"
-			},
 			"specimen_id" : 1
 		}
 	],
@@ -91,11 +91,47 @@
 							[
 								{
 									"mhap_id" : 1,
-									"reads" : 2227
-								},
+									"reads" : 289
+								}
+							],
+							"mhaps_target_id" : 2
+						},
+						{
+							"haps" : 
+							[
 								{
-									"mhap_id" : 2,
-									"reads" : 51
+									"mhap_id" : 0,
+									"reads" : 333
+								}
+							],
+							"mhaps_target_id" : 47
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 480
+								}
+							],
+							"mhaps_target_id" : 99
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 427
+								}
+							],
+							"mhaps_target_id" : 76
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 181
 								}
 							],
 							"mhaps_target_id" : 98
@@ -105,493 +141,7 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 19391
-								}
-							],
-							"mhaps_target_id" : 97
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 2,
-									"reads" : 16586
-								}
-							],
-							"mhaps_target_id" : 96
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 2,
-									"reads" : 836
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 33
-								}
-							],
-							"mhaps_target_id" : 95
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 6967
-								}
-							],
-							"mhaps_target_id" : 94
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 1010
-								}
-							],
-							"mhaps_target_id" : 93
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 300
-								}
-							],
-							"mhaps_target_id" : 86
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 4256
-								}
-							],
-							"mhaps_target_id" : 84
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 958
-								}
-							],
-							"mhaps_target_id" : 83
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 31313
-								}
-							],
-							"mhaps_target_id" : 79
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 2554
-								}
-							],
-							"mhaps_target_id" : 78
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 1379
-								}
-							],
-							"mhaps_target_id" : 81
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 1089
-								}
-							],
-							"mhaps_target_id" : 75
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 2310
-								}
-							],
-							"mhaps_target_id" : 72
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 44681
-								}
-							],
-							"mhaps_target_id" : 71
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 365
-								},
-								{
-									"mhap_id" : 2,
-									"reads" : 19
-								}
-							],
-							"mhaps_target_id" : 69
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 282
-								}
-							],
-							"mhaps_target_id" : 67
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 3831
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 64
-								}
-							],
-							"mhaps_target_id" : 63
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 507
-								}
-							],
-							"mhaps_target_id" : 56
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 2790
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 67
-								}
-							],
-							"mhaps_target_id" : 10
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 1186
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 20
-								}
-							],
-							"mhaps_target_id" : 55
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 2,
-									"reads" : 5344
-								}
-							],
-							"mhaps_target_id" : 41
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 10595
-								}
-							],
-							"mhaps_target_id" : 54
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 1420
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 30
-								}
-							],
-							"mhaps_target_id" : 50
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 11091
-								}
-							],
-							"mhaps_target_id" : 48
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 3576
-								}
-							],
-							"mhaps_target_id" : 59
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 377
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 15
-								}
-							],
-							"mhaps_target_id" : 7
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 710
-								}
-							],
-							"mhaps_target_id" : 45
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 259
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 15
-								}
-							],
-							"mhaps_target_id" : 40
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 1009
-								}
-							],
-							"mhaps_target_id" : 43
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 3485
-								},
-								{
-									"mhap_id" : 2,
-									"reads" : 31
-								}
-							],
-							"mhaps_target_id" : 74
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 16766
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 93
-								}
-							],
-							"mhaps_target_id" : 38
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 13601
-								}
-							],
-							"mhaps_target_id" : 33
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 33117
-								}
-							],
-							"mhaps_target_id" : 37
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 1980
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 15
-								}
-							],
-							"mhaps_target_id" : 14
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 957
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 25
-								}
-							],
-							"mhaps_target_id" : 32
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 6197
-								}
-							],
-							"mhaps_target_id" : 39
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 19559
-								}
-							],
-							"mhaps_target_id" : 29
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 1167
-								}
-							],
-							"mhaps_target_id" : 85
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 5895
-								}
-							],
-							"mhaps_target_id" : 11
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 733
-								}
-							],
-							"mhaps_target_id" : 28
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 860
-								}
-							],
-							"mhaps_target_id" : 26
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 4213
-								}
-							],
-							"mhaps_target_id" : 27
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 560
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 19
-								}
-							],
-							"mhaps_target_id" : 58
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 361
-								},
-								{
-									"mhap_id" : 2,
-									"reads" : 17
+									"reads" : 352
 								}
 							],
 							"mhaps_target_id" : 21
@@ -601,257 +151,57 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 23438
+									"reads" : 333
 								}
 							],
-							"mhaps_target_id" : 31
+							"mhaps_target_id" : 74
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 302
+								}
+							],
+							"mhaps_target_id" : 97
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 299
+								}
+							],
+							"mhaps_target_id" : 96
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 1,
-									"reads" : 511
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 16
+									"reads" : 230
 								}
 							],
-							"mhaps_target_id" : 92
+							"mhaps_target_id" : 95
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 2230
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 17
+									"reads" : 268
 								}
 							],
-							"mhaps_target_id" : 24
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 419
-								}
-							],
-							"mhaps_target_id" : 82
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 14122
-								}
-							],
-							"mhaps_target_id" : 70
+							"mhaps_target_id" : 94
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 25203
-								}
-							],
-							"mhaps_target_id" : 57
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 516
-								}
-							],
-							"mhaps_target_id" : 19
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 2249
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 48
-								},
-								{
-									"mhap_id" : 2,
-									"reads" : 20
-								}
-							],
-							"mhaps_target_id" : 88
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 371
-								}
-							],
-							"mhaps_target_id" : 4
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 515
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 22
-								}
-							],
-							"mhaps_target_id" : 0
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 7336
-								}
-							],
-							"mhaps_target_id" : 3
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 486
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 20
-								}
-							],
-							"mhaps_target_id" : 87
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 1564
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 15
-								}
-							],
-							"mhaps_target_id" : 68
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 17721
-								}
-							],
-							"mhaps_target_id" : 64
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 784
-								}
-							],
-							"mhaps_target_id" : 25
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 283
-								}
-							],
-							"mhaps_target_id" : 36
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 7629
-								}
-							],
-							"mhaps_target_id" : 8
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 2,
-									"reads" : 1964
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 50
-								}
-							],
-							"mhaps_target_id" : 16
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 1213
-								}
-							],
-							"mhaps_target_id" : 80
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 11070
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 106
-								}
-							],
-							"mhaps_target_id" : 15
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 2500
-								},
-								{
-									"mhap_id" : 2,
-									"reads" : 39
-								}
-							],
-							"mhaps_target_id" : 60
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 24537
+									"reads" : 301
 								}
 							],
 							"mhaps_target_id" : 30
@@ -861,39 +211,117 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 1868
-								},
-								{
-									"mhap_id" : 2,
-									"reads" : 18
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 15
+									"reads" : 271
 								}
 							],
-							"mhaps_target_id" : 13
+							"mhaps_target_id" : 46
 						},
 						{
 							"haps" : 
 							[
-								{
-									"mhap_id" : 1,
-									"reads" : 22789
-								}
-							],
-							"mhaps_target_id" : 89
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 2,
-									"reads" : 3602
-								},
 								{
 									"mhap_id" : 0,
-									"reads" : 20
+									"reads" : 260
+								}
+							],
+							"mhaps_target_id" : 87
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 358
+								}
+							],
+							"mhaps_target_id" : 85
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 329
+								}
+							],
+							"mhaps_target_id" : 84
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 305
+								}
+							],
+							"mhaps_target_id" : 80
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 208
+								}
+							],
+							"mhaps_target_id" : 79
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 360
+								}
+							],
+							"mhaps_target_id" : 81
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 311
+								}
+							],
+							"mhaps_target_id" : 82
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 377
+								}
+							],
+							"mhaps_target_id" : 72
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 446
+								}
+							],
+							"mhaps_target_id" : 16
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 361
+								}
+							],
+							"mhaps_target_id" : 71
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 324
 								}
 							],
 							"mhaps_target_id" : 77
@@ -902,40 +330,308 @@
 							"haps" : 
 							[
 								{
+									"mhap_id" : 0,
+									"reads" : 282
+								}
+							],
+							"mhaps_target_id" : 69
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 208
+								}
+							],
+							"mhaps_target_id" : 66
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 408
+								}
+							],
+							"mhaps_target_id" : 63
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 286
+								}
+							],
+							"mhaps_target_id" : 68
+						},
+						{
+							"haps" : 
+							[
+								{
 									"mhap_id" : 2,
-									"reads" : 2155
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 16
-								},
-								{
-									"mhap_id" : 3,
-									"reads" : 11
+									"reads" : 363
 								}
 							],
-							"mhaps_target_id" : 42
+							"mhaps_target_id" : 62
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 1,
-									"reads" : 16298
+									"reads" : 387
 								}
 							],
-							"mhaps_target_id" : 91
+							"mhaps_target_id" : 61
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 362
+								}
+							],
+							"mhaps_target_id" : 51
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 316
+								}
+							],
+							"mhaps_target_id" : 50
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 356
+								}
+							],
+							"mhaps_target_id" : 31
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 374
+								}
+							],
+							"mhaps_target_id" : 49
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 1,
-									"reads" : 2079
-								},
+									"reads" : 317
+								}
+							],
+							"mhaps_target_id" : 35
+						},
+						{
+							"haps" : 
+							[
 								{
 									"mhap_id" : 0,
-									"reads" : 38
+									"reads" : 288
+								}
+							],
+							"mhaps_target_id" : 48
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 354
+								}
+							],
+							"mhaps_target_id" : 43
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 441
+								}
+							],
+							"mhaps_target_id" : 33
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 385
+								}
+							],
+							"mhaps_target_id" : 67
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 156
+								}
+							],
+							"mhaps_target_id" : 37
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 391
+								}
+							],
+							"mhaps_target_id" : 3
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 469
+								}
+							],
+							"mhaps_target_id" : 14
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 276
+								}
+							],
+							"mhaps_target_id" : 32
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 441
+								}
+							],
+							"mhaps_target_id" : 86
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 395
+								}
+							],
+							"mhaps_target_id" : 11
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 305
+								}
+							],
+							"mhaps_target_id" : 28
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 346
+								}
+							],
+							"mhaps_target_id" : 26
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 326
+								}
+							],
+							"mhaps_target_id" : 59
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 382
+								}
+							],
+							"mhaps_target_id" : 27
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 433
+								}
+							],
+							"mhaps_target_id" : 88
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 310
+								}
+							],
+							"mhaps_target_id" : 64
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 333
+								}
+							],
+							"mhaps_target_id" : 8
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 350
+								}
+							],
+							"mhaps_target_id" : 19
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 257
+								}
+							],
+							"mhaps_target_id" : 36
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 235
 								}
 							],
 							"mhaps_target_id" : 65
@@ -944,18 +640,28 @@
 							"haps" : 
 							[
 								{
-									"mhap_id" : 0,
-									"reads" : 4739
+									"mhap_id" : 2,
+									"reads" : 348
 								}
 							],
-							"mhaps_target_id" : 22
+							"mhaps_target_id" : 25
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 775
+									"reads" : 335
+								}
+							],
+							"mhaps_target_id" : 58
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 262
 								}
 							],
 							"mhaps_target_id" : 73
@@ -965,7 +671,7 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 618
+									"reads" : 385
 								}
 							],
 							"mhaps_target_id" : 20
@@ -974,52 +680,48 @@
 							"haps" : 
 							[
 								{
-									"mhap_id" : 1,
-									"reads" : 20051
-								}
-							],
-							"mhaps_target_id" : 46
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 1533
-								},
-								{
 									"mhap_id" : 0,
-									"reads" : 12
+									"reads" : 289
 								}
 							],
-							"mhaps_target_id" : 9
+							"mhaps_target_id" : 93
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 1,
-									"reads" : 34752
+									"reads" : 366
 								}
 							],
-							"mhaps_target_id" : 5
+							"mhaps_target_id" : 24
 						},
 						{
 							"haps" : 
 							[
 								{
-									"mhap_id" : 2,
-									"reads" : 6522
+									"mhap_id" : 1,
+									"reads" : 270
 								}
 							],
-							"mhaps_target_id" : 34
+							"mhaps_target_id" : 83
 						},
 						{
 							"haps" : 
 							[
 								{
-									"mhap_id" : 0,
-									"reads" : 26863
+									"mhap_id" : 1,
+									"reads" : 346
+								}
+							],
+							"mhaps_target_id" : 70
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 293
 								}
 							],
 							"mhaps_target_id" : 23
@@ -1028,18 +730,238 @@
 							"haps" : 
 							[
 								{
-									"mhap_id" : 2,
-									"reads" : 15285
+									"mhap_id" : 0,
+									"reads" : 356
 								}
 							],
-							"mhaps_target_id" : 47
+							"mhaps_target_id" : 57
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 1324
+									"reads" : 316
+								}
+							],
+							"mhaps_target_id" : 17
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 358
+								}
+							],
+							"mhaps_target_id" : 15
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 366
+								}
+							],
+							"mhaps_target_id" : 60
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 420
+								}
+							],
+							"mhaps_target_id" : 18
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 341
+								}
+							],
+							"mhaps_target_id" : 6
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 392
+								}
+							],
+							"mhaps_target_id" : 13
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 327
+								}
+							],
+							"mhaps_target_id" : 9
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 351
+								}
+							],
+							"mhaps_target_id" : 53
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 287
+								}
+							],
+							"mhaps_target_id" : 92
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 420
+								}
+							],
+							"mhaps_target_id" : 12
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 405
+								}
+							],
+							"mhaps_target_id" : 22
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 399
+								}
+							],
+							"mhaps_target_id" : 45
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 395
+								}
+							],
+							"mhaps_target_id" : 75
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 370
+								}
+							],
+							"mhaps_target_id" : 7
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 418
+								}
+							],
+							"mhaps_target_id" : 40
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 261
+								}
+							],
+							"mhaps_target_id" : 5
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 439
+								}
+							],
+							"mhaps_target_id" : 41
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 251
+								}
+							],
+							"mhaps_target_id" : 52
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 308
+								}
+							],
+							"mhaps_target_id" : 38
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 398
+								}
+							],
+							"mhaps_target_id" : 89
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 300
+								}
+							],
+							"mhaps_target_id" : 4
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 329
+								}
+							],
+							"mhaps_target_id" : 0
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 250
 								}
 							],
 							"mhaps_target_id" : 90
@@ -1048,8 +970,48 @@
 							"haps" : 
 							[
 								{
-									"mhap_id" : 0,
-									"reads" : 1590
+									"mhap_id" : 2,
+									"reads" : 340
+								}
+							],
+							"mhaps_target_id" : 78
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 303
+								}
+							],
+							"mhaps_target_id" : 42
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 389
+								}
+							],
+							"mhaps_target_id" : 34
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 302
+								}
+							],
+							"mhaps_target_id" : 91
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 338
 								}
 							],
 							"mhaps_target_id" : 1
@@ -1058,11 +1020,51 @@
 							"haps" : 
 							[
 								{
-									"mhap_id" : 1,
-									"reads" : 46824
+									"mhap_id" : 2,
+									"reads" : 357
 								}
 							],
-							"mhaps_target_id" : 2
+							"mhaps_target_id" : 39
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 300
+								}
+							],
+							"mhaps_target_id" : 29
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 293
+								}
+							],
+							"mhaps_target_id" : 44
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 358
+								}
+							],
+							"mhaps_target_id" : 56
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 290
+								}
+							],
+							"mhaps_target_id" : 10
 						}
 					]
 				},
@@ -1074,12 +1076,18 @@
 							"haps" : 
 							[
 								{
-									"mhap_id" : 1,
-									"reads" : 23292
-								},
+									"mhap_id" : 0,
+									"reads" : 1191
+								}
+							],
+							"mhaps_target_id" : 2
+						},
+						{
+							"haps" : 
+							[
 								{
 									"mhap_id" : 0,
-									"reads" : 8192
+									"reads" : 1129
 								}
 							],
 							"mhaps_target_id" : 54
@@ -1088,12 +1096,12 @@
 							"haps" : 
 							[
 								{
-									"mhap_id" : 0,
-									"reads" : 17655
+									"mhap_id" : 1,
+									"reads" : 920
 								},
 								{
-									"mhap_id" : 1,
-									"reads" : 6421
+									"mhap_id" : 0,
+									"reads" : 291
 								}
 							],
 							"mhaps_target_id" : 21
@@ -1103,429 +1111,7 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 29456
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 6163
-								}
-							],
-							"mhaps_target_id" : 96
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 33182
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 283
-								}
-							],
-							"mhaps_target_id" : 95
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 32066
-								}
-							],
-							"mhaps_target_id" : 94
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 38609
-								}
-							],
-							"mhaps_target_id" : 93
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 48414
-								}
-							],
-							"mhaps_target_id" : 46
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 30508
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 6187
-								}
-							],
-							"mhaps_target_id" : 30
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 25447
-								}
-							],
-							"mhaps_target_id" : 86
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 21610
-								}
-							],
-							"mhaps_target_id" : 84
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 42576
-								}
-							],
-							"mhaps_target_id" : 83
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 49627
-								}
-							],
-							"mhaps_target_id" : 79
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 45595
-								}
-							],
-							"mhaps_target_id" : 78
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 17913
-								}
-							],
-							"mhaps_target_id" : 80
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 42252
-								}
-							],
-							"mhaps_target_id" : 81
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 37051
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 12590
-								}
-							],
-							"mhaps_target_id" : 97
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 49953
-								}
-							],
-							"mhaps_target_id" : 75
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 33844
-								}
-							],
-							"mhaps_target_id" : 72
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 19299
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 6398
-								}
-							],
-							"mhaps_target_id" : 16
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 46915
-								}
-							],
-							"mhaps_target_id" : 71
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 41720
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 8246
-								}
-							],
-							"mhaps_target_id" : 76
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 28472
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 10008
-								}
-							],
-							"mhaps_target_id" : 69
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 18960
-								}
-							],
-							"mhaps_target_id" : 66
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 33183
-								}
-							],
-							"mhaps_target_id" : 63
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 31147
-								}
-							],
-							"mhaps_target_id" : 68
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 35366
-								}
-							],
-							"mhaps_target_id" : 62
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 29611
-								}
-							],
-							"mhaps_target_id" : 61
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 27075
-								}
-							],
-							"mhaps_target_id" : 56
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 26668
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 9510
-								}
-							],
-							"mhaps_target_id" : 51
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 28161
-								}
-							],
-							"mhaps_target_id" : 50
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 48791
-								}
-							],
-							"mhaps_target_id" : 31
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 11363
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 4463
-								}
-							],
-							"mhaps_target_id" : 49
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 43173
-								}
-							],
-							"mhaps_target_id" : 35
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 35561
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 14385
-								}
-							],
-							"mhaps_target_id" : 48
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 45402
-								}
-							],
-							"mhaps_target_id" : 98
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 21661
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 7975
-								}
-							],
-							"mhaps_target_id" : 47
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 34294
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 12740
-								}
-							],
-							"mhaps_target_id" : 27
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 49955
-								}
-							],
-							"mhaps_target_id" : 59
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 16463
-								}
-							],
-							"mhaps_target_id" : 40
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 37292
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 12510
+									"reads" : 1039
 								}
 							],
 							"mhaps_target_id" : 74
@@ -1535,163 +1121,67 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 24539
+									"reads" : 1151
 								}
 							],
-							"mhaps_target_id" : 7
+							"mhaps_target_id" : 97
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 41530
+									"reads" : 1177
 								}
 							],
-							"mhaps_target_id" : 45
+							"mhaps_target_id" : 96
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 29642
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 12542
+									"reads" : 1221
 								}
 							],
-							"mhaps_target_id" : 33
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 20519
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 7538
-								}
-							],
-							"mhaps_target_id" : 67
+							"mhaps_target_id" : 95
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 27730
+									"reads" : 1076
 								}
 							],
-							"mhaps_target_id" : 37
+							"mhaps_target_id" : 94
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 49338
+									"reads" : 1090
 								}
 							],
-							"mhaps_target_id" : 3
+							"mhaps_target_id" : 30
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 32341
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 12140
+									"reads" : 1137
 								}
 							],
-							"mhaps_target_id" : 14
+							"mhaps_target_id" : 46
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 49365
-								}
-							],
-							"mhaps_target_id" : 32
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 39009
-								}
-							],
-							"mhaps_target_id" : 39
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 27621
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 9786
-								}
-							],
-							"mhaps_target_id" : 29
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 29934
-								}
-							],
-							"mhaps_target_id" : 85
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 49971
-								}
-							],
-							"mhaps_target_id" : 11
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 23924
-								}
-							],
-							"mhaps_target_id" : 28
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 29713
-								}
-							],
-							"mhaps_target_id" : 26
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 38625
+									"reads" : 884
 								}
 							],
 							"mhaps_target_id" : 87
@@ -1701,143 +1191,57 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 49969
+									"reads" : 1417
 								}
 							],
-							"mhaps_target_id" : 64
+							"mhaps_target_id" : 85
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 45069
+									"reads" : 1282
 								}
 							],
-							"mhaps_target_id" : 8
+							"mhaps_target_id" : 84
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 24050
+									"reads" : 1295
 								}
 							],
-							"mhaps_target_id" : 19
+							"mhaps_target_id" : 80
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 41999
+									"reads" : 1488
 								}
 							],
-							"mhaps_target_id" : 36
+							"mhaps_target_id" : 79
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 48335
+									"reads" : 1455
 								}
 							],
-							"mhaps_target_id" : 65
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 1,
-									"reads" : 22586
-								},
-								{
-									"mhap_id" : 0,
-									"reads" : 18757
-								}
-							],
-							"mhaps_target_id" : 25
+							"mhaps_target_id" : 81
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 37449
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 12495
-								}
-							],
-							"mhaps_target_id" : 34
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 31005
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 6377
-								}
-							],
-							"mhaps_target_id" : 57
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 44271
-								}
-							],
-							"mhaps_target_id" : 23
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 24451
-								}
-							],
-							"mhaps_target_id" : 58
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 49746
-								}
-							],
-							"mhaps_target_id" : 92
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 28724
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 21186
-								}
-							],
-							"mhaps_target_id" : 24
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 25672
+									"reads" : 1375
 								}
 							],
 							"mhaps_target_id" : 82
@@ -1847,189 +1251,57 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 35612
+									"reads" : 928
 								}
 							],
-							"mhaps_target_id" : 70
+							"mhaps_target_id" : 98
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 49786
+									"reads" : 1439
 								}
 							],
-							"mhaps_target_id" : 15
+							"mhaps_target_id" : 76
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 29564
+									"reads" : 1315
 								}
 							],
-							"mhaps_target_id" : 60
+							"mhaps_target_id" : 72
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 21816
+									"reads" : 1434
 								}
 							],
-							"mhaps_target_id" : 18
+							"mhaps_target_id" : 16
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 36326
+									"reads" : 997
 								}
 							],
-							"mhaps_target_id" : 6
+							"mhaps_target_id" : 71
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 21602
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 7824
-								}
-							],
-							"mhaps_target_id" : 13
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 31697
-								}
-							],
-							"mhaps_target_id" : 38
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 33113
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 11252
-								}
-							],
-							"mhaps_target_id" : 88
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 3203
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 2781
-								}
-							],
-							"mhaps_target_id" : 52
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 28266
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 9483
-								}
-							],
-							"mhaps_target_id" : 4
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 34463
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 11600
-								}
-							],
-							"mhaps_target_id" : 0
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 37213
-								}
-							],
-							"mhaps_target_id" : 43
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 24157
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 18874
-								}
-							],
-							"mhaps_target_id" : 22
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 10520
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 3622
-								}
-							],
-							"mhaps_target_id" : 12
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 49745
-								}
-							],
-							"mhaps_target_id" : 89
-						},
-						{
-							"haps" : 
-							[
-								{
-									"mhap_id" : 0,
-									"reads" : 24530
-								},
-								{
-									"mhap_id" : 1,
-									"reads" : 9730
+									"reads" : 1208
 								}
 							],
 							"mhaps_target_id" : 77
@@ -2039,79 +1311,401 @@
 							[
 								{
 									"mhap_id" : 1,
-									"reads" : 22427
+									"reads" : 788
 								},
 								{
 									"mhap_id" : 0,
-									"reads" : 8239
+									"reads" : 321
 								}
 							],
-							"mhaps_target_id" : 42
+							"mhaps_target_id" : 69
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 35294
+									"reads" : 1354
+								}
+							],
+							"mhaps_target_id" : 66
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1234
+								}
+							],
+							"mhaps_target_id" : 63
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1117
+								}
+							],
+							"mhaps_target_id" : 68
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 833
 								},
 								{
 									"mhap_id" : 1,
-									"reads" : 12195
+									"reads" : 336
 								}
 							],
-							"mhaps_target_id" : 41
+							"mhaps_target_id" : 62
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 49972
+									"reads" : 1451
 								}
 							],
-							"mhaps_target_id" : 55
+							"mhaps_target_id" : 61
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 37605
+									"reads" : 1283
 								}
 							],
-							"mhaps_target_id" : 91
+							"mhaps_target_id" : 51
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 19230
+									"reads" : 915
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 267
 								}
 							],
-							"mhaps_target_id" : 53
+							"mhaps_target_id" : 50
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 49701
+									"reads" : 1209
 								}
 							],
-							"mhaps_target_id" : 10
+							"mhaps_target_id" : 31
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 2063
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 450
+								}
+							],
+							"mhaps_target_id" : 49
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1319
+								}
+							],
+							"mhaps_target_id" : 35
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1196
+								}
+							],
+							"mhaps_target_id" : 48
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1507
+								}
+							],
+							"mhaps_target_id" : 99
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 843
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 269
+								}
+							],
+							"mhaps_target_id" : 47
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1411
+								}
+							],
+							"mhaps_target_id" : 43
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1334
+								}
+							],
+							"mhaps_target_id" : 33
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 937
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 318
+								}
+							],
+							"mhaps_target_id" : 67
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1066
+								}
+							],
+							"mhaps_target_id" : 37
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1128
+								}
+							],
+							"mhaps_target_id" : 3
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1500
+								}
+							],
+							"mhaps_target_id" : 14
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1276
+								}
+							],
+							"mhaps_target_id" : 32
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1370
+								}
+							],
+							"mhaps_target_id" : 86
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 1,
-									"reads" : 30585
+									"reads" : 1011
 								},
 								{
 									"mhap_id" : 0,
-									"reads" : 10686
+									"reads" : 347
+								}
+							],
+							"mhaps_target_id" : 11
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1288
+								}
+							],
+							"mhaps_target_id" : 28
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 955
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 313
+								}
+							],
+							"mhaps_target_id" : 26
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1171
+								}
+							],
+							"mhaps_target_id" : 59
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1197
+								}
+							],
+							"mhaps_target_id" : 27
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 952
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 403
+								}
+							],
+							"mhaps_target_id" : 88
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1100
+								}
+							],
+							"mhaps_target_id" : 64
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1133
+								}
+							],
+							"mhaps_target_id" : 8
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1293
+								}
+							],
+							"mhaps_target_id" : 19
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1257
+								}
+							],
+							"mhaps_target_id" : 36
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1338
+								}
+							],
+							"mhaps_target_id" : 65
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 934
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 318
+								}
+							],
+							"mhaps_target_id" : 25
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1371
+								}
+							],
+							"mhaps_target_id" : 58
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 933
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 338
 								}
 							],
 							"mhaps_target_id" : 73
@@ -2120,8 +1714,12 @@
 							"haps" : 
 							[
 								{
+									"mhap_id" : 1,
+									"reads" : 712
+								},
+								{
 									"mhap_id" : 0,
-									"reads" : 32967
+									"reads" : 289
 								}
 							],
 							"mhaps_target_id" : 20
@@ -2131,41 +1729,71 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 3634
+									"reads" : 1413
 								}
 							],
-							"mhaps_target_id" : 44
+							"mhaps_target_id" : 93
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 28109
+									"reads" : 1196
 								}
 							],
-							"mhaps_target_id" : 9
+							"mhaps_target_id" : 24
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 37013
+									"reads" : 1348
 								}
 							],
-							"mhaps_target_id" : 5
+							"mhaps_target_id" : 83
 						},
 						{
 							"haps" : 
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 21764
-								},
+									"reads" : 1207
+								}
+							],
+							"mhaps_target_id" : 70
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 909
+								}
+							],
+							"mhaps_target_id" : 23
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1135
+								}
+							],
+							"mhaps_target_id" : 57
+						},
+						{
+							"haps" : 
+							[
 								{
 									"mhap_id" : 1,
-									"reads" : 7383
+									"reads" : 951
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 318
 								}
 							],
 							"mhaps_target_id" : 17
@@ -2175,7 +1803,249 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 34162
+									"reads" : 964
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 294
+								}
+							],
+							"mhaps_target_id" : 15
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1397
+								}
+							],
+							"mhaps_target_id" : 60
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1251
+								}
+							],
+							"mhaps_target_id" : 18
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 910
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 337
+								}
+							],
+							"mhaps_target_id" : 6
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1039
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 325
+								}
+							],
+							"mhaps_target_id" : 13
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1489
+								}
+							],
+							"mhaps_target_id" : 9
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 814
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 267
+								}
+							],
+							"mhaps_target_id" : 53
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1186
+								}
+							],
+							"mhaps_target_id" : 92
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1496
+								}
+							],
+							"mhaps_target_id" : 12
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1454
+								}
+							],
+							"mhaps_target_id" : 22
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1224
+								}
+							],
+							"mhaps_target_id" : 45
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1429
+								}
+							],
+							"mhaps_target_id" : 75
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1097
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 350
+								}
+							],
+							"mhaps_target_id" : 7
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1493
+								}
+							],
+							"mhaps_target_id" : 40
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1024
+								}
+							],
+							"mhaps_target_id" : 5
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1365
+								}
+							],
+							"mhaps_target_id" : 41
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1097
+								}
+							],
+							"mhaps_target_id" : 52
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 819
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 273
+								}
+							],
+							"mhaps_target_id" : 38
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1121
+								}
+							],
+							"mhaps_target_id" : 89
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1227
+								}
+							],
+							"mhaps_target_id" : 4
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1058
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 245
+								}
+							],
+							"mhaps_target_id" : 0
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 732
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 253
 								}
 							],
 							"mhaps_target_id" : 90
@@ -2185,7 +2055,51 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 49728
+									"reads" : 883
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 299
+								}
+							],
+							"mhaps_target_id" : 78
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1076
+								}
+							],
+							"mhaps_target_id" : 42
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 991
+								}
+							],
+							"mhaps_target_id" : 34
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1158
+								}
+							],
+							"mhaps_target_id" : 91
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1341
 								}
 							],
 							"mhaps_target_id" : 1
@@ -2195,10 +2109,68 @@
 							[
 								{
 									"mhap_id" : 0,
-									"reads" : 49740
+									"reads" : 992
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 302
 								}
 							],
-							"mhaps_target_id" : 2
+							"mhaps_target_id" : 39
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1184
+								}
+							],
+							"mhaps_target_id" : 29
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1304
+								}
+							],
+							"mhaps_target_id" : 44
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 810
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 364
+								}
+							],
+							"mhaps_target_id" : 56
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1356
+								}
+							],
+							"mhaps_target_id" : 55
+						},
+						{
+							"haps" : 
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1109
+								}
+							],
+							"mhaps_target_id" : 10
 						}
 					]
 				}
@@ -2213,7 +2185,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "AACTTTTTTTATTTTTTTTGTCAATAGATAAATGATCAATATTTTCTATATTTAATCTATCAAGTATTTTTATATATCTATTATTTCTTTCTTCGATGGATAAATTATATGAATCAATATCCTTTCTTTCATCAACAAACTTTTTTATTGTTAACTCCATTTTTTTATTTA"
+						"seq" : "AACTTTTTTTATTTTTTTTGTCAATAGATAAATGATCAATATTTTCTATATTTAATCTATCAAGAATTTTTATATATCTATTATTTCTTTCTTCGATGGATAAATTATATGAATCAATATCCTTTCTTTCATCAACAAACTTTTTTATTGTTAACTCCATTTTTTTATTTA"
+					},
+					{
+						"seq" : "AACTTTTTTTATTTTTTTTGTCAATAGATAAATGATCAATATTTTCTATATTTAATCTATCAAGAATTTTTATATATCTATTATTTCTTTCTTCGATGGATAAATTATAAGAATCAATATCCTTTCTTTCATCAACAAACTTTTTTATTGTTAACTCCATTTTTTTATTTA"
 					},
 					{
 						"seq" : "AACTTTTTTTATTTTTTTTGTCAATAGATAAATGATCAATATTTTCTATATTTAATCTATCAAGTATTTTTATATATCTATTATTTCTTTCTTCGATGGATAAATTATAAGAATCAATATCCTTTCTTTCATCAACAAACTTTTTTATTGTTAACTCCATTTTTTTATTTA"
@@ -2225,7 +2200,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "ACTTATGTTCATGAGCTAATTTCCCACAAATACTCCATAACGAACTTTTCATTTTATTAAATTTATCTCTCAAAAGAGAATGACTATAATGCCATATTAAATACATATCTTTCCTTTCTAATTTTCCTGGTAATTCTATTATCATTCTTTCTAAATCTTCTTCTGTAACTTTT"
+						"seq" : "ACTCATGTTCATGAGCTAATTTCCCACAAATACTCCATAACGAACTTTTCATTTTATTAAATTTATCTCTCAAAAGAGAATGACTATAATGCCATATTAAATACATATCTTTCCTTTCTAATGTTCCTGGTAATTCTATTATCATTCTTTCTAAATCTTCTTCTGTAAGTTTT"
+					},
+					{
+						"seq" : "ACTTATGTTCATGAGCTAATTTCCCACAAATACTCCATAACGAACTTTTCATTTTATTAAATTTATCTCTCAAAAGAGAATGACTATAATGCCATATTAAATACATATCTTTCCTTTCTAATTTTCCTGGTAATTCTATTATCATTCTTTCTAAATCTTCTTCTGTAAGTTTT"
 					}
 				],
 				"target_id" : 98
@@ -2234,10 +2212,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TCGTTTTGAATTGTTAGAATTTAAAATGACGGAGGATTGTTATACAAAAATGTGGTTTGATTTTATGATTGATTTTGGAATAGCTACAATGAATGAAAACGAACATACTAGATCTTTTTATGGCT"
+						"seq" : "TCGTTTTGAATTGTCAGAATTTAAAATGACGGAGGATTGTTATACAAAAATGTGGTTTGATTTTATGAGTGATTTTGGAATAGCTACAATGAATGAAACCGAACATACTAGATCTTTTTATGGCT"
 					},
 					{
-						"seq" : "TCGTTTTGAATTGTTAGAATTTAAAATGACGGAGGATTGTTATACAAAAATGTGGTTTGATTTTATGAGTGATTTTGGAATAGCTACAATGAATGAAACCGAACATACTAGATCTTTTTATGGCT"
+						"seq" : "TCGTTTTGCATTGTCAGAATTTAAAATGACGGAGGATTGTTATACAAAAATGTGGTTTGATTTTATGAGTGATTTTGGAATAGCTACAATGAATGAAAGCGAACATACTAGATCTTTTTATGGCT"
 					}
 				],
 				"target_id" : 99
@@ -2246,7 +2224,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "GAATTTTCTTTTTTATGACTTTCTTCTCCTTGTTCAGAAGCTTCTTTTTCATCCTTTTTTTCTGCTGCGTCAGATAAATTGGGGGAAGCACTTGAAGATTCATTTCCTCCAGGAGTATTACTAGTACTTACTCCTTCCACATTTGGTTTTTCTTCCCCTAGAATTCTCA"
+						"seq" : "GAATTTTCTTTTTTATGACTTTCTTCTCCTTGTTCAGAAGCTTCTTTTTCATCCTTTTTTTCTGCTGCGTCAGATAAATTGGGGGAAGCACTTGAAGATTCATTTCCTCCAGGAGTATCACTAGTACTTACTCCGTCCATATTTGGTTTTTCTTCCCTTAGAATTCTCA"
 					},
 					{
 						"seq" : "GAATTTTCTTTTTTATGACTTTCTTCTCCTTGTTCAGAAGCTTCTTTTTCATCCTTTTTTTCTGCTGCGTCAGATAAATTGGGGGAAGCACTTGAAGATTCATTTCCTCCAGGAGTATTACTAGTACTTACTCCGTCCACATTTGGTTTTTCTTCCCCTAGAATTCTCA"
@@ -2258,10 +2236,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TACACATAAGAAAAAAAAAATTTATTTATTCTTACAAAAAGAATATAAAAACAAAATTTTGGGATTTATAAATTTTTATAAACATATAACACACAAAATAAAAAAGAAACAAGAAAATGTTCATGATAAAATCACTTTTTTAAAATGTCTAAAGGAACTCTTTTTTGTCACACATACAAATG"
+						"seq" : "TACACATAAGAAAAAAAAAATTTATTTATTCTTACAAAAAGAATATAAAAACAAAATTTTGGGATTTATAAATTTTTATAAACGTATAACACACAAAATAAAAAAGAAACAAGAAAATGTTCATGATAAAATCACTTTTTTAAAATGTCTAAAGGAACTCTTTTTTGTCACACATACAAATA"
 					},
 					{
-						"seq" : "TACACATAAGAAAAAAAAAATTTATTTATTCTTACAAAAAGAATATAAAAACAAAATTTTGGGATTTATAAATTTTTATAAACATATAACACACAAAATAAAAAAGAAACAAGAAAATGTTCATGATAAAATCACTTTTTTAAAATGTCTAAAGGAACTCTTTTTTGTCACACATACAAATA"
+						"seq" : "TACACATAAGAAAAAAAAAATTTATTTATTCTTACAAAAAGAATATAAAAACAAAATTTTGGGATTTATAAATTTTTATAAACATATAACACACAAAATAAAAAAGAAACAAGAAAATGTTCATGATAAAATCACTTTTTTAAAATGTCTAAAGGAACTCTTTTTTGTCACACATACAAATG"
 					}
 				],
 				"target_id" : 78
@@ -2269,9 +2247,6 @@
 			{
 				"microhaplotypes" : 
 				[
-					{
-						"seq" : "TAATTATGAAGACAGTCTCACGACTGCATGTTATATTGATGAAAACAAATCCGATTCATCCTATAAAACTGAAGAAGAAAATGTAAACTATAATAATAAAATGGGTAAACGCAAAAATTTA"
-					},
 					{
 						"seq" : "TAATTATGAAGACAGTCTCACGACTTCATGTTATATTGATGAAAACAAATCCGATTCATCCTATGAAACTGAAGAAAATGTAAACTATAATAATAAAATGGGTAAACGCAAAAATTTA"
 					}
@@ -2283,6 +2258,9 @@
 				[
 					{
 						"seq" : "ACTTTTTAACACTATCATTATAATTATGTCTTTTATTTTCATATTTTTCTTTATAATAATTTATATCCTTTAATTTTTCTTTCATCAAATTTAACCATTTATCATTTAAATTCTCTTTTTCCACAGCTCCAGCATTTTTATTTATATCATCTACAACTACATCTTCCTTCACATAATTATTTATATAAAAATTATTATCATCTA"
+					},
+					{
+						"seq" : "ACTTTTTAACACTATCATTATAATTATGTCTTTTATTTTCATATTTTTCTTTATAATAATTTATATCCTTTAATTTTTCTTTCATCAAATTTAACCATTTATCATTTAAATTCTCTTTTTCCACAGCTCCAGCATTTTTATTTATATCATCTACAACTACATCTTCCTTCACATAATTATTTATATAAAAACTATTATCATCTA"
 					}
 				],
 				"target_id" : 73
@@ -2303,10 +2281,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TGAACTATTTACGACATTAAACACACTGGAACATTTTTCCATTTTACAAATTTTTTTTTCAATATCATTTGCATAATCTAATTGGTCTTTAGGTTTATTAGCAGAGCCAGGCTTTATTCTAACTTGAATA"
+						"seq" : "TGAACTATTTACGACATTAAACACACTGGAACATTTTTCCATTTTACAAATTTTTTTTTCAATATCATTTTCATAATCTAATTCGTCTTTAGGTTTATTAGCAGAGCCAGGCTTTATTCTAACTTGAATA"
 					},
 					{
-						"seq" : "TGAACTATTTACGACATTAAACACACTGGAACATTTTTCCATTTTACAAATTTTTTTTTCAATATCATTTTCATAATTTAATTCGTCTTTAGGTTTATTAGCAGAGCCAGGCTTTATTCTAACTTGAATA"
+						"seq" : "TGAACTATTTACGACATTAAACACACTGGAACATTTTTCCATTTTACAAATTTTTTTTTCAATATCATTTTCATAATCTAATTGGTCTTTAGGTTTATCAGCAGAGCCAGGCTTTATTCTAACTTGAATA"
 					}
 				],
 				"target_id" : 57
@@ -2315,7 +2293,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "AAAAGAGATTATAGAAGTGGAAAGAAGACATATATAATACAAGCTCTACAATATGCATTAACATATTATAGCAAACTTTCAAATAGAAAGGAAGCACCTAAAGTAACCATGTTATTTACAGATGGAAATGATTCCTATGAATCAGAAAAGGGATTACAGGATATTGCATTATTATATAGAAAA"
+						"seq" : "AAAAGAGATTATAGAAGTGGAAAGAAGACATATATAATACAAGCTCTACGATATGCATTAACATATTATAGCAAACTTTCAAATAGAAAGGAAGCACCTAAAGTAACCATGTTATTTACAGATGGAAATGATCCCTATGAATCAGAAAAGGGATTACAGGATATTGCATTATTATATAGAAAA"
 					},
 					{
 						"seq" : "AAAAGAGATTATAGAAGTGGAAAGAAGACATATATAATACAAGCTCTACGATATGCATTAACATATTATAGCAAACTTTCAAATAGAAAGGAAGCACCTAAAGTAACCATGTTATTTACAGATGGAAATGATTCCTATGAATCAGAAAAGGGATTACAGGATATTGCATTATTATATAGAAAA"
@@ -2327,10 +2305,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TATTTTTATAATTTCCTTTCATCTTATTTTTTTCTTTATATTTTTTTTTTTCATATGTAAGATTTATATAATCACTTTCGCTTTTTCTAACGCTTTTGAACTTTTTAAATGTACTTCGTTCATTATTTCTAATTCTCGTAAACACAAGAATAAATATTTTGATATATCTTA"
+						"seq" : "TATTTTTATAATTTCCTTTCATCTTATTTTTTTCTTTATATTTTTTTTTTTCATATGTAAGATTTATATAATCACTTTCGCTTTTTCTAACGCTTTTGAACTTTTTAAATGTACTTCCTTCATTATTTCTAATTCTCGTAAACACAAGAATAAATATTTTGATATATCTTA"
 					},
 					{
-						"seq" : "TATTTTTATAATTTCCTTTCATCTTATTTTTTTCTTTATATTTTTTTTTTTCATATGTAAGATTTATATAATCACTTTCGCTTTTTCTAACCCTTTTGAACTTTTTAAATGTACTTCGTTCATTATTTCTAATTCTCGTAAACACAAGAATAAATATTTTGATATATCTTA"
+						"seq" : "TATTTTTATAATTTCCTTTCATCTTATTTTTTTCTTTATATTTTTTTTTTTCATATGTAAGATTTATATAATCACTTTCGCTTTTTCTAACGCTTTTGAACTTTTTAAATGTACTTCGTTCATTATTTCTAATTCTCGTAAACACAAGAATAAATATTTTGATATATCTTA"
 					}
 				],
 				"target_id" : 90
@@ -2339,7 +2317,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "CATATTCGTTTCAGCGTTTATAGAGCGAATATTATCGATTATGTCTATATTCCCTAAAATATGTACATAATAATCTCCATTTAATAATGTTACTTTCTTAAGAATATTTTTGTATATGACATCAAAGATATTACGAGTTAACAATACATCTACATTTCCGTCTATTATATA"
+						"seq" : "CATATTCGTTTCAGCGTTTATAGAGCGAATATTATCGATTATGTCTATATTCCCTAAAATATGTACATAATAATCTCCATTTAATAATGTTACTTTCTTAAGAATATTTTTGTATATGACATCAAAGATATTACGAGTTAACAATACATCTACATTTCGGTCTATTATATA"
+					},
+					{
+						"seq" : "CATATTCGTTTCAGCGTTTATAGAGCGAAAATTATCGATTATGTCTATATTCCCTAAAATATGTACATAATAATCTCCATTTAATAATGTTACTTTCTTAAGAATATTTTTGTATATGACATCAAAGATATTACGAGTTAACAATACATCTACATTTCGGTCTATTATATA"
 					}
 				],
 				"target_id" : 48
@@ -2348,10 +2329,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TTTCGATACAGGACATATAGATCATAATATAAACGAATATGAAAAACATTTTACAATTTTAAAAAAATCTTTTTTTCATAAGTCATTAAAATTTATGGATTATATATGGATTGTTATAATGAAACGAGATAATAATACATTTTTAAATAAAATAAGAAATGAACAAGTGAGGGCATCGTTATTAATAACAGGTATTATAAACGAAAATAT"
+						"seq" : "TTTCGATATAGGACATATAGATCATAATATAAACGAATATGAAAAACGTTTTACAATTTTAAAAGAATCTTTTTTTCATAAGTCATTAAAATTTATGGATTATATATGGATTGTTATAATGAAACGAGAAAATAATACATTTTTAAATAGATTAAGAAATGAACAAGTGAGGGCATCGTTATTAATAACAGGTATTATAAACGAAAATAT"
 					},
 					{
-						"seq" : "TTTCGATACAGGACATATAGATCATAATATAAACGAATATGAAAAACATTTTACAATTTTAAAAAAATCTTTTTTTCATAAGTCATTAAAATTTATGGATTATATATGGATTGTTATAATGAAACGAGATAATAATACATTTTTAAATAGAATAAGCCATGAAGGAATCAAAAAATCGTTATTAATAACAGGTATTATAAACGAAAATAT"
+						"seq" : "TTTCGATACAGGACATATAGATCATAATATAAACGAATATGAAAAACATTTTACAATTTTAAAAAAATCTTTTTTTCATAAGTCATTAAAATTTATGGATTATATATGGATTGTTATAATGAAACGAGATAATAATACATTTTTAAATAGATTAAGAAATGAACAAGTGAGGGCATCGTTATTAATAACAGGTATTATAAACGAAAATAT"
 					}
 				],
 				"target_id" : 82
@@ -2360,13 +2341,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "ATATTTGTATATATTCTAGTAAACACTTTAGGTACACCTGCAAGTACCTCAACATCTGAATTATATAAATCTTTAGAAAAACAACTAATATCCTTACTCCATATATTTATTTTTATACCAAGAATAACAGCCATATAAACCAAAACTCTCTCAAATACATGTGATACAGGTAA"
-					},
-					{
-						"seq" : "ATATTTGTATATATTCTAGTAAACACTTTAGGTACACCTGCAAGTACCTCAACATCTGAATTATATAAATCTTTAGAAAAACAACTAATATCCTTACTACATATATTTATTTTTATACCAAGAATAACAGCCATATAAACCAAAACTCTCTCAAATGCATGTGATACAGGTAA"
-					},
-					{
 						"seq" : "ATATTTGTATATATTCTAGTAAACACTTTAGGTACACCTGCAAGTACCTCAACATCTGAATTATATAAATCTTTAGAAAAACAACTAATATCCTTACTCCATATATTTATTTTTATACCAAGAATAACAGCCATATAAACCAAAACTCTCTCAAATGCATGTGATACAGGTAA"
+					},
+					{
+						"seq" : "ATATTTGTATATATTCTAGTAAACACTTTAGGTACACCTGCAAGTACCTCAACATCTGAATTATATAAATCTTTAGAAAAACAACTAATATCCTTACTCCATATATTTATTTTTATACCAAGAATAACAGCCATATAAACCAAAACTCTCTCAAATACATGTGATACAGGTAA"
 					}
 				],
 				"target_id" : 74
@@ -2375,7 +2353,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TAGATTTTTTCCCTTCAGCAGGTGCCCTCACTTTAGGTGTTTTAAACTTAGTTGTATGTGGAACCCCATCTTTATTTGGTTTACCTCTATTTAATCTTTTACCAGCAGTAGAAACTACATTCTCTCGATTATCATTACCTACTTCAGTCTTTACAATTGTAGGAGGTGTTTTAACATGATTATCCCCTCCATGAGGAGTAACCCTTAA"
+						"seq" : "TAGATTTTTTCCCTCCAACAGATGCACTCACTTTAGGTGTTTTAAACTTAGTTGTATGTTGACCCCCCTCATTATTTAGTTTACCTTTATTTAATCTTTTACCAGCAGTAGAAACTACATTCTCTCGATTATCATTACCTACTTCAGTCTTTACAATTGTAGGAGGTGTTTTAACATGATCATCCCCTCCATGAGGAGTAACCCTTAA"
 					},
 					{
 						"seq" : "TAGATTTTTTCCCTTCAGCAGGTGCCCTCACTTTAGGTGTTTTAAACTTAGTTGTATGTGGAACCCCATCTTTATTTGCTTTACCTCTATTTAATCTTTTACCAGCAGTAGAAACTACATTCTCTCGATTATCATTACCTACTTCAGTCTTTACAATTGTAGGAGGTGTTTTAACATGATTATCCCCTCCATGAGGAGTAACCCTTAA"
@@ -2387,10 +2365,13 @@
 				"microhaplotypes" : 
 				[
 					{
+						"seq" : "TTTCAAATTATATAAAGACAGAACTAAGAAATATAAACCTGCAAGAAATAAAAAACAATATAATAAAAATATTTAAAGAATTCAAATCTGCACACAAAGAAATTAAAAAAGAATCAAAACAAATTAATAAAGAATTTACCAAAATGGATGTCGTCATAAATCAAT"
+					},
+					{
 						"seq" : "TTTCAAATTATATAAAGACAGAACTAAGAAATATAAACCTGCAAGAAATAAAAAACAATATAATAAAAATATTTAAAGAATTCGAATCTGCACACAAAGAAATTAAAAAAGAATCAAAACAAATTAATAAAGAATTTACCAAAATGGATGTCGTCATAAATCAAT"
 					},
 					{
-						"seq" : "TTTCAAATTATATAAAGACAGAACTAAGAAATATAAACCTGCAAGAAATAAAAAACAATATAATAAAAATATTTAAAGAATTCAAATCTGCACACAAAGAAATTAAAAAAGAATCAGAACAAATTAATAAAGAATTTACCAAAATGGATGTCGTCATAAATCAAT"
+						"seq" : "TTTCAAATTATATAAAGACAGAACTAAGAAATATAAACCTGCAAGAAATAAAAAACAATATAATAAAAATATTTAAAGAATTCGAATCTGCACACAAAGAAATTAAAAAAGAATCAGAACAAATTAATAAAGAATTTACCAAAATGGATGTCGTCATAAATCAAT"
 					}
 				],
 				"target_id" : 70
@@ -2400,12 +2381,6 @@
 				[
 					{
 						"seq" : "TGCTAGTTTTGCTGCTCATGAAAATAAAAGCTACTCATATGAAGGTCGTACATATAAAATGTATCCACCTGAATTTAATACATTAATGTTAAAAGCAGATTATTTTATAAGAGATATAAATACACGAGGATTTAGAGAAGTAAATATGGATTCATGTAAATCATATACAAA"
-					},
-					{
-						"seq" : "TGCTAGTTTTGCTGCTCATGAAAATAAAAGCTACTCATATGAAGGTCGTACATATAAAATGTATCCACCTGAATTTAATGCATTAATGTTAAAAGCAGATTATTTTATAAGAGATATAAATACACGAGGATTTAGAGAAGTAAATATGGATTCATGTAAATCATATACAAA"
-					},
-					{
-						"seq" : "TGCTAGTTTTGCTGCTCATGAAAATAAAAGCTACTCATATGAAAGTCGTACATATAAAATGTATCCACCTGAATTTAATACATTAATGTTAAAAGCAGATTATTTTATAAGAGATATAAATACACGAGGATTTAGAGAAGTAAATATGGATTCATGTAAATCATATACAAA"
 					}
 				],
 				"target_id" : 15
@@ -2414,10 +2389,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TATATTTTACATAATAACAATCTTTCATGTAATGATTATAATTTAAATAATCTTTCATTTAATATAAATAAATATATTAATGAAGAAAAAGGCAAAAATAAAAAAACAAATCAACATATATCAGAACAATTTTTATTTCCT"
+						"seq" : "TATATTTTACATAATAACAATCTTTCATGTAATGATTATAATTTAAATAATCTTTCATTTAATATAAATAAATATATAAATGAAGAAAAAGGCAAAAATAAAAAAACAAATCAACATATATCAGAACAATTTTTATTTCCT"
 					},
 					{
-						"seq" : "TATATTTTACATAATAACAATCTTTCATGTAATGATTATAATTTAAATAATCTTTCATTTAATATAAATAAATATATAAATGAAGAAAAAGGCAAAAATAAAAAAACAAATCAACATATATCAGAACAATTTTTATTTCCT"
+						"seq" : "TATATTTTACATAATAACAATCCTTCATGTAATGATTATAATTTAAATAATCTTTCATTTAATATAAATAAATATATAAATGAAGAAAAAGGCAAAAATAAAAAAACAAATCAACATATATCAGAACAATTTTTATTTCCT"
 					}
 				],
 				"target_id" : 96
@@ -2444,7 +2419,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "AAATTATTATAGAAAGATAGAAGTTATTTTATATGAATGGTTATATTTTCATTATAATAATGTATATAACACCAAAGTAAAAAAACAAAAATTTATATTTACCCAACAAAAAAAAGACATATCAAAACATAACAAGTTATATCTTCAGTATGATCAAAATAAAAGAAATTCTGAAATAAAACATAC"
+						"seq" : "AAATTATTATAGAAAGATAGAAGTTATTTTATATGAATGGTTATATTTTCATTATAATAATGTATATAACACCAAAGTAAAAAAACAAAAATTTATATTTACCCAACAAAAAAAAGACATATCAAAACATAACAAGTTATATCTTCAGTATGATCAAAATAAAAGAAATTCTGAAATAGAACATAC"
+					},
+					{
+						"seq" : "AAATTATTATAGAAAGATAGAAGTTATTTTATATGAATGGTTATATTTTCATTATAATAATGTATATAACACCAAAGTAAAAAAACAAAAATTTATATTTACCCAACAAAAAAAAGACATATCAAAACATAACAAGTTATATCTTCAGTATGATCAAAATAAAAGAAATTCTGAAATAGAACGTAC"
 					}
 				],
 				"target_id" : 92
@@ -2453,13 +2431,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TCTTATAAAGTTAATGAAATAGCTCAACTTAATTTAACCATAGAAAGAGATTTAACAGATGATGCTGTGATTTTTGCACACTCACTTTATTTACCATTTGAAAAAGAAGAAATGTGGTGGATCGTTATCGGAATTAAAAAAATGAACTTACTTTTATCTATCAAAAAATTATCTTTATTGAAAAGTATCAATAATATAAAAATTAATT"
+						"seq" : "TCTTATAAAGTTAATGAAATTGCTCAACTTAATTTAACCATAGAAAGAGATTTAACAGATGATGCTGTGATTTTTGCACACTCACTTTATTTACCATTTGAAAAAGAAGAAATGTGGTGGATCGTTATCGGAATTAAAAAAATGAACTTACTTTTATCTATCAAAAAATTATCTTTATTGAAAAGTATCAATAATATAAAAATTAATT"
 					},
 					{
 						"seq" : "TCTTATAAAGTTAATGAAATAGCTCAACTTAATTTAACCATAGAAAGAGATTTAACAGATGATGCTGTGATTTTTGCACACTCACTTTATTTACCATTTGAAAAAGAAGAAATGTGGTGGATCGTTATCGGAATTAAAAAAATGAACTTACTTTTATCTATCAAAAAATTATCTTTATTGAAAAGTGTCAATAATATAAAAATTAATT"
-					},
-					{
-						"seq" : "TCTTATAAAGTTAATGAAATTGCTCAACTTAATTTAACCATAGAAAGAGATTTAACAGATGATGCTGTGATTTTTGCACACTCACTTTATTTACCATTTGAAAAAGAAGAAATGTGGTGGATCGTTATCGGAATTAAAAAAATGAACTTACTTTTATCTATCAAAAAATTATCTTTATTGAAAAGTATCAATAATATAAAAATTAATT"
 					}
 				],
 				"target_id" : 52
@@ -2468,10 +2443,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "ATGTTCTAAGATCTGGTGGAAAAATATCTGATCAAGGTTCTGAGATAAGTCCTCCTAAGGCACTTTCTAATAAACAAATGACTCCTGCTCAACGTAAGAATGTGCCACATTTTGTTGAAAGAAGAGGCTATGGAAATAGTCATGTTAGGGGTAACGCACTTAAAAAAATTAGT"
+						"seq" : "ATGTTCTAAGATCTGATGGAAAAATATCTGATCAAGGTTCTCAGAAAAGTCCTCCTAAGGAACTTTCTAATAAACAAATGACTCCTGCTCAACGTAAGAATGTGCCACATTTTGTTGAAAGAAGAGGCTATGGAAATAGTCATGTTAGGGGTAACGCACTTAAAAAAATTAGT"
 					},
 					{
-						"seq" : "ATGTTCTAAGATCTGATGGAAAAATATCTGATCAAGGTTCTCAGAAAAGTCCTCCTAAGGAACTTTCTAATAAACAAATGACTCCTGCTCAACGTAAGAATGTGCCACATTTTGTTGAAAGAAGAGGCTATGGAAATAGTCATGTTAGGGGTAACGCACTTAAAAAAATTAGT"
+						"seq" : "ATGTTCTAAGATCTGGTGGAAAAATATCTGATCAAGGTTCTCAGAAAAGTCCTCCTAAGGAACTTTCTAATAAACAAATGACTCCTGCTCAACGTAAGAATGTGCCACATTTTGTTGAAAGAAGAGGCTATGGAAATAGTCATGTTAGGGGTAACTCACTTAAAAAAATTAGT"
 					}
 				],
 				"target_id" : 81
@@ -2479,6 +2454,9 @@
 			{
 				"microhaplotypes" : 
 				[
+					{
+						"seq" : "TCATTCTTTTTTTAACTAAAACTATTCATCTCAAAAATATAAGATATTTTATATGACGAATGCCATTGTATTTTTTGTTACGTAAAACCTGACTTCTTCAAGGAAAACACATGC"
+					},
 					{
 						"seq" : "TCATTCTTTTTTTAACGAAAACTATTCATCTCAAAAATATAAGATATTTTATATGACGAATGCCATTGTATTTTTTGTTACGTAAAACCTGACTTCTTCAAGGAAAACACATGC"
 					}
@@ -2489,10 +2467,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "AAGAAATAAATAAAATAATTTATACAAACGAATTTAATAATTATGAAGATAAAATATATGAAGATGTCAAATATATTAAAGAACAGGAAAATGAAATGTACTTGAGAGATGGAATTGAAGAGTTACATATGGATGAACCAAGTGGGGATGTATATTTTGATGATCAAGATGATTATATATTTTTAGA"
+						"seq" : "AAGAAATAAATAAAATAATTTATACAAACGAATTTAATAATTATGAAGATAAAATATATGAAGATGTCAAATATATTAAAGAACAGGAAAATGAAATATACTTGAGAGATGGAATTGAAGAGTTACATATGGATGAACCAAGTCGGGATGTATATGTTGATGATGAAAATGATTATATATTTTTAGA"
 					},
 					{
-						"seq" : "AAGAAATAAATAAAATAATTTATACAAACGAATTTAATAATTATGAAGATAAAATATATGAAGATGTCAAATATATTAAAGAACAGGAAAATGAAATATACTTGAGAGATGGAATTGAAGAGTTACATATGGATGAACCAAGTCGGGATGTATATTTTGATGATGAAAATGATTATATATTTTTAGA"
+						"seq" : "AAGAAATAAATAAAATAATTTATACAAACGAATTTAATAATTATGAAGATAAAATATATGAAGATGTCAAATATATTAAAGAACAGGAAAATGAAATGTACTTGAGAGATGGAATTGAAGAGTTACATATGGATGAACCAAGTGGGGATGTATATTTTGATGATCAAGATGATTATATATTTTTAGA"
 					}
 				],
 				"target_id" : 67
@@ -2501,10 +2479,13 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "AATCATCTAAGAATAAACTTTTTTGTTTAAACCATTTATTGAACATTTCACTTAAATGTGATTCAATTTTTTTTTCTGAGCTTTCCATAATTTGATTACATCTATTCAATTTGTTTGTATAAGTTTTAGGTGTTATTATTCTTTTACGTTTT"
+						"seq" : "AATCATCTAAGAATAAACTTTTTTGTTTAAACCATTTATTGAACATTTCACTTAAATGTGATTCAATTTTTTTTTCTGAGCTTTCCATAATTTGATTACATCTATTCAATTTGTTTGTATAAGTATTAGGTCTTATTATTCTTTTACGTTTT"
 					},
 					{
-						"seq" : "AATCATCTAAGAATAAACTTTTTTGTTTAAACCATTTATTGAACATTTCACTTAAATGTGATTCAATTTTTTTTTCTGAGCTTTCCATAATTTGATTACAACTATTCAATTTGTTTGTATAAGTTTTAGGTCTTATTATTCTTTTACGTTTT"
+						"seq" : "AATCATCTAAGAATAAACTTTTTTGTTTAAACCATTTATTGAACATTTCACTTAAATGTGATTCAATTTTTTTTTCTGAGATTTCCATAATTTGATTACATCTATTCAATTTGTTTGTATAATTATTAGGTCTTATTATTCTTTTACGTTTT"
+					},
+					{
+						"seq" : "AATCATCTAAGAATAAACTTTTTTGTTTAAACCATTTATTGAACATTTCACTTAAATGTGATTCAATTTTTTTTTCTGAGCTTTCCATAATTTGATTACATCTATTCAATTTGTTTGTATAATTATTAGGTCTTATTATTCTTTTACGTTTT"
 					}
 				],
 				"target_id" : 61
@@ -2513,7 +2494,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TTGAAAGAGTTAAAGGGAAAAATACAAAATTATTTAGATAATGATATTCAATTGAGTAATGGAAAACTCCTATATAAGGATACATGGGATAGAATTGATTTGAAGTTTTGTAGAACGGTAGCAATAGAAGAGGCAGTATACACTAGAAAATTTTATAGCTTAATTAATGATAAACATACAAT"
+						"seq" : "TTGAAAGAGTTAAAGGGAAAAATACAAAATTATTTAGATAATGATATTCAATTGAGTAATGGAAAACTCCTATATAAGGATACATGGGATAGAATTGATTTGAAGTTTTGTAGAACGGTAGCAATAGAAGAGGCAGAATACACTAGAAAATTTTATAGCTTAATTAATGATAAACATACAAT"
+					},
+					{
+						"seq" : "TTGAAAGAATTAAAGGGAAAAATACAAAATTATTTAGATAATGATATTCAATTGAGTAATGGAAAACTCCTATATAAGGATACATGGGATAGAATTGATTTGAAGTTTTGTAGAACGATAGCAATAGAAGAGGCAGAATACACTAGAAAATTTTATAGCTTAATTAATGATAAACATACAAT"
 					}
 				],
 				"target_id" : 54
@@ -2523,9 +2507,6 @@
 				[
 					{
 						"seq" : "TTGTGATGTATATAAATTCCCTTCTTCTTTATGTACCACATTATAAGAACCACGAACATATTCTTTTAAAAATGTTAACTTACTTCCAACAAATATATAATCAAAACAAAATTTTTTATTGTCGAAATGTTCTCGTTCAACCCCATTCATATTTCGGATATCATTATTTA"
-					},
-					{
-						"seq" : "TTGTGATGTATATAAATTCCCTTCTTCTTTATGTACCACATTATAAGAACCACGAACATATTCTTTTAAAAATGTTAACTTACTTCCAACAAATATATAATCAAAACAAAATTGTTTATTGTCGAAATGTTTTCGTTCAACCCCATTCATATTTCGGATATCATTATTTA"
 					}
 				],
 				"target_id" : 33
@@ -2535,6 +2516,9 @@
 				[
 					{
 						"seq" : "TTTATATCATTTGTATGTGCTGTATTATCAGGAGGAACATTACCTTTTTTTATATCTGTGTTTGGTGTAATATTAAAGAACATGAATTTAGGTGATGATATTAATCCTATAATATTATCATTAGTATCTATAGGTTTAGTACAATTTATATTATCAATGA"
+					},
+					{
+						"seq" : "TTTATATCATTTGTATGTGCTGTATTATCAGGAGGAACATTACCTTTTTTTATATCTGTGTTTGGTGTAATATTAAAGAACATGTATTTAGGTGATGATATTAATCCTATAATATTATCATTAGTATCTATAGGTTTAGTACAATTTATATTATCAATGA"
 					}
 				],
 				"target_id" : 49
@@ -2543,7 +2527,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "ACGAAATTTATAACAATTTTTACATATGCCAGTTCCTTTTTAGGTTTATTTATTTGGTCATTAATAAAAAATGCACGTTTGACTTTATGTATTACTTGCGTTTTTCCGTTAATTT"
+						"seq" : "ACGAAATTTATAACAATTTTTACATATGCCAGTTCCTTTTTAGGGTTATTTATTTGGTCATTAATAAAAAATGCACGTTTGACTTTATGTATTACTTGCGTTTTTCCGTTAATTT"
 					},
 					{
 						"seq" : "ACGAAATTTATAACAATTTTTACATATGCCAGTTCCTTTTTAGGTTTATATATTTGGTCATTAATAAAAAATGCACGTTTGACTTTATGTATTACTTGCGTTTTTCCGTTAATTT"
@@ -2555,9 +2539,6 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TATTATTACGGTACCATTATATGATTCTTTAGGTCCTCAATCAAGTAGATTTATATTAGATCAAACACAGATGGAAACTATTGTATGTGACAAGACATGTGCTCGTAATTTATTTAA"
-					},
-					{
 						"seq" : "TATTATTACGGTACCATTATATGATTCTTTAGGTCCTCAATCAAGTAGATTTATATTAGATCAAACACAGATGGAAACTATTGTATGTAACAAGACATGTGCTCGTAATTTATTTAA"
 					}
 				],
@@ -2567,7 +2548,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "AATGAAGAAAATATGTCTGACAGACCAAACAGTTTATCTCATGATAAGGATCAACACCTCGATGAAACATGTAATGAACAATATGGATTATACGTAAAAGAAATGGAATCTAAAGTTGAAAAATTAGCTGAAA"
+						"seq" : "AATGAAGAAAATATGTCTGACAGACCAAACAGTTTATCTCATGATAAGGATCAACACCACGATGAAACACATAATGAACAATATGGATTATACGTAAAAGAAATGGAATCTAAAGTTGAAAAATTAGCTGAAA"
 					}
 				],
 				"target_id" : 27
@@ -2577,9 +2558,6 @@
 				[
 					{
 						"seq" : "ATTTGAATAAAATTTATCATTCACAATATTATATTTTTGTTTCTTCTTTTTTCCCATAATATTATTATTTTGTTCACAATATATGTTCATGTGTCCCCTCTTTTTCTGTAAAATATTAAAATGTTTCTTACTATGCTTTTCTTCATTTTTAATAAC"
-					},
-					{
-						"seq" : "ATTTGAATAAAATTTATCATTCACAATATTATATTTTTGTTTCTTCTTTTTTCCCATAATATTATTATTTTGTTCACAATATATGTTCATGTGTCCCCTCTTTTTCTGTAAAATATTAAAATGTTTCTTAGTATGCTTCTCTTCATTTTTAATAAC"
 					}
 				],
 				"target_id" : 44
@@ -2588,10 +2566,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "GAACAATTGTTAAACACCAAATTGGGTGAAACAAAAAACCACCTGAACAGAACTCCATTTATACCTGAATCGGTCATACGAGAAAGGAAATTACGCCAAGAAAAAGCGCAATCCACAAACAACATGTTCGATTCAACAAACGCAGATAGTATTACTTCCCCATGTGATCCAACGAATGCCA"
+						"seq" : "GAACAATTGTTAAACACCAAATTGGGTGAAACAAAAAACCACCTGAACAGAACCCCATTTATACCTGAATCGGTCATACGAGAAAGGAAATTACGCCAAGAAAAAGCGCAATCCACAAACAACATGTTCGATTCAACAAACGCAGATAGTATTACTTCCCCATGTGATCCAACGAATGCCA"
 					},
 					{
-						"seq" : "GAACAATTGCTAAACACCAAATTGGGTGAAACAAAAAACCACCTGAACAGAACTCCATTTATACCTGAATCGGTCATACGAGAAAGGAAATTACGCCAAGAAAAAGCTCAATCCACAAACAACATGTTCGATTCAACAAACGCAGATAGTATTACTTCCCCATGTGATCCAACGAATGCCA"
+						"seq" : "GAACAATTGCTAAACACCAAATTGGGTGAAACAAAAAACCACCTGAACAGAACCCCATTTATACCTGAATCGGTCATACGAGAAAGGAAATTACGCCAAGAAAAAGCGCAATCCACAAACAACATGTTCGATTCAACAAACGCAGATAGTATTACTTCCCCATGTGATCCAACGAATGCCA"
 					}
 				],
 				"target_id" : 39
@@ -2600,13 +2578,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "GAAAGTAGCGAATACCCTGTACAAATCGTTAGTAAACCTCTGGAATGGTTATTGTTTCATGATTTTACTACGCCTGATGTTACTGCACTACCTGAAGAATTACCATTAACGAGCTATAAAGTAACACCTACTTCTATTAATGTATTGCATAAAGAGGGCCCCACTTTAAA"
+						"seq" : "GAAAGTAGCGAATACCCTGTAGAAATTGTTAGTAAACCTCTGGAATGGTTATTGTTTCATGATTTTACTACGCCTGGTGTTACTGCACTACCTGAAGAATTACCATTAACGAGCTATAAAGTAACACCTACTTCTATTAATGTATTGCATAAAGAGGGCCCCACTTTAAA"
 					},
 					{
 						"seq" : "GAAAGTAGCGAATACCCTGTAGAAATTGTTAGTAAACCTCTGGAATGGTTATTGTTTCATGATTTTACTACGCCTGATGTTACTGCACTACCTGAAGAATTACCATTAACGAGCTATAAAGTAACACCTACTTCTATTAATGTATTGCATAAAGAGGGCCCCACTTTAAA"
-					},
-					{
-						"seq" : "GAAAGTAGCGAATACCCTGTACAAATCGTTAGTAAACCTCTGGAATGGTTATTGTTTCATGATTTGACTAAGCCTGATGTTACTGCACTACCTGAACAATTGCCATTAACAAATTATAAAGTAACACCTACTTCTATTAATGTATTGAATAAAGAGGGCCCCACTTTAAA"
 					}
 				],
 				"target_id" : 62
@@ -2615,7 +2590,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TCATTATTATTATTATTATAATTATCATTGTTATTATTATTGTTGTTGTTGTTATTATTATTTCCTTTATTATTTAATATGCATTTTTTAATATCCATTTTATTATTTATCATATCAGTACTTTTATTTTTCTCCTTTTCGTTTATAGCTTTTTCCCTATGCACCCTGAATTTCCCATTTTTTTT"
+						"seq" : "TAATTATCATTATTATTATAATTATCATTGTTATTATTATTGTTGTTGTTGTTATTATTATTTCCTTTATTATTTAATATGCATTTTTTAATATCCATTTTATTATTTATCATATCAGTACTTTTATTTTTCTCCTTTTCGTTTATAGCTTTTTCCCTATGCACCCTGAATTTCCCATTTTTTTT"
+					},
+					{
+						"seq" : "TCATTATTATTATTATTATAATTATCATTTTTATTATTATTGTTGTTATTATTATTTCCTTTATTATTTAATATGCATTTTTTAATATCCATTTTATTATTTATCATATCAGTACTTTTATTTTTCTCCTTTTCGTTTATAGCTTTTTCCCTATGCACCCTGAATTTCCCATTTTTTTT"
 					}
 				],
 				"target_id" : 29
@@ -2642,10 +2620,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TTTATGTGAAATTTTAAATAAAGAGAAATTGTTTGTGCACACATCTATTTTGGGATATATATCTAATCGTTTATATTACGATATAGAAAAATATAGATGTTCATTATTGAA"
+						"seq" : "TTTATGTGAAATTTTAAATAAAGAGAAATTGTTTGTGCACACATCTATTTTGGGATATATATCTAATCGTTTATGTTACGATATAAAAAAATATAGATGTTCATTATTGAA"
 					},
 					{
-						"seq" : "TTTATGTGAAATTTTAAATAAAGAGAAATTGTTTGTGCACACATCTATTTTGGGATATATATCTAATCGTTTATATTACGATATAGAAAAATATAGATGTTCATTATTGAG"
+						"seq" : "TTTATGTGAAATTTTAAATAAAGAGAAATTGTTTGTGCACACATCTATTTTGGGATATATATCTAATCGTTTATGTTACGATATAGAAAAATATAGATGTTCATTATTGAA"
 					}
 				],
 				"target_id" : 75
@@ -2654,7 +2632,13 @@
 				"microhaplotypes" : 
 				[
 					{
+						"seq" : "AATATTTAATATTTTTGTTTAGGAAGTTTTCAAAATTGATGACATTGATAACCGTTTTTATTAAATCGCTTGGGTTGTTTGTGTGTTCCATTGTAGAAGACATAATTTTAAGAATGTGTTTTTGTGTTATTAAACAAAACTTTGTTACTATATGGAATCGTATGTTAT"
+					},
+					{
 						"seq" : "AATATTTAATATTTTTGTTTAGGAAGTTTTCAAAATTGATGACATTGATAACCGTTTTTATTAAATCGCTTGGGTTGTTTGTGTGTTCTATAGTAGAAGACATAATTTTAAGAATGTGTTTTTGTGTTATTAAACAAAACTTTGTTACTATATGGAATCGTATGTTAT"
+					},
+					{
+						"seq" : "AATATTTAATATTTTTGTTTAGGAAGTTTTCAAAATTGATGACATTGATAACCGTTTTTATTAAATCGCTTGGGTTGTTTGTGTGTTCTATTGTAGAAGACATAATTTTAAGAATGTGTTTTTGTGTTATTAAACAAAACTTTGTTACTATATGGAATCGTATGTTAT"
 					}
 				],
 				"target_id" : 45
@@ -2663,10 +2647,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "AGAATCTCAACTTTTGCTTAAAAAAAATGATAACAAATATAATTCTAAATTTTGTAATGATTTGAAGAATAGTTTTTTAGATTATGGACATCTTGCTATGGGAAATGATATGGATTTTGGAGGTTATTCAACTAAGGCAGAAAACAAAATTCAAGAAGTTTTTAAAGGGGCTCATGGGGAAATAAGTGAACATAAAATTAAAAATTTTAGAAAAG"
-					},
-					{
-						"seq" : "AGAATCTCAACTTTTGCTTAAAAAAAATGATAACAAATATAATTCTAAATTTTGTAATGATTTGAAGAATAGTTTTTTAGATTATGGACATCTTGCTATGGGAAATGATATGGATTTTGGAGGTTATTCAACTAAGGCAGAAAACAAAATTCAAGAAGTTTTTAAAGGGGCTCATGGGAAAATAAGTGAACATGAAATTAAAAATTTTAGAAAAA"
+						"seq" : "AGAATCTCAACTTTTGCTTAAAAAAAATGATAACAAATATAATTCTAAATTTTGTAATGATTTGAAGAATAGTTTTTTAGATTATGGACATCTTGCTATGGGAAATGATATGGATTTTGGAGGTTATTCAACTAAGGCAGAAAACAAAATTCAAGAAGTTTTTAAAGGGGCTCATGGGAAAATAAGTGAACATGAAATTAAAAATTTTAGAAAAG"
 					}
 				],
 				"target_id" : 35
@@ -2675,13 +2656,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TAATTTTCTCAAGTAACATATTTTTGTCTTGACTACTTTCATCTGTAAATGGAACGAATACTCTTTGCTTACCTGCAAAAAGGACAACTGACATATGAGCCTTATCCTTACTTACATTCGAATTAAAGACCATAGATTCTAAAAATGGTATAGTTCCTTTTAACCAATAATC"
-					},
-					{
-						"seq" : "TAATTTTCTCAAGTAACATATTTTTGTCTTGACTACTTTCATCTGTAAATGGAACCAATACTCTTTGCTTACCTGCAAAAAGGACAACTGACATATGAGCCTTATCCTTACTTACATTCGAATTAAAGACCATAGATTCTAAAAATGGTATAGTTCCTTTTAACCAATAATC"
-					},
-					{
-						"seq" : "TAATTTTCTCAAGTAACATATTTTTGTCTTGACTACTTTCATCTGTAAATGGAACGACTACTCTTTGCTTACCTGCAAAAAGGACAACTGACATATGAGCCTTATCCTTACTTACATTCGAATTAAAGACCATAGATTCTAAAAATGGTATAGTTCCTTTTAACCAATAATC"
+						"seq" : "TAATTTTCTCAAGTAACATATTTTTGTCTTGACTACTTTCATCTGTAAATGGAACGAATACTCTTTGCTTACCTGCAAAAAGGACAACTGACATATGAGCCTTATCCTTACTTACATTCGAATTAAGGACCATAGATTCTAAAAATGGTATAGTTCCTTTTAACCAATAATC"
 					}
 				],
 				"target_id" : 86
@@ -2693,13 +2668,7 @@
 						"seq" : "AAATTTACAGAAAAATTTAGATTTAATCATATGGCTAAAAAAGAATATAAAAGAAGGAGAAGCTTTAATTTCTGATATACCCACATCAAGTTTTTTAAGGTGTACTACAAATTATAAATTTGTATTGCATCCACAATATGAAGATAGTAACTTGAGAAAGAGGGTTCAAGATTATTA"
 					},
 					{
-						"seq" : "AAATTTACAAAAAAATTTAGATTTAATCATATGGCTAAAAAAGAATATAAAAGAAGGAGAAGCTTTAATTTCTGATATACCTACATCAAGTTTTTTAAGGTGTACTACAAATTATAAATTTGTATTGCATCCACAATATGAAGATAGTAACTTGAGAAAGAGGGTTCAAGATTATTA"
-					},
-					{
-						"seq" : "AAATTTACAGAAAAATTTAGATTTAATCATATGGCTAAAAAAGAATATAAAAGAAGGAGAAGCTTTAATTTCTGATATACCCACATCAAGTTTTTTAAGGTGTACTACAAATTATAAATTTGTATTGCATCCCCAATATGAAGATAGTAACTTGAGAAAGAGGGTTCAAGATTATTA"
-					},
-					{
-						"seq" : "AAATTTACAAAAAAATTTAGATTTAATCATATGGCTAAAAAAGAATATAAAAGAAGGAGAAGCTTTAATTTCTGATATACCTACATCAAGTTTTTTAAGGTGTACTACAAATTATAAATTTGTATTGCATCCCCAATATGAAGATAGTAACTTGAGAAAGAGGGTTCAAGATTATTA"
+						"seq" : "AAATTTACAGAAAAATTTAGATTTAATCATATGGCTAAAAAAGAATATAAAAGAAGGAGAAGCTTTAATTTCTGATATACCTACATCAAGTTTTTTAAGGTGTACTACAAATTATAAATTTGTATTGCATCCCCAATATGAAGATAGTAACTTGAGAAAGAGGGTTCAAGATTATTA"
 					}
 				],
 				"target_id" : 85
@@ -2711,7 +2680,7 @@
 						"seq" : "TCATTACTATTCTTTATCCATATATATGTTGTTATATCAGTTGCACCTGAGGGTGGATTCAAACCTCTTGCTTGTATAATATATGCACGTACTACTAAATTACGTGTTAATCTATATTCTCTTACTAAATCATCACATTTCTTTATCATTTCTTTTTTTAAATACATTGTCTTTTCATCATACACAT"
 					},
 					{
-						"seq" : "TCATTACTATTCTTTATCCATATATATGTTGTTATATCAGTTGCACCGGATGGTGGATTCAAACCTCTTGCTTGTATAATATATGCACGTACTACTAAATTACGTGTTAATCTATATTCTCTTACTAAATCATCACATTTCTTTATCATTTCTTTTTTTAAATACATTGTCTTTTCATCATACACAT"
+						"seq" : "TCATTACTATTCTTTATCCATATATATGTTGTTATATCAGTTGCACCGGATGGTGGATTCAAACCTCTTGCTTGTATAATATATGCACGTACTACTAAATTACGTGTTAATCTATATTCTCTTACTAAATCACCACATTTCTTTATCATTTCTTTTTTTAAATACATTGTCTTTTCATCATACACAT"
 					}
 				],
 				"target_id" : 80
@@ -2729,7 +2698,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TAAAGAAATTAAGTGAAGATGATTATGAAAAAAATTGTAGACATTTAAATTATTTAATAGATAATATAAGAGAATTATTTTTTAGTTCTAAAAATATTAGAATTCCTGATGTAGCTCGTAAATATTTGTGGGATAATCAAATTGAAGGAAATCTCAAAAAATTAATATCTTCAGAAACAAAATATAA"
+						"seq" : "TAAAGAAATTAAGTGAAGATGATTATGAAAAAAATTGTAGACATTTAAATTATTTAATAGATAATATAAGAGAATTATTTTTTAGTTCTAAAAATATTAGAATTCCTGATTTAGCTCGTAAATATTTGTGGGATAATCAAATTGAAGGAAATCTCAAAAAATTAATATCTTCAGCAACAAAATATAA"
+					},
+					{
+						"seq" : "TAAAGAAATTAAGTGAAGATGATTATGAAAAAAATTGTAGACATTTAAATTATTTAATAGATAATATAAGAGAATTATTTTTTAGTTCTAAAAATATTAGAATTCTTGATGTAGCTCGTAAATATTTGTGGGATAATCAAATTGAAGGAAATCTCAAAAAATTAATATCTTCAGAAACAAAAAATAA"
 					}
 				],
 				"target_id" : 38
@@ -2737,9 +2709,6 @@
 			{
 				"microhaplotypes" : 
 				[
-					{
-						"seq" : "TGGTTTTAATGAGGATGATTTAGATAAAGAGTTTTCTTTTGATTTGCCGTCGATTAGTGGTTTTTCAAGTAATGGTATGAAAAAATGTAATTTAAGAAATTTATTAAAAAGATTAGAA"
-					},
 					{
 						"seq" : "TGGTTTTAATGAGGATGATTTAGATAAAGAGTTTTTTTTTGATTTGCCGTCGATTAGTGGTTTTTCAAGTAATGGTATGAAAAAATGTAATTTAAGAAATTTATTAAAAAGATTAGAA"
 					}
@@ -2749,9 +2718,6 @@
 			{
 				"microhaplotypes" : 
 				[
-					{
-						"seq" : "CCTTAGCATTAATAACACTTATAGGAGGTATTTATATGACTAAAGGAAGAAAAAGTTCCATATGGCATAATTCAGAAATAAATGATACACTTTATGATGTTGTTCTTGAAGCAGTGAATCAAGGAAATACAGAT"
-					},
 					{
 						"seq" : "CCTTAGCATTAATAACACTTATAGGAGGTATTTATATGACTAAAGGAAGAAAAAGTTCCATATGGCATAATTCAGAAATAAATGATACACTTTATGATGTTGTTCTTGAAACAGTGAATCAAGGAAATACAGAT"
 					},
@@ -2765,10 +2731,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "AATATATCTTTTACTTTATCTGTAAGTTTCATGGAATCTATTATTTCTTCTGCATATTTTATTTTTGCCTCGTTTATATATTTACCTGCTTCTAATTTACATAAACATTTTTCTATTAAGTTTTGATCATT"
-					},
-					{
-						"seq" : "AATATATCTTTTACTTTATCTGTAAGTTTCATGGAATCTATTATTTCATGTGCATATTTTATTTTTGCCTCGTTTATATATTTACCTGCTTTTAATTTACATAAACATTTTTCTATTAAGTTTTGATCATT"
+						"seq" : "AATATATCTTTTACTTTATCTGTAAGTTTCATGGAATCTATTATTTCATCTGCATATTTTATTTTTGCCTCGTTTATATATTTACCTGCTTTTAATTTACATAAACATTTTTCTATTAAGTTTTGATCATT"
 					}
 				],
 				"target_id" : 30
@@ -2780,7 +2743,10 @@
 						"seq" : "GTAAAAAAAAAGGGTTTTCCTAAAAAACCATCGGTTCATGGTTTTACACAGATGGTGTTTTTGCAGCTTACTAATATAGTCATGTATGCCCTTTGTTTTATGAGCCTTTCACAAATATATGCTTATTTCGAAAACGTGAATTTTTATATTATAAGCAATTTTCGTTTCCTTGAGAGATATTTTAATATATTCAA"
 					},
 					{
-						"seq" : "GTAAAAAAAAAGGGTTTTCCTAAAAAACCATCGGTTCATGGTTTTACACAGATGATGTTTTTGCAGCTTACTAATATAGTCATGTATGCCCTTTGTTTTATGAACCTTTCACAATTATATGCTTATTTCGAAAACGTGAATTTTTATATTATAAGCAATTTTCGTTTCCTTGAGAGATATTTTAATATATTCAA"
+						"seq" : "GTAAAAAAAAAGGGTTTTCCTAAAAAACCATCGGTTCATGGTTTTACACAGATGGTGTTTTTGAAGATTACTAATATAGTCATGTATGCCCTTTGTTTTATGAGCCTTTCACAAATATATGCTTATTTCGAAAACGTGAATTTTTATATTATAAGCAATTTTCGTTTCCTTGAGAGATATTTTAATATATTCAA"
+					},
+					{
+						"seq" : "GTAAACAAAAAGGGTTTTCCTAAAAAACCATTGGTTCATGGTTTTACACAGATGGTGTTTTTGCAGCTTACTAATATAGTCATGTATGCCCTTTGTTTTATGGACCTTTCACAAATATATGCTTATTTCGAAAACGTGAATTTTTATATTATAAGCAATTTTCGTTTCCTTGAGAGATATTTTAATATATTCAA"
 					}
 				],
 				"target_id" : 28
@@ -2789,10 +2755,13 @@
 				"microhaplotypes" : 
 				[
 					{
+						"seq" : "TGTTTGTGTAATAAAGGATATTTCTATAATGTCAAGAAACAACAATGTGAAGAATGTCCCATAGGTTTTTATTGTCCAGAAATAAGCTCAAAAAATAATATAAAAAAACCTATCAAATGTCCTAAAAATTCCTCAAGTATAAAAAAAGGTATGTATATATCA"
+					},
+					{
 						"seq" : "TGTTTGTGTAATAAAGGATATTTCTATAATGTCAAGAAACAACAATGTAAAGAATGTCCCATAGGTTTTTATTGTCCAGAAATAAGCTCAAAAAATAATATAAAAAAACCTATCAAATGTCCTAAAAATTCCTCAAGTATAAAAAAAGGTATGTATATATCA"
 					},
 					{
-						"seq" : "TGTTTGTGTAATAAAGGATATTTCTATAATGTCAAGAAACAACAATGTGAAGAATGTCCCATAGGTTTTTATTGTCCAGAAATAAGCTCAAAAAATAATATAAAAAAACCTATCAAATGTCCTAAAAATTCCTCAAGTATAAAAAAAGGTATGTATATATCA"
+						"seq" : "TGTTTGTGTAATAAAGGATATTTCTATAATGTCAAGAAACAACAATGTAAAGAATGTCCCATAGGTTTTTATTGTCCAAAAATAAGCTCAAAAAATAATATAAAAAAACCTATCAAATGTCCTAAAAATTCCTCAAGTATAAAAAAAGGTATGTATATATCA"
 					}
 				],
 				"target_id" : 26
@@ -2801,10 +2770,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TTATTTTCGTTTTTTTTTATATTATCATTATAATTATATGTATTTACAAAGAATTTATTATTATTTGTTTCTTTATAATTATATTCATTTTCTTTATTACTTAAGGAATTTATATTTGATAAAACTTGTTGTCCTCTTTCTTCTTTGTTGATGTGAATATTTGAGAAAATAATAATAAATGTAATGACTAGGGCTATAT"
-					},
-					{
-						"seq" : "TTATTTTCGTTTTTTTTTATATTATCATTATAATTATATGTATTTACAAAGAATTTATTATTATTTGTTTCTTTATAATTATATTCATTTTCTTTATTACTTAAGGAATTTATATTTGATAAAACTTGTTGTCCTCTTTCTTCTTTGTTGATGTGAATATTTGAGAAAATAATAATAAATGTAATGACTAGGGCTATGT"
+						"seq" : "TTATTTTCGTTTTTTTTTATATTATCATTATAATTATATGTATTTACAAAGAATTTATTATTATTTGTTTCTTTATAATTATATTCATTTTCTTTATTACTTAAGGAATTTATATTTGATAAAACTTGTTGTACTCTTTCTTCTTTGTTGATGTGAATATTTGAGAAAATAATAATAAATGTAATGACTAGGGCTATGT"
 					}
 				],
 				"target_id" : 25
@@ -2812,9 +2778,6 @@
 			{
 				"microhaplotypes" : 
 				[
-					{
-						"seq" : "CAAAGGAACAAGATAATTTTTTCCATTTTTATAAAAGTAATATATATGATATGGAAAATAGAACATGTAATAATAATATATTACAATATTGTGTTATGAATAATAAATCATATTTATTTCATAATATATCATCCAAAAAAAATATATATATAAAAAAAAAGAATCATCAGTTTTCTTTATTCATATATT"
-					},
 					{
 						"seq" : "CAAAGGAACAAGATAATTTTTTCAATTTTTATAAAAGTAATATATATGATATGGAAAATAGAACATGTAATAATAATATATTACAATATTGTGTTATGAATAATAAATCATATTTATTTCATAATATATCATCCAAAAAAAATATATATATAAAAAAAAAGAATCATCAGTTTTCTTTATTCATATATT"
 					}
@@ -2824,6 +2787,9 @@
 			{
 				"microhaplotypes" : 
 				[
+					{
+						"seq" : "CAAATTACCCTTAGCCCCAGATATGGTAAAGACATATCACTGTTATAAATTAGGAAAGCAAGCAGCTAAATTATTAGAATCTATCATTTTAAAGAAAAAGTTCGTAAGATTTAGAGTTACTGATGCTATTGATGTATATGATTTCTTTTATATAAAGAAAGTTTTATCCAGTCGTATTAAGA"
+					},
 					{
 						"seq" : "CAAATTATCCTTAGCCCCAGATATGGTAAAGACATATCACTGTTATAAATTAGGAAAGCAAGCAGCTGAATTATTAGAATCTATCATTTTAAAGAAAAAGTTCGTAAGATTTAGAGTTACTGATGCTATTGATGTATATGATTTCTTTTATATAAAGAAAGTTTTATCCAGTCGTATTAAGA"
 					}
@@ -2835,9 +2801,6 @@
 				[
 					{
 						"seq" : "AATTAATTTTAATGATGATGTTACTTTAGAAACACAATCCATGATAGCACACGGAGGGTCTTTGTCAGAAATAGAAGAAACTGGAGATTTATCTTCAGATGTTGATAGATTACTTTCATCAATCGAAACTACTC"
-					},
-					{
-						"seq" : "AATTAATTTTAATGATGATGTTACTTTAGAAACACAATCCATGATAGCACACGGAGGGTCTTTGTCAGAAATAGAAGAAACTGAAGATTTATCTTCAGATGTTGATAGATTACTTTCATCAATCGAAACTACTC"
 					}
 				],
 				"target_id" : 51
@@ -2847,9 +2810,6 @@
 				[
 					{
 						"seq" : "TAAAACCTGACAGCTTTGTACAGTTATATTTACCCAATTAGAATGTTCAAACATATTTAAGTGTTGCCATTCTTCAAATAATTTTTTTTCATATTCAGTTTTTGGTTGGTTTTTAAATTCTTTTGATAATGTACCTTCTGCGGATGGTATAGGGAAGTTAAAAATTTTATTACTTACTTTGTTTGAT"
-					},
-					{
-						"seq" : "TAAAACCTGACAGCTTTGTACAGTTATATTTACCCAATTAGAATGTTCAAACATATTTAAGTGTTGCCATTCTTCAAATAATTTTTTTTCATATTCAGTTTTTGGTTGGTTTTTAAATTCTTTTGATACTGTACCTTCTGCGGATGGTATAGGGAAGTTAAAAATTTTATTACGTACTTTGTTTGAT"
 					}
 				],
 				"target_id" : 87
@@ -2858,10 +2818,13 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "AAAGAAAGATGTTAAGAAAAAAAAGATCGATATGATAAATATATTACACATACCTACAAATAATTATAGCATGCCAAATGAAAAAGATATAAACAGTTATGAATTTTTTGGATCTGAACCTATTGAATTATATGATGGAAAATCTAATAAGAATTGTGTTATAACTAGCCAATCTTATATTTGTATTGAAAACCCGCATGCTGCCATATTATCCGA"
+						"seq" : "AAAGAAAGATGTTAAGAAAAAAAAGATCGATATGATAAATATATTACACATTCCTACAAATAATTATAGCATGCCAAATGAAAAAGATATAAACAGTTATGAATTTTTTGGATCTGAACCTATTGAATTATATGATGGAAAATCTAATAAGAATTGTGTTATAACTAGCCAATCTTATATTTGTATTGAAAACCCGCATGCTGCCATATTATCCGA"
 					},
 					{
-						"seq" : "AAAGAAAGATGTTAAGAAAAAAAAGATCGATATGATAAATATATTACACATTCCTACAAATAATTATAGCATGCCAAATGAAAAAGATATAAACAGTTATGAATTTTTTGGATCTGAACCTATTGAATTATATGATGTAAAATCTAATAAGAATTGTGTTATAACTAGCCAATCTTATATTTGTATTGAAAACCCGCATGCTGCCATAGTATCCGA"
+						"seq" : "AAAGAAAGATGTTAAGAAAAAAAAGATCGATATGATAAATATATTACACATACCTACAAATAATTATAACATGCCAAATGAAAAAGATATAAACAGTTATGAATTTTTTGGATCTGAACCTATTGAATTATATGATGTAAAATCTAATAAGAATTGTGTTATAACTAGCCAATCTTATATTTGTATTGAAAACCCGCATGCTGCCATATTATCCGA"
+					},
+					{
+						"seq" : "AAAGAAAGATGTTAAGAAAAAAAAGATCGATATGATAAATATATTACACATACCTACAAATAATTATAACATGCCAAATAAAAAAGATATAAACAGTTATGAATTTTTTGGATCTGAACCTATTGAATTATATGATGTAAAATCTAATAAGAATTGTGTTATAACTAGCCAATCTTATATTTGTATTGAAAACCCGCATGCTGCCATATTATCCGA"
 					}
 				],
 				"target_id" : 24
@@ -2869,9 +2832,6 @@
 			{
 				"microhaplotypes" : 
 				[
-					{
-						"seq" : "ACCAAAAAATGATACCTGTACGTTTTTCTCCAGGAGAAACAAAAAAATTAGAAAGGATTCTCAAAAAAGTAGACGACTTTTTCTGTGCCAATATTAAAGCGCATTATACCTG"
-					},
 					{
 						"seq" : "ACCAAAAAATGATACCTGTACGTTTTTCTCCAGGAGAAACAAAAAAATTAGAAAGGATTCTCAAAAAAGTAGACGACTTTTTCTGTGCCAATATTAAAGCGCAATATACCTG"
 					}
@@ -2882,10 +2842,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TTTTAAAAAAAAAAATTATGATATAAAATCTTCAATTAATAAAAGATCTATCCAGTTCTTTAGAGACACTAATATAGATCATTATATAGCATATGAATATTATAAGGAGGACCGTACAGAATTTATATTAACTATTATGAATGAAAAAAATATTACTCATCAAGAAACTCA"
-					},
-					{
-						"seq" : "TTTTAAAAAAAAAAATTATGATATAAAATCTTCAATTAATAAAAGATCTATCCAGTTCTTTAAAGACACTAATATAGATCATTATATAGCATATGAATATTATAAGGAGGACCGTACAGAATTTATATTAACTATTATGAATGAAAAAAATATTACTCATCAAGAAACTCA"
+						"seq" : "TTTTAAAAAAAAAAATTATGATATAAAATCTTCAATTAATAAAAGATCTATCCAGTTCTTTACAGACACTAATATAGATCATTATATAGCATATGAATATTATAAGGAGGACCGTACAGAATTTATATTAACTATTATGAATGAAAAAAATATTACTCATCAAGAAACTCA"
 					}
 				],
 				"target_id" : 65
@@ -2894,7 +2851,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "GAGAACAGGTTAAATATATTGAAGACGTGGTTTGATAATCAGGTATTTCTTTAATTAAATATTCATGATATTGTTCGTTAGATACATAAATTAATTCATCCTCCACATTTTGCTGTTCTGTTATAATTTGTGAAGAAGCTTGGTTTGTTTTATTTGGTAATTGCTCT"
+						"seq" : "GAGAACAGGTTAAATATATTGAAGACGTGGTTTGATAATCAGGTATTTCTTTAATTAAATATTCATGATATTGTTCGTTAGATACATAAATTAATTCGTCCTCCACATTTTGCTGTTCTGTTATAATTTGTGAAGAAGCTTGGTTTGTCTTATTTGGTAATTGCTCT"
 					},
 					{
 						"seq" : "GGGAACAGGTTAAATATATTGAAGACGTGGTTTGATAATCAGGTATTTCTTTAATTAAATATTCATGATATTGTTCGTTAGATACATAAATTAATTCGTCCTCCACATTTTGCTGTTCTGTTATAATTTGTGAAGAAGCTTGGTTTGTCTTATTTGGTAATTGCTCT"
@@ -2906,13 +2863,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "ACATCAGAACATAGTAAAGATTTAAATAATAATGATTCAAAAAATGAATCTAGTGATATTATTTCAGTAAATAATAAATCAAATAAAGTACAAAATCATTTTGAATCATTATCAGATTTAGAATTACTTGAAAATTCCTCACAAGATAATTTAGACAAAGATACA"
+						"seq" : "ACATCAGAACATAGTAAAGATTTAAATAATAATGATTCAAAAAATGAATCTAGTGATATTATTTCAGAAAATAATAAATCAAATAAAGTAGAAAATCATTTTGAATCATTATCAGATTTAGAATTACTTGAAAATTCCTCACAAGATAATTTAGACAAAGATACA"
 					},
 					{
 						"seq" : "ACATCAGAACATAGTAAAGATTTAAATAATAATGATTCAAAAAATGAATCTAGTGATATTATTTCAGAAAATAATAAATCAAATAAAGTACAAAATCATTTTGAATCATTATCAGATTTAGAATTACTTGAAAATTCCTCACAAGATAATTTAGACAAAGATACA"
-					},
-					{
-						"seq" : "ACATCAGAACATAGTAAAGATTTAAATAATAATGGTTCAAAAAATGAATCTAGTGATATTATTTCAGAAAATAATAAATCAAATAAAGTACAAAATCATTTTGAATCATTATCAGATTTAGAATTACTTGAAAATTCCTCACAAGATAATTTAGACAAAGATACA"
 					}
 				],
 				"target_id" : 71
@@ -2920,6 +2874,9 @@
 			{
 				"microhaplotypes" : 
 				[
+					{
+						"seq" : "GAGGAGAAACACGTTTTATCTCATAATTCATATGAGAAAACTAAAAATAATGAAAATAATAAATTTTTCGATAAGGATAAAGAGTTATCGATGTCTAATGTAAAAAATGTGTCACAAACAAATTTCAAAAGTCTTTTAAGAAATCTTGGTGTTTCAGAGAATATATTCCTTAAAGAAAATAAATTAAATAAGGAAGGGAAA"
+					},
 					{
 						"seq" : "GAGAAGAAACACGTTTTATCTCATAATTCATATGAGAAAACTAAAAATAATGAAAATAATAAATTTTTCGATAAGGATAAAGAGTTAACGATGTCTAATGTAAAAAATGTGTCACAAACAAATTTCAAAAGTCTTTTAAGAAATCTTGGTGTTTCAGAGAATATATTCCTTAAAGAAAATAAATTAAATAAGGAAGGGAAA"
 					}
@@ -2929,6 +2886,12 @@
 			{
 				"microhaplotypes" : 
 				[
+					{
+						"seq" : "TTCATCCAAAAGTAATTATGTTTTTCTTGTTGATATTTTGCTTTATACAAACGAGCAAGATACTTATTATACGATTCATGCTCTTTAATTTTCTTTTCAAAAGTTTTGGTTATAATGTGTTCAAGTGATTGTAAAGTATTTTTCTTTAATTTTCTCCATATTAATCTACATGCGATTATAAGAATTCTATATTCTTTGATATTCC"
+					},
+					{
+						"seq" : "TTCATCCAAGAGTAATTATGTTTTTCTTGTTGATATTTTGCTTTATACAAACGAGCAAGATACTTATTATACGATTCATGCTCTTTAATTTTCTTTTCAAAAGTTTTGGTTATAATGTGTTGAAGTGATTGTAAAGTATTTTTCTTTAATTTTCTCCATATTAATCTACATGCGATTATAAGAATTCTATATTCTTTGATATTCC"
+					},
 					{
 						"seq" : "TTCATCCAAAAGTAATTATGTTTTTCTTGTTGATATTTTGCTTTATACAAACGAGCAAGATACTTATTATACGATTCATGCTCTTTAATTTTCTTTTCAAAAGTTTTGGTTATAATGTGTTGAAGTGATTGTAAAGTATTTTTCTTTAATTTTCTCCATATTAATCTACATGCGATTATAAGAATTCTATATTCTTTGATATTCC"
 					}
@@ -2961,9 +2924,6 @@
 				[
 					{
 						"seq" : "TCTCATTCCTTTGAAAATATGAACTATTCAACTCATCAAGGTTTTCATATGTTATTTCATAACTGCCATCATCTGAATCCTCTTCATCACTACTACTTAAAGAATGCTCTTCTACAGTTATATCTTCATAATGATTATTTTTAGGAAAATATTCTTCAGATCTTTCTATAAATTCTGTTCCATTA"
-					},
-					{
-						"seq" : "TCTCATTCCTTTGAAAATATGAACTATTCAACTCATCAAGGTTTTCATATGTTATTTCATAAGTGCCATCATCTGAATCCTCTTCATCACTACTACTTAAAGAATGCTCTTCTACAGTTATATCTTCATAATGATTATTTTTAGGAAAATATTCTTCAGATCTTTCTATAAATTCTGTTCCATTA"
 					}
 				],
 				"target_id" : 60
@@ -2996,7 +2956,7 @@
 						"seq" : "TATTAAAAACAACAAATAAATTACCAAGGTCATGGAAAAAACTCTTGTTAAATCTATCCATTAGATTTCAAACAATACCTATAGGTGGTTCTATCGAAATCATATCAAAGGATGAGAAAAATATTTCTGTGACACGATCCAGTGAATATAATGCAACAACATATGAGCATTACACATTTCCCAAATGG"
 					},
 					{
-						"seq" : "TATTAAAAACAACAAATAAATTACCAAGGTCATGGAAAAAACTCTTGTTAAATCTATCCATTAGATTTCAAACAATACCTATAGGTGGTTCTATCGAAATCATATCAAAGGATGAGAAAAATATTTCTATGACACGATCCAGTGAATATAATGCAACAACATATGAGCATTACACATTTCCCAAATGG"
+						"seq" : "TATTAAAAACAACAGATAAATTACCAAGGTCATGGAAAAAACTCTTGTTAAATCTATCCATTAGATTTCAAACAATACCTATAGGTGGTTCTATCGAAATCATATCAAAGGATGAGAAAAATATTTCTATGACACGATCCAGTGAATATAATGCAACAACATATGAGCATTACACATTTCCCAAATGG"
 					}
 				],
 				"target_id" : 21
@@ -3005,13 +2965,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TTGACTTCTCCGGGTTGGTTACATTATCATTACAACCAATATTATTAAGGTTAATATTATTTTTATCATTATTATTGTTGTTTTCATTTGTGTGGTTATATAATAACAATGATGTGTCGTCTATTGGATCATTTTGCACAAGGTCAATATCATTAGAATTATGTTTCATATTATTTGTATACATTTTTTTGTAATTATCATTTTTTCTTACT"
-					},
-					{
-						"seq" : "TTGACTTCTCCGGGTTTGTTACATTATCATTACAACCAATATTATTAAGGTTAATACTATTTTTATCATTATTATTGTTGTTTTCATTTGTGTGGTTATATAATAACAATGATGTGTCGTCTATTGGATCATTTTGCACAAGGTCAATATCATTAGAATTATGTTTCATATTATTTGTATACATTTTTTTGTAATTATCATTTTTTCTTACT"
-					},
-					{
 						"seq" : "TTGACTTCTCCGGGTTTGTTACATTATCATTACAACCAATATTATTAAGGTTAATATTATTTTTATCATTATTATTGTTGTTTTCATTTGTGTGGTTATATAATAACAATGATGTGTCGTCTATTGGATCATTTTGCACAAGGTCAATATCATTAGAATTATGTTTCATATTATTTGTATACATTTTTTTGTAATTATCATTTTTTCTTACT"
+					},
+					{
+						"seq" : "TTGACTTCTCCGGGTTTGTTACATTATCATTACAACCAATATTATTAAGGTTAATATTATTTTTATCATTATTATTGTTGTTTTCATTTGTGTGGTTATATAATAACAATGATGTGTCGTCTATTGGATCATTTTGCACAAGGTCAATATCATTAGAATTATGTTTCCTATTATTTGTATACATTTTTTTGTAATTATCATTTTTTCTTACT"
 					}
 				],
 				"target_id" : 18
@@ -3020,10 +2977,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "ATAATTTCAGCTTTTGAATTACATATGTCTGTATTCAAAAATTTTATATCTCTACTCCATATATTTATCTTTACACCCAAAAACAAAGTAATGAAAAAAATAACCCTTTCAT"
+						"seq" : "ATAATTTCACCTTTTGAATTACATATGTCTGTATTCAAAAATTTTATATCTCTACTCCATATATTTATCTTTACACCCAAAAACAAAGCAATGAAAAAAACAACCCTTTCAT"
 					},
 					{
-						"seq" : "ATAATTTCACCTTTTGAATTACATATGTCTGTATTCAAAAATTTTATATCTCTACTCCATATATTTATCTTTACACCCAAAAACAAAGCAATGAAAAAAATAACCCTTTCAT"
+						"seq" : "ATAATTTCACCTTTTGAATTACATATGTCTGTATTCAAAAATTTTATATCTCTACTCCATATATTTATCTTTACACCCAAAAACAAAGTAATGAAAAAAATAACCCTTTCAT"
 					}
 				],
 				"target_id" : 69
@@ -3032,10 +2989,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "GGTCGACTTTTGGTGGTTTAACATTTTGAGCTACGAGATTTTCGACTGATGGCAATCCTACTTTGATTAATTCCTTTAACATAGATTTTGCGTGTCTTTTTACTTCTGATTTGATAT"
+						"seq" : "GGTCGACTTTTGGTGGTTTAACATTTTCAGCTATGAGTTTTTCGACTGATGGCAATCCTACTTTGATTAATTCCTTTAACATAAGTTTTGCGTGTTTTTTTACTTCTGATTTGATAT"
 					},
 					{
-						"seq" : "GGTCGACTTTTGGTGGTTTAACATTTTGAGCTACGAGTTTTTCGAATGATGGCAATCCTACTTTGATTAATTCCTTTAACATAAGTTTTGCGTGGTTTTTTACTTCTGATTTGATAT"
+						"seq" : "GGTCGACTTTTGGTGGTTTAACATTTTCAGCTACGAGTTTTTCGACTGATGGCAATCCTACTTTGATTAATTCCTTTAACATAAGTTTTGCGTGTCTTTTTACTTCTGATTTGATAT"
 					}
 				],
 				"target_id" : 16
@@ -3044,7 +3001,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "ATATCAAGATGGTAGTATTGTTTTAGAGGTTAGTAGTACGAGAGATAAACTTTATGGAGAAGTTGAGTGGGAAGGATATAAATTTGAACTTGTGGATACAGGAGGTTTAGTTTTTGAACAAGAAAAGTTTTCAAAAGAAATAAAGGATCAAATTCTTATGGCTCTAAAAGA"
+						"seq" : "ATATCAAGATGGTAGTATTGTTTTAGATGTTAGTAGTACGAGAGATAAACTTTATGGAGAAGTTGAGTGGGAAGGATATAAATTTGAACTTGTGGATACAGGAGGTTTAGTTTTTGAACAAGAAAAGTTTTCAAAAGAAATAAAGGATCAAATTCTTATGGCTCTAAAAGA"
+					},
+					{
+						"seq" : "ATATCAAGATGGTAGTATTGTTTTAGATGTTAGTAGTACGAGAGATAAACTTTATGGAGAAGTTGAGTGGGAAGGATATAAATTTGAACTTGTGGATACAGGAGGTTTAGTTTTTGAACAAGAAAAGTTTTCAAAAGAAATAAAGGATCAAATTTTTATGGCTCTAAAAGA"
 					}
 				],
 				"target_id" : 14
@@ -3065,10 +3025,16 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TTTAAACTTTGAATCTGTTCAATTAATAACACTTCATCATTGTCTTCGCCTTTTATAATATCTCCATGATTATGTGCTCCTCTAATTAAGGTATCACTAACCTGTTGTTCATCTGTCGCATGAGAACTAGTAGATATATCTGGTTTATTTTTTTTCTTTCTTTTTGTTATTTCTAATTTTTT"
-					},
+						"seq" : "GTATGAACACAAAACCGAAAGAGAGTTTAAAAAAAGATCCGATTTTAATGAAGGAAGAAATAACATAATAAATGTGTCAAATGTAAAGAAAACATGTAATATAGTTAAAAATGATTTAAAGGAATCTAACGAGATAAAAACTAATATAAACACAAGTTCTTATAATTTAT"
+					}
+				],
+				"target_id" : 53
+			},
+			{
+				"microhaplotypes" : 
+				[
 					{
-						"seq" : "TTTAAACTTTGAATCTGTTCAATTAATAACACTTCATCATTGTCTTCTCCTTTTATAATATCTCCATGATTATGTGCTCCTCTAATTAAGGTATCACTAACCTGTTGTTCATCTGTCGCATGAGAACTAGTAGATATATCTGGTTTATTTTTTTTCTTTCTTTTTGTTATTTCTAATTTTTT"
+						"seq" : "TTTAAACTTTGAATCTGTTCAATTAATAACACTTCATCATTGTCTTCGCCTTTTATAATATCTCCATGATTATGTGCTCCTCTAATTAAGGTATCACTAACCTGTTGTTCATCTGTCGCATGAGAACTAGTAGATATATCTGGTTTATTTTTTTTCTTTCTTTTTGTTATTTCTAATTTTTT"
 					},
 					{
 						"seq" : "TTTAAACTTTGAATCTGTTCAATTAATAACACTTCATCATTGTCTTCTCCTTTTATAATATCCCCATGATTATGTGCTCCTCTAATTAAGGTATCACTAACCTGTTGTTCATCTGTCGCATGAGAACTAGTAGATATATCTGGTTTATTTTTTTTCTTTCTTTTTGTTATTTCTAATTTTTT"
@@ -3080,6 +3046,9 @@
 				"microhaplotypes" : 
 				[
 					{
+						"seq" : "ACTGATGTTAATGAAGGCCAAAATGGAAAAAGTTTAACACAAGAAAAAACCCTAAAACAAATTCCTTCGACATCACCAAATAATTTAGAACAAAAATTACAACAAACACATATTTCTTCTTCCCAACAAAAACATTTAATAAAAACTACTCCTACTTCAGATTCAACTACAACTTCATCAAGCTCTTCTGTTCCTCTTACAAAACAATCCCTTCATTC"
+					},
+					{
 						"seq" : "ACTGATGTTAATGAAGGCCAAAATGGAAAACGTTTAACACAAGAAAAAACCCTAAAACAAATTCCTTCGACATCACCAAATAATTTAGAACAAAAATTACAACAAACACATATTTCTTCTTCCCAACAAAAACATTTAATAAAAACTACTCCTACTTCAGATTCAACTACAACTTCATCAAGCTCTTCTGTTCCTCTTACAAAACAATCCCTTCATTC"
 					}
 				],
@@ -3090,9 +3059,6 @@
 				[
 					{
 						"seq" : "ATAGAGTTATTATGTTCGAATTAATGACCAGATTGTTTCGATTTTATACAAAACCAATAGACCTTATTATTACTATGAATACACACAGATATGACACACCTATATTGTTAAAACATTCAAACAGCTTACAACTTATCTTATCAAATCAACAAAA"
-					},
-					{
-						"seq" : "ATAGAGTTATTATGTTCGAATTAATGACCAGATTATTTCGATTTTATACAAAACCAATAGACCTTATTATTACTATGAATACACACAGATATGACACACCTATATTGTTAAAACATTCAAACAGCTTACAACTTATCTTATCAAATCAACAAAA"
 					}
 				],
 				"target_id" : 17
@@ -3101,13 +3067,13 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "GATAAAAAAAGAAAATGTACTAATCTACCTTGTGATTGTATCTTATGTAAAAAAAAGCACAATGTTTGTTATTGTAATATGTGTAAAAAGAAAGAGAAAAATATGAGAGAAGATTTATCGGTTGTAAAATATAATGAATATCCGATTAGTG"
-					},
-					{
-						"seq" : "GATAAAAAAAGAAAATGTAACAATCTACCTTGTGATTGTATCTTATGTAAAAAAAAGCACAATGTTTGTTATTGTAATATGTGTAAAAAGAAAGAAAAAAATATGAGAGAAGATTTATCGGTTGTAAAATATAATGAATATCCTATTAGTG"
+						"seq" : "GATAAAAAAAGAAAATGTAACAATCTACCTTGTGATTGTATCTTATGTAAAAAAAAGCACAATGTTTGTTATTGTAATATGTGTAAAAAGAAAGAAAAAAATATGAGAGAAGATTTATCGGTTGTAAAATATAATGAATATCCGATTAGTG"
 					},
 					{
 						"seq" : "GATAAAAAAAGAAAATGTAATAATCTACTTTGTGATTGTATCTTATGTAAAAAAAAGCACAATGTTTGTTATTGTAATATGTGTAAAAAGAAAGAGAAAAATATGAGAGAAGATTTATCGGTTGTAAAATATAATGAATATCCGATTAGTG"
+					},
+					{
+						"seq" : "GATAAAAAAAGAAAATGTAATAATCTACCTTGTGATTGTATCTTATGTAAAAAAAAGCACAATGTTTGTTATTGTAATATGTGTAAAAAGAAAGAAAAAAATATGAGAGAAGATTTATCGGTTGTAAAATATAATGAATATCCGATTAGTG"
 					}
 				],
 				"target_id" : 84
@@ -3117,6 +3083,9 @@
 				[
 					{
 						"seq" : "TAAAAAAAGCAAACAAAAAGAAAAGAGAATGGAAGATTTAAGTATTGAGGAAAATTTGAAAGAGAAATTAATAAACCTAAATATTCAGAAACAGTATAGTGGTTTCCATATGAAAGAAATGGAGGAACAAAATATTCCTGAATTAAATATTCCACAACTTTCAGCTATTCATAATAGAGAAGATATGA"
+					},
+					{
+						"seq" : "TAAAAAAAGCAAACAAAAAGAAAAGAGAATGGAAGATTTAAGTATTGAGGAAAATTTGAAAGAGAAATTAATAAACCTAAATATTCAGAAACAGTATAGTGGTTTCCATATGAAAGAAATGGAGGAACAAAATATTCCTGAATTAAATATTCCACAACTTTCAGCTACTCATAATAGAGAAGATATGA"
 					}
 				],
 				"target_id" : 9
@@ -3124,6 +3093,9 @@
 			{
 				"microhaplotypes" : 
 				[
+					{
+						"seq" : "TGGTTTTTGTACTTTTTGTCCTTGTGTTGATATCTCTTGTTCATTTTTAGATTGAGTATCTGTTTCACTTTGTGCCTTTACCTTTGATAATACGTTTTTACCGAATAATCCTAAATTTTGGAATA"
+					},
 					{
 						"seq" : "TGGTTTTTGTACTTCTTTTCCTTGTGTTGATATCTCTTGTTCATTTTTAGATTGAGTATCTGTTTCACTTTGTGCCTTTACCTTTGATAATACGTTTTTACCGAATAATCCTAAATTTTGGAATA"
 					}
@@ -3143,7 +3115,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TATATTTTGGTTCAGACAAATGTACGTTACATGAAATATGTGCACTATCATCAACTAAAGAAATATCTAAACTATCTGTAAAAGTATGTTTAGAACTAACATTTGAAGAGAAGTTACATCCGTGTATGACTTTTTTTTCATATTTTGGTTTTAAAACTATTTTATAATTATTATTTTTAA"
+						"seq" : "TATATTTTGGTTCAGACAAATGTACGTTACATGAAATATGTGCATTATCATCAACTAAAGAAATATCTAAACTATCTGTAAAAGTATGTTTAGAACTATCATTTGAAGAGAAGTTACATCCGTGTATGACTTTTTTTTCATATTTTGGTTTTAAAACTATTTTATAATTATTATTTTTAA"
 					}
 				],
 				"target_id" : 11
@@ -3152,10 +3124,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TCATTAAGTAAAAAATTTACGGTATCGACATTAACAGTGTAATAATTTCTTCCTAAATTTAAATGTTCTATATAATTCAAATTTAATACGGTATTTAACCTTTCTTCAAGTATTATCATTGCATTAATTTGAAACATAAGTGAAAAATTATTAGCACTTCTAAAA"
+						"seq" : "TCATTAAGTAAAAAATTTACGGTATCGACATTAACAGTGTAATAATTTCTTCCTAAATTTAAATGTTCTAAATAATTCAAATTTAATACGGTATTTAACCTTTCTTCAAGTATTATCATTGCATTAATTTGAAACATAAGTAAAAAATTATTAGCACTTCTAAAA"
 					},
 					{
-						"seq" : "TCATTAAGTAAAAAATTTACGGTATCGACATTAACAGTGTAATAATTTCTTCCTAAATTTAAATGTTCTAAATAATTCAAATTTAATACGGTATTTAACCTTTCTTCAAGTATTATCATTGCATTAATTTGAAACATAAGTAAAAAATTATTAGCACTTCTAAAA"
+						"seq" : "TCATTAAGTAAAAAATTTACGGTATCGACATTAACAGTGTAATAATGTCTTCCTAAATTTAAATGTTCTAAATAATTCAAATTTAATACGGTATTTAACCTTTCTTCAAGTATTATCATTGCATTAATTTGAAACATAAGTAAAAAATTATTAGCACTTCTAAAA"
 					}
 				],
 				"target_id" : 68
@@ -3173,7 +3145,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "CTATGCTTTATCAAAACAAAGTAATGAAAATGTAATACATTATTCTTGTCGATCTATATGTGCTTTTACAAAAAACCCTAAGGGTTTAGAAGCGGTAAAGGATATCAAGGACTTTGCGAATATTATAAGTAAATCTGTTGGTGATTTGAGTAAAGAGA"
+						"seq" : "CCATGCTTTATCAAAACAAAGTAATGAAAATGTAATACATTATTCTTGTCGATCTATATGTGCTTTTACAAAAAACCCTAAGGGTTTAGAAGCGGTAAAGGATATCAAGGACTTTGCGAATATTATAAGTAAATCTGTTGGTGATTTGAGTAAAGAGA"
 					}
 				],
 				"target_id" : 6
@@ -3182,7 +3154,7 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "GAACTTACTTTAGAAGCCATGAATTCGGCCGATGATCCATTGGAAGCATTTAAAAATACTTTATTAATATTTGATTTTAATTTATCTGAATTTGATAAGGATCCATATATAAATGGTGTGCATGATTTAGCATCTAATATAAAGGATTGTTTAAGAAAAGGAGGTCAGAGTAAAATATAT"
+						"seq" : "GAACTTACTTTAGAAGCCATGAATTCGGCCGATGATCCATTGGAAGCATTTAAAAATACTTTATTAATATTTGATTTTAATTTATCTGAATTTGATAAGGATCCATATGTAAATGGTGTGCATGATTTAGCATCTAATATAAAGGATTGTTTAAGAAAAGGAGGTCACAGTAAAATATAT"
 					}
 				],
 				"target_id" : 47
@@ -3203,7 +3175,7 @@
 						"seq" : "CATAGAAATATGTGCGAAAATTGGGAAAAAAATAAATAACAGGAATTGTTATATAAATTGAATCAAGAATGGCACAAAGAAAATAATACTGGTGACTTTCACACTAGTGATATCACACACAATAGTGGTATTACATACACTAGTGGTAACATACCTAGTGAAAGTAATAGTAGTTATATCCA"
 					},
 					{
-						"seq" : "CATAGAAATGTGTGCGAAAATTGGGAAAAAAATAAATAACAGGAATTGTTAGATAAATTGAATGAAGAATGGCACAAAGAAAATAATACTGGTGACTTTCACACTAGTGATATCACACACAATAGTGGTATTACATACACTAGTGGTAACATACCTAGTGAAAGTAATAGTAGTTATATCTA"
+						"seq" : "CATAGAAATATGTGCGAAAATTGGGAAAAAAATAAATAACAGGAATTGTTATATAAATTGAATCAAGAATGGCACAAAGAAAATAATACTGGTGACTTTCACACTAGTGATATCACACACAATAGTGGTATTACATACAGTAGTGGTAACATACCTAGTGAAAGTAATAGTAGTTATATCCA"
 					}
 				],
 				"target_id" : 55
@@ -3211,12 +3183,6 @@
 			{
 				"microhaplotypes" : 
 				[
-					{
-						"seq" : "ATATTCCGTCAGATATTCAAAATGAATGTATTTGTTCAAAAATAAATGAAGATAGAAATAATGATATGATAAACATATCTGAAATATTTTATCGTTTCATTAAATTTATAACAATGATTGAAATATATTTGTGTGTAATAGAGGAAATTAAAAGGGAAGAATGGGAA"
-					},
-					{
-						"seq" : "ATATTCCGTCAGATATTCAAAATGAATGTATTTGTTCAAAAATAAATGAAGATAGAAATAATGATATGATAAACATATCTGAAATATATTATCGTTTCATTAAATTTATAACAATGATTGAAATATATTTGTGTGTAATAGAGGAAATTAAAAGGGAAGAATGGGAA"
-					},
 					{
 						"seq" : "ATACTCCGTCAGATATTCAAAATGAATGTATTTGTTCAAAAATAAATGAAGATAGAAATAATGATATGATAAACATATCTGAAATATATTATCGTTTCATTAAATTTATAACAATGATTGAAATATATTTGTGTGTAATAGAGGAAATTAAAAGGGAAGAATGGGAA"
 					}
@@ -3227,10 +3193,13 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "TTACAATGTTCTTCGCATTCGAAATTTTTTTCAGGATTACTTGAAAAGCCTTCTGGACAATTACAATATTCATATCCATGAGCATTCTTACAAACACCTTTTCCACAATTTAAAAAACATTTTTCTTCATTTAA"
+						"seq" : "TTACAATGTTCTTCGCATTCGAAATTTTTTTCAGGATTACTTGAAAAGCCTTCTGGACAATTACAATATTCATATCCATGAGCATTGTTACAAACACCTTTTCCACAATTTAAAAAACATTTTTCTTCATTTAA"
 					},
 					{
-						"seq" : "TTACAATGTTCTTCGCATTCGAAATTTTTTTCAGGATTACTTGAAAAGCCTTCTGGACAATTACAATATTCATATCCATGAACATTCTTACAAACACCTTTTCCACAATTTAAAAAACATTTTTCTTCATTTAA"
+						"seq" : "TTACAATGTTCTTCGCATTCGAAATTTTTTTCAGGATTACTTGAAAAGCCTTGTGGACAATTACAATATTCATATCCATGAGCATTCTTACAAACACCTTTTCCACAATTTAAAAAACATTTTTCTTCATTTAA"
+					},
+					{
+						"seq" : "TTACAATGTTCTTCGCATTCGAAATTTTTTTCAGGATTACTTGAAAAGCCTTCTGGACAATTACAATATTCATATCCATGAGCATTCTTACAAACACCTTTTCCACAATTTAAAAAACATTTTTCTTCATTTAA"
 					}
 				],
 				"target_id" : 83
@@ -3238,6 +3207,9 @@
 			{
 				"microhaplotypes" : 
 				[
+					{
+						"seq" : "TAATAATAGTAATATAAAGAATTATTCAGCTGTAGATATATTCTCACCCAAAAAAACTGGAAAGGAATGTATTAAATGTCTCCCAGATAATTTTTGTGAATGCGAATGTAGTTGTAAAAATAAAACAGGTTTTTCAATGAAATATAGACATGCCAGTAAGGGATCTAAAAGATATCGTAAAAAAATG"
+					},
 					{
 						"seq" : "TAATAATAGTAATATAAAGAATTATTCAGCTGTAGATATATTCTCACCCAAAAAAACTGGAAAGGAATGTATTAAATGTCTCCCAGATAATTTTTGTGAATGCGAATGTAGTTGTAAAAATAAAACAGGTTTTTCAATGAAATATAGACATGCCAGTAAGGGATCTAAAAGATATAGTAAAAAAATG"
 					}
@@ -3249,9 +3221,6 @@
 				[
 					{
 						"seq" : "AGTTATAGTGATTCATATAAGGTAAATTGTATTAATTTCTCTGAAGGATTTTGTTGCTGTCATCCAATAAATAATTTAGCACTATTATATGGAGAGTATCAACAAAATCAAGAATCAAAAA"
-					},
-					{
-						"seq" : "AGTAATAGTGATTCATATAAGGTAAATTGTATTAATTTCTCTGAAGGATTTTGTTGCTGTCATCCAATAAATAATTTAGCACTATTATATGGAGAGTATCAACAAAATCAAGAATCAAAAA"
 					}
 				],
 				"target_id" : 88
@@ -3261,9 +3230,6 @@
 				[
 					{
 						"seq" : "CTCCTTCCTTTTCATTCTTTACTTTATTTCTATTAATACACAACTCTCCTTGAGTTAAGAGATTTACGATATTATCAATATTGTTTTCTTTCATATACTTCAACTTTTTACTATTCATTTTTAAAAGATAATTAACCAAGTTACTCATGTTTGTATTAGATGGTATGTTCCCAATTTTTTCGTCTTTTCT"
-					},
-					{
-						"seq" : "CTACTACCTTTTCATTCTTTACTTTATTTCTATTAATACACAACTCTCCTTGAGTTAAGAGATTTACGATATTATCAATATTGTTTTCTTTCATATACTTCAACTTTTTACTATTCATTTTTAAAAGATAATTAACCAAGTTACTCATGTTTGTATTAGATGGTATGTTCCCAATTTTTTCGTCTTTTCT"
 					}
 				],
 				"target_id" : 66
@@ -3271,9 +3237,6 @@
 			{
 				"microhaplotypes" : 
 				[
-					{
-						"seq" : "TATTAAAACTTTTTTTTCTTTCTGTAAAGTTTGTACATTATGTTTTGATGAGTTTTTATTATCTTCATAAAACTTTATATATTTATAAAAATTATTTTGTATAAAATCATTTAATAAAGGTAACATAATTTTTTTAGCTTGATTCAATTCACTACATGAATGTATAT"
-					},
 					{
 						"seq" : "TATTAAAACTTTTTTTTCTTTCTGTAAAGTTTGTACATTATGTTTTGATGAGTTTTGATTATCTTCATAAAACTTTATATATTTATAAAAATTATTTTGTATAAAATCATTTAATAAAGGTAACATAATTTTTTTAGCTTGATTCAATTCACTACATGAATGTATAT"
 					}
@@ -3285,6 +3248,9 @@
 				[
 					{
 						"seq" : "ATACAACTAATAAAGCTCTACGATAAATTTCTTTTTTATTTGATTTAGAAAAAGGAGAAAACCATTGAAACTTTTTGGCTAGATATTTATGGTCTTTATCAAAAATATATTCTGA"
+					},
+					{
+						"seq" : "ATACAACTAATAAAGCTCTACGATAAATTTCTTTTTTATTTGATTTAGAAAAAGGAGAAAACCATTGAAACTTTTTGGCTAGATATTTATGGTCTTTATCAAAAATATAATCTGA"
 					}
 				],
 				"target_id" : 1
@@ -3294,12 +3260,6 @@
 				[
 					{
 						"seq" : "TATATATAAAGTTAAACCTATAAATAATACACTACCTAATAAACTATTCTTATATTTAAAAATAAATATAATACATGTTATTAATCCTTCTATTGTTGCCGGAATAATATACATTAAAACAGAACTCATCAAATTATTAGCACTCTCGGTACCTC"
-					},
-					{
-						"seq" : "TATATAAAGTTAAACCTATAAATAATACACTACCTAATAAACTATTCTTATATTTAAAAATAAATATAATACATGTTATTAATCCTTCTATTGTTGCCGGAATAATATACATTAAAACAGAACTCATCAAATTATTAGCACTCTCGGTACCTC"
-					},
-					{
-						"seq" : "TATATATAAAGTTAAACCTATAAATAATACACTACCTAATAAACTATTCTTATATTTAAAAATAAATATAACACATGTTATTAATCCTTCTATTGTTGCCGGAATAATATACATTAAAACAGAACTCATCAAATTATTAGCACTCTCGGTACCTC"
 					}
 				],
 				"target_id" : 0
@@ -3307,12 +3267,6 @@
 			{
 				"microhaplotypes" : 
 				[
-					{
-						"seq" : "TAATCACCAGTACCATTTTTTTCTGATAAATTAATATTTTTTTGTATAACATCATATTTATCCCTTTTCGTGGTAAGTGCAGTATCCTGTTTTATTATTATATTATCGAATTCATCATGGTGTATATTTCTTTCT"
-					},
-					{
-						"seq" : "TAAACACCAGTACCATTTTTTTCTGATAAATTAATATTTTTTTGTATAACATCATATTTATCCCTTTTCGTGGTAAGTGCAGTATCCTGTTTTATTATTATATTATCGAATTCATCATGGTGTATATTTCTTTCA"
-					},
 					{
 						"seq" : "TAAACACCAGTACCATTTTTTTCTGATAAATTAATATTTTTTTGTATAACATCATATTTATCCCTTTTCGTGGTAAGTGCAGTATCCTGTTTTATTATTATATTATCGAATTCATCATGGTGTATATTTCTTTCT"
 					}
@@ -3326,7 +3280,7 @@
 						"seq" : "AATGAGGTATAATCATTCATTTCGTTGGGTCGATTTGATCTATTTTTAAGGTCCATATATTGAGATGAATCATTATGCATTTTATAATCATGAGGGATATTAGGTGCATGGTATTTAGGGTCTTT"
 					},
 					{
-						"seq" : "AATGAGGTATAATCATCCATTTCGTTGGGTCGATTTGATCTATTTTTAAGGTCCATATATTGAGATGAATCATTATGCATTTTATAATCATGAGGGATATTAGGTGCATGGTATTTAGGGTCTTT"
+						"seq" : "AAAGAGGTATAATCATCCATTTTGTTGGGTCGATTTGATCTATTTTTAAGGTCCATATATTGAGATGAATCATTATGCATTTTATAATCATGAGGGATATTAGGTGCATGGTATTTAGGGTCTTT"
 					}
 				],
 				"target_id" : 12
@@ -3335,13 +3289,10 @@
 				"microhaplotypes" : 
 				[
 					{
-						"seq" : "ATGGAAAAATGGAATATGAAGTATTAAGTGATGATAATATAGTGTATGAAAATATACAACATGATTTATTAAAAACAATAGAAGATGGTGAAGAAATGTTAAAAGGAACTGAAAGGAAGGATAATATAGATATACTGAGGACTCCTGGAAGGGGAGAATATAATATGTGGTCTACTTCTGGACTAGGGTTCTATGAAT"
+						"seq" : "ATGGAAAAATGGAATATGAAGTATTAAGTGATGATAAAATAGTGTATGAAAATATACAACATGATTTATTAAAAACAATAGAAGATGGTGAAGAAATGTTAAAAGGAACTGAAAGGAAGGATAATATAGATATACTGAGGACTCCTGGAAGGGGAGAATATGATATGTGGTCTACTTCTGGACTAGGGTTCTATGAAT"
 					},
 					{
-						"seq" : "ATGGAAAAATGGAATATGAAGTATTAAGTGATGATAAAATAGTGTATGAAAATATACAACATGATTTATTAAAAACAATAGAAGATGATGACGAAATGTTAAAAGGAACTGAAAGGAAGGATAATATAGATATACTGAGGACTCCTGGAAGGGGAGAATATAATATGTGGTCTACTTCTGGACTAGGGTTCTATGAAT"
-					},
-					{
-						"seq" : "ATGGAAAAATGGAATATGAAGTATTAAGTGATGATAAAATAGTGTATGAAAATATACAACATGATTTATTAAAAACAATAGAAGATGATGAAGAAATGTTAAAAGGAACTGAAAGGAAGGATAATATAGATATACTGAGGACTCCTGGAAGGGGAGAATATAATATGTGGTCTACTTCTGGACTAGGGTTCTATGAAT"
+						"seq" : "ATGGAAAAATGGAATATGAAGTATTAAGTGATGATAAAATAGTGTATGAAAATATACAACATGATTTATTAAAAACAATAGAAGATGATGAAGAAATGTTAAAAGGAACTGAAAGGAAGGATAATATAGATATACTGAGGACTCCTGGAAGGGGAGAATATGATATGTGGTCTACTTCTGGACTAGGGTTCTATGAAT"
 					}
 				],
 				"target_id" : 31
@@ -3473,2415 +3424,46 @@
 		},
 		"pmo_version" : "v1.0.0"
 	},
-	"read_counts_by_stage" : 
-	[
-		{
-			"bioinformatics_run_id" : 0,
-			"read_counts_by_experimental_sample_by_stage" : 
-			[
-				{
-					"experiment_sample_id" : 1,
-					"read_counts_for_targets" : 
-					[
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 15285,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 16686,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 32
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2278,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2448,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 31
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1089,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1172,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 13
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 19391,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 20615,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 12
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 10595,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 11645,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 51
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 378,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 408,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 52
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 16586,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 17719,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 50
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 869,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 936,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 0
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 6967,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 7810,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 1
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1010,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1080,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 2
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 20051,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 21658,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 3
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 24537,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 26316,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 4
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 300,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 327,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 5
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 4256,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 4550,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 6
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 958,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1028,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 7
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 31313,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 34255,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 8
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2554,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2798,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 9
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1213,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1271,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 10
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1379,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1462,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 11
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2310,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2421,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 14
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2014,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2126,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 15
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 44681,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 47559,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 16
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 273,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 17
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 384,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 410,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 18
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 507,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 594,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 24
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 226,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 19
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 3895,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 4189,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 20
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1579,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1650,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 21
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 222,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 22
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 170,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 23
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 150,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 25
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1450,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1537,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 26
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 23438,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 25268,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 27
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 128,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 28
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 269,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 29
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 11091,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 11848,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 30
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 6522,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 7079,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 62
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 25203,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 27285,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 63
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 26863,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 29317,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 64
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 13601,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 14870,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 39
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 282,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 298,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 40
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 33117,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 35774,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 41
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 7336,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 8382,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 42
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1995,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2099,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 43
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 982,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1036,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 44
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 6197,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 6765,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 45
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 19559,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 20984,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 46
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1167,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1229,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 47
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 5895,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 6380,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 48
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 733,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 786,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 49
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 3576,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 3856,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 34
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 4213,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 4575,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 33
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 860,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 942,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 54
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 506,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 546,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 55
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 17721,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 19024,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 56
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 516,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 546,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 58
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 283,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 298,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 59
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 7629,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 8260,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 57
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2117,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2224,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 60
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 784,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 826,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 61
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 579,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 622,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 65
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 527,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 563,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 66
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2247,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2384,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 67
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 419,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 444,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 68
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 14122,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 16039,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 69
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1009,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1071,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 80
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 274,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 300,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 35
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 392,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 426,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 37
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 3516,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 3818,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 36
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2317,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2458,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 76
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 16859,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 17934,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 75
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 4739,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 5188,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 81
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 19,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 82
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 371,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 413,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 78
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 537,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 595,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 79
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 11176,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 12286,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 70
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2539,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2663,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 71
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 232,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 72
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 172,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 73
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1901,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2051,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 74
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 22789,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 25098,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 83
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 3622,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 3947,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 84
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2182,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 2296,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 85
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 5344,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 5849,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 86
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1206,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1279,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 87
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 16298,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 17431,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 88
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 106,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 89
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 2857,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 3115,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 90
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 710,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 774,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 38
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 775,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 813,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 91
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 618,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 655,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 92
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 4,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 93
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1545,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1630,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 94
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 170,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 96
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 34752,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 37672,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 95
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1324,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1416,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 97
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 1590,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 1663,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 98
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 46824,
-									"stage" : "final"
-								},
-								{
-									"read_count" : 50413,
-									"stage" : "demultiplexed"
-								}
-							],
-							"target_id" : 99
-						}
-					],
-					"total_raw_count" : 806549
-				},
-				{
-					"experiment_sample_id" : 0,
-					"read_counts_for_targets" : 
-					[
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 31484,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 51
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 24076,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 52
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 35619,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 50
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 33465,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 0
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 32066,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 1
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 38609,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 2
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 48414,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 3
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 36695,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 4
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 25447,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 5
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 21610,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 6
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 42576,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 7
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49627,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 8
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 45595,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 9
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 17913,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 10
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 42252,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 11
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49641,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 12
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49953,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 13
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 33844,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 14
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 25697,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 15
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 46915,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 16
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49966,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 17
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 38480,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 18
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 18960,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 19
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 33183,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 20
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 31147,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 21
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 35366,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 22
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 29611,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 23
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 27075,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 24
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 36178,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 25
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 28161,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 26
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 48791,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 27
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 15826,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 28
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 43173,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 29
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49946,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 30
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 45402,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 31
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 29636,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 32
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 47034,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 33
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49955,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 34
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 16463,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 35
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49802,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 36
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 24539,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 37
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 41530,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 38
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 42184,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 39
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 28057,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 40
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 27730,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 41
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49338,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 42
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 44481,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 43
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49365,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 44
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 39009,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 45
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 37407,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 46
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 29934,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 47
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49971,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 48
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 23924,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 49
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 29713,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 54
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 38625,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 55
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49969,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 56
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 45069,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 57
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 24050,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 58
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 41999,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 59
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 48335,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 60
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 41343,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 61
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49944,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 62
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 37382,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 63
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 44271,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 64
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 24451,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 65
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49746,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 66
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49910,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 67
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 25672,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 68
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 35612,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 69
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49786,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 70
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 29564,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 71
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 21816,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 72
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 36326,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 73
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 29426,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 74
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 31697,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 75
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 44365,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 76
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 5984,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 77
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 37749,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 78
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 46063,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 79
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 37213,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 80
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 43031,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 81
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 14142,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 82
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49745,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 83
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 34260,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 84
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 30666,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 85
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 47489,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 86
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49972,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 87
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 37605,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 88
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 19230,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 89
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49701,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 90
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 41271,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 91
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 32967,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 92
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 3634,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 93
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 28109,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 94
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 37013,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 95
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 29147,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 96
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 34162,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 97
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49728,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 98
-						},
-						{
-							"stages" : 
-							[
-								{
-									"read_count" : 49740,
-									"stage" : "final"
-								}
-							],
-							"target_id" : 99
-						}
-					],
-					"total_raw_count" : 6858739
-				}
-			]
-		}
-	],
 	"sequencing_info" : 
 	[
 		{
-			"library_kit" : "TruSeq i5/i7 barcode primers",
 			"library_layout" : "paired-end",
-			"library_screen" : "40 uL reaction containing 10 uL of bead purified digested product, 18uL of nuclease-free water, 8uL of 5X secondary PCR master mix, and 5 uL of 10 uM TruSeq i5/i7 barcode primers",
 			"library_selection" : "RANDOM",
 			"library_source" : "GENOMIC",
 			"library_strategy" : "WGS",
-			"nucl_acid_amp" : "https://www.paragongenomics.com/targeted-sequencing/amplicon-sequencing/cleanplex-ngs-amplicon-sequencing/",
-			"nucl_acid_amp_date" : "2019-07-15",
-			"nucl_acid_ext" : "https://www.paragongenomics.com/targeted-sequencing/amplicon-sequencing/cleanplex-ngs-amplicon-sequencing/",
-			"nucl_acid_ext_date" : "2019-07-15",
-			"pcr_cond" : "10 min at 95C, 13 cycles for high density samples (or 15 cycles for low density samples) of 15 sec at 98C and 75 sec at 60C",
-			"seq_center" : "UCSF",
-			"seq_date" : "2019-07-15",
-			"seq_instrument_model" : "NextSeq 550 instrument",
+			"seq_date" : "2020-01-01",
+			"seq_instrument_model" : "Multiple",
 			"seq_platform" : "ILLUMINA",
-			"sequencing_info_name" : "Mozambique2018"
+			"sequencing_info_name" : "Pf7Plus"
 		}
 	],
 	"specimen_info" : 
 	[
 		{
-			"collection_country" : "Mozambique",
-			"collection_date" : "2018-06-07",
-			"collector_chief_scientist" : "Greenhouse, Bryan",
-			"geo_admin3" : "Inhassoro",
+			"collection_country" : "India",
+			"collection_date" : "2012-08-01",
+			"collector_chief_scientist" : "Multiple",
+			"geo_admin3" : "NA",
 			"host_taxon_id" : 9606,
-			"lat_lon" : "-21.5535,35.1819",
-			"parasite_density_info" : 
-			[
-				{
-					"density" : 477719.34375,
-					"method" : "qpcr"
-				}
-			],
-			"plate_info" : 
-			{
-				"plate_col" : 12,
-				"plate_name" : "8",
-				"plate_row" : "C"
-			},
-			"project_name" : "MOZ2018",
-			"specimen_collect_device" : "dried blood spot",
-			"specimen_name" : "8025874217",
-			"specimen_store_loc" : "UCSF Greenhouse Lab",
+			"project_name" : "PathWeaverHeome1",
+			"specimen_collect_device" : "Dried Blood spot",
+			"specimen_name" : "5tbx",
+			"specimen_store_loc" : "Multiple",
 			"specimen_taxon_id" : 
 			[
 				5833
 			]
 		},
 		{
-			"collection_country" : "Mozambique",
-			"collection_date" : "2018-04-30",
-			"collector_chief_scientist" : "Greenhouse, Bryan",
-			"geo_admin3" : "Namaacha",
+			"collection_country" : "Papua New Guinea",
+			"collection_date" : "NA",
+			"collector_chief_scientist" : "Multiple",
+			"geo_admin3" : "NA",
 			"host_taxon_id" : 9606,
-			"lat_lon" : "-25.9871,32.0326",
-			"parasite_density_info" : 
-			[
-				{
-					"density" : 875.13098144531205,
-					"method" : "qpcr"
-				}
-			],
-			"plate_info" : 
-			{
-				"plate_col" : 7,
-				"plate_name" : "8",
-				"plate_row" : "B"
-			},
-			"project_name" : "MOZ2018",
-			"specimen_collect_device" : "dried blood spot",
-			"specimen_name" : "8025874266",
-			"specimen_store_loc" : "UCSF Greenhouse Lab",
+			"project_name" : "PathWeaverHeome1",
+			"specimen_collect_device" : "Dried Blood spot",
+			"specimen_name" : "XUC009",
+			"specimen_store_loc" : "Multiple",
 			"specimen_taxon_id" : 
 			[
 				5833
