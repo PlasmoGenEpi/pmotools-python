@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import pandas as pd
 
-from pmotools.pmo_engine.PMOExtractor import PMOExtractor
+from pmotools.pmo_engine.pmo_processor import PMOProcessor
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
@@ -28,7 +28,7 @@ def extract_refseq_of_inserts_of_panels():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # get panel insert locations
-    panel_bed_locs = PMOExtractor.extract_panels_insert_bed_loc(pmo)
+    panel_bed_locs = PMOProcessor.extract_panels_insert_bed_loc(pmo)
 
     # write
     output_target = sys.stdout if args.output == "STDOUT" else open(args.output, "w")

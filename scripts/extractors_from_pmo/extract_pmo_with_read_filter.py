@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import pandas as pd
 
-from pmotools.pmo_engine.PMOExtractor import PMOExtractor
+from pmotools.pmo_engine.pmo_processor import PMOProcessor
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.pmo_engine.pmo_writer import PMOWriter
 from pmotools.utils.small_utils import Utils
@@ -29,7 +29,7 @@ def extract_pmo_with_read_filter():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # extract
-    pmo_out = PMOExtractor.extract_from_pmo_with_read_filter(pmo, args.read_count_minimum)
+    pmo_out = PMOProcessor.extract_from_pmo_with_read_filter(pmo, args.read_count_minimum)
 
     # write out the extracted
     args.output = PMOWriter.add_pmo_extension_as_needed(args.output, args.file.endswith('.gz') or args.output.endswith(".gz"))

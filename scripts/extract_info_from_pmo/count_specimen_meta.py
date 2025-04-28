@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import pandas as pd
 
-from pmotools.pmo_engine.PMOExtractor import PMOExtractor
+from pmotools.pmo_engine.pmo_processor import PMOProcessor
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
@@ -37,7 +37,7 @@ def count_specimen_meta():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # count sub-fields
-    counts_df = PMOExtractor.count_specimen_meta_subfields(pmo, meta_fields_toks)
+    counts_df = PMOProcessor.count_specimen_meta_subfields(pmo, meta_fields_toks)
 
     #write out
     counts_df.to_csv(sys.stdout if "STDOUT" == args.output else args.output, sep = output_delim, index=False)
