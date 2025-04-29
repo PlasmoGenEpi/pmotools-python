@@ -255,6 +255,148 @@ class PMOProcessor:
 
         return ret.sort_values(["bioinformatics_run_id", "target", "mhap_id"]).reset_index(drop=True)
 
+
+    @staticmethod
+    def extract_alleles_per_sample_table(pmodata,
+                                       additional_specimen_info_fields: list[str] = None,
+                                       additional_experiment_infos_fields: list[str] = None,
+                                       additional_microhap_fields: list[str] = None,
+                                       additional_representative_infos_fields: list[str] = None,
+                                       default_base_col_names: list[str] = ["sampleID", "locus", "allele"]) -> pd.DataFrame:
+        """
+        Create a pd.Dataframe of sample, target and allele. Can optionally add on any other additional fields
+
+        :param output_delimiter: the delimiter used to write the output file
+        :param pmodata: the data to write from
+        :param additional_specimen_info_fields: any additional fields to write from the specimen_info object
+        :param additional_experiment_infos_fields: any additional fields to write from the experiment_samples object
+        :param additional_microhap_fields: any additional fields to write from the microhap object
+        :param additional_representative_infos_fields: any additional fields to write from the representative_microhaplotype_sequences object
+        :param default_base_col_names: The default column name for the sample, locus and allele
+        :return: pandas dataframe
+        """
+
+        # check input
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                               "etc/portable_microhaplotype_object.schema.json")) as f:
+            checker = PMOChecker(json.load(f))
+            checker.check_for_required_base_fields(pmodata)
+
+        # Check to see if at least 1 sample has supplied meta field
+        # samples without this meta field will have NA
+        if additional_specimen_info_fields is not None:
+            # Find meta fields that have at least some data
+            meta_fields_with_data = {
+                metafield
+                for metafield in additional_specimen_info_fields
+                for specimen_data in pmodata["specimen_info"]
+                if metafield in specimen_data
+            }
+
+            # Determine meta fields with no samples having data
+            meta_fields_with_no_samples = set(additional_specimen_info_fields) - meta_fields_with_data
+
+            if meta_fields_with_no_samples:
+                raise Exception(f"No specimen_info have data for fields: {', '.join(meta_fields_with_no_samples)}")
+        # Check to see if at least 1 sample has supplied meta field
+        # samples without this meta field will have NA
+        if additional_experiment_infos_fields is not None:
+            # Find meta fields that have at least some data
+            meta_fields_with_data = {
+                metafield
+                for metafield in additional_experiment_infos_fields
+                for experiment_data in pmodata["experiment_info"]
+                if metafield in experiment_data
+            }
+            # Determine meta fields with no samples having data
+            meta_fields_with_no_samples = set(additional_experiment_infos_fields) - meta_fields_with_data
+
+            if meta_fields_with_no_samples:
+                raise Exception(f"No experiment_infos have data for fields: {', '.join(meta_fields_with_no_samples)}")
+
+        # Check to see if at least 1 haplotype has this field
+        # samples without this meta field will have NA
+        if additional_microhap_fields is not None:
+            # Find meta fields that have at least some data
+            additional_microhap_fields_with_data = {
+                additional_microhap_field
+                for additional_microhap_field in additional_microhap_fields
+                for microhaplotypes_detected in pmodata["microhaplotypes_detected"]
+                for experiment_samples_data in microhaplotypes_detected["experiment_samples"]
+                for target_data in experiment_samples_data["target_results"]
+                for microhap_data in target_data["haps"]
+                if additional_microhap_field in microhap_data
+            }
+            # Determine meta fields with no samples having data
+            additional_microhap_fields_with_no_samples = set(
+                additional_microhap_fields) - additional_microhap_fields_with_data
+
+            if additional_microhap_fields_with_no_samples:
+                raise Exception(
+                    f"No microhaplotypes_detected have data for fields: {', '.join(additional_microhap_fields_with_no_samples)}")
+        # Check to see if at least 1 haplotype has this field
+        # samples without this meta field will have NA
+        if additional_representative_infos_fields is not None:
+            # Find meta fields that have at least some data
+            additional_microhap_fields_with_data = {
+                additional_microhap_field
+                for additional_microhap_field in additional_representative_infos_fields
+                for target_data in pmodata["microhaplotypes_info"]["targets"]
+                for microhap_data in target_data["microhaplotypes"]
+                if additional_microhap_field in microhap_data
+            }
+            # Determine meta fields with no samples having data
+            additional_microhap_fields_with_no_samples = set(
+                additional_representative_infos_fields) - additional_microhap_fields_with_data
+
+            if additional_microhap_fields_with_no_samples:
+                raise Exception(
+                    f"No representative_microhaplotype_sequences have data for fields: {', '.join(additional_microhap_fields_with_no_samples)}")
+
+        if len(default_base_col_names) != 3:
+            raise Exception("Must have 3 default columns for allele counts, not {}".format(len(default_base_col_names)))
+
+        rows = []
+        specimen_info = pmodata["specimen_info"]
+        target_info = pmodata["target_info"]
+        experiment_infos = pmodata["experiment_info"]
+        detected_microhaps = pmodata["microhaplotypes_detected"]
+        rep_haps = pmodata["microhaplotypes_info"]["targets"]
+        for bio_run_for_detected_microhaps in detected_microhaps:
+            bioinformatics_run_id = bio_run_for_detected_microhaps["bioinformatics_run_id"]
+            for sample_data in bio_run_for_detected_microhaps["experiment_samples"]:
+                experiment_sample_id = sample_data["experiment_sample_id"]
+                specimen_id = experiment_infos[experiment_sample_id]["specimen_id"]
+                experimental_meta = experiment_infos[experiment_sample_id]
+                specimen_meta = specimen_info[specimen_id]
+                for target_data in sample_data["target_results"]:
+                    target_name = target_info[rep_haps[target_data["mhaps_target_id"]]["target_id"]]["target_name"]
+                    for microhap_data in target_data["haps"]:
+                        allele_id = microhap_data["mhap_id"]
+                        #print(rep_haps[target_data["mhaps_target_id"]])
+                        rep_hap_meta = rep_haps[target_data["mhaps_target_id"]]["microhaplotypes"][allele_id]
+                        row = {
+                            "bioinformatics_run_id"  : bioinformatics_run_id,
+                            default_base_col_names[0]: specimen_meta["specimen_name"],
+                            default_base_col_names[1]: target_name,
+                            default_base_col_names[2]: allele_id
+                        }
+                        if additional_experiment_infos_fields is not None:
+                            for field in additional_experiment_infos_fields:
+                                row[field] =experimental_meta.get(field, "NA")
+                        if additional_specimen_info_fields is not None:
+                            for field in additional_specimen_info_fields:
+                                row[field] = specimen_meta.get(field, "NA")
+                        if additional_microhap_fields is not None:
+                            for field in additional_microhap_fields:
+                                row[field] = microhap_data.get(field, "NA")
+                        if additional_representative_infos_fields is not None:
+                            for field in additional_representative_infos_fields:
+                                row[field] = rep_hap_meta.get(field, "NA")
+                        rows.append(row)
+        # Build and return DataFrame
+        return pd.DataFrame(rows)
+
     @staticmethod
     def write_alleles_per_sample_table(pmodata,
                                        bioid: str,

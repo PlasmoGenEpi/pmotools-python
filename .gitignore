@@ -165,3 +165,4 @@ docs/api/generated
 *.DS_Store*
 tests/test_pmo_engine/*.bed
 tests/test_pmo_engine/*.json*
+tests/test_pmo_engine/*.csv
