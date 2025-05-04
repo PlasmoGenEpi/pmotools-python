@@ -4,7 +4,7 @@ import os, argparse, json
 import jsonschema
 
 
-from pmotools.pmo_engine.PMOReader import PMOReader
+from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.utils.small_utils import Utils
 
