@@ -27,55 +27,65 @@ def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = Fal
 
 
 def experiment_info_table_to_json(
-        # TODO: update this schema
         contents: pd.DataFrame,
-        experiment_sample_id_col: str = 'experiment_sample_id',
-        sequencing_info_id: str = 'sequencing_info_id',
-        specimen_id: str = 'specimen_id',
-        panel_id: str = 'panel_id',
-        accession: str = None,
-        plate_col: int = None,
-        plate_name: str = None,
-        plate_row: str = None,
-        additional_experiment_cols: list | None = None,
+        experiment_sample_name_col: str = 'experiment_sample_name',
+        # TODO: This gets converted to ID on merge
+        sequencing_info_name_col: str = 'sequencing_info_name',
+        # TODO: This gets converted to ID on merge
+        specimen_name_col: str = 'specimen_name',
+        # TODO: This gets converted to ID on merge
+        panel_name_col: str = 'panel_name',
+        accession_col: str = None,
+        extraction_plate_name_col: str = None,
+        extraction_plate_col_col: int = None,
+        extraction_plate_row_col: str = None,
+        sequencing_plate_name_col: str = None,
+        sequencing_plate_col_col: int = None,
+        sequencing_plate_row_col: str = None,
+        additional_experiment_info_cols: list | None = None,
 ):
     """
     Converts a DataFrame containing experiment information into JSON.
 
     :param contents (pd.DataFrame): Input DataFrame containing experiment data.
-    :param experiment_sample_id_col (str): Column name for experiment sample IDs. Default: experiment_sample_id
-    :param sequencing_info_id (str): Column name for sequencing information IDs. Default: sequencing_info_id
-    :param specimen_id (str): Column name for specimen IDs. Default: specimen_id
-    :param panel_id (str): Column name for panel IDs. Default: panel_id
-    :param accession (Optional[str]): Column name for accession information.
-    :param plate_col (Optional[int]): Column index for plate information.
-    :param plate_name (Optional[str]): Column name for plate names.
-    :param plate_row (Optional[str]): Column name for plate rows.
-    :param additional_experiment_cols (Optional[List[str], None]]): Additional column names to include.
+    :param experiment_sample_name_col (str): Column name for experiment sample names. Default: experiment_sample_name
+    :param sequencing_info_name_col (str): Column name for sequencing information IDs. Default: sequencing_info_name
+    :param specimen_name_col (str): Column name for specimen IDs. Default: specimen_name
+    :param panel_name_col (str): Column name for panel IDs. Default: panel_name
+    :param accession_col (Optional[str]): Column name for accession information.
+    :param extraction_plate_name_col (Optional[str]): Column name containing plate name for extraction.
+    :param extraction_plate_col_col (Optional[int]): Column name for col of sample on extraction plate.
+    :param extraction_plate_row_col (Optional[str]): Column name for row of sample on extraction plate.
+    :param sequencing_plate_name_col (Optional[str]): Column name containing plate name for sequencing.
+    :param sequencing_plate_col_col (Optional[int]): Column name for col of sample on sequencing plate.
+    :param sequencing_plate_row_col (Optional[str]): Column name for row of sample on sequencing plate.
+    :param additional_experiment_info_cols (Optional[List[str], None]]): Additional column names to include.
 
     :return: JSON format where keys are `experiment_sample_id` and values are corresponding row data.
     """
     copy_contents = contents.copy()
     selected_columns = [
-        experiment_sample_id_col,
-        sequencing_info_id,
-        specimen_id,
-        panel_id
+        experiment_sample_name_col,
+        sequencing_info_name_col,
+        specimen_name_col,
+        panel_name_col
     ]
 
     # Add optional columns
-    optional_columns = [accession, plate_col, plate_name, plate_row]
+    optional_columns = [accession_col, extraction_plate_name_col, extraction_plate_col_col,
+                        extraction_plate_row_col, sequencing_plate_name_col, sequencing_plate_col_col, sequencing_plate_row_col]
     selected_columns += [col for col in optional_columns if col]
 
     # Include additional user-defined columns if provided
-    if additional_experiment_cols:
-        selected_columns += additional_experiment_cols
-
+    if additional_experiment_info_cols:
+        selected_columns += additional_experiment_info_cols
+    # TODO: Think about what to do with the plate information is stored. The current way would need to make a table for each sample and for each type of plate. Should be flexible
     # Subset to columns
     copy_contents = copy_contents[selected_columns]
 
     # Convert to JSON
-    copy_contents.set_index(experiment_sample_id_col, drop=False, inplace=True)
+    copy_contents.set_index(experiment_sample_name_col,
+                            drop=False, inplace=True)
     meta_json = pandas_table_to_json(copy_contents, return_indexed_dict=True)
     return meta_json
 
