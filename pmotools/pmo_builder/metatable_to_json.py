@@ -93,27 +93,32 @@ def experiment_info_table_to_json(
 def specimen_info_table_to_json(
         contents: pd.DataFrame,
         specimen_name_col: str = 'specimen_name',
-        samp_taxon_id_col: int = 'samp_taxon_id',
+        specimen_taxon_id_col: int = 'specimen_taxon_id',
+        host_taxon_id_col: int = 'host_taxon_id',
         collection_date_col: str = 'collection_date',
         collection_country_col: str = 'collection_country',
-        collector_col: str = 'collector',
-        samp_store_loc_col: str = 'samp_store_loc',
-        samp_collect_device_col: str = 'samp_collect_device',
         project_name_col: str = 'project_name',
         alternate_identifiers_col: str = None,
-        host_date_of_birth_col: str = None,
+        collector_chief_scientist_col: str = None,
+        drug_usage_col: str = None,
+        env_broad_scale_col: str = None,
+        env_local_scale_col: str = None,
+        env_medium_col: str = None,
         geo_admin1_col: str = None,
         geo_admin2_col: str = None,
         geo_admin3_col: str = None,
-        host_taxon_id_col: int = None,
-        individual_id_col: str = None,
+        host_age_col: float = None,
+        host_sex_col: float = None,
+        host_subject_id: str = None,
         lat_lon_col: str = None,
-        parasite_density_info_col: float = None,
+        parasite_density_col: float = None,
+        parasite_density_method_col: str = None,
         plate_col_col: int = None,
         plate_name_col: str = None,
         plate_row_col: str = None,
-        sample_comments_col: str = None,
-        host_sex_col: str = None,
+        specimen_collect_device_col: str = None,
+        specimen_comments_col: str = None,
+        specimen_store_loc_col: str = None,
         additional_specimen_cols: list | None = None,
 ):
     """
@@ -149,19 +154,35 @@ def specimen_info_table_to_json(
     copy_contents = contents.copy()
     selected_columns = [
         specimen_name_col,
-        samp_taxon_id_col,
+        specimen_taxon_id_col,
+        host_taxon_id_col,
         collection_date_col,
         collection_country_col,
-        collector_col,
-        samp_store_loc_col,
-        samp_collect_device_col,
-        project_name_col
+        project_name_col,
     ]
-
     # Add optional columns
-    optional_columns = [alternate_identifiers_col, host_date_of_birth_col, geo_admin1_col, geo_admin2_col, geo_admin3_col,
-                        host_taxon_id_col, individual_id_col, lat_lon_col, parasite_density_info_col, plate_col_col,
-                        plate_name_col, plate_row_col, sample_comments_col, host_sex_col]
+    optional_columns = [alternate_identifiers_col,
+                        collector_chief_scientist_col,
+                        drug_usage_col,
+                        env_broad_scale_col,
+                        env_local_scale_col,
+                        env_medium_col,
+                        geo_admin1_col,
+                        geo_admin2_col,
+                        geo_admin3_col,
+                        host_age_col,
+                        host_sex_col,
+                        host_subject_id,
+                        lat_lon_col,
+                        parasite_density_col,
+                        parasite_density_method_col,
+                        plate_col_col,
+                        plate_name_col,
+                        plate_row_col,
+                        specimen_collect_device_col,
+                        specimen_comments_col,
+                        specimen_store_loc_col]
+
     selected_columns += [col for col in optional_columns if col]
     # Include additional user-defined columns if provided
     if additional_specimen_cols:
@@ -170,6 +191,7 @@ def specimen_info_table_to_json(
     # Subset to columns
     copy_contents = copy_contents[selected_columns]
 
-    copy_contents.set_index(specimen_name_col, drop=False, inplace=True)
     meta_json = pandas_table_to_json(copy_contents, return_indexed_dict=True)
+
+    # TODO: sort out the parasitemia and plate sections
     return meta_json
