@@ -126,27 +126,32 @@ def specimen_info_table_to_json(
 
     :param contents (pd.DataFrame): The input DataFrame containing experiment data.
     :param specimen_name_col (str): The column name for specimen sample IDs. Default: specimen_id
-    :param samp_taxon_id_col (int): NCBI taxonomy number of the organism. Default: samp_taxon_id
+    :param specimen_taxon_id_col (int): NCBI taxonomy number of the organism. Default: samp_taxon_id
+    :param host_taxon_id_col (int): NCBI taxonomy number of the host. Default: host_taxon_id
     :param collection_date_col (string): Date of the sample collection. Default: collection_date
     :param collection_country_col (string): Name of country collected in (admin level 0). Default : collection_country
-    :param collector_col (string): Name of the primary person managing the specimen. Default: collector
-    :param samp_store_loc_col (string): Sample storage site. Default: samp_store_loc
-    :param samp_collect_device_col (string): The way the sample was collected. Default : samp_collect_device
     :param project_name_col (string): Name of the project. Default : project_name
     :param alternate_identifiers_col (Optional[str]): List of optional alternative names for the samples
-    :param host_date_of_birth_col (Optional[str]): Host date of birth (YYYY or YYYY-MM or YYYY-MM-DD) 
+    :param collector_chief_scientist_col (Optional[str]): Name of the primary person managing the specimen. Default: collector
+    :param drug_usage_col (Optional[str]): Any drug used by subject and the frequency of usage; can include multiple drugs used
+    :param env_broad_scale_col (Optional[str]): The broad environment from which the specimen was collected
+    :param env_local_scale_col (Optional[str]): The local environment from which the specimen was collected
+    :param env_medium_col (Optional[str]): The environment medium from which the specimen was collected from
     :param geo_admin1_col (Optional[str]): Geographical admin level 1
     :param geo_admin2_col (Optional[str]): Geographical admin level 2
     :param geo_admin3_col (Optional[str]): Geographical admin level 3
-    :param host_taxon_id_col (Optional[int]): NCBI taxonomy number of the host
-    :param individual_id_col (Optional[str]): ID for the individual a specimen was collected from
+    :param host_age_col (Optional[float]): The age in years of the person
+    :param host_sex_col (Optional[str]): If specimen is from a person, the sex of that person
+    :param host_subject_id (Optional[str]): ID for the individual a specimen was collected from
     :param lat_lon_col (Optional[str]): Latitude and longitude of the collection site
-    :param parasite_density_info_col (Optional[float]): The parasite density
+    :param parasite_density_col (Optional[float]): The parasite density in parasites per microliters
+    :param parasite_density_method_col (Optional[str]): The method of how this density was obtained
     :param plate_col_col (Optional[int]): Column the specimen was in in the plate
     :param plate_name_col (Optional[str]): Name of plate the specimen was in
     :param plate_row_col (Optional[str]): Row the specimen was in in the plate
-    :param sample_comments_col (Optional[str]): Additional comments about the sample
-    :param host_sex_col (Optional[str]): if specimen is from a person, the sex of that person
+    :param specimen_collect_device_col (Optional[str]): The way the specimen was collected
+    :param specimen_comments_col (Optional[str]): Additional comments about the specimen
+    :param specimen_store_loc_col (Optional[str]): Specimen storage site
     :param additional_specimen_cols (Optional[List[str], None]]): Additional column names to include
 
     :return: JSON format where keys are `specimen_name_col` and values are corresponding row data.
