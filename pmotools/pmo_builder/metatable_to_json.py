@@ -94,7 +94,7 @@ def specimen_info_table_to_json(
         contents: pd.DataFrame,
         specimen_name_col: str = 'specimen_name',
         specimen_taxon_id_col: int = 'specimen_taxon_id',
-        host_taxon_id_col: int = 'host_taxon_id',
+        host_taxon_id_col: str = 'host_taxon_id',
         collection_date_col: str = 'collection_date',
         collection_country_col: str = 'collection_country',
         project_name_col: str = 'project_name',
@@ -107,15 +107,16 @@ def specimen_info_table_to_json(
         geo_admin1_col: str = None,
         geo_admin2_col: str = None,
         geo_admin3_col: str = None,
-        host_age_col: float = None,
-        host_sex_col: float = None,
+        host_age_col: str = None,
+        host_sex_col: str = None,
         host_subject_id: str = None,
         lat_lon_col: str = None,
-        parasite_density_col: float = None,
+        parasite_density_col: str = None,
         parasite_density_method_col: str = None,
-        plate_col_col: int = None,
+        plate_col_col: str = None,
         plate_name_col: str = None,
         plate_row_col: str = None,
+        plate_position_col: str = None,
         specimen_collect_device_col: str = None,
         specimen_comments_col: str = None,
         specimen_store_loc_col: str = None,
@@ -125,9 +126,9 @@ def specimen_info_table_to_json(
     Converts a DataFrame containing specimen information into JSON.
 
     :param contents (pd.DataFrame): The input DataFrame containing experiment data.
-    :param specimen_name_col (str): The column name for specimen sample IDs. Default: specimen_id
-    :param specimen_taxon_id_col (int): NCBI taxonomy number of the organism. Default: samp_taxon_id
-    :param host_taxon_id_col (int): NCBI taxonomy number of the host. Default: host_taxon_id
+    :param specimen_name_col (string): The column name for specimen sample IDs. Default: specimen_id
+    :param specimen_taxon_id_col (string): NCBI taxonomy number of the organism. Default: samp_taxon_id
+    :param host_taxon_id_col (string): NCBI taxonomy number of the host. Default: host_taxon_id
     :param collection_date_col (string): Date of the sample collection. Default: collection_date
     :param collection_country_col (string): Name of country collected in (admin level 0). Default : collection_country
     :param project_name_col (string): Name of the project. Default : project_name
@@ -140,15 +141,16 @@ def specimen_info_table_to_json(
     :param geo_admin1_col (Optional[str]): Geographical admin level 1
     :param geo_admin2_col (Optional[str]): Geographical admin level 2
     :param geo_admin3_col (Optional[str]): Geographical admin level 3
-    :param host_age_col (Optional[float]): The age in years of the person
+    :param host_age_col (Optional[str]): The age in years of the person
     :param host_sex_col (Optional[str]): If specimen is from a person, the sex of that person
     :param host_subject_id (Optional[str]): ID for the individual a specimen was collected from
     :param lat_lon_col (Optional[str]): Latitude and longitude of the collection site
-    :param parasite_density_col (Optional[float]): The parasite density in parasites per microliters
-    :param parasite_density_method_col (Optional[str]): The method of how this density was obtained
-    :param plate_col_col (Optional[int]): Column the specimen was in in the plate
+    :param parasite_density_col (Optional[str, list[str]]): The parasite density in parasites per microliters
+    :param parasite_density_method_col (Optional[str or list[str]]): The method of how the density was obtained. If set parasite_density_col must also be specified. 
+    :param plate_col_col (Optional[str]): Column the specimen was in in the plate. If set plate_row_col must also be specified. 
     :param plate_name_col (Optional[str]): Name of plate the specimen was in
-    :param plate_row_col (Optional[str]): Row the specimen was in in the plate
+    :param plate_row_col (Optional[str]): Row the specimen was in in the plate. If set plate_col_col must also be specified. 
+    :param plate_position_col (Optional[str]): Position of the specimen on the plate (e.g. A01). Can't be set if plate_col_col and plate_row_col are specified. 
     :param specimen_collect_device_col (Optional[str]): The way the specimen was collected
     :param specimen_comments_col (Optional[str]): Additional comments about the specimen
     :param specimen_store_loc_col (Optional[str]): Specimen storage site
@@ -157,46 +159,199 @@ def specimen_info_table_to_json(
     :return: JSON format where keys are `specimen_name_col` and values are corresponding row data.
     """
     copy_contents = contents.copy()
-    selected_columns = [
-        specimen_name_col,
-        specimen_taxon_id_col,
-        host_taxon_id_col,
-        collection_date_col,
-        collection_country_col,
-        project_name_col,
-    ]
-    # Add optional columns
-    optional_columns = [alternate_identifiers_col,
-                        collector_chief_scientist_col,
-                        drug_usage_col,
-                        env_broad_scale_col,
-                        env_local_scale_col,
-                        env_medium_col,
-                        geo_admin1_col,
-                        geo_admin2_col,
-                        geo_admin3_col,
-                        host_age_col,
-                        host_sex_col,
-                        host_subject_id,
-                        lat_lon_col,
-                        parasite_density_col,
-                        parasite_density_method_col,
-                        plate_col_col,
-                        plate_name_col,
-                        plate_row_col,
-                        specimen_collect_device_col,
-                        specimen_comments_col,
-                        specimen_store_loc_col]
 
-    selected_columns += [col for col in optional_columns if col]
+    column_mapping = {
+        specimen_name_col: "specimen_name",
+        specimen_taxon_id_col: "specimen_taxon_id",
+        host_taxon_id_col: "host_taxon_id",
+        collection_date_col: "collection_date",
+        collection_country_col: "collection_country",
+        project_name_col: "project_name",
+    }
+
+    optional_column_mapping = {
+        alternate_identifiers_col: "alternate_identifiers",
+        collector_chief_scientist_col: "collector_chief_scientist",
+        drug_usage_col: "drug_usage",
+        env_broad_scale_col: "env_broad_scale",
+        env_local_scale_col: "env_local_scale",
+        env_medium_col: "env_medium",
+        geo_admin1_col: "geo_admin1",
+        geo_admin2_col: "geo_admin2",
+        geo_admin3_col: "geo_admin3",
+        host_age_col: "host_age",
+        host_sex_col: "host_sex",
+        host_subject_id: "host_subject_id",
+        lat_lon_col: "lat_lon",
+        specimen_collect_device_col: "specimen_collect_device",
+        specimen_comments_col: "specimen_comments",
+        specimen_store_loc_col: "specimen_store_loc",
+    }
+
+    column_mapping.update(
+        {k: v for k, v in optional_column_mapping.items() if k is not None})
+
     # Include additional user-defined columns if provided
     if additional_specimen_cols:
-        selected_columns += additional_specimen_cols
+        # selected_columns += additional_specimen_cols
+        for col in additional_specimen_cols:
+            column_mapping[col] = col
 
-    # Subset to columns
-    copy_contents = copy_contents[selected_columns]
+    # Check column selection
+    check_unique_columns([specimen_name_col,
+                         specimen_taxon_id_col,
+                         host_taxon_id_col,
+                         collection_date_col,
+                         collection_country_col,
+                         project_name_col,
+                         alternate_identifiers_col,
+                         collector_chief_scientist_col,
+                         drug_usage_col,
+                         env_broad_scale_col,
+                         env_local_scale_col,
+                         env_medium_col,
+                         geo_admin1_col,
+                         geo_admin2_col,
+                         geo_admin3_col,
+                         host_age_col,
+                         host_sex_col,
+                         host_subject_id,
+                         lat_lon_col,
+                         plate_col_col,
+                         plate_name_col,
+                         plate_row_col,
+                         plate_position_col,
+                         specimen_collect_device_col,
+                         specimen_comments_col,
+                         specimen_store_loc_col,])
+    check_columns_exist(copy_contents, list(column_mapping.keys()))
 
-    meta_json = pandas_table_to_json(copy_contents, return_indexed_dict=True)
+    # Rename and subset columns
+    selected_pmo_fields = list(column_mapping.values())
+    copy_contents = copy_contents.rename(columns=column_mapping)
+    subset_contents = copy_contents[selected_pmo_fields]
+    meta_json = pandas_table_to_json(subset_contents, return_indexed_dict=True)
 
-    # TODO: sort out the parasitemia and plate sections
+    meta_json = add_parasite_density_info(
+        parasite_density_col, parasite_density_method_col, meta_json, copy_contents, "specimen_name")
+
+    meta_json = add_plate_info(plate_col_col, plate_name_col,
+                               plate_row_col, plate_position_col, meta_json, copy_contents, "specimen_name")
+    return meta_json
+
+
+def check_unique_columns(columns):
+    cols_to_check = [col for col in columns if col is not None]
+    if len(cols_to_check) != len(set(cols_to_check)):
+        raise ValueError(f"Selected columns must be unique.")
+
+
+def check_columns_exist(df, columns):
+    missing_cols = []
+    df_columns = df.columns
+    for col in columns:
+        if col not in df_columns:
+            missing_cols.append(col)
+    if missing_cols:
+        raise ValueError(
+            f"The following columns are not in the DataFrame: {missing_cols}")
+
+
+def add_plate_info(plate_col_col, plate_name_col, plate_row_col, plate_position_col, meta_json, df, specimen_name_col):
+    if all(col is None for col in [plate_col_col, plate_name_col, plate_row_col, plate_position_col]):
+        return meta_json
+
+    # If one of col or row are set both must be
+    if (plate_row_col is None) != (plate_col_col is None):
+        raise ValueError(
+            'If one of plate_row_col and plate_col_col is set, then both must be.')
+    # Check position isn't specified in multiple ways
+    if plate_position_col:
+        if plate_col_col:
+            raise ValueError(
+                'Position in a plate can be specified by setting plate_col_col and plate_row_col or plate_position, but both were set.')
+        else:
+            plate_row_col = "plate_row"
+            plate_col_col = "plate_col"
+
+            try:
+                df[plate_row_col] = df[plate_position_col].str.extract(
+                    r"(?i)^([A-H])")[0].str.upper()
+                df[plate_col_col] = df[plate_position_col].str.extract(
+                    r"(?i)^[A-H]0*([1-9]|1[0-2])")[0].astype(int)
+            except:
+                raise ValueError(
+                    f"Values in '{plate_position_col}' must start with a single letter A-H followed by a two-digit number 01-12.")
+
+    for _, row in meta_json.items():
+        content_row = df[df[specimen_name_col] == row[specimen_name_col]]
+        plate_name_val = content_row[plate_name_col].iloc[0] if plate_name_col else None
+        plate_row_val = content_row[plate_row_col].iloc[0] if plate_row_col else None
+        plate_col_val = content_row[plate_col_col].iloc[0] if plate_col_col else None
+        plate_info = {}
+        if plate_name_val:
+            plate_info["plate_name"] = plate_name_val
+        if plate_row_val:
+            plate_info["plate_row"] = plate_row_val
+        if plate_col_val:
+            plate_info["plate_col"] = plate_col_val
+
+        if plate_info:
+            row["plate_info"] = plate_info
+    return meta_json
+
+
+def add_parasite_density_info(parasite_density_col, parasite_density_method_col, meta_json, df, specimen_name_col):
+    density_method_pairs = []
+    if parasite_density_col is None and parasite_density_method_col is None:
+        pass
+
+    elif isinstance(parasite_density_col, list):
+        if parasite_density_method_col is None:
+            density_method_pairs = [(d_col, None)
+                                    for d_col in parasite_density_col]
+        elif isinstance(parasite_density_method_col, list):
+            if len(parasite_density_col) != len(parasite_density_method_col):
+                raise ValueError(
+                    "If both parasite_density_col and parasite_density_method_col are lists, they must be the same length.")
+            density_method_pairs = list(
+                zip(parasite_density_col, parasite_density_method_col))
+        else:
+            raise TypeError(
+                "If parasite_density_col is a list, parasite_density_method_col must be a list or None.")
+
+    elif isinstance(parasite_density_col, str):
+        if parasite_density_method_col is None:
+            density_method_pairs = [(parasite_density_col, None)]
+        elif isinstance(parasite_density_method_col, str):
+            density_method_pairs = [
+                (parasite_density_col, parasite_density_method_col)]
+        else:
+            raise TypeError(
+                "If parasite_density_col is a string, parasite_density_method_col must be a string or None.")
+
+    elif parasite_density_col is None:
+        if isinstance(parasite_density_method_col, list) or isinstance(parasite_density_method_col, str):
+            raise ValueError(
+                "parasite_density_method_col is set but parasite_density_col is None. Cannot proceed.")
+
+    else:
+        raise TypeError(
+            "Invalid types for parasite_density_col and parasite_density_method_col.")
+
+    # Add parasite density info to meta_json
+    for _, row in meta_json.items():
+        content_row = df[df[specimen_name_col]
+                         == row[specimen_name_col]]
+        density_infos = []
+        for density_col, method_col in density_method_pairs:
+            density_val = content_row[density_col].iloc[0] if density_col else None
+            method_val = content_row[method_col].iloc[0] if method_col else None
+            if density_val is not None:
+                info = {"density": density_val}
+                if method_val is not None:
+                    info["method"] = method_val
+                density_infos.append(info)
+        if density_infos:
+            row["parasite_density_info"] = density_infos
     return meta_json
