@@ -29,19 +29,18 @@ def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = Fal
 def experiment_info_table_to_json(
         contents: pd.DataFrame,
         experiment_sample_name_col: str = 'experiment_sample_name',
-        # TODO: This gets converted to ID on merge
         sequencing_info_name_col: str = 'sequencing_info_name',
-        # TODO: This gets converted to ID on merge
         specimen_name_col: str = 'specimen_name',
-        # TODO: This gets converted to ID on merge
         panel_name_col: str = 'panel_name',
         accession_col: str = None,
         extraction_plate_name_col: str = None,
         extraction_plate_col_col: int = None,
         extraction_plate_row_col: str = None,
+        extraction_plate_position_col: str = None,
         sequencing_plate_name_col: str = None,
         sequencing_plate_col_col: int = None,
         sequencing_plate_row_col: str = None,
+        sequencing_plate_position_col: str = None,
         additional_experiment_info_cols: list | None = None,
 ):
     """
@@ -49,44 +48,57 @@ def experiment_info_table_to_json(
 
     :param contents (pd.DataFrame): Input DataFrame containing experiment data.
     :param experiment_sample_name_col (str): Column name for experiment sample names. Default: experiment_sample_name
-    :param sequencing_info_name_col (str): Column name for sequencing information IDs. Default: sequencing_info_name
+    :param sequencing_info_name_col (str): Column name for sequencing information names. Default: sequencing_info_name
     :param specimen_name_col (str): Column name for specimen IDs. Default: specimen_name
     :param panel_name_col (str): Column name for panel IDs. Default: panel_name
     :param accession_col (Optional[str]): Column name for accession information.
     :param extraction_plate_name_col (Optional[str]): Column name containing plate name for extraction.
     :param extraction_plate_col_col (Optional[int]): Column name for col of sample on extraction plate.
     :param extraction_plate_row_col (Optional[str]): Column name for row of sample on extraction plate.
+    :param extraction_plate_position_col (Optional[str]): Column name for position on extraction plate (e.g. A01). Can't be set if extraction_plate_col_col and extraction_plate_row_col are specified. 
     :param sequencing_plate_name_col (Optional[str]): Column name containing plate name for sequencing.
     :param sequencing_plate_col_col (Optional[int]): Column name for col of sample on sequencing plate.
     :param sequencing_plate_row_col (Optional[str]): Column name for row of sample on sequencing plate.
+    :param sequencing_plate_position_col (Optional[str]): Column name for position on sequencing plate (e.g. A01). Can't be set if sequencing_plate_col_col and sequencing_plate_row_col are specified. 
     :param additional_experiment_info_cols (Optional[List[str], None]]): Additional column names to include.
 
     :return: JSON format where keys are `experiment_sample_id` and values are corresponding row data.
     """
     copy_contents = contents.copy()
-    selected_columns = [
-        experiment_sample_name_col,
-        sequencing_info_name_col,
-        specimen_name_col,
-        panel_name_col
-    ]
+    column_mapping = {
+        experiment_sample_name_col: "experiment_sample_name",
+        sequencing_info_name_col: "sequencing_info_name",
+        specimen_name_col: "specimen_name",
+        panel_name_col: "panel_name"
+    }
 
     # Add optional columns
-    optional_columns = [accession_col, extraction_plate_name_col, extraction_plate_col_col,
-                        extraction_plate_row_col, sequencing_plate_name_col, sequencing_plate_col_col, sequencing_plate_row_col]
-    selected_columns += [col for col in optional_columns if col]
+    optional_column_mapping = {accession_col: "accession"}
+    column_mapping.update(
+        {k: v for k, v in optional_column_mapping.items() if k is not None})
 
     # Include additional user-defined columns if provided
     if additional_experiment_info_cols:
-        selected_columns += additional_experiment_info_cols
-    # TODO: Think about what to do with the plate information is stored. The current way would need to make a table for each sample and for each type of plate. Should be flexible
-    # Subset to columns
-    copy_contents = copy_contents[selected_columns]
+        for col in additional_experiment_info_cols:
+            column_mapping[col] = col
 
-    # Convert to JSON
-    copy_contents.set_index(experiment_sample_name_col,
-                            drop=False, inplace=True)
-    meta_json = pandas_table_to_json(copy_contents, return_indexed_dict=True)
+    # Checks on columns selected
+    check_unique_columns([experiment_sample_name_col, sequencing_info_name_col,
+                         specimen_name_col, panel_name_col, accession_col])
+    check_columns_exist(copy_contents, list(column_mapping.keys()))
+
+    # Rename and subset columns
+    selected_pmo_fields = list(column_mapping.values())
+    copy_contents = copy_contents.rename(columns=column_mapping)
+    subset_contents = copy_contents[selected_pmo_fields]
+
+    # Convert to format
+    meta_json = pandas_table_to_json(subset_contents, return_indexed_dict=True)
+    meta_json = add_plate_info(extraction_plate_col_col, extraction_plate_name_col,
+                               extraction_plate_row_col, extraction_plate_position_col, meta_json, copy_contents, "specimen_name", "extraction_plate_info")
+    meta_json = add_plate_info(sequencing_plate_col_col, sequencing_plate_name_col,
+                               sequencing_plate_row_col, sequencing_plate_position_col, meta_json, copy_contents, "specimen_name", "sequencing_prep_plate_info")
+
     return meta_json
 
 
@@ -257,19 +269,19 @@ def check_columns_exist(df, columns):
             f"The following columns are not in the DataFrame: {missing_cols}")
 
 
-def add_plate_info(plate_col_col, plate_name_col, plate_row_col, plate_position_col, meta_json, df, specimen_name_col):
+def add_plate_info(plate_col_col, plate_name_col, plate_row_col, plate_position_col, meta_json, df, specimen_name_col, entry_name="plate_info"):
     if all(col is None for col in [plate_col_col, plate_name_col, plate_row_col, plate_position_col]):
         return meta_json
 
     # If one of col or row are set both must be
     if (plate_row_col is None) != (plate_col_col is None):
         raise ValueError(
-            'If one of plate_row_col and plate_col_col is set, then both must be.')
+            'If either plate row or column is set, then both must be.')
     # Check position isn't specified in multiple ways
     if plate_position_col:
         if plate_col_col:
             raise ValueError(
-                'Position in a plate can be specified by setting plate_col_col and plate_row_col or plate_position, but both were set.')
+                'Plate position can be specified using either row and col, or position, but not both.')
         else:
             plate_row_col = "plate_row"
             plate_col_col = "plate_col"
@@ -281,7 +293,7 @@ def add_plate_info(plate_col_col, plate_name_col, plate_row_col, plate_position_
                     r"(?i)^[A-H]0*([1-9]|1[0-2])")[0].astype(int)
             except:
                 raise ValueError(
-                    f"Values in '{plate_position_col}' must start with a single letter A-H followed by a two-digit number 01-12.")
+                    f"Values in '{plate_position_col}' must start with a single letter A-H/a-h followed by number 1-12.")
 
     for _, row in meta_json.items():
         content_row = df[df[specimen_name_col] == row[specimen_name_col]]
@@ -297,7 +309,7 @@ def add_plate_info(plate_col_col, plate_name_col, plate_row_col, plate_position_
             plate_info["plate_col"] = plate_col_val
 
         if plate_info:
-            row["plate_info"] = plate_info
+            row[entry_name] = plate_info
     return meta_json
 
 
