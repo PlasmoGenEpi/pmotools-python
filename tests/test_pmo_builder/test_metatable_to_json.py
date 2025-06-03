@@ -382,6 +382,12 @@ class TestMetatableToJson(unittest.TestCase):
         self.assertEqual(
             "The following columns are not in the DataFrame: ['drug_usage']", str(context.exception))
 
+    def test_specimen_info_table_to_json_fails_without_df(self):
+        with self.assertRaises(ValueError) as context:
+            specimen_info_table_to_json('test')
+        self.assertEqual(
+            "contents must be a pandas DataFrame.", str(context.exception))
+
     def test_experiment_info_table_to_json_default(self):
         df = pd.DataFrame({
             'experiment_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
@@ -493,6 +499,12 @@ class TestMetatableToJson(unittest.TestCase):
             experiment_info_table_to_json(df)
         self.assertEqual(
             "The following columns are not in the DataFrame: ['specimen_name', 'panel_name']", str(context.exception))
+
+    def test_experiment_info_table_to_json_fails_without_df(self):
+        with self.assertRaises(ValueError) as context:
+            specimen_info_table_to_json('test')
+        self.assertEqual(
+            "contents must be a pandas DataFrame.", str(context.exception))
 
 
 if __name__ == '__main__':

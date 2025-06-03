@@ -34,11 +34,11 @@ def experiment_info_table_to_json(
         panel_name_col: str = 'panel_name',
         accession_col: str = None,
         extraction_plate_name_col: str = None,
-        extraction_plate_col_col: int = None,
+        extraction_plate_col_col: str = None,
         extraction_plate_row_col: str = None,
         extraction_plate_position_col: str = None,
         sequencing_plate_name_col: str = None,
-        sequencing_plate_col_col: int = None,
+        sequencing_plate_col_col: str = None,
         sequencing_plate_row_col: str = None,
         sequencing_plate_position_col: str = None,
         additional_experiment_info_cols: list | None = None,
@@ -53,17 +53,21 @@ def experiment_info_table_to_json(
     :param panel_name_col (str): Column name for panel IDs. Default: panel_name
     :param accession_col (Optional[str]): Column name for accession information.
     :param extraction_plate_name_col (Optional[str]): Column name containing plate name for extraction.
-    :param extraction_plate_col_col (Optional[int]): Column name for col of sample on extraction plate.
+    :param extraction_plate_col_col (Optional[str]): Column name for col of sample on extraction plate.
     :param extraction_plate_row_col (Optional[str]): Column name for row of sample on extraction plate.
     :param extraction_plate_position_col (Optional[str]): Column name for position on extraction plate (e.g. A01). Can't be set if extraction_plate_col_col and extraction_plate_row_col are specified. 
     :param sequencing_plate_name_col (Optional[str]): Column name containing plate name for sequencing.
-    :param sequencing_plate_col_col (Optional[int]): Column name for col of sample on sequencing plate.
+    :param sequencing_plate_col_col (Optional[str]): Column name for col of sample on sequencing plate.
     :param sequencing_plate_row_col (Optional[str]): Column name for row of sample on sequencing plate.
     :param sequencing_plate_position_col (Optional[str]): Column name for position on sequencing plate (e.g. A01). Can't be set if sequencing_plate_col_col and sequencing_plate_row_col are specified. 
     :param additional_experiment_info_cols (Optional[List[str], None]]): Additional column names to include.
 
     :return: JSON format where keys are `experiment_sample_id` and values are corresponding row data.
     """
+    # Check contents is a dataframe
+    if not isinstance(contents, pd.DataFrame):
+        raise ValueError("contents must be a pandas DataFrame.")
+
     copy_contents = contents.copy()
     column_mapping = {
         experiment_sample_name_col: "experiment_sample_name",
@@ -170,6 +174,10 @@ def specimen_info_table_to_json(
 
     :return: JSON format where keys are `specimen_name_col` and values are corresponding row data.
     """
+    # Check contents is a dataframe
+    if not isinstance(contents, pd.DataFrame):
+        raise ValueError("contents must be a pandas DataFrame.")
+
     copy_contents = contents.copy()
 
     column_mapping = {
