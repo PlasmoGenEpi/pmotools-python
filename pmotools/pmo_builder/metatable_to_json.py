@@ -93,7 +93,7 @@ def experiment_info_table_to_json(
     subset_contents = copy_contents[selected_pmo_fields]
 
     # Convert to format
-    meta_json = pandas_table_to_json(subset_contents, return_indexed_dict=True)
+    meta_json = pandas_table_to_json(subset_contents)
     meta_json = add_plate_info(extraction_plate_col_col, extraction_plate_name_col,
                                extraction_plate_row_col, extraction_plate_position_col, meta_json, copy_contents, "specimen_name", "extraction_plate_info")
     meta_json = add_plate_info(sequencing_plate_col_col, sequencing_plate_name_col,
@@ -242,8 +242,7 @@ def specimen_info_table_to_json(
     selected_pmo_fields = list(column_mapping.values())
     copy_contents = copy_contents.rename(columns=column_mapping)
     subset_contents = copy_contents[selected_pmo_fields]
-    meta_json = pandas_table_to_json(subset_contents, return_indexed_dict=True)
-
+    meta_json = pandas_table_to_json(subset_contents)
     meta_json = add_parasite_density_info(
         parasite_density_col, parasite_density_method_col, meta_json, copy_contents, "specimen_name")
 
@@ -290,15 +289,16 @@ def add_plate_info(plate_col_col, plate_name_col, plate_row_col, plate_position_
                 df[plate_row_col] = df[plate_position_col].str.extract(
                     r"(?i)^([A-H])")[0].str.upper()
                 df[plate_col_col] = df[plate_position_col].str.extract(
-                    r"(?i)^[A-H]0*([1-9]|1[0-2])")[0].astype(int)
+                    r"(?i)^[A-H]0*([1-9]|1[0-2])$")[0].astype(int)
             except:
                 raise ValueError(
                     f"Values in '{plate_position_col}' must start with a single letter A-H/a-h followed by number 1-12.")
 
-    for _, row in meta_json.items():
+    for row in meta_json:
         content_row = df[df[specimen_name_col] == row[specimen_name_col]]
         plate_name_val = content_row[plate_name_col].iloc[0] if plate_name_col else None
-        plate_row_val = content_row[plate_row_col].iloc[0] if plate_row_col else None
+        plate_row_val = content_row[plate_row_col].iloc[0].upper(
+        ) if plate_row_col else None
         plate_col_val = content_row[plate_col_col].iloc[0] if plate_col_col else None
         plate_info = {}
         if plate_name_val:
@@ -352,7 +352,7 @@ def add_parasite_density_info(parasite_density_col, parasite_density_method_col,
             "Invalid types for parasite_density_col and parasite_density_method_col.")
 
     # Add parasite density info to meta_json
-    for _, row in meta_json.items():
+    for row in meta_json:
         content_row = df[df[specimen_name_col]
                          == row[specimen_name_col]]
         density_infos = []
