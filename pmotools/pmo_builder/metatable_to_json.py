@@ -8,7 +8,7 @@ def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = Fal
     Convert a pandas dataframe table into a json dictionary, if there is an index column create a dictionary with the keys being the index
 
     :param contents: the dataframe to be converted
-    :param index_col: whether to return an indexed dictionary
+    :param return_indexed_dict: whether to return an indexed dictionary
     :return: a dictionary of the input table data
     """
 
@@ -137,6 +137,8 @@ def specimen_info_table_to_json(
         specimen_comments_col: str = None,
         specimen_store_loc_col: str = None,
         additional_specimen_cols: list | None = None,
+        list_values_specimen_columns: list | None = ["alternate_identifiers_col"],
+        list_values_specimen_columns_delimiter : str = ","
 ):
     """
     Converts a DataFrame containing specimen information into JSON.
@@ -171,6 +173,8 @@ def specimen_info_table_to_json(
     :param specimen_comments_col (Optional[str]): Additional comments about the specimen
     :param specimen_store_loc_col (Optional[str]): Specimen storage site
     :param additional_specimen_cols (Optional[List[str], None]]): Additional column names to include
+    :param list_values_specimen_columns (Optional[List[str], None]): columns that contain values that could be list, are delimited by the argument list_values_specimen_columns_delimiter
+    :param list_values_specimen_columns_delimiter (','): delimiter between list_values_specimen_columns
 
     :return: JSON format where keys are `specimen_name_col` and values are corresponding row data.
     """
@@ -256,6 +260,10 @@ def specimen_info_table_to_json(
 
     meta_json = add_plate_info(plate_col_col, plate_name_col,
                                plate_row_col, plate_position_col, meta_json, copy_contents, "specimen_name")
+
+    for col in list_values_specimen_columns:
+        if col in meta_json:
+            meta_json[col] = meta_json[col].split(list_values_specimen_columns_delimiter)
     return meta_json
 
 
