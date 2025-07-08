@@ -19,27 +19,163 @@ class PMOProcessor:
     A class to extract info out of a loaded PMO object
     """
 
+    @staticmethod
+    def get_index_key_of_specimen_names(pmodata):
+        """
+        Get key of specimen_name to index in pmodata["specimen_info"]
+        :param pmodata: the PMO to get indexes from
+        :return: a dictionary of indexes keyed by specimen_name
+        """
+        ret = {}
+        for idx, specimen in enumerate(pmodata["specimen_info"]):
+            ret[specimen["specimen_name"]] = idx
+        return ret
 
     @staticmethod
-    def count_targets_per_sample(pmo, minimum_total_target_read_sum: float = 0.0) -> pd.DataFrame:
+    def get_index_key_of_experiment_sample_names(pmodata):
+        """
+        Get key of experiment_sample_name to index in pmodata["experiment_info"]
+        :param pmodata: the PMO to get indexes from
+        :return: a dictionary of indexes keyed by experiment_sample_name
+        """
+        ret = {}
+        for idx, experiment in enumerate(pmodata["experiment_info"]):
+            ret[experiment["experiment_sample_name"]] = idx
+        return ret
+
+    @staticmethod
+    def get_index_key_of_target_names(pmodata):
+        """
+        Get key of target_name to index in pmodata["target_info"]
+        :param pmodata: the PMO to get indexes from
+        :return: a dictionary of indexes keyed by target_name
+        """
+        ret = {}
+        for idx, target in enumerate(pmodata["target_info"]):
+            ret[target["target_name"]] = idx
+        return ret
+
+    @staticmethod
+    def get_index_key_of_panel_names(pmodata):
+        """
+        Get key of panel_name to index in pmodata["panel_info"]
+        :param pmodata: the PMO to get indexes from
+        :return: a dictionary of indexes keyed by panel_name
+        """
+        ret = {}
+        for idx, panel in enumerate(pmodata["panel_info"]):
+            ret[panel["panel_name"]] = idx
+        return ret
+
+    @staticmethod
+    def get_index_key_of_target_in_microhaplotypes_info(pmodata):
+        """
+        Get key of target_name to index for the representative microhaplotypes for the target_name in pmodata["microhaplotypes_info"]
+        :param pmodata: the PMO to get indexes from
+        :return: a dictionary of indexes keyed by target_name
+        """
+        ret = {}
+        for idx, microhaplotypes_info_for_target in enumerate(pmodata["microhaplotypes_info"]["targets"]):
+            ret[pmodata["target_info"][microhaplotypes_info_for_target["target_id"]]["target_name"]] = idx
+        return ret
+
+    @staticmethod
+    def get_index_of_specimen_names(pmodata, specimen_names: list[str]):
+        """
+        Get index of specimen_name in pmodata["specimen_info"]
+        :param pmodata: the PMO to get indexes from
+        :param specimen_names: a list of specimen_names
+        :return: the index of specimen_names in pmodata["specimen_info"] returned in the same order as specimen_names
+        """
+        specimen_key = PMOProcessor.get_index_key_of_specimen_names(pmodata)
+        return [specimen_key[name] for name in specimen_names]
+
+    @staticmethod
+    def get_index_of_experiment_sample_names(pmodata, experiment_sample_names: list[str]):
+        """
+        Get index of experiment_sample_name in pmodata["experiment_info"]
+        :param pmodata: the PMO to get indexes from
+        :param experiment_sample_names: a list of experiment_sample_names
+        :return: the index of experiment_sample_names in pmodata["experiment_info"] returned in the same order as experiment_sample_names
+        """
+        experiment_sample_key = PMOProcessor.get_index_key_of_experiment_sample_names(pmodata)
+        return [experiment_sample_key[name] for name in experiment_sample_names]
+
+    @staticmethod
+    def get_index_of_target_names(pmodata, target_names: list[str]):
+        """
+        Get index of target_name in pmodata["target_info"]
+        :param pmodata: the PMO to get indexes from
+        :param target_names: a list of target_names
+        :return: the index of target_names in pmodata["target_info"] returned in the same order as target_names
+        """
+        target_key = PMOProcessor.get_index_key_of_target_names(pmodata)
+        return [target_key[name] for name in target_names]
+
+    @staticmethod
+    def get_index_of_panel_names(pmodata, panel_names: list[str]):
+        """
+        Get index of panel_name in pmodata["panel_info"]
+        :param pmodata: the PMO to get indexes from
+        :param panel_names: a list of panel_names
+        :return: the index of panel_names in pmodata["panel_info"] returned in the same order as panel_names
+        """
+        panel_key = PMOProcessor.get_index_key_of_panel_names(pmodata)
+        return [panel_key[name] for name in panel_names]
+
+    @staticmethod
+    def get_index_of_target_in_microhaplotypes_info(pmodata, target_names: list[str]):
+        """
+        Get index of target_name in pmodata["microhaplotypes_info"]["targets"]
+        :param pmodata: the PMO to get indexes from
+        :param target_names: a list of target_names
+        :return: the index of target_names in pmodata["microhaplotypes_info"]["targets"] returned in the same order as target_names
+        """
+        microhap_target_key = PMOProcessor.get_index_key_of_target_in_microhaplotypes_info(pmodata)
+        return [microhap_target_key[name] for name in target_names]
+
+    @staticmethod
+    def get_experiment_ids_for_specimen_ids(pmodata, specimen_ids: set[int]):
+        """
+        get a dictionary that lists the experiment_ids for a specimen_id
+        :param pmodata: the PMO to get indexes from
+        :param specimen_ids: a set of specimen_ids
+        :return: a dictionary that lists the experiment_ids for a specimen_id
+        """
+        ret = defaultdict(set)
+        # check to make sure the supplied specimens actually exist within the data
+        warnings = []
+        for specimen_id in specimen_ids:
+            if specimen_id > len(pmodata["specimen_info"]):
+                warnings.append(f"{specimen_id} id is beyond the length of specimen_info: " + str(len(pmodata["specimen_info"])) )
+        if len(warnings) > 0:
+            raise Exception("\n".join(warnings))
+        for experiment_sample_id, experiment_sample in enumerate(pmodata["experiment_info"]):
+            if experiment_sample["specimen_id"] in specimen_ids:
+                ret[experiment_sample["specimen_id"]].add(experiment_sample_id)
+        return ret
+
+
+    @staticmethod
+    def count_targets_per_sample(pmodata, min_reads: float = 0.0) -> pd.DataFrame:
         """
         Count the number of targets per experimental sample, with optional collapsing across bioinformatics runs.
 
-        :param pmo: the loaded PMO
-        :param minimum_total_target_read_sum: a minimum number of reads for a target in order for it to be counted
+        :param pmodata: the loaded PMO
+        :param min_reads: a minimum number of reads for a target in order for it to be counted
         :return: a pandas DataFrame, columns = [bioinformatics_run_id, experiment_sample_name, target_number]
         """
         records = []
-        experiment_info = pmo["experiment_info"]
+        experiment_info = pmodata["experiment_info"]
 
-        for result in pmo["microhaplotypes_detected"]:
+        for result in pmodata["microhaplotypes_detected"]:
             run_id = result["bioinformatics_run_id"]
             for sample in result["experiment_samples"]:
                 sample_id = sample["experiment_sample_id"]
                 sample_name = experiment_info[sample_id]["experiment_sample_name"]
 
                 target_count = sum(
-                    sum(hap["reads"] for hap in target["haps"]) >= minimum_total_target_read_sum
+                    sum(hap["reads"] for hap in target["haps"]) >= min_reads
                     for target in sample["target_results"]
                 )
 
@@ -53,29 +189,29 @@ class PMOProcessor:
         return pd.DataFrame.from_records(records)
 
     @staticmethod
-    def count_samples_per_target(pmo, minimum_total_target_read_sum: float = 0.0,
+    def count_samples_per_target(pmodata, min_reads: float = 0.0,
                                  collapse_across_runs: bool = False) -> pd.DataFrame:
         """
         Count the number of experimental samples per target, optionally collapsing across bioinformatics runs.
 
-        :param pmo: the loaded PMO
-        :param minimum_total_target_read_sum: the minimum number of reads for a target in order for it to be counted
+        :param pmodata: the loaded PMO
+        :param min_reads: the minimum number of reads for a target in order for it to be counted
         :param collapse_across_runs: if True, sums across bioinformatics_run_id per target
         :return: a pandas dataframe
                  - if collapse_across_runs=False: columns = [bioinformatics_run_id, target_name, sample_count]
                  - if collapse_across_runs=True:  columns = [target_name, sample_count]
         """
         records = []
-        microhap_targets = pmo["microhaplotypes_info"]["targets"]
-        target_info = pmo["target_info"]
+        microhap_targets = pmodata["microhaplotypes_info"]["targets"]
+        target_info = pmodata["target_info"]
 
-        for result in pmo["microhaplotypes_detected"]:
+        for result in pmodata["microhaplotypes_detected"]:
             run_id = result["bioinformatics_run_id"]
             target_sample_counts = defaultdict(int)
 
             for sample in result["experiment_samples"]:
                 for target_result in sample["target_results"]:
-                    if sum(hap["reads"] for hap in target_result["haps"]) >= minimum_total_target_read_sum:
+                    if sum(hap["reads"] for hap in target_result["haps"]) >= min_reads:
                         mhaps_target_id = target_result["mhaps_target_id"]
                         target_id = microhap_targets[mhaps_target_id]["target_id"]
                         target_name = target_info[target_id]["target_name"]
@@ -97,19 +233,20 @@ class PMOProcessor:
         return ret.sort_values(by=["bioinformatics_run_id", "target_name"]).reset_index(drop=True)
 
     @staticmethod
-    def list_experiment_sample_ids_per_specimen_id(pmo) -> pandas.DataFrame:
+    def list_experiment_sample_ids_per_specimen_id(pmodata, select_specimen_ids: list[str] = None) -> pandas.DataFrame:
         """
         List the experiment_sample_id per specimen_id
-        :param pmo: the PMO
+        :param pmodata: the PMO
+        :param select_specimen_ids: a list of specimen_ids to select, if None, all specimen_ids are used
         :return: a pandas dataframe with 3 columns, specimen_id, experiment_sample_id, and experiment_sample_id_count(the number of experiment_sample_ids per specimen_id)
         """
-
         exp_samples_per_spec = defaultdict(list[str])
-        for exp_sample in pmo["experiment_info"]:
-            exp_samples_per_spec[pmo["specimen_info"][exp_sample["specimen_id"]]["specimen_name"]].append(exp_sample["experiment_sample_name"])
+        for exp_sample in pmodata["experiment_info"]:
+            if select_specimen_ids is None or exp_sample["specimen_id"] in select_specimen_ids:
+                exp_samples_per_spec[pmodata["specimen_info"][exp_sample["specimen_id"]]["specimen_name"]].append(exp_sample["experiment_sample_name"])
 
         specimens_not_list = []
-        for specimen in pmo["specimen_info"]:
+        for specimen in pmodata["specimen_info"]:
             if specimen["specimen_name"] not in exp_samples_per_spec:
                 specimens_not_list.append(specimen["specimen_name"])
 
@@ -128,37 +265,36 @@ class PMOProcessor:
         return df
 
     @staticmethod
-    def count_specimen_meta_fields(pmo) -> pd.DataFrame:
+    def count_specimen_per_meta_fields(pmodata) -> pd.DataFrame:
         """
         Get a pandas dataframe of counts of the meta fields within the specimen_info section
-
-        :param pmo: the pmo to count from
+        :param pmodata: the pmo to count from
         :return: a pandas dataframe of counts with the following columns: field, present_in_specimens_count, total_specimen_count
         """
         field_counts = defaultdict(int)
-        for specimen in pmo["specimen_info"]:
+        for specimen in pmodata["specimen_info"]:
             for meta_field in specimen:
                 field_counts[meta_field] += 1
         counts_df = pd.DataFrame(columns=["field", "present_in_specimens_count", "total_specimen_count"])
         for field_name, field_count in field_counts.items():
             counts_df.loc[len(counts_df)] = {"field": field_name, "present_in_specimens_count": field_count,
-                                             "total_specimen_count": len(pmo["specimen_info"])}
+                                             "total_specimen_count": len(pmodata["specimen_info"])}
         return counts_df
 
     @staticmethod
-    def count_specimen_meta_subfields(pmo, meta_fields: list[str]) -> pd.DataFrame:
+    def count_specimen_by_field_value(pmodata, meta_fields: list[str]) -> pd.DataFrame:
         """
         Count the values of the meta fields. If a specimen doesn't have a field, it is marked as 'NA'.
         Groups are combinations of all given meta fields.
 
-        :param pmo: the pmo to count from
+        :param pmodata: the pmo to count from
         :param meta_fields: the fields to get counts for
         :return: counts for all sub-field groups, with metadata
         """
-        total_specimens = len(pmo["specimen_info"])
+        total_specimens = len(pmodata["specimen_info"])
         field_counts = defaultdict(int)
 
-        for specimen in pmo["specimen_info"]:
+        for specimen in pmodata["specimen_info"]:
             key = tuple(str(specimen.get(field, "NA")) for field in meta_fields)
             field_counts[key] += 1
 
@@ -399,10 +535,10 @@ class PMOProcessor:
 
 
     @staticmethod
-    def extract_from_pmo_select_experiment_sample_ids(pmo, experiment_sample_ids: set[int]):
+    def filter_pmo_by_experiment_sample_ids(pmodata, experiment_sample_ids: set[int]):
         """
-        Extract out of a load PMO the data associated with select specimen_ids
-        :param pmo:the loaded PMO
+        Extract out of a load PMO the data associated with select experiment_sample_ids
+        :param pmodata:the loaded PMO
         :param experiment_sample_ids: the experiment_sample_ids to extract the info for
         :return: a new PMO with only the data associated with the supplied experiment_sample_ids
         """
@@ -415,24 +551,24 @@ class PMOProcessor:
         # check to make sure the supplied specimens actually exist within the data
         warnings = []
         for experiment_sample_id in experiment_sample_ids:
-            if experiment_sample_id > len(pmo["experiment_info"]):
-                warnings.append(f"{experiment_sample_id} id is beyond the length of experiment_info: " + str(len(pmo["experiment_info"])) )
+            if experiment_sample_id > len(pmodata["experiment_info"]):
+                warnings.append(f"{experiment_sample_id} id is beyond the length of experiment_info: " + str(len(pmodata["experiment_info"])) )
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
 
-        pmo_out = {"pmo_header": pmo["pmo_header"],
-                   "panel_info": pmo["panel_info"],
-                   "sequencing_info": pmo["sequencing_info"],
-                   "target_info": pmo["target_info"],
-                   "targeted_genomes": pmo["targeted_genomes"],
-                   "microhaplotypes_info": pmo["microhaplotypes_info"],
-                   "bioinformatics_methods_info": pmo["bioinformatics_methods_info"],
-                   "bioinformatics_run_info": pmo["bioinformatics_run_info"],
+        pmo_out = {"pmo_header": pmodata["pmo_header"],
+                   "panel_info": pmodata["panel_info"],
+                   "sequencing_info": pmodata["sequencing_info"],
+                   "target_info": pmodata["target_info"],
+                   "targeted_genomes": pmodata["targeted_genomes"],
+                   "microhaplotypes_info": pmodata["microhaplotypes_info"],
+                   "bioinformatics_methods_info": pmodata["bioinformatics_methods_info"],
+                   "bioinformatics_run_info": pmodata["bioinformatics_run_info"],
                    "specimen_info" : [],
                    "experiment_info" : [],
                    "microhaplotypes_detected" : []
                    }
-        if "read_counts_by_stage" in pmo:
+        if "read_counts_by_stage" in pmodata:
             pmo_out["read_counts_by_stage"] = []
         # need to update read_counts_by_stage, experiment_info, specimen_info, microhaplotypes_detected
 
@@ -441,21 +577,21 @@ class PMOProcessor:
         specimen_ids = set()
         specimen_id_index_key = {}
         for experiment_sample_id in experiment_sample_ids:
-            specimen_ids.add(pmo["experiment_info"][experiment_sample_id]["specimen_id"])
+            specimen_ids.add(pmodata["experiment_info"][experiment_sample_id]["specimen_id"])
         for specimen_id in specimen_ids:
             specimen_id_index_key[specimen_id] = len(pmo_out["specimen_info"])
-            pmo_out["specimen_info"].append(pmo["specimen_info"][specimen_id])
+            pmo_out["specimen_info"].append(pmodata["specimen_info"][specimen_id])
 
         # experiment_info
         experiment_id_index_key = {}
         for experiment_sample_id in experiment_sample_ids:
             experiment_id_index_key[experiment_sample_id] = len(pmo_out["experiment_info"])
-            pmo_out["experiment_info"].append(pmo["experiment_info"][experiment_sample_id])
+            pmo_out["experiment_info"].append(pmodata["experiment_info"][experiment_sample_id])
             # update specimen_id
-            pmo_out["experiment_info"][len(pmo_out["experiment_info"])-1]["specimen_id"] = specimen_id_index_key[pmo["experiment_info"][experiment_sample_id]["specimen_id"]]
+            pmo_out["experiment_info"][len(pmo_out["experiment_info"])-1]["specimen_id"] = specimen_id_index_key[pmodata["experiment_info"][experiment_sample_id]["specimen_id"]]
 
         # microhaplotypes_detected
-        for microhaplotypes_detected in pmo["microhaplotypes_detected"]:
+        for microhaplotypes_detected in pmodata["microhaplotypes_detected"]:
             new_microhaplotypes_detected = {"bioinformatics_run_id": microhaplotypes_detected["bioinformatics_run_id"],
                                             "experiment_samples": []}
             for sample in microhaplotypes_detected["experiment_samples"]:
@@ -465,8 +601,8 @@ class PMOProcessor:
                     new_microhaplotypes_detected["experiment_samples"][len(new_microhaplotypes_detected["experiment_samples"]) - 1]["experiment_sample_id"] = experiment_id_index_key[sample["experiment_sample_id"]]
             pmo_out["microhaplotypes_detected"].append(new_microhaplotypes_detected)
         # read_counts_by_stage
-        if "read_counts_by_stage" in pmo:
-            for read_count in pmo["read_counts_by_stage"]:
+        if "read_counts_by_stage" in pmodata:
+            for read_count in pmodata["read_counts_by_stage"]:
                 new_read_count = {"bioinformatics_run_id": read_count["bioinformatics_run_id"],
                                   "read_counts_by_experimental_sample_by_stage": []}
                 for sample in read_count["read_counts_by_experimental_sample_by_stage"]:
@@ -475,33 +611,169 @@ class PMOProcessor:
                         # update experiment_sample_id
                         new_read_count["read_counts_by_experimental_sample_by_stage"][len(new_read_count["read_counts_by_experimental_sample_by_stage"]) - 1]["experiment_sample_id"] = experiment_id_index_key[sample["experiment_sample_id"]]
         return pmo_out
+    @staticmethod
+    def filter_pmo_by_experiment_sample_names(pmodata, experiment_sample_names: set[str]):
+        """
+        Filters pmodata by experiment sample names
+        :param pmodata: the pmodata object
+        :param experiment_sample_names: set of experiment sample names, will be converted into indexes to extract out
+        :return: filtered pmodata object containing only the indexes
+        """
+        experiment_sample_names_list = sorted(list(experiment_sample_names))
+        experiment_sample_ids_list = PMOProcessor.get_index_of_experiment_sample_names(pmodata,experiment_sample_names_list)
+        return PMOProcessor.filter_pmo_by_experiment_sample_ids(pmodata, set(experiment_sample_ids_list))
 
     @staticmethod
-    def extract_from_pmo_select_specimen_ids(pmo, specimen_ids: set[int]):
+    def filter_pmo_by_specimen_ids(pmodata, specimen_ids: set[int]):
         """
         Extract out of a load PMO the data associated with select specimen_ids
-        :param pmo:the loaded PMO
+        :param pmodata:the loaded PMO
         :param specimen_ids: the specimen_ids to extract the info for
         :return: a new PMO with only the data associated with the supplied specimen_ids
         """
         # check to make sure the supplied specimens actually exist within the data
         warnings = []
         for specimen_id in specimen_ids:
-            if specimen_id > len(pmo["specimen_info"]):
-                warnings.append(f"{specimen_id} id is beyond the length of specimen_info: " + str(len(pmo["specimen_info"])) )
+            if specimen_id > len(pmodata["specimen_info"]):
+                warnings.append(f"{specimen_id} id is beyond the length of specimen_info: " + str(len(pmodata["specimen_info"])) )
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
-        experiment_sample_ids_for_specimen_ids = PMOProcessor.get_experiment_ids_for_specimen_ids(pmo, specimen_ids)
+        experiment_sample_ids_for_specimen_ids = PMOProcessor.get_experiment_ids_for_specimen_ids(pmodata, specimen_ids)
         all_experiment_sample_ids = {exp_samp for spec in experiment_sample_ids_for_specimen_ids.values() for exp_samp in spec}
-        return PMOProcessor.extract_from_pmo_select_experiment_sample_ids(pmo, all_experiment_sample_ids)
+        return PMOProcessor.filter_pmo_by_experiment_sample_ids(pmodata, all_experiment_sample_ids)
+    @staticmethod
+    def filter_pmo_by_specimen_names(pmodata, specimen_names: set[str]):
+        """
+        Extract out of a load PMO the data associated with select specimen_ids
+        :param pmodata:the loaded PMO
+        :param specimen_names: the specimen_names to extract the info for
+        :return: a new PMO with only the data associated with the supplied specimen_names
+        """
+        specimen_names_list = sorted(list(specimen_names))
+        specimen_ids_list = PMOProcessor.get_index_of_specimen_names(pmodata,specimen_names_list)
+        return PMOProcessor.filter_pmo_by_specimen_ids(pmodata, set(specimen_ids_list))
 
     @staticmethod
-    def extract_from_pmo_samples_with_meta_groupings(pmo, meta_fields_values: str):
+    def filter_pmo_by_target_ids(pmodata, target_ids: set[int]):
+        """
+        Extract out data from the PMO for only select target IDs
+        :param pmodata: the pmo to extract data from
+        :param target_ids: the target_ids to extract
+        :return: a new pmo with the data for only the targets supplied
+        """
+        # create a new pmo out
+
+        # check to make sure the supplied specimens actually exist within the data
+        warnings = []
+        for target_id in target_ids:
+            if target_id >= len(pmodata["target_info"]):
+                warnings.append(f"{target_id} out of range of target_info, length is {len(pmodata['target_info'])}")
+        target_ids_in_microhaplotypes_info = []
+        for target in pmodata["microhaplotypes_info"]["targets"]:
+            target_ids_in_microhaplotypes_info.append(target["target_id"])
+        for target_id in target_ids:
+            if target_id not in target_ids_in_microhaplotypes_info:
+                warnings.append(f"{target_id} not in pmodata[\"microhaplotypes_info\"]")
+
+        if len(warnings) > 0:
+            raise Exception("\n".join(warnings))
+
+        pmo_out = {"pmo_header": pmodata["pmo_header"],
+                   "sequencing_info": pmodata["sequencing_info"],
+                   "specimen_info": pmodata["specimen_info"],
+                   "experiment_info": pmodata["experiment_info"],
+                   "bioinformatics_methods_info": pmodata["bioinformatics_methods_info"],
+                   "bioinformatics_run_info": pmodata["bioinformatics_run_info"],
+                   "targeted_genomes": pmodata["targeted_genomes"], "target_info": []}
+        # will need to update target_info, panel_info, microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage based
+        # on target_ids selecting for
+        # first update microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage
+        # then update target_info, panel_info
+        # then update the target_ids
+
+        # target_info
+        pmo_out["target_info"] = []
+        target_info_index_key = {}
+        for target_info_id, target_info in enumerate(pmodata["target_info"]):
+            if target_info_id in target_ids:
+                target_info_index_key[target_info_id] = len(pmo_out["target_info"])
+                pmo_out["target_info"].append(target_info)
+
+        # panel_info
+        pmo_out["panel_info"] = []
+        for panel_info in pmodata["panel_info"]:
+            new_panel_info = {"panel_name": panel_info["panel_name"],"reactions": []}
+            for reaction in panel_info["reactions"]:
+                new_reaction = {"reaction_name": reaction["reaction_name"], "panel_targets" : []}
+                for panel_target_id in reaction["panel_targets"]:
+                    if panel_target_id in target_ids:
+                        # add new updated target_id index
+                        new_reaction["panel_targets"].append(target_info_index_key[panel_target_id])
+                if len(new_reaction["panel_targets"]) > 0:
+                    new_panel_info["reactions"].append(new_reaction)
+        # microhaplotypes_info
+        pmo_out["microhaplotypes_info"] = {"targets" :[]}
+        # key=old_mhaps_target_id, value = new_mhaps_target_id
+        mhaps_target_id_new_key = {}
+        for microhap_info_index, microhap_info in enumerate(pmodata["microhaplotypes_info"]["targets"]):
+            if microhap_info["target_id"] in target_ids:
+                mhaps_target_id_new_key[microhap_info_index] = len(pmo_out["microhaplotypes_info"]["targets"])
+                # update new target_id index
+                microhap_info["target_id"] = target_info_index_key[microhap_info["target_id"]]
+                pmo_out["microhaplotypes_info"]["targets"].append(microhap_info)
+        # microhaplotypes_info
+        pmo_out["microhaplotypes_detected"] = []
+        for microhaplotypes_detected in pmodata["microhaplotypes_detected"]:
+            new_microhaplotypes_detected = {"bioinformatics_run_id": microhaplotypes_detected["bioinformatics_run_id"],
+                                            "experiment_samples" : []}
+            for sample in microhaplotypes_detected["experiment_samples"]:
+                new_sample = {"experiment_sample_id": sample["experiment_sample_id"],
+                              "target_results" : []}
+                for target in sample["target_results"]:
+                    if target["mhaps_target_id"] in mhaps_target_id_new_key:
+                        # update with new mhaps_target_id id
+                        target["mhaps_target_id"] = mhaps_target_id_new_key[target["mhaps_target_id"]]
+                        new_sample["target_results"].append(target)
+                new_microhaplotypes_detected["experiment_samples"].append(new_sample)
+            pmo_out["microhaplotypes_detected"].append(new_microhaplotypes_detected)
+
+        # read_counts_by_stage
+        if "read_counts_by_stage" in pmodata:
+            pmo_out["read_counts_by_stage"] = []
+            for read_counts_by_bioid in pmodata["read_counts_by_stage"]:
+                new_read_counts_by_bioid = {"bioinformatics_run_id": read_counts_by_bioid["bioinformatics_run_id"], "read_counts_by_experimental_sample_by_stage" : []}
+                for sample in read_counts_by_bioid["read_counts_by_experimental_sample_by_stage"]:
+                    new_samples = {"experiment_sample_id": sample["experiment_sample_id"],
+                                   "total_raw_count" : sample["total_raw_count"]}
+                    if "read_counts_for_targets" in sample:
+                        new_samples["read_counts_for_targets"] = []
+                        for target in sample["read_counts_for_targets"]:
+                            if target["target_id"] in target_ids:
+                                # update with new target_id index
+                                target["target_id"] = target_info_index_key[target["target_id"]]
+                                new_samples["read_counts_for_targets"].append(target)
+                    new_read_counts_by_bioid["read_counts_by_experimental_sample_by_stage"].append(new_samples)
+                pmo_out["read_counts_by_stage"].append(new_read_counts_by_bioid)
+        return pmo_out
+    @staticmethod
+    def filter_pmo_by_target_names(pmodata, target_names: set[str]):
+        """
+        Extract out data from the PMO for only select target IDs
+        :param pmodata: the pmo to extract data from
+        :param target_names: the target_names to extract
+        :return: a new pmo with the data for only the targets supplied
+        """
+        target_names_list = sorted(list(target_names))
+        target_ids_list = PMOProcessor.get_index_of_target_names(pmodata,target_names_list)
+        return PMOProcessor.filter_pmo_by_target_ids(pmodata, set(target_ids_list))
+
+    @staticmethod
+    def extract_from_pmo_samples_with_meta_groupings(pmodata, meta_fields_values: str):
         """
         Extract out of a PMO the data associated with specimens that belong to specific meta data groupings
-        :param pmo: the PMO to extract from
+        :param pmodata: the PMO to extract from
         :param meta_fields_values: Meta Fields to include, should either be a table with columns field, values (comma separated values) (and optionally group) or supplied command line as field1=value1,value2,value3:field2=value1,value2;field1=value5,value6, where each group is separated by a semicolon
-        :return: a pmo with the input meta
+        :return: a pmodata with the input meta
         """
         selected_meta_groups = {}
         # parse meta values
@@ -535,7 +807,7 @@ class PMOProcessor:
                 selected_meta_groups[idx] = group_criteria
 
         # get count of fields
-        fields_counts = PMOProcessor.count_specimen_meta_fields(pmo)
+        fields_counts = PMOProcessor.count_specimen_per_meta_fields(pmodata)
 
         # check to see if the fields supplied actually exit
         warnings = []
@@ -549,7 +821,7 @@ class PMOProcessor:
 
         group_counts = defaultdict(int)
         all_specimen_names = []
-        for specimen in pmo["specimen_info"]:
+        for specimen in pmodata["specimen_info"]:
             for group_name, meta in selected_meta_groups.items():
                 passes_criteria = True
                 for field, values in meta.items():
@@ -571,147 +843,44 @@ class PMOProcessor:
         group_counts_df = group_counts_df.map(lambda x: ','.join(x) if isinstance(x, list) else x)
         group_counts_df.index.name = "group"
 
-        all_specimen_ids = set(PMOProcessor.get_index_of_specimen_names(pmo, all_specimen_names))
+        all_specimen_ids = set(PMOProcessor.get_index_of_specimen_names(pmodata, all_specimen_names))
 
-        pmo_out = PMOProcessor.extract_from_pmo_select_specimen_ids(pmo, all_specimen_ids)
+        pmo_out = PMOProcessor.filter_pmo_by_specimen_ids(pmodata, all_specimen_ids)
 
         return pmo_out, group_counts_df
 
     @staticmethod
-    def extract_from_pmo_select_target_ids(pmo, target_ids: set[int]):
-        """
-        Extract out data from the PMO for only select target IDs
-        :param pmo: the pmo to extract data from
-        :param target_ids: the target_ids to extract
-        :return: a new pmo with the data for only the targets supplied
-        """
-        # create a new pmo out
-
-        # check to make sure the supplied specimens actually exist within the data
-        warnings = []
-        for target_id in target_ids:
-            if target_id >= len(pmo["target_info"]):
-                warnings.append(f"{target_id} out of range of target_info, length is {len(pmo['target_info'])}")
-        target_ids_in_microhaplotypes_info = []
-        for target in pmo["microhaplotypes_info"]["targets"]:
-            target_ids_in_microhaplotypes_info.append(target["target_id"])
-        for target_id in target_ids:
-            if target_id not in target_ids_in_microhaplotypes_info:
-                warnings.append(f"{target_id} not in pmo[\"microhaplotypes_info\"]")
-
-        if len(warnings) > 0:
-            raise Exception("\n".join(warnings))
-
-        pmo_out = {"pmo_header": pmo["pmo_header"],
-                   "sequencing_info": pmo["sequencing_info"],
-                   "specimen_info": pmo["specimen_info"],
-                   "experiment_info": pmo["experiment_info"],
-                   "bioinformatics_methods_info": pmo["bioinformatics_methods_info"],
-                   "bioinformatics_run_info": pmo["bioinformatics_run_info"],
-                   "targeted_genomes": pmo["targeted_genomes"], "target_info": []}
-        # will need to update target_info, panel_info, microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage based
-        # on target_ids selecting for
-        # first update microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage
-        # then update target_info, panel_info
-        # then update the target_ids
-
-        # target_info
-        pmo_out["target_info"] = []
-        target_info_index_key = {}
-        for target_info_id, target_info in enumerate(pmo["target_info"]):
-            if target_info_id in target_ids:
-                target_info_index_key[target_info_id] = len(pmo_out["target_info"])
-                pmo_out["target_info"].append(target_info)
-
-        # panel_info
-        pmo_out["panel_info"] = []
-        for panel_info in pmo["panel_info"]:
-            new_panel_info = {"panel_name": panel_info["panel_name"],"reactions": []}
-            for reaction in panel_info["reactions"]:
-                new_reaction = {"reaction_name": reaction["reaction_name"], "panel_targets" : []}
-                for panel_target_id in reaction["panel_targets"]:
-                    if panel_target_id in target_ids:
-                        # add new updated target_id index
-                        new_reaction["panel_targets"].append(target_info_index_key[panel_target_id])
-                if len(new_reaction["panel_targets"]) > 0:
-                    new_panel_info["reactions"].append(new_reaction)
-        # microhaplotypes_info
-        pmo_out["microhaplotypes_info"] = {"targets" :[]}
-        # key=old_mhaps_target_id, value = new_mhaps_target_id
-        mhaps_target_id_new_key = {}
-        for microhap_info_index, microhap_info in enumerate(pmo["microhaplotypes_info"]["targets"]):
-            if microhap_info["target_id"] in target_ids:
-                mhaps_target_id_new_key[microhap_info_index] = len(pmo_out["microhaplotypes_info"]["targets"])
-                # update new target_id index
-                microhap_info["target_id"] = target_info_index_key[microhap_info["target_id"]]
-                pmo_out["microhaplotypes_info"]["targets"].append(microhap_info)
-        # microhaplotypes_info
-        pmo_out["microhaplotypes_detected"] = []
-        for microhaplotypes_detected in pmo["microhaplotypes_detected"]:
-            new_microhaplotypes_detected = {"bioinformatics_run_id": microhaplotypes_detected["bioinformatics_run_id"],
-                                            "experiment_samples" : []}
-            for sample in microhaplotypes_detected["experiment_samples"]:
-                new_sample = {"experiment_sample_id": sample["experiment_sample_id"],
-                              "target_results" : []}
-                for target in sample["target_results"]:
-                    if target["mhaps_target_id"] in mhaps_target_id_new_key:
-                        # update with new mhaps_target_id id
-                        target["mhaps_target_id"] = mhaps_target_id_new_key[target["mhaps_target_id"]]
-                        new_sample["target_results"].append(target)
-                new_microhaplotypes_detected["experiment_samples"].append(new_sample)
-            pmo_out["microhaplotypes_detected"].append(new_microhaplotypes_detected)
-
-        # read_counts_by_stage
-        if "read_counts_by_stage" in pmo:
-            pmo_out["read_counts_by_stage"] = []
-            for read_counts_by_bioid in pmo["read_counts_by_stage"]:
-                new_read_counts_by_bioid = {"bioinformatics_run_id": read_counts_by_bioid["bioinformatics_run_id"], "read_counts_by_experimental_sample_by_stage" : []}
-                for sample in read_counts_by_bioid["read_counts_by_experimental_sample_by_stage"]:
-                    new_samples = {"experiment_sample_id": sample["experiment_sample_id"],
-                                   "total_raw_count" : sample["total_raw_count"]}
-                    if "read_counts_for_targets" in sample:
-                        new_samples["read_counts_for_targets"] = []
-                        for target in sample["read_counts_for_targets"]:
-                            if target["target_id"] in target_ids:
-                                # update with new target_id index
-                                target["target_id"] = target_info_index_key[target["target_id"]]
-                                new_samples["read_counts_for_targets"].append(target)
-                    new_read_counts_by_bioid["read_counts_by_experimental_sample_by_stage"].append(new_samples)
-                pmo_out["read_counts_by_stage"].append(new_read_counts_by_bioid)
-        return pmo_out
-
-    @staticmethod
-    def extract_from_pmo_with_read_filter(pmo, read_filter: float):
+    def extract_from_pmo_with_read_filter(pmodata, read_filter: float):
         """
         Extract out data from the PMO with inconclusive read filter
-        :param pmo: the pmo to extract data from
+        :param pmodata: the pmo to extract data from
         :param read_filter: the read filter to use, inconclusive filter
-        :return: a new pmo with the data only with detected microhaplotypes above this read filter
+        :return: a new pmodata with the data only with detected microhaplotypes above this read filter
         """
         # create a new pmo out
         # majority will be the same, just filtering detected microhaplotypes based on read counts
         # @todo consider updating microhaplotypes_info if certain microhaplotypes are no longer detected in any sample with the given filter
-        pmo_out = {"pmo_header": pmo["pmo_header"],
-                   "panel_info": pmo["panel_info"],
-                   "sequencing_info": pmo["sequencing_info"],
-                   "target_info": pmo["target_info"],
-                   "specimen_info": pmo["specimen_info"],
-                   "experiment_info": pmo["experiment_info"],
+        pmo_out = {"pmo_header": pmodata["pmo_header"],
+                   "panel_info": pmodata["panel_info"],
+                   "sequencing_info": pmodata["sequencing_info"],
+                   "target_info": pmodata["target_info"],
+                   "specimen_info": pmodata["specimen_info"],
+                   "experiment_info": pmodata["experiment_info"],
 
-                   "targeted_genomes": pmo["targeted_genomes"],
-                   "microhaplotypes_info": pmo["microhaplotypes_info"],
-                   "bioinformatics_methods_info": pmo["bioinformatics_methods_info"],
-                   "bioinformatics_run_info": pmo["bioinformatics_run_info"],
+                   "targeted_genomes": pmodata["targeted_genomes"],
+                   "microhaplotypes_info": pmodata["microhaplotypes_info"],
+                   "bioinformatics_methods_info": pmodata["bioinformatics_methods_info"],
+                   "bioinformatics_run_info": pmodata["bioinformatics_run_info"],
                    "microhaplotypes_detected": []
                    }
         # if has optional read_counts_by_stage then add as well
         # if does contain, @todo consider updating with new counts now that a filter has been applied
 
-        if "read_counts_by_stage" in pmo:
-            pmo_out["read_counts_by_stage"] = pmo["read_counts_by_stage"]
+        if "read_counts_by_stage" in pmodata:
+            pmo_out["read_counts_by_stage"] = pmodata["read_counts_by_stage"]
 
         # microhaplotypes_detected
-        for microhaplotypes_detected in pmo["microhaplotypes_detected"]:
+        for microhaplotypes_detected in pmodata["microhaplotypes_detected"]:
             extracted_microhaps_for_id = {
                 "bioinformatics_run_id": microhaplotypes_detected["bioinformatics_run_id"],
                 "experiment_samples": []}
@@ -751,10 +920,10 @@ class PMOProcessor:
                 f.write("\n")
 
     @staticmethod
-    def extract_targets_insert_bed_loc(pmo, select_target_ids: list[int] = None, sort_output: bool = True):
+    def extract_targets_insert_bed_loc(pmodata, select_target_ids: list[int] = None, sort_output: bool = True):
         """
         Extract out of a PMO the insert location for targets, will add ref seq if loaded into PMO
-        :param pmo: the PMO to extract from
+        :param pmodata: the PMO to extract from
         :param select_target_ids: a list of target ids to select, if None will select all targets
         :param sort_output: whether to sort output by genomic location
         :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, extra_info, ref_seq
@@ -762,12 +931,12 @@ class PMOProcessor:
         # bed_loc = NamedTuple("bed_loc", [("chrom", str), ("start", int), ("end", int), ("name", str), ("score", float), ("strand", str), ("extra_info", str), ("ref_seq", str)])
         bed_loc_out = []
         if select_target_ids is None:
-            select_target_ids = list(range(len(pmo["target_info"])))
+            select_target_ids = list(range(len(pmodata["target_info"])))
         for target_id in select_target_ids:
-            tar = pmo["target_info"][target_id]
+            tar = pmodata["target_info"][target_id]
             if "insert_location" not in tar:
-                raise Exception("no insert_location in pmo for target id " + str(target_id) + " target_name " + str(tar["target_name"]) + ", cannot extract insert_location")
-            genome_info = pmo["targeted_genomes"][tar["insert_location"]["genome_id"]]
+                raise Exception("no insert_location in pmodata for target id " + str(target_id) + " target_name " + str(tar["target_name"]) + ", cannot extract insert_location")
+            genome_info = pmodata["targeted_genomes"][tar["insert_location"]["genome_id"]]
             genome_name_version = genome_info["name"]  + "_" + genome_info["genome_version"]
             extra_info = str("[") + str("genome_name_version=") + genome_name_version + ";]"
             strand = "+" if "strand" not in tar["insert_location"] else tar["insert_location"]["strand"]
@@ -778,30 +947,30 @@ class PMOProcessor:
         return bed_loc_out
 
     @staticmethod
-    def extract_panels_insert_bed_loc(pmo, select_panel_ids: list[int] = None, sort_output: bool = True):
+    def extract_panels_insert_bed_loc(pmodata, select_panel_ids: list[int] = None, sort_output: bool = True):
         """
         Extract out of a PMO the insert location for panels, will add ref seq if loaded into PMO
-        :param pmo: the PMO to extract from
+        :param pmodata: the PMO to extract from
         :param select_panel_ids: a list of panels ids to select, if None will select all panels
         :param sort_output: whether to sort output by genomic location
         :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, extra_info, ref_seq
         """
         bed_loc_out = {}
         if select_panel_ids is None:
-            select_panel_ids = list(range(len(pmo["panel_info"])))
+            select_panel_ids = list(range(len(pmodata["panel_info"])))
         for panel_id in select_panel_ids:
             bed_loc_out_per_panel = []
-            for reaction_id in range(len(pmo["panel_info"][panel_id]["reactions"])):
-                for target_id in pmo["panel_info"][panel_id]["reactions"][reaction_id]["panel_targets"]:
-                    tar = pmo["target_info"][target_id]
+            for reaction_id in range(len(pmodata["panel_info"][panel_id]["reactions"])):
+                for target_id in pmodata["panel_info"][panel_id]["reactions"][reaction_id]["panel_targets"]:
+                    tar = pmodata["target_info"][target_id]
                     if "insert_location" not in tar:
-                        raise Exception("no insert_location in pmo for target id " + str(target_id) + " target_name " + str(tar["target_name"]) + ", cannot extract insert_location")
-                    genome_info = pmo["targeted_genomes"][tar["insert_location"]["genome_id"]]
+                        raise Exception("no insert_location in pmodata for target id " + str(target_id) + " target_name " + str(tar["target_name"]) + ", cannot extract insert_location")
+                    genome_info = pmodata["targeted_genomes"][tar["insert_location"]["genome_id"]]
                     genome_name_version = genome_info["name"]  + "_" + genome_info["genome_version"]
                     extra_info = (str("[") +
                                   "genome_name_version=" + genome_name_version + ";" +
-                                  "panel=" + pmo["panel_info"][panel_id]["panel_name"] + ";" +
-                                  "reaction=" + pmo["panel_info"][panel_id]["reactions"][reaction_id]["reaction_name"] + ";" +
+                                  "panel=" + pmodata["panel_info"][panel_id]["panel_name"] + ";" +
+                                  "reaction=" + pmodata["panel_info"][panel_id]["reactions"][reaction_id]["reaction_name"] + ";" +
                                   "]")
                     strand = "+" if "strand" not in tar["insert_location"] else tar["insert_location"]["strand"]
                     ref_seq =  "" if "ref_seq" not in tar["insert_location"] else tar["insert_location"]["ref_seq"]
@@ -811,138 +980,3 @@ class PMOProcessor:
             bed_loc_out[panel_id] = bed_loc_out_per_panel
         return bed_loc_out
 
-    @staticmethod
-    def get_index_key_of_specimen_names(pmo):
-        """
-        Get key of specimen_name to index in pmo["specimen_info"]
-        :param pmo: the PMO to get indexes from
-        :return: a dictionary of indexes keyed by specimen_name
-        """
-        ret = {}
-        for idx, specimen in enumerate(pmo["specimen_info"]):
-            ret[specimen["specimen_name"]] = idx
-        return ret
-
-    @staticmethod
-    def get_index_key_of_experiment_sample_names(pmo):
-        """
-        Get key of experiment_sample_name to index in pmo["experiment_info"]
-        :param pmo: the PMO to get indexes from
-        :return: a dictionary of indexes keyed by experiment_sample_name
-        """
-        ret = {}
-        for idx, experiment in enumerate(pmo["experiment_info"]):
-            ret[experiment["experiment_sample_name"]] = idx
-        return ret
-
-    @staticmethod
-    def get_index_key_of_target_names(pmo):
-        """
-        Get key of target_name to index in pmo["target_info"]
-        :param pmo: the PMO to get indexes from
-        :return: a dictionary of indexes keyed by target_name
-        """
-        ret = {}
-        for idx, target in enumerate(pmo["target_info"]):
-            ret[target["target_name"]] = idx
-        return ret
-
-    @staticmethod
-    def get_index_key_of_panel_names(pmo):
-        """
-        Get key of panel_name to index in pmo["panel_info"]
-        :param pmo: the PMO to get indexes from
-        :return: a dictionary of indexes keyed by panel_name
-        """
-        ret = {}
-        for idx, panel in enumerate(pmo["panel_info"]):
-            ret[panel["panel_name"]] = idx
-        return ret
-
-    @staticmethod
-    def get_index_key_of_target_in_microhaplotypes_info(pmo):
-        """
-        Get key of target_name to index for the representative microhaplotypes for the target_name in pmo["microhaplotypes_info"]
-        :param pmo: the PMO to get indexes from
-        :return: a dictionary of indexes keyed by target_name
-        """
-        ret = {}
-        for idx, microhaplotypes_info_for_target in enumerate(pmo["microhaplotypes_info"]["targets"]):
-            ret[pmo["target_info"][microhaplotypes_info_for_target["target_id"]]["target_name"]] = idx
-        return ret
-
-    @staticmethod
-    def get_index_of_specimen_names(pmo, specimen_names: list[str]):
-        """
-        Get index of specimen_name in pmo["specimen_info"]
-        :param pmo: the PMO to get indexes from
-        :param specimen_names: a list of specimen_names
-        :return: the index of specimen_names in pmo["specimen_info"] returned in the same order as specimen_names
-        """
-        specimen_key = PMOProcessor.get_index_key_of_specimen_names(pmo)
-        return [specimen_key[name] for name in specimen_names]
-
-    @staticmethod
-    def get_index_of_experiment_sample_names(pmo, experiment_sample_names: list[str]):
-        """
-        Get index of experiment_sample_name in pmo["experiment_info"]
-        :param pmo: the PMO to get indexes from
-        :param experiment_sample_names: a list of experiment_sample_names
-        :return: the index of experiment_sample_names in pmo["experiment_info"] returned in the same order as experiment_sample_names
-        """
-        experiment_sample_key = PMOProcessor.get_index_key_of_experiment_sample_names(pmo)
-        return [experiment_sample_key[name] for name in experiment_sample_names]
-
-    @staticmethod
-    def get_index_of_target_names(pmo, target_names: list[str]):
-        """
-        Get index of target_name in pmo["target_info"]
-        :param pmo: the PMO to get indexes from
-        :param target_names: a list of target_names
-        :return: the index of target_names in pmo["target_info"] returned in the same order as target_names
-        """
-        target_key = PMOProcessor.get_index_key_of_target_names(pmo)
-        return [target_key[name] for name in target_names]
-
-    @staticmethod
-    def get_index_of_panel_names(pmo, panel_names: list[str]):
-        """
-        Get index of panel_name in pmo["panel_info"]
-        :param pmo: the PMO to get indexes from
-        :param panel_names: a list of panel_names
-        :return: the index of panel_names in pmo["panel_info"] returned in the same order as panel_names
-        """
-        panel_key = PMOProcessor.get_index_key_of_panel_names(pmo)
-        return [panel_key[name] for name in panel_names]
-
-    @staticmethod
-    def get_index_of_target_in_microhaplotypes_info(pmo, target_names: list[str]):
-        """
-        Get index of target_name in pmo["microhaplotypes_info"]["targets"]
-        :param pmo: the PMO to get indexes from
-        :param target_names: a list of target_names
-        :return: the index of target_names in pmo["microhaplotypes_info"]["targets"] returned in the same order as target_names
-        """
-        microhap_target_key = PMOProcessor.get_index_key_of_target_in_microhaplotypes_info(pmo)
-        return [microhap_target_key[name] for name in target_names]
-
-    @staticmethod
-    def get_experiment_ids_for_specimen_ids(pmo, specimen_ids: set[int]):
-        """
-        get a dictionary that lists the experiment_ids for a specimen_id
-        :param pmo: the PMO to get indexes from
-        :param specimen_ids: a set of specimen_ids
-        :return: a dictionary that lists the experiment_ids for a specimen_id
-        """
-        ret = defaultdict(set)
-        # check to make sure the supplied specimens actually exist within the data
-        warnings = []
-        for specimen_id in specimen_ids:
-            if specimen_id > len(pmo["specimen_info"]):
-                warnings.append(f"{specimen_id} id is beyond the length of specimen_info: " + str(len(pmo["specimen_info"])) )
-        if len(warnings) > 0:
-            raise Exception("\n".join(warnings))
-        for experiment_sample_id, experiment_sample in enumerate(pmo["experiment_info"]):
-            if experiment_sample["specimen_id"] in specimen_ids:
-                ret[experiment_sample["specimen_id"]].add(experiment_sample_id)
-        return ret

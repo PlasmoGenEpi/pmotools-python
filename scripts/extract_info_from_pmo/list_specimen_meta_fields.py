@@ -31,7 +31,7 @@ def list_specimen_meta_fields():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # count fields
-    counts_df = PMOProcessor.count_specimen_meta_fields(pmo)
+    counts_df = PMOProcessor.count_specimen_per_meta_fields(pmo)
 
     # output
     counts_df.to_csv(sys.stdout if "STDOUT" == args.output else args.output, sep = output_delim, index=False)
