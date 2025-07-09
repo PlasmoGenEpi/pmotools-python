@@ -312,17 +312,17 @@ class PMOProcessor:
 
     @staticmethod
     def extract_allele_counts_freq_from_pmo(pmodata,
-                                            select_bioids: list[int] = None,
-                                            select_exp_samples: list[str] = None,
-                                            select_targets: list[str] = None,
+                                            bioinformatics_run_ids: list[int] = None,
+                                            experiment_sample_names: list[str] = None,
+                                            target_names: list[str] = None,
                                             collapse_across_runs: bool = False) -> pd.DataFrame:
         """
         Extract allele counts from PMO data into a single DataFrame.
 
         :param pmodata: the pmo data structure
-        :param select_bioids: optional list of bioinformatics_run_ids to include
-        :param select_exp_samples: optional list of experiment_sample_names to include
-        :param select_targets: optional list of target_names to include
+        :param bioinformatics_run_ids: optional list of bioinformatics_run_ids to include
+        :param experiment_sample_names: optional list of experiment_sample_names to include
+        :param target_names: optional list of target_names to include
         :param collapse_across_runs: whether to collapse count/freqs across bioinformatics_run_id runs
         :return: DataFrame with columns: bioinformatics_run_id, target, mhap_id, count, freq, target_total
         """
@@ -336,16 +336,16 @@ class PMOProcessor:
 
         for data_for_run in pmodata["microhaplotypes_detected"]:
             bioid = data_for_run["bioinformatics_run_id"]
-            if select_bioids is not None and bioid not in select_bioids:
+            if bioinformatics_run_ids is not None and bioid not in bioinformatics_run_ids:
                 continue
             for sample_data in data_for_run["experiment_samples"]:
                 sample_name = pmodata["experiment_info"][sample_data["experiment_sample_id"]]["experiment_sample_name"]
-                if select_exp_samples is not None and sample_name not in select_exp_samples:
+                if experiment_sample_names is not None and sample_name not in experiment_sample_names:
                     continue
                 for target_data in sample_data["target_results"]:
                     target_id = pmodata["microhaplotypes_info"]["targets"][target_data["mhaps_target_id"]]["target_id"]
                     target = pmodata["target_info"][target_id]["target_name"]
-                    if select_targets is not None and target not in select_targets:
+                    if target_names is not None and target not in target_names:
                         continue
                     for microhapid in target_data["haps"]:
                         mhap_id = microhapid["mhap_id"]
@@ -685,9 +685,8 @@ class PMOProcessor:
                    "bioinformatics_methods_info": pmodata["bioinformatics_methods_info"],
                    "bioinformatics_run_info": pmodata["bioinformatics_run_info"],
                    "targeted_genomes": pmodata["targeted_genomes"], "target_info": []}
-        # will need to update target_info, panel_info, microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage based
-        # on target_ids selecting for
-        # first update microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage
+        # function will update target_info, panel_info, microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage based
+        # on target_ids selecting for first update microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage
         # then update target_info, panel_info
         # then update the target_ids
 
