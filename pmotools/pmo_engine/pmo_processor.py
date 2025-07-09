@@ -362,7 +362,7 @@ class PMOProcessor:
                     freq = count / total if total > 0 else 0.0
                     rows.append({
                         "bioinformatics_run_id": bioid,
-                        "target": target,
+                        "target_name": target,
                         "mhap_id": mhap_id,
                         "count": count,
                         "freq": freq,
@@ -373,24 +373,24 @@ class PMOProcessor:
         if collapse_across_runs:
             # Aggregate counts across runs
             collapsed = (
-                ret.groupby(["target", "mhap_id"], as_index=False)["count"]
+                ret.groupby(["target_name", "mhap_id"], as_index=False)["count"]
                 .sum()
             )
             # Recalculate target_total as sum of counts per target
             total_counts = (
-                collapsed.groupby("target", as_index=False)["count"]
+                collapsed.groupby("target_name", as_index=False)["count"]
                 .sum()
                 .rename(columns={"count": "target_total"})
             )
-            collapsed = collapsed.merge(total_counts, on="target", how="left")
+            collapsed = collapsed.merge(total_counts, on="target_name", how="left")
             collapsed["freq"] = collapsed["count"] / collapsed["target_total"]
 
             # Sort output
-            return collapsed.sort_values(["target", "mhap_id"]).reset_index(drop=True)[
-                ["target", "mhap_id", "count", "freq", "target_total"]
+            return collapsed.sort_values(["target_name", "mhap_id"]).reset_index(drop=True)[
+                ["target_name", "mhap_id", "count", "freq", "target_total"]
             ]
 
-        return ret.sort_values(["bioinformatics_run_id", "target", "mhap_id"]).reset_index(drop=True)
+        return ret.sort_values(["bioinformatics_run_id", "target_name", "mhap_id"]).reset_index(drop=True)
 
 
     @staticmethod
@@ -399,7 +399,7 @@ class PMOProcessor:
                                        additional_experiment_info_fields: list[str] = None,
                                        additional_microhap_fields: list[str] = None,
                                        additional_representative_info_fields: list[str] = None,
-                                       default_base_col_names: list[str] = ["sampleID", "locus", "allele"]) -> pd.DataFrame:
+                                       default_base_col_names: list[str] = ["experiment_sample_name", "target_name", "mhap_id"]) -> pd.DataFrame:
         """
         Create a pd.Dataframe of sample, target and allele. Can optionally add on any other additional fields
 

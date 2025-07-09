@@ -186,24 +186,24 @@ class TestPMOProcessor(unittest.TestCase):
     def test_extract_alleles_per_sample_table(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             pmo_data = json.load(f)
-        allele_data = PMOProcessor.extract_alleles_per_sample_table(pmo_data).sort_values(by=['bioinformatics_run_id', 'sampleID', 'locus', 'allele'])
+        allele_data = PMOProcessor.extract_alleles_per_sample_table(pmo_data).sort_values(by=['bioinformatics_run_id', 'experiment_sample_name', 'target_name', 'mhap_id'])
         allele_data.to_csv("extracted_alleles_per_sample_table_no_extra_args.csv", index = False)
-        self.assertEqual("9efc4b744faa77176c9e224dbb2bf809", md5sum_of_fnp("extracted_alleles_per_sample_table_no_extra_args.csv"))
-
+        self.assertEqual("5e4d462b6de3ace0db54b8d7d2ec7a5e", md5sum_of_fnp("extracted_alleles_per_sample_table_no_extra_args.csv"))
+#experiment_sample_name", "target_name", "mhap_id
         allele_data_with_seq_reads = PMOProcessor.extract_alleles_per_sample_table(pmo_data,
                                                                                    additional_microhap_fields = ["reads"],
-                                                                                   additional_representative_info_fields = ["seq"]).sort_values(by=['bioinformatics_run_id', 'sampleID', 'locus', 'allele'])
+                                                                                   additional_representative_info_fields = ["seq"]).sort_values(by=['bioinformatics_run_id', 'experiment_sample_name', 'target_name', 'mhap_id'])
         allele_data_with_seq_reads.to_csv("extracted_alleles_per_sample_table_no_extra_args_with_seq_reads.csv", index = False)
-        self.assertEqual("bd525642ec9ed0a29996304595b43b85", md5sum_of_fnp("extracted_alleles_per_sample_table_no_extra_args_with_seq_reads.csv"))
+        self.assertEqual("72deae7afa21d0df5e7c0e83a18217b0", md5sum_of_fnp("extracted_alleles_per_sample_table_no_extra_args_with_seq_reads.csv"))
 
         allele_data_with_seq_reads_panel_id_collection_country = PMOProcessor.extract_alleles_per_sample_table(pmo_data,
                                                                                    additional_microhap_fields = ["reads"],
                                                                                    additional_representative_info_fields = ["seq"],
                                                                                    additional_experiment_info_fields = ["panel_id"],
                                                                                    additional_specimen_info_fields = ["collection_country"],
-                                                                                   ).sort_values(by=['bioinformatics_run_id', 'sampleID', 'locus', 'allele'])
+                                                                                   ).sort_values(by=['bioinformatics_run_id', 'experiment_sample_name', 'target_name', 'mhap_id'])
         allele_data_with_seq_reads_panel_id_collection_country.to_csv("extracted_alleles_per_sample_table_no_extra_args_with_seq_reads_panel_id_collection_country.csv", index = False)
-        self.assertEqual("8409a859490b5b705f828a8579b5bdfc", md5sum_of_fnp("extracted_alleles_per_sample_table_no_extra_args_with_seq_reads_panel_id_collection_country.csv"))
+        self.assertEqual("a8ccb14976e6bd5d320e6d912ab7fcd2", md5sum_of_fnp("extracted_alleles_per_sample_table_no_extra_args_with_seq_reads_panel_id_collection_country.csv"))
 
     def test_extract_from_pmo_with_read_filter(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
