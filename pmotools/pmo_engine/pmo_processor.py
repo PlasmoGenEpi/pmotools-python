@@ -288,7 +288,8 @@ class PMOProcessor:
         Groups are combinations of all given meta fields.
 
         :param pmodata: the pmo to count from
-        :param meta_fields: the fields to get counts for
+        :param meta_fields: a list of meta fields to count
+        :type meta_fields: list[str]
         :return: counts for all sub-field groups, with metadata
         """
         total_specimens = len(pmodata["specimen_info"])
