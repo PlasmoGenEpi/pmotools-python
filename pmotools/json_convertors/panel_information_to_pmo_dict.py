@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 import warnings
+from ..pmo_engine.pmo_processor import PMOProcessor
 
 
 def panel_info_table_to_pmo_dict(target_table: pd.DataFrame,
@@ -65,19 +66,30 @@ def panel_info_table_to_pmo_dict(target_table: pd.DataFrame,
     targets_dict = create_targets_dict(target_table, target_name_col, forward_primers_seq_col, reverse_primers_seq_col,
                                        location_info_cols=location_cols, gene_name_col=gene_name_col, target_attributes_col=target_attributes_col,
                                        additional_target_info_cols=additional_target_info_cols)
+    panel_dict = build_panel_info(panel_name, target_table, targets_dict,
+                                  reaction_name_col, target_name_col)
     # Put together components
-    panel_info_dict = {"panel_info": [], "targeted_genomes": [
+    panel_info_dict = {"panel_info": [panel_dict], "targeted_genomes": [
         genome_info], "target_info": targets_dict}
     return panel_info_dict
 
 
-def build_panel_info(panel_name, target_table, reaction_name_col):
+def build_panel_info(panel_name, target_table, targets_dict, reaction_name_col, target_name_col):
     panel_dict = {'panel_name': panel_name, "reactions": []}
     if reaction_name_col:
-        for reaction in target_table[reaction_name_col].unique():
-            reaction_target_table = target_table[target_table[reaction_name_col] == reaction]
-            reaction_dict = {'reaction_name': reaction, 'panel_targets': []}
-            # TODO: USE get_index_of_specimen_names from recent PR
+        reactions = target_table[reaction_name_col].unique()
+    else:
+        reactions = [1]
+        target_table["reaction"] = 1
+        reaction_name_col = "reaction"
+    for reaction in reactions:
+        reaction_target_table = target_table[target_table[reaction_name_col] == reaction]
+        target_indeces = PMOProcessor.get_index_of_target_names(
+            {'target_info': targets_dict}, reaction_target_table[target_name_col].to_list())
+        reaction_dict = {'reaction_name': reaction,
+                         'panel_targets': target_indeces}
+        panel_dict["reactions"].append(reaction_dict)
+    return panel_dict
 
 
 def check_genome_info(genome_info):
