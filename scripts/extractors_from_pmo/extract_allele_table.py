@@ -4,7 +4,7 @@ import argparse
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 from pmotools.pmo_engine.pmo_checker import PMOChecker
-from pmotools.pmo_engine.PMOExtractor import PMOExtractor
+from pmotools.pmo_engine.pmo_processor import PMOProcessor
 
 
 
@@ -56,16 +56,16 @@ def extract_for_allele_table():
     if args.representative_haps_fields is not None:
         args.representative_haps_fields = Utils.parse_delimited_input_or_file(args.representative_haps_fields, ",")
 
-    PMOExtractor.write_alleles_per_sample_table(pmodata, args.bioid, allele_per_sample_table_out_fnp,
-                                                 additional_specimen_infos_fields = args.specimen_info_meta_fields,
-                                                 additional_experiment_infos_fields = args.experiment_info_meta_fields,
-                                                 additional_microhap_fields = args.microhap_fields,
-                                                 additional_representative_infos_fields = args.representative_haps_fields,
-                                                 output_delimiter=output_delim,
-                                                 default_base_col_names=args.default_base_col_names.split(","))
+    PMOProcessor.write_alleles_per_sample_table(pmodata, args.bioid, allele_per_sample_table_out_fnp,
+                                                additional_specimen_infos_fields = args.specimen_info_meta_fields,
+                                                additional_experiment_infos_fields = args.experiment_info_meta_fields,
+                                                additional_microhap_fields = args.microhap_fields,
+                                                additional_representative_infos_fields = args.representative_haps_fields,
+                                                output_delimiter=output_delim,
+                                                default_base_col_names=args.default_base_col_names.split(","))
     if args.allele_freqs_output is not None:
-        allele_counts, allele_freqs, target_totals = PMOExtractor.extract_allele_counts_freq_from_pmo(pmodata, args.bioid)
-        PMOExtractor.write_allele_freq_output(allele_freq_output, allele_freqs, output_delimiter=output_delim)
+        allele_counts, allele_freqs, target_totals = PMOProcessor.extract_allele_counts_freq_from_pmo(pmodata, args.bioid)
+        PMOProcessor.write_allele_freq_output(allele_freq_output, allele_freqs, output_delimiter=output_delim)
 
 if __name__ == "__main__":
     extract_for_allele_table()

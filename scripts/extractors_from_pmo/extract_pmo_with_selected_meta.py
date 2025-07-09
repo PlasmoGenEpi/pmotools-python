@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import pandas as pd
 
-from pmotools.pmo_engine.PMOExtractor import PMOExtractor
+from pmotools.pmo_engine.pmo_processor import PMOProcessor
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.pmo_engine.pmo_writer import PMOWriter
 from pmotools.utils.small_utils import Utils
@@ -31,7 +31,7 @@ def extract_pmo_with_selected_meta():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # extract out of PMO
-    pmo_out, group_counts = PMOExtractor.extract_from_pmo_samples_with_meta_groupings(pmo, args.metaFieldsValues)
+    pmo_out, group_counts = PMOProcessor.extract_from_pmo_samples_with_meta_groupings(pmo, args.metaFieldsValues)
 
     # write out the extracted
     args.output = PMOWriter.add_pmo_extension_as_needed(args.output, args.file.endswith('.gz') or args.output.endswith(".gz"))
