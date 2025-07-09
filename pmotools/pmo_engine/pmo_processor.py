@@ -366,7 +366,7 @@ class PMOProcessor:
                         "mhap_id": mhap_id,
                         "count": count,
                         "freq": freq,
-                        "target_total": total
+                        "total_haps_per_target": total
                     })
         ret = pd.DataFrame(rows)
 
