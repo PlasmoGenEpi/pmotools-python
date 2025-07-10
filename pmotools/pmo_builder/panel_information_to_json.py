@@ -1,32 +1,33 @@
 #!/usr/bin/env python3
 import pandas as pd
 import numpy as np
+import json
 import warnings
 
 from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 from ..pmo_engine.pmo_processor import PMOProcessor
 
 
-def panel_info_table_to_pmo_dict(target_table: pd.DataFrame,
-                                 panel_name: str,
-                                 genome_info: dict,
-                                 target_name_col: str = 'target_name',
-                                 forward_primers_seq_col: str = 'fwd_primer',
-                                 reverse_primers_seq_col: str = 'rev_primer',
-                                 reaction_name_col: str | None = None,
-                                 forward_primers_start_col: int | None = None,
-                                 forward_primers_end_col: int | None = None,
-                                 reverse_primers_start_col: int | None = None,
-                                 reverse_primers_end_col: int | None = None,
-                                 insert_start_col: int | None = None,
-                                 insert_end_col: int | None = None,
-                                 chrom_col: str | None = None,
-                                 strand_col: str | None = None,
-                                 ref_seq_col: str | None = None,
-                                 gene_name_col: str | None = None,
-                                 target_attributes_col: str | None = None,
-                                 additional_target_info_cols: list | None = None,
-                                 ):
+def panel_info_table_to_json(target_table: pd.DataFrame,
+                             panel_name: str,
+                             genome_info: dict,
+                             target_name_col: str = 'target_name',
+                             forward_primers_seq_col: str = 'fwd_primer',
+                             reverse_primers_seq_col: str = 'rev_primer',
+                             reaction_name_col: str | None = None,
+                             forward_primers_start_col: int | None = None,
+                             forward_primers_end_col: int | None = None,
+                             reverse_primers_start_col: int | None = None,
+                             reverse_primers_end_col: int | None = None,
+                             insert_start_col: int | None = None,
+                             insert_end_col: int | None = None,
+                             chrom_col: str | None = None,
+                             strand_col: str | None = None,
+                             ref_seq_col: str | None = None,
+                             gene_name_col: str | None = None,
+                             target_attributes_col: str | None = None,
+                             additional_target_info_cols: list | None = None,
+                             ):
     """
     Convert a dataframe containing panel information into dictionary of targets and reference information
 
@@ -84,6 +85,7 @@ def panel_info_table_to_pmo_dict(target_table: pd.DataFrame,
     # Put together components
     panel_info_dict = {"panel_info": [panel_dict], "targeted_genomes": [
         genome_info], "target_info": targets_dict}
+    panel_info_json = json.dumps(panel_info_dict, indent=4)
     return panel_info_dict
 
 
@@ -93,22 +95,23 @@ class PMOPanelBuilder:
             target_table: pd.DataFrame,
             panel_name: str,
             genome_info: dict,
-            target_name_col: str,
-            forward_primers_seq_col: str,
-            reverse_primers_seq_col: str,
-            reaction_name_col: str,
-            forward_primers_start_col: str,
-            forward_primers_end_col: str,
-            reverse_primers_start_col: str,
-            reverse_primers_end_col: str,
-            insert_start_col: str,
-            insert_end_col: str,
-            chrom_col: str,
-            strand_col: str,
-            ref_seq_col: str,
-            gene_name_col: str,
-            target_attributes_col: str,
-            additional_target_info_cols: str,
+            target_name_col: str = 'target_name',
+            forward_primers_seq_col: str = 'fwd_primer',
+            reverse_primers_seq_col: str = 'rev_primer',
+            reaction_name_col: str | None = None,
+            forward_primers_start_col: int | None = None,
+            forward_primers_end_col: int | None = None,
+            reverse_primers_start_col: int | None = None,
+            reverse_primers_end_col: int | None = None,
+            insert_start_col: int | None = None,
+            insert_end_col: int | None = None,
+            chrom_col: str | None = None,
+            strand_col: str | None = None,
+            ref_seq_col: str | None = None,
+            gene_name_col: str | None = None,
+            target_attributes_col: str | None = None,
+            additional_target_info_cols: list | None = None,
+
     ):
         self.target_table = target_table
         self.panel_name = panel_name
@@ -309,8 +312,8 @@ class PMOPanelBuilder:
         if self.reaction_name_col:
             reactions = self.target_table[self.reaction_name_col].unique()
         else:
-            reactions = [1]
-            self.target_table["reaction"] = 1
+            reactions = ["1"]
+            self.target_table["reaction"] = "1"
             self.reaction_name_col = "reaction"
         for reaction in reactions:
             reaction_target_table = self.target_table[self.target_table[self.reaction_name_col] == reaction]
