@@ -272,19 +272,29 @@ def create_detected_microhaplotype_dict(
     return mhap_detected
 
 
-def build_detected_mhap_dict(df, bioinformatics_run_name, mhap_cols):
+def build_detected_mhap_dict(df, bioinformatics_run_name, mhap_cols, always_include=None):
+    if always_include is None:
+        always_include = ['mhap_id', 'reads']
+
     mhap_detected = {
-        "bioinformatics_run_name": bioinformatics_run_name, 'experiment_samples': []}
+        "bioinformatics_run_name": bioinformatics_run_name, "experiment_samples": []}
+
     for sample, sample_df in df.groupby('experiment_sample_name'):
         target_results = []
         for target_id, target_df in sample_df.groupby("mhaps_target_id"):
-            mhaps = target_df[mhap_cols].to_dict(orient="records")
+            mhaps = target_df.apply(
+                lambda row: {
+                    col: row[col]
+                    for col in mhap_cols
+                    if col in always_include or pd.notna(row[col])
+                },
+                axis=1
+            ).to_list()
             target_results.append(
                 {"mhaps_target_id": target_id, "mhaps": mhaps})
-        mhap_detected['experiment_samples'].append({
-            "experiment_sample_name": sample,
-            "target_results": target_results
-        })
+        mhap_detected['experiment_samples'].append(
+            {"experiment_sample_name": sample, "target_results": target_results})
+
     return mhap_detected
 
 
