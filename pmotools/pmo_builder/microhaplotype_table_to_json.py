@@ -2,7 +2,6 @@
 import pandas as pd
 import json
 import warnings
-from ..pmo_engine.pmo_processor import PMOProcessor
 from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 
 
@@ -184,22 +183,15 @@ def create_representative_microhaplotype_dict(
             "target_name": target,
             "microhaplotypes": []
         }
-
+        first_row = group.iloc[0]
         if chrom_col and pd.notna(group[chrom_col].iloc[0]):
-            chrom = group[chrom_col].iloc[0]
-            start = group[start_col].iloc[0]
-            end = group[end_col].iloc[0]
-            loc = {"genome_id": genome_id, "chrom": chrom,
-                   "start": start, "end": end}
-            if ref_seq_col:
-                ref_seq = get_if_present(group.iloc[0], ref_seq_col)
-                if ref_seq:
-                    loc["ref_seq"] = ref_seq
-            if strand_col:
-                strand = get_if_present(group.iloc[0], strand_col)
-                if strand:
-                    loc["strand"] = strand
-                    target_dict["mhap_location"] = loc
+            loc = {"genome_id": genome_id, "chrom": first_row[chrom_col],
+                   "start": first_row[start_col], "end": first_row[end_col]}
+            if ref_seq_col and pd.notna(first_row[ref_seq_col]):
+                loc["ref_seq"] = first_row[ref_seq_col]
+            if strand_col and pd.notna(first_row[strand_col]):
+                loc["strand"] = first_row[strand_col]
+            target_dict["mhap_location"] = loc
 
         for _, row in group.iterrows():
             mhap = {"seq": row[seq_col]}
