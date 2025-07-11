@@ -68,15 +68,15 @@ class PMOProcessor:
         return ret
 
     @staticmethod
-    def get_index_key_of_target_in_microhaplotypes_info(pmodata):
+    def get_index_key_of_target_in_representative_microhaplotypes(pmodata):
         """
-        Get key of target_name to index for the representative microhaplotypes for the target_name in pmodata["microhaplotypes_info"]
+        Get key of target_name to index for the representative microhaplotypes for the target_name in pmodata["representative_microhaplotypes"]
         :param pmodata: the PMO to get indexes from
         :return: a dictionary of indexes keyed by target_name
         """
         ret = {}
-        for idx, microhaplotypes_info_for_target in enumerate(pmodata["microhaplotypes_info"]["targets"]):
-            ret[pmodata["target_info"][microhaplotypes_info_for_target["target_id"]]["target_name"]] = idx
+        for idx, representative_microhaplotypes_for_target in enumerate(pmodata["representative_microhaplotypes"]["targets"]):
+            ret[pmodata["target_info"][representative_microhaplotypes_for_target["target_id"]]["target_name"]] = idx
         return ret
 
     @staticmethod
@@ -124,14 +124,14 @@ class PMOProcessor:
         return [panel_key[name] for name in panel_names]
 
     @staticmethod
-    def get_index_of_target_in_microhaplotypes_info(pmodata, target_names: list[str]):
+    def get_index_of_target_in_representative_microhaplotypes(pmodata, target_names: list[str]):
         """
-        Get index of target_name in pmodata["microhaplotypes_info"]["targets"]
+        Get index of target_name in pmodata["representative_microhaplotypes"]["targets"]
         :param pmodata: the PMO to get indexes from
         :param target_names: a list of target_names
-        :return: the index of target_names in pmodata["microhaplotypes_info"]["targets"] returned in the same order as target_names
+        :return: the index of target_names in pmodata["representative_microhaplotypes"]["targets"] returned in the same order as target_names
         """
-        microhap_target_key = PMOProcessor.get_index_key_of_target_in_microhaplotypes_info(pmodata)
+        microhap_target_key = PMOProcessor.get_index_key_of_target_in_representative_microhaplotypes(pmodata)
         return [microhap_target_key[name] for name in target_names]
 
     @staticmethod
@@ -168,14 +168,14 @@ class PMOProcessor:
         records = []
         experiment_info = pmodata["experiment_info"]
 
-        for result in pmodata["microhaplotypes_detected"]:
+        for result in pmodata["detected_microhaplotypes"]:
             run_id = result["bioinformatics_run_id"]
             for sample in result["experiment_samples"]:
                 sample_id = sample["experiment_sample_id"]
                 sample_name = experiment_info[sample_id]["experiment_sample_name"]
 
                 target_count = sum(
-                    sum(hap["reads"] for hap in target["haps"]) >= min_reads
+                    sum(hap["reads"] for hap in target["mhaps"]) >= min_reads
                     for target in sample["target_results"]
                 )
 
@@ -202,16 +202,16 @@ class PMOProcessor:
                  - if collapse_across_runs=True:  columns = [target_name, sample_count]
         """
         records = []
-        microhap_targets = pmodata["microhaplotypes_info"]["targets"]
+        microhap_targets = pmodata["representative_microhaplotypes"]["targets"]
         target_info = pmodata["target_info"]
 
-        for result in pmodata["microhaplotypes_detected"]:
+        for result in pmodata["detected_microhaplotypes"]:
             run_id = result["bioinformatics_run_id"]
             target_sample_counts = defaultdict(int)
 
             for sample in result["experiment_samples"]:
                 for target_result in sample["target_results"]:
-                    if sum(hap["reads"] for hap in target_result["haps"]) >= min_reads:
+                    if sum(hap["reads"] for hap in target_result["mhaps"]) >= min_reads:
                         mhaps_target_id = target_result["mhaps_target_id"]
                         target_id = microhap_targets[mhaps_target_id]["target_id"]
                         target_name = target_info[target_id]["target_name"]
@@ -335,7 +335,7 @@ class PMOProcessor:
         allele_counts = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
         target_totals = defaultdict(lambda: defaultdict(int))
 
-        for data_for_run in pmodata["microhaplotypes_detected"]:
+        for data_for_run in pmodata["detected_microhaplotypes"]:
             bioid = data_for_run["bioinformatics_run_id"]
             if bioinformatics_run_ids is not None and bioid not in bioinformatics_run_ids:
                 continue
@@ -344,11 +344,11 @@ class PMOProcessor:
                 if experiment_sample_names is not None and sample_name not in experiment_sample_names:
                     continue
                 for target_data in sample_data["target_results"]:
-                    target_id = pmodata["microhaplotypes_info"]["targets"][target_data["mhaps_target_id"]]["target_id"]
+                    target_id = pmodata["representative_microhaplotypes"]["targets"][target_data["mhaps_target_id"]]["target_id"]
                     target = pmodata["target_info"][target_id]["target_name"]
                     if target_names is not None and target not in target_names:
                         continue
-                    for microhapid in target_data["haps"]:
+                    for microhapid in target_data["mhaps"]:
                         mhap_id = microhapid["mhap_id"]
                         allele_counts[bioid][target][mhap_id] += 1
                         target_totals[bioid][target] += 1
@@ -458,10 +458,10 @@ class PMOProcessor:
             additional_microhap_fields_with_data = {
                 additional_microhap_field
                 for additional_microhap_field in additional_microhap_fields
-                for microhaplotypes_detected in pmodata["microhaplotypes_detected"]
-                for experiment_samples_data in microhaplotypes_detected["experiment_samples"]
+                for detected_microhaplotypes in pmodata["detected_microhaplotypes"]
+                for experiment_samples_data in detected_microhaplotypes["experiment_samples"]
                 for target_data in experiment_samples_data["target_results"]
-                for microhap_data in target_data["haps"]
+                for microhap_data in target_data["mhaps"]
                 if additional_microhap_field in microhap_data
             }
             # Determine meta fields with no samples having data
@@ -470,7 +470,7 @@ class PMOProcessor:
 
             if additional_microhap_fields_with_no_samples:
                 raise Exception(
-                    f"No microhaplotypes_detected have data for fields: {', '.join(additional_microhap_fields_with_no_samples)}")
+                    f"No detected_microhaplotypes have data for fields: {', '.join(additional_microhap_fields_with_no_samples)}")
         # Check to see if at least 1 haplotype has this field
         # samples without this meta field will have NA
         if additional_representative_info_fields is not None:
@@ -478,7 +478,7 @@ class PMOProcessor:
             additional_microhap_fields_with_data = {
                 additional_microhap_field
                 for additional_microhap_field in additional_representative_info_fields
-                for target_data in pmodata["microhaplotypes_info"]["targets"]
+                for target_data in pmodata["representative_microhaplotypes"]["targets"]
                 for microhap_data in target_data["microhaplotypes"]
                 if additional_microhap_field in microhap_data
             }
@@ -497,8 +497,8 @@ class PMOProcessor:
         specimen_info = pmodata["specimen_info"]
         target_info = pmodata["target_info"]
         experiment_info = pmodata["experiment_info"]
-        detected_microhaps = pmodata["microhaplotypes_detected"]
-        rep_haps = pmodata["microhaplotypes_info"]["targets"]
+        detected_microhaps = pmodata["detected_microhaplotypes"]
+        rep_haps = pmodata["representative_microhaplotypes"]["targets"]
         for bio_run_for_detected_microhaps in detected_microhaps:
             bioinformatics_run_id = bio_run_for_detected_microhaps["bioinformatics_run_id"]
             for sample_data in bio_run_for_detected_microhaps["experiment_samples"]:
@@ -508,7 +508,7 @@ class PMOProcessor:
                 specimen_meta = specimen_info[specimen_id]
                 for target_data in sample_data["target_results"]:
                     target_name = target_info[rep_haps[target_data["mhaps_target_id"]]["target_id"]]["target_name"]
-                    for microhap_data in target_data["haps"]:
+                    for microhap_data in target_data["mhaps"]:
                         allele_id = microhap_data["mhap_id"]
                         #print(rep_haps[target_data["mhaps_target_id"]])
                         rep_hap_meta = rep_haps[target_data["mhaps_target_id"]]["microhaplotypes"][allele_id]
@@ -546,7 +546,7 @@ class PMOProcessor:
 
         # create a new pmo out
         # pmo_name, panel_info, sequencing_info, taramp_bioinformatics_info will stay the same
-        # specimen_info, experiment_info, microhaplotypes_detected, representative_microhaplotype_sequences will be
+        # specimen_info, experiment_info, detected_microhaplotypes, representative_microhaplotype_sequences will be
         # created based on the supplied experiment ids
 
         # check to make sure the supplied specimens actually exist within the data
@@ -562,16 +562,17 @@ class PMOProcessor:
                    "sequencing_info": pmodata["sequencing_info"],
                    "target_info": pmodata["target_info"],
                    "targeted_genomes": pmodata["targeted_genomes"],
-                   "microhaplotypes_info": pmodata["microhaplotypes_info"],
+                   "representative_microhaplotypes": pmodata["representative_microhaplotypes"],
                    "bioinformatics_methods_info": pmodata["bioinformatics_methods_info"],
                    "bioinformatics_run_info": pmodata["bioinformatics_run_info"],
                    "specimen_info" : [],
                    "experiment_info" : [],
-                   "microhaplotypes_detected" : []
+                   "project_info" : pmodata["project_info"],
+                   "detected_microhaplotypes" : []
                    }
         if "read_counts_by_stage" in pmodata:
             pmo_out["read_counts_by_stage"] = []
-        # need to update read_counts_by_stage, experiment_info, specimen_info, microhaplotypes_detected
+        # need to update read_counts_by_stage, experiment_info, specimen_info, detected_microhaplotypes
 
         # specimen_info
         # first get the specimen_ids needed and then build
@@ -591,16 +592,16 @@ class PMOProcessor:
             # update specimen_id
             pmo_out["experiment_info"][len(pmo_out["experiment_info"])-1]["specimen_id"] = specimen_id_index_key[pmodata["experiment_info"][experiment_sample_id]["specimen_id"]]
 
-        # microhaplotypes_detected
-        for microhaplotypes_detected in pmodata["microhaplotypes_detected"]:
-            new_microhaplotypes_detected = {"bioinformatics_run_id": microhaplotypes_detected["bioinformatics_run_id"],
+        # detected_microhaplotypes
+        for detected_microhaplotypes in pmodata["detected_microhaplotypes"]:
+            new_detected_microhaplotypes = {"bioinformatics_run_id": detected_microhaplotypes["bioinformatics_run_id"],
                                             "experiment_samples": []}
-            for sample in microhaplotypes_detected["experiment_samples"]:
+            for sample in detected_microhaplotypes["experiment_samples"]:
                 if sample["experiment_sample_id"] in experiment_sample_ids:
-                    new_microhaplotypes_detected["experiment_samples"].append(sample)
+                    new_detected_microhaplotypes["experiment_samples"].append(sample)
                     # update experiment_sample_id
-                    new_microhaplotypes_detected["experiment_samples"][len(new_microhaplotypes_detected["experiment_samples"]) - 1]["experiment_sample_id"] = experiment_id_index_key[sample["experiment_sample_id"]]
-            pmo_out["microhaplotypes_detected"].append(new_microhaplotypes_detected)
+                    new_detected_microhaplotypes["experiment_samples"][len(new_detected_microhaplotypes["experiment_samples"]) - 1]["experiment_sample_id"] = experiment_id_index_key[sample["experiment_sample_id"]]
+            pmo_out["detected_microhaplotypes"].append(new_detected_microhaplotypes)
         # read_counts_by_stage
         if "read_counts_by_stage" in pmodata:
             for read_count in pmodata["read_counts_by_stage"]:
@@ -669,12 +670,12 @@ class PMOProcessor:
         for target_id in target_ids:
             if target_id >= len(pmodata["target_info"]):
                 warnings.append(f"{target_id} out of range of target_info, length is {len(pmodata['target_info'])}")
-        target_ids_in_microhaplotypes_info = []
-        for target in pmodata["microhaplotypes_info"]["targets"]:
-            target_ids_in_microhaplotypes_info.append(target["target_id"])
+        target_ids_in_representative_microhaplotypes = []
+        for target in pmodata["representative_microhaplotypes"]["targets"]:
+            target_ids_in_representative_microhaplotypes.append(target["target_id"])
         for target_id in target_ids:
-            if target_id not in target_ids_in_microhaplotypes_info:
-                warnings.append(f"{target_id} not in pmodata[\"microhaplotypes_info\"]")
+            if target_id not in target_ids_in_representative_microhaplotypes:
+                warnings.append(f"{target_id} not in pmodata[\"representative_microhaplotypes\"]")
 
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
@@ -682,12 +683,13 @@ class PMOProcessor:
         pmo_out = {"pmo_header": pmodata["pmo_header"],
                    "sequencing_info": pmodata["sequencing_info"],
                    "specimen_info": pmodata["specimen_info"],
+                   "project_info": pmodata["project_info"],
                    "experiment_info": pmodata["experiment_info"],
                    "bioinformatics_methods_info": pmodata["bioinformatics_methods_info"],
                    "bioinformatics_run_info": pmodata["bioinformatics_run_info"],
                    "targeted_genomes": pmodata["targeted_genomes"], "target_info": []}
-        # function will update target_info, panel_info, microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage based
-        # on target_ids selecting for first update microhaplotypes_info, microhaplotypes_detected, read_counts_by_stage
+        # function will update target_info, panel_info, representative_microhaplotypes, detected_microhaplotypes, read_counts_by_stage based
+        # on target_ids selecting for first update representative_microhaplotypes, detected_microhaplotypes, read_counts_by_stage
         # then update target_info, panel_info
         # then update the target_ids
 
@@ -711,22 +713,22 @@ class PMOProcessor:
                         new_reaction["panel_targets"].append(target_info_index_key[panel_target_id])
                 if len(new_reaction["panel_targets"]) > 0:
                     new_panel_info["reactions"].append(new_reaction)
-        # microhaplotypes_info
-        pmo_out["microhaplotypes_info"] = {"targets" :[]}
+        # representative_microhaplotypes
+        pmo_out["representative_microhaplotypes"] = {"targets" :[]}
         # key=old_mhaps_target_id, value = new_mhaps_target_id
         mhaps_target_id_new_key = {}
-        for microhap_info_index, microhap_info in enumerate(pmodata["microhaplotypes_info"]["targets"]):
+        for microhap_info_index, microhap_info in enumerate(pmodata["representative_microhaplotypes"]["targets"]):
             if microhap_info["target_id"] in target_ids:
-                mhaps_target_id_new_key[microhap_info_index] = len(pmo_out["microhaplotypes_info"]["targets"])
+                mhaps_target_id_new_key[microhap_info_index] = len(pmo_out["representative_microhaplotypes"]["targets"])
                 # update new target_id index
                 microhap_info["target_id"] = target_info_index_key[microhap_info["target_id"]]
-                pmo_out["microhaplotypes_info"]["targets"].append(microhap_info)
-        # microhaplotypes_info
-        pmo_out["microhaplotypes_detected"] = []
-        for microhaplotypes_detected in pmodata["microhaplotypes_detected"]:
-            new_microhaplotypes_detected = {"bioinformatics_run_id": microhaplotypes_detected["bioinformatics_run_id"],
+                pmo_out["representative_microhaplotypes"]["targets"].append(microhap_info)
+        # representative_microhaplotypes
+        pmo_out["detected_microhaplotypes"] = []
+        for detected_microhaplotypes in pmodata["detected_microhaplotypes"]:
+            new_detected_microhaplotypes = {"bioinformatics_run_id": detected_microhaplotypes["bioinformatics_run_id"],
                                             "experiment_samples" : []}
-            for sample in microhaplotypes_detected["experiment_samples"]:
+            for sample in detected_microhaplotypes["experiment_samples"]:
                 new_sample = {"experiment_sample_id": sample["experiment_sample_id"],
                               "target_results" : []}
                 for target in sample["target_results"]:
@@ -734,8 +736,8 @@ class PMOProcessor:
                         # update with new mhaps_target_id id
                         target["mhaps_target_id"] = mhaps_target_id_new_key[target["mhaps_target_id"]]
                         new_sample["target_results"].append(target)
-                new_microhaplotypes_detected["experiment_samples"].append(new_sample)
-            pmo_out["microhaplotypes_detected"].append(new_microhaplotypes_detected)
+                new_detected_microhaplotypes["experiment_samples"].append(new_sample)
+            pmo_out["detected_microhaplotypes"].append(new_detected_microhaplotypes)
 
         # read_counts_by_stage
         if "read_counts_by_stage" in pmodata:
@@ -859,19 +861,19 @@ class PMOProcessor:
         """
         # create a new pmo out
         # majority will be the same, just filtering detected microhaplotypes based on read counts
-        # @todo consider updating microhaplotypes_info if certain microhaplotypes are no longer detected in any sample with the given filter
+        # @todo consider updating representative_microhaplotypes if certain microhaplotypes are no longer detected in any sample with the given filter
         pmo_out = {"pmo_header": pmodata["pmo_header"],
                    "panel_info": pmodata["panel_info"],
                    "sequencing_info": pmodata["sequencing_info"],
                    "target_info": pmodata["target_info"],
                    "specimen_info": pmodata["specimen_info"],
                    "experiment_info": pmodata["experiment_info"],
-
+                   "project_info": pmodata["project_info"],
                    "targeted_genomes": pmodata["targeted_genomes"],
-                   "microhaplotypes_info": pmodata["microhaplotypes_info"],
+                   "representative_microhaplotypes": pmodata["representative_microhaplotypes"],
                    "bioinformatics_methods_info": pmodata["bioinformatics_methods_info"],
                    "bioinformatics_run_info": pmodata["bioinformatics_run_info"],
-                   "microhaplotypes_detected": []
+                   "detected_microhaplotypes": []
                    }
         # if has optional read_counts_by_stage then add as well
         # if does contain, @todo consider updating with new counts now that a filter has been applied
@@ -879,26 +881,26 @@ class PMOProcessor:
         if "read_counts_by_stage" in pmodata:
             pmo_out["read_counts_by_stage"] = pmodata["read_counts_by_stage"]
 
-        # microhaplotypes_detected
-        for microhaplotypes_detected in pmodata["microhaplotypes_detected"]:
+        # detected_microhaplotypes
+        for detected_microhaplotypes in pmodata["detected_microhaplotypes"]:
             extracted_microhaps_for_id = {
-                "bioinformatics_run_id": microhaplotypes_detected["bioinformatics_run_id"],
+                "bioinformatics_run_id": detected_microhaplotypes["bioinformatics_run_id"],
                 "experiment_samples": []}
-            for experiment in microhaplotypes_detected["experiment_samples"]:
+            for experiment in detected_microhaplotypes["experiment_samples"]:
                 targets_for_samples = {"experiment_sample_id": experiment["experiment_sample_id"],
                                        "target_results": []}
                 for target in experiment["target_results"]:
                     microhaps_for_target = []
-                    for microhap in target["haps"]:
+                    for microhap in target["mhaps"]:
                         if microhap["reads"] >= read_filter:
                             microhaps_for_target.append(microhap)
                     if len(microhaps_for_target) > 0:
                         targets_for_samples["target_results"].append(
                             {"mhaps_target_id" : target["mhaps_target_id"],
-                            "haps": microhaps_for_target})
+                            "mhaps": microhaps_for_target})
                 if len(targets_for_samples["target_results"]) > 0:
                     extracted_microhaps_for_id["experiment_samples"].append(targets_for_samples)
-            pmo_out["microhaplotypes_detected"].append(extracted_microhaps_for_id)
+            pmo_out["detected_microhaplotypes"].append(extracted_microhaps_for_id)
         return pmo_out
 
     @staticmethod
