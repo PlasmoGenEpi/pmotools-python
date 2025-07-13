@@ -2,10 +2,11 @@
 import pandas as pd
 import json
 import warnings
+
 from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 
 
-def microhaplotype_table_to_pmo_dict(
+def mhap_table_to_pmo_json(
     microhaplotype_table: pd.DataFrame,
     bioinformatics_run_name: str,
     experiment_sample_name_col: str = 'experiment_sample_name',
@@ -74,8 +75,8 @@ def microhaplotype_table_to_pmo_dict(
 
 def create_representative_microhaplotype_dict(
         microhaplotype_table: pd.DataFrame,
-        target_name_col: str,
-        seq_col: str,
+        target_name_col: str = 'target_name',
+        seq_col: str = 'seq',
         genome_id: int = 0,
         chrom_col: str | None = None,
         start_col: str | None = None,
@@ -127,19 +128,22 @@ def create_representative_microhaplotype_dict(
     def extract_masking(row):
         if not (masking_seq_start_col and masking_seq_segment_size_col and masking_replacement_size_col):
             return []
-        starts = str(row[masking_seq_start_col]).split(masking_delim)
-        sizes = str(row[masking_seq_segment_size_col]).split(masking_delim)
-        replacements = str(
-            row[masking_replacement_size_col]).split(masking_delim)
-        return [
-            {
-                "seq_start": int(s),
-                "seq_segment_size": int(sz),
-                "replacement_size": int(r)
-            }
-            for s, sz, r in zip(starts, sizes, replacements)
-            if s and sz and r
-        ]
+        if all([pd.notna(row[masking_seq_start_col]), pd.notna(row[masking_seq_segment_size_col]), pd.notna(row[masking_replacement_size_col])]):
+            starts = str(row[masking_seq_start_col]).split(masking_delim)
+            sizes = str(row[masking_seq_segment_size_col]).split(masking_delim)
+            replacements = str(
+                row[masking_replacement_size_col]).split(masking_delim)
+            return [
+                {
+                    "seq_start": int(s),
+                    "seq_segment_size": int(sz),
+                    "replacement_size": int(r)
+                }
+                for s, sz, r in zip(starts, sizes, replacements)
+                if s and sz and r
+            ]
+        else:
+            return []
 
     def warn_if_duplicated_seqs(df, target_col, seq_col):
         dup_counts = df.groupby([target_col, seq_col]).size()
@@ -216,7 +220,6 @@ def create_representative_microhaplotype_dict(
             target_dict["microhaplotypes"].append(mhap)
 
         mhap_data["targets"].append(target_dict)
-
     return mhap_data
 
 
@@ -304,8 +307,8 @@ def get_target_id_in_representative_mhaps(df, representative_dict):
     df['mhaps_target_id'] = df['target_name'].map(
         target_name_to_mhaps_target_id)
     if df['mhaps_target_id'].isnull().any():
-        missing_targets = df[df['mhaps_target_id']].isnull()[
-            'target_name'].unique()
+        missing_targets = df[df.mhaps_target_id.isnull()
+                             ]['target_name'].unique()
         raise ValueError(
             f"Missing target_name(s) in representative microhaplotype table: {missing_targets}")
     return df
@@ -321,7 +324,8 @@ def get_mhap_index_in_representative_mhaps(df, representative_dict):
         lambda row: target_seq_to_mhap_id.get((row['mhaps_target_id'], row['seq'])), axis=1
     )
     if df['mhap_id'].isnull().any():
-        missing_seqs = df[df['mhap_id'].isnull()][['target_name', 'seq']]
+        missing_seqs = df[df['mhap_id'].isnull(
+        )][['target_name', 'seq']].drop_duplicates()
         raise ValueError(
             f"Some seq values not found in representative microhaplotype table:\n{missing_seqs}")
     return df
