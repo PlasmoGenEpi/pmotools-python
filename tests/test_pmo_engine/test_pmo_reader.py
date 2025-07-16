@@ -40,6 +40,7 @@ class TestPMOReader(unittest.TestCase):
             pmo_jsonschema_data = json.load(f)
         checker = PMOChecker(pmo_jsonschema_data)
         checker.validate_pmo_json(combined_pmo)
+
         # check against expected
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             expected_pmo = json.load(f)

@@ -16,25 +16,26 @@ class TestPMOChecker(unittest.TestCase):
             self.pmo_jsonschema_data = json.load(f)
         self.checker = PMOChecker(self.pmo_jsonschema_data)
         self.pmo_required_base_fields = ["experiment_info",
-        "specimen_info",
-        "sequencing_info",
-        "panel_info",
-        "target_info",
-        "targeted_genomes",
-        "microhaplotypes_info",
-        "bioinformatics_methods_info",
-        "bioinformatics_run_info",
-        "microhaplotypes_detected",
-        "pmo_header"]
+                                         "specimen_info",
+                                         "sequencing_info",
+                                         "panel_info",
+                                         "target_info",
+                                         "targeted_genomes",
+                                         "representative_microhaplotypes",
+                                         "bioinformatics_methods_info",
+                                         "bioinformatics_run_info",
+                                         "detected_microhaplotypes",
+                                         "project_info"
+                                         "pmo_header"]
 
         self.specimen_required_fields = [
-                "specimen_name",
-                "specimen_taxon_id",
-                "host_taxon_id",
-                "collection_date",
-                "collection_country",
-                "project_name"
-            ]
+            "specimen_name",
+            "specimen_taxon_id",
+            "host_taxon_id",
+            "collection_date",
+            "collection_country",
+            "project_id"
+        ]
 
     def test_pmo_checker_check_for_required_base_fields(self):
 
@@ -45,10 +46,11 @@ class TestPMOChecker(unittest.TestCase):
             "panel_info":[],
             "target_info":[],
             "targeted_genomes":[],
-            "microhaplotypes_info":{},
+            "representative_microhaplotypes":{},
             "bioinformatics_methods_info":[],
             "bioinformatics_run_info":[],
-            "microhaplotypes_detected":[],
+            "detected_microhaplotypes":[],
+            "project_info": [],
             "pmo_header":{}
         }
         self.checker.check_for_required_base_fields(pmo_test_object)
@@ -76,6 +78,10 @@ class TestPMOChecker(unittest.TestCase):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json")) as f:
             pmo_data = json.load(f)
         self.checker.validate_pmo_json(pmo_data)
+
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json")) as f:
+            pmo_data2 = json.load(f)
+        self.checker.validate_pmo_json(pmo_data2)
 
     def test_pmo_checker_validate_pmo_json_fail(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example_bad_format.json")) as f:

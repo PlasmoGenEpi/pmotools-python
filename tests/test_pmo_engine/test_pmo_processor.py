@@ -123,13 +123,12 @@ class TestPMOProcessor(unittest.TestCase):
         specimen_meta_fields_counts_check = pd.DataFrame([
             {"field": "collection_country", "present_in_specimens_count": 4, "total_specimen_count": 4},
             {"field": "collection_date", "present_in_specimens_count": 4, "total_specimen_count": 4},
-            {"field": "collector_chief_scientist", "present_in_specimens_count": 4, "total_specimen_count": 4},
             {"field": "geo_admin3", "present_in_specimens_count": 4, "total_specimen_count": 4},
             {"field": "host_taxon_id", "present_in_specimens_count": 4, "total_specimen_count": 4},
             {"field": "lat_lon", "present_in_specimens_count": 2, "total_specimen_count": 4},
             {"field": "parasite_density_info", "present_in_specimens_count": 2, "total_specimen_count": 4},
             {"field": "plate_info", "present_in_specimens_count": 2, "total_specimen_count": 4},
-            {"field": "project_name", "present_in_specimens_count": 4, "total_specimen_count": 4},
+            {"field": "project_id", "present_in_specimens_count": 4, "total_specimen_count": 4},
             {"field": "specimen_collect_device", "present_in_specimens_count": 4, "total_specimen_count": 4},
             {"field": "specimen_name", "present_in_specimens_count": 4, "total_specimen_count": 4},
             {"field": "specimen_store_loc", "present_in_specimens_count": 4, "total_specimen_count": 4},
@@ -211,7 +210,7 @@ class TestPMOProcessor(unittest.TestCase):
         pmo_data_filtered = PMOProcessor.extract_from_pmo_with_read_filter(pmo_data, 1000)
         with open("read_filter_100_combined_pmo_example.json", "w") as f:
             json.dump(pmo_data_filtered, f)
-        self.assertEqual("a624dbce6bf501e4fe970e139c31e575",md5sum_of_fnp("read_filter_100_combined_pmo_example.json"))
+        self.assertEqual("36dd9c690c0d99221e013a17afec308d",md5sum_of_fnp("read_filter_100_combined_pmo_example.json"))
         # check pmo extracted against PMO schema
         pmo_jsonschema_fnp = os.path.join(os.path.dirname(os.path.dirname(self.working_dir)),
                                                "etc/portable_microhaplotype_object.schema.json")
@@ -226,7 +225,7 @@ class TestPMOProcessor(unittest.TestCase):
         pmo_data_select_targets = PMOProcessor.filter_pmo_by_target_ids(pmo_data, {1,10,11,55})
         with open("combined_pmo_target_ids_1_10_11_55.json", "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("a09d7320b95f549b1ddd36384c1a9349",md5sum_of_fnp("combined_pmo_target_ids_1_10_11_55.json"))
+        self.assertEqual("cdf87de4b48e9db790f59a6d26ea668d",md5sum_of_fnp("combined_pmo_target_ids_1_10_11_55.json"))
         # check pmo extracted against PMO schema
         pmo_jsonschema_fnp = os.path.join(os.path.dirname(os.path.dirname(self.working_dir)),
                                                "etc/portable_microhaplotype_object.schema.json")
@@ -241,7 +240,7 @@ class TestPMOProcessor(unittest.TestCase):
         pmo_data_select_targets = PMOProcessor.filter_pmo_by_target_names(pmo_data, {"t96", "t80", "t34", "t55"})
         with open("combined_pmo_target_ids_t96_t80_t34_t55.json", "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("af2135e65a0bb0e2bc14da0c18fe21bb",md5sum_of_fnp("combined_pmo_target_ids_t96_t80_t34_t55.json"))
+        self.assertEqual("f6843527add82f756944312cfc6e68e4",md5sum_of_fnp("combined_pmo_target_ids_t96_t80_t34_t55.json"))
         # check pmo extracted against PMO schema
         pmo_jsonschema_fnp = os.path.join(os.path.dirname(os.path.dirname(self.working_dir)),
                                                "etc/portable_microhaplotype_object.schema.json")
@@ -256,7 +255,7 @@ class TestPMOProcessor(unittest.TestCase):
         pmo_data_select_targets = PMOProcessor.filter_pmo_by_experiment_sample_ids(pmo_data, {1, 3})
         with open("combined_pmo_example_ids_1_3.json", "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("1961bf5b7f41439191ecf12a296152aa",md5sum_of_fnp("combined_pmo_example_ids_1_3.json"))
+        self.assertEqual("4c79fb8157cb6b2dee106fe8cd67329b",md5sum_of_fnp("combined_pmo_example_ids_1_3.json"))
         # check pmo extracted against PMO schema
         pmo_jsonschema_fnp = os.path.join(os.path.dirname(os.path.dirname(self.working_dir)),
                                                "etc/portable_microhaplotype_object.schema.json")
@@ -271,7 +270,7 @@ class TestPMOProcessor(unittest.TestCase):
         pmo_data_select_experiment_sample_names = PMOProcessor.filter_pmo_by_experiment_sample_names(pmo_data, {"8025874217", "XUC009"})
         with open("combined_pmo_example_ids_8025874217_XUC009.json", "w") as f:
             json.dump(pmo_data_select_experiment_sample_names, f)
-        self.assertEqual("fe440e75e79f6b0348339c799647f9be",md5sum_of_fnp("combined_pmo_example_ids_8025874217_XUC009.json"))
+        self.assertEqual("78ad5c2fccca5d0e993329c27d18cd6e",md5sum_of_fnp("combined_pmo_example_ids_8025874217_XUC009.json"))
         # check pmo extracted against PMO schema
         pmo_jsonschema_fnp = os.path.join(os.path.dirname(os.path.dirname(self.working_dir)),
                                                "etc/portable_microhaplotype_object.schema.json")
@@ -286,7 +285,7 @@ class TestPMOProcessor(unittest.TestCase):
         pmo_data_select_targets = PMOProcessor.filter_pmo_by_specimen_ids(pmo_data, {0,2})
         with open("combined_pmo_specimen_ids_0_2.json", "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("0ecc93cfd4730b2fbcf1c815ade61fa9",md5sum_of_fnp("combined_pmo_specimen_ids_0_2.json"))
+        self.assertEqual("3e276cacdb9892999712ca793ee8ba57",md5sum_of_fnp("combined_pmo_specimen_ids_0_2.json"))
         # check pmo extracted against PMO schema
         pmo_jsonschema_fnp = os.path.join(os.path.dirname(os.path.dirname(self.working_dir)),
                                                "etc/portable_microhaplotype_object.schema.json")
@@ -301,7 +300,7 @@ class TestPMOProcessor(unittest.TestCase):
         pmo_data_select_targets = PMOProcessor.filter_pmo_by_specimen_names(pmo_data, {"8025874217", "5tbx"})
         with open("combined_pmo_specimen_ids_8025874217_5tbx.json", "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("0ecc93cfd4730b2fbcf1c815ade61fa9",md5sum_of_fnp("combined_pmo_specimen_ids_8025874217_5tbx.json"))
+        self.assertEqual("3e276cacdb9892999712ca793ee8ba57",md5sum_of_fnp("combined_pmo_specimen_ids_8025874217_5tbx.json"))
         # check pmo extracted against PMO schema
         pmo_jsonschema_fnp = os.path.join(os.path.dirname(os.path.dirname(self.working_dir)),
                                                "etc/portable_microhaplotype_object.schema.json")
@@ -316,7 +315,7 @@ class TestPMOProcessor(unittest.TestCase):
         pmo_data_select_meta, group_counts = PMOProcessor.extract_from_pmo_samples_with_meta_groupings(pmo_data, "collection_country=Mozambique")
         with open("combined_pmo_collection_country_Mozambique.json", "w") as f:
             json.dump(pmo_data_select_meta, f)
-        self.assertEqual("7310416dd5354647bb6caa2572461c3b",md5sum_of_fnp("combined_pmo_collection_country_Mozambique.json"))
+        self.assertEqual("7736414b20161e203ee2976bbbd2201d",md5sum_of_fnp("combined_pmo_collection_country_Mozambique.json"))
         # check pmo extracted against PMO schema
         pmo_jsonschema_fnp = os.path.join(os.path.dirname(os.path.dirname(self.working_dir)),
                                                "etc/portable_microhaplotype_object.schema.json")

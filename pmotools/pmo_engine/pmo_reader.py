@@ -104,14 +104,12 @@ class PMOReader:
                         if "insert_location" in target:
                             # update genome_id
                             target["insert_location"]["genome_id"] = targeted_genomes_old_index_key[pmo_index][target["insert_location"]["genome_id"]]
-                        for forward_primer in pmo["forward_primers"]:
-                            if "location" in forward_primer:
-                                # update genome_id
-                                forward_primer["location"]["genome_id"] = targeted_genomes_old_index_key[pmo_index][forward_primer["location"]["genome_id"]]
-                        for reverse_primer in pmo["reverse_primers"]:
-                            if "location" in reverse_primer:
-                                # update genome_id
-                                reverse_primer["location"]["genome_id"] = targeted_genomes_old_index_key[pmo_index][reverse_primer["location"]["genome_id"]]
+                        if "location" in pmo["forward_primer"]:
+                            # update genome_id
+                            pmo["forward_primer"]["location"]["genome_id"] = targeted_genomes_old_index_key[pmo_index][pmo["forward_primer"]["location"]["genome_id"]]
+                        if "location" in pmo["reverse_primer"]:
+                            # update genome_id
+                            pmo["reverse_primer"]["location"]["genome_id"] = targeted_genomes_old_index_key[pmo_index][pmo["reverse_primer"]["location"]["genome_id"]]
                     pmo_out["target_info"].append(target)
                     target_info_out_index_key[target["target_name"]] = new_index
                     target_info_old_index_key[pmo_index][target_index] = new_index
@@ -153,7 +151,28 @@ class PMOReader:
                 pmo_out["sequencing_info"].append(sequencing_info)
                 sequencing_info_old_index_key[pmo_index][sequencing_info_index] = new_index
 
+        # combine project_info
+        # could be possible to be combining PMOs across one project so check if project already exists
+        pmo_out["project_info"] = pmos[0]["project_info"]
+        project_info_old_index_key = defaultdict(dict)
+        for pmo_index, pmo in enumerate(pmos[1:], start=1):
+            for project_info_index, project_info in enumerate(pmo["project_info"]):
+                # check to see if project already exists
+                found_project_info = False
+                for current_project_id, current_project_info in enumerate(pmo_out["project_info"]):
+                    if current_project_info["project_name"] == project_info["project_name"]:
+                        if current_project_info["project_description"] != project_info["project_description"]:
+                            raise Exception("Project description mismatch for project_name: " + project_info["project_name"])
+                        else:
+                            project_info_old_index_key[pmo_index][project_info_index] = current_project_id
+                            found_project_info = True
+                if not found_project_info:
+                    new_index = len(pmo_out["project_info"])
+                    pmo_out["project_info"].append(project_info)
+                    project_info_old_index_key[pmo_index][project_info_index] = new_index
+
         # combine specimen_info and experiment_info
+        # update project_id
         pmo_out["specimen_info"] = pmos[0]["specimen_info"]
         specimen_names = []
         duplicate_specimen_names = []
@@ -171,6 +190,8 @@ class PMOReader:
                     duplicate_specimen_names.append(specimen_info["specimen_name"])
                 specimen_names.append(specimen_info["specimen_name"])
                 new_index = len(pmo_out["specimen_info"])
+                # update project_id
+                specimen_info["project_id"] = project_info_old_index_key[pmo_index][specimen_info["project_id"]]
                 pmo_out["specimen_info"].append(specimen_info)
                 specimen_info_old_index_key[pmo_index][specimen_info_index] = new_index
 
@@ -228,59 +249,59 @@ class PMOReader:
                 pmo_out["bioinformatics_run_info"].append(bioinformatics_run_info)
                 bioinformatics_run_info_old_index_key[pmo_index][bioinformatics_run_info_index] = new_index
 
-        # update microhaplotypes_info
-        pmo_out["microhaplotypes_info"] = pmos[0]["microhaplotypes_info"]
-        #key: target_name (not index), val: index in microhaplotypes_info
-        microhaplotypes_info_out_index_key = {}
-        for microhaplotypes_info_index, microhaplotypes_info in enumerate(pmo_out["microhaplotypes_info"]["targets"]):
-            microhaplotypes_info_out_index_key[pmo_out["target_info"][microhaplotypes_info["target_id"]]["target_name"]] = microhaplotypes_info_index
+        # update representative_microhaplotypes
+        pmo_out["representative_microhaplotypes"] = pmos[0]["representative_microhaplotypes"]
+        #key: target_name (not index), val: index in representative_microhaplotypes
+        representative_microhaplotypes_out_index_key = {}
+        for representative_microhaplotypes_index, representative_microhaplotypes in enumerate(pmo_out["representative_microhaplotypes"]["targets"]):
+            representative_microhaplotypes_out_index_key[pmo_out["target_info"][representative_microhaplotypes["target_id"]]["target_name"]] = representative_microhaplotypes_index
         # key1: pmo_index, key2: old_mhaps_target_id, val: new_mhaps_target_id
-        microhaplotypes_info_old_index_key = defaultdict(dict)
+        representative_microhaplotypes_old_index_key = defaultdict(dict)
         #key1: pmo_index, key2: old_mhaps_target_id, key3: old_mhap_id, val: new_mhap_id
-        microhaplotypes_info_hmap_for_target_index_old_index_key = defaultdict(lambda: defaultdict(dict))
+        representative_microhaplotypes_hmap_for_target_index_old_index_key = defaultdict(lambda: defaultdict(dict))
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
-            for microhaplotypes_info_index, microhaplotypes_info in enumerate(pmo["microhaplotypes_info"]["targets"]):
-                if pmo["target_info"][microhaplotypes_info["target_id"]]["target_name"] in microhaplotypes_info_out_index_key:
-                    microhaplotypes_info_old_index_key[pmo_index][microhaplotypes_info_index] = microhaplotypes_info_out_index_key[pmo["target_info"][microhaplotypes_info["target_id"]]["target_name"]]
+            for representative_microhaplotypes_index, representative_microhaplotypes in enumerate(pmo["representative_microhaplotypes"]["targets"]):
+                if pmo["target_info"][representative_microhaplotypes["target_id"]]["target_name"] in representative_microhaplotypes_out_index_key:
+                    representative_microhaplotypes_old_index_key[pmo_index][representative_microhaplotypes_index] = representative_microhaplotypes_out_index_key[pmo["target_info"][representative_microhaplotypes["target_id"]]["target_name"]]
                     # now update per microhaplotype
-                    for adding_microhap_index, adding_microhap in enumerate(microhaplotypes_info["microhaplotypes"]):
+                    for adding_microhap_index, adding_microhap in enumerate(representative_microhaplotypes["microhaplotypes"]):
                         found = False
-                        # print(pmo_out["microhaplotypes_info"]["targets"][microhaplotypes_info_out_index_key[pmo["target_info"][microhaplotypes_info["target_id"]]["target_name"]]]["microhaplotypes"])
+                        # print(pmo_out["representative_microhaplotypes"]["targets"][representative_microhaplotypes_out_index_key[pmo["target_info"][representative_microhaplotypes["target_id"]]["target_name"]]]["microhaplotypes"])
                         # print("\n\n\n")
-                        for already_have_microhap_index, already_have_microhap in enumerate(pmo_out["microhaplotypes_info"]["targets"][microhaplotypes_info_out_index_key[pmo["target_info"][microhaplotypes_info["target_id"]]["target_name"]]]["microhaplotypes"]):
+                        for already_have_microhap_index, already_have_microhap in enumerate(pmo_out["representative_microhaplotypes"]["targets"][representative_microhaplotypes_out_index_key[pmo["target_info"][representative_microhaplotypes["target_id"]]["target_name"]]]["microhaplotypes"]):
                             # print(already_have_microhap)
                             # print("\n")
                             if adding_microhap["seq"] == already_have_microhap["seq"]:
-                                microhaplotypes_info_hmap_for_target_index_old_index_key[pmo_index][microhaplotypes_info_index][adding_microhap_index] = already_have_microhap_index
+                                representative_microhaplotypes_hmap_for_target_index_old_index_key[pmo_index][representative_microhaplotypes_index][adding_microhap_index] = already_have_microhap_index
                                 found = True
                                 break
                         if not found:
-                            new_index = len(pmo_out["microhaplotypes_info"]["targets"][microhaplotypes_info_out_index_key[pmo["target_info"][microhaplotypes_info["target_id"]]["target_name"]]]["microhaplotypes"])
-                            pmo_out["microhaplotypes_info"]["targets"][microhaplotypes_info_out_index_key[pmo["target_info"][microhaplotypes_info["target_id"]]["target_name"]]]["microhaplotypes"].append(adding_microhap)
-                            microhaplotypes_info_hmap_for_target_index_old_index_key[pmo_index][microhaplotypes_info_index][adding_microhap_index] = new_index
+                            new_index = len(pmo_out["representative_microhaplotypes"]["targets"][representative_microhaplotypes_out_index_key[pmo["target_info"][representative_microhaplotypes["target_id"]]["target_name"]]]["microhaplotypes"])
+                            pmo_out["representative_microhaplotypes"]["targets"][representative_microhaplotypes_out_index_key[pmo["target_info"][representative_microhaplotypes["target_id"]]["target_name"]]]["microhaplotypes"].append(adding_microhap)
+                            representative_microhaplotypes_hmap_for_target_index_old_index_key[pmo_index][representative_microhaplotypes_index][adding_microhap_index] = new_index
                 else:
-                    # if not currently in microhaplotypes_info, update keys and look-ups
-                    new_mhaps_target_index = len(pmo_out["microhaplotypes_info"]["targets"])
-                    pmo_out["microhaplotypes_info"]["targets"].append(microhaplotypes_info)
-                    microhaplotypes_info_old_index_key[pmo_index][microhaplotypes_info_index] = new_mhaps_target_index
-                    microhaplotypes_info_out_index_key[pmo["target_info"][microhaplotypes_info["target_id"]]["target_name"]] = new_mhaps_target_index
-                    for adding_microhap_index, adding_microhap in enumerate(microhaplotypes_info["microhaplotypes"]):
-                        microhaplotypes_info_hmap_for_target_index_old_index_key[pmo_index][microhaplotypes_info_index][adding_microhap_index] = adding_microhap_index
-        # print(microhaplotypes_info_hmap_for_target_index_old_index_key)
-        # update microhaplotypes_detected
-        pmo_out["microhaplotypes_detected"] = pmos[0]["microhaplotypes_detected"]
+                    # if not currently in representative_microhaplotypes, update keys and look-ups
+                    new_mhaps_target_index = len(pmo_out["representative_microhaplotypes"]["targets"])
+                    pmo_out["representative_microhaplotypes"]["targets"].append(representative_microhaplotypes)
+                    representative_microhaplotypes_old_index_key[pmo_index][representative_microhaplotypes_index] = new_mhaps_target_index
+                    representative_microhaplotypes_out_index_key[pmo["target_info"][representative_microhaplotypes["target_id"]]["target_name"]] = new_mhaps_target_index
+                    for adding_microhap_index, adding_microhap in enumerate(representative_microhaplotypes["microhaplotypes"]):
+                        representative_microhaplotypes_hmap_for_target_index_old_index_key[pmo_index][representative_microhaplotypes_index][adding_microhap_index] = adding_microhap_index
+        # print(representative_microhaplotypes_hmap_for_target_index_old_index_key)
+        # update detected_microhaplotypes
+        pmo_out["detected_microhaplotypes"] = pmos[0]["detected_microhaplotypes"]
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
             # update indexes
-            for microhaplotypes_detected in pmo["microhaplotypes_detected"]:
-                for experiment_sample in microhaplotypes_detected["experiment_samples"]:
+            for detected_microhaplotypes in pmo["detected_microhaplotypes"]:
+                for experiment_sample in detected_microhaplotypes["experiment_samples"]:
                     for target_result in experiment_sample["target_results"]:
-                        for hap in target_result["haps"]:
-                            hap["mhap_id"] = microhaplotypes_info_hmap_for_target_index_old_index_key[pmo_index][target_result["mhaps_target_id"]][hap["mhap_id"]]
-                        target_result["mhaps_target_id"] = microhaplotypes_info_old_index_key[pmo_index][target_result["mhaps_target_id"]]
+                        for hap in target_result["mhaps"]:
+                            hap["mhap_id"] = representative_microhaplotypes_hmap_for_target_index_old_index_key[pmo_index][target_result["mhaps_target_id"]][hap["mhap_id"]]
+                        target_result["mhaps_target_id"] = representative_microhaplotypes_old_index_key[pmo_index][target_result["mhaps_target_id"]]
                     experiment_sample["experiment_sample_id"] = experiment_info_old_index_key[pmo_index][experiment_sample["experiment_sample_id"]]
-                microhaplotypes_detected["bioinformatics_run_id"] = bioinformatics_run_info_old_index_key[pmo_index][microhaplotypes_detected["bioinformatics_run_id"]]
+                detected_microhaplotypes["bioinformatics_run_id"] = bioinformatics_run_info_old_index_key[pmo_index][detected_microhaplotypes["bioinformatics_run_id"]]
                 # append after the indexes have been updated
-                pmo_out["microhaplotypes_detected"].append(microhaplotypes_detected)
+                pmo_out["detected_microhaplotypes"].append(detected_microhaplotypes)
 
         pmo_indexes_with_read_counts_by_stage = []
         for pmo_index, pmo in enumerate(pmos):
