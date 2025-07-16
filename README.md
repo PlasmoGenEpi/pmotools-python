@@ -15,7 +15,7 @@ Recommend using the conda environment file to ensure all python modules tested w
 cd pmotools-python
 conda env create -f envs/pmotools-env.yml 
 
-conda active pmotools
+conda activate pmotools
 ```
 
 Install using pip 
