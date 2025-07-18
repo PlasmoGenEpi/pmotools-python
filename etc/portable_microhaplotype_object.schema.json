@@ -28,6 +28,14 @@
                         "null"
                     ]
                 },
+                "program_url": {
+                    "description": "a url pointing to code base of a program, e.g. a github link",
+                    "pattern": "^[A-z-._0-9\\(\\),\\/\\ ]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
                 "program_version": {
                     "description": "the version of generation method, should be in the format of v[MAJOR].[MINOR].[PATCH]",
                     "pattern": "^[A-z-._0-9 ]+$",
@@ -118,7 +126,7 @@
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
-                "experiment_samples": {
+                "library_samples": {
                     "description": "a list of the microhaplotypes detected for a sample by targets ",
                     "items": {
                         "$ref": "#/$defs/DetectedMicrohaplotypesForSample"
@@ -128,7 +136,7 @@
             },
             "required": [
                 "bioinformatics_run_id",
-                "experiment_samples"
+                "library_samples"
             ],
             "title": "DetectedMicrohaplotypes",
             "type": "object"
@@ -137,8 +145,8 @@
             "additionalProperties": true,
             "description": "Microhaplotypes detected for a sample for all targets",
             "properties": {
-                "experiment_sample_id": {
-                    "description": "the index into the experiment_info list",
+                "library_sample_id": {
+                    "description": "the index into the library_info list",
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -151,7 +159,7 @@
                 }
             },
             "required": [
-                "experiment_sample_id",
+                "library_sample_id",
                 "target_results"
             ],
             "title": "DetectedMicrohaplotypesForSample",
@@ -179,69 +187,6 @@
                 "mhaps"
             ],
             "title": "DetectedMicrohaplotypesForTarget",
-            "type": "object"
-        },
-        "ExperimentInfo": {
-            "additionalProperties": true,
-            "description": "Information about a specific amplification and sequencing of a specimen",
-            "properties": {
-                "accession": {
-                    "description": "ERA/SRA accession number for the sample if it was submitted",
-                    "pattern": "^[A-z-._0-9]+$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "experiment_sample_name": {
-                    "description": "a unique identifier for this sequence/amplification run on a specimen_name",
-                    "pattern": "^[A-z-._0-9 ]+$",
-                    "type": "string"
-                },
-                "library_prep_plate_info": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/PlateInfo"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "description": "plate location of where experiment was prepared for sequencing "
-                },
-                "panel_id": {
-                    "description": "the index into the panel_info list",
-                    "pattern": "^[0-9]+$",
-                    "type": "integer"
-                },
-                "qpcr_parasite_density_info": {
-                    "description": "qpcr parasite density measurement ",
-                    "items": {
-                        "$ref": "#/$defs/ParasiteDensity"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "sequencing_info_id": {
-                    "description": "the index into the sequencing_info list",
-                    "pattern": "^[0-9]+$",
-                    "type": "integer"
-                },
-                "specimen_id": {
-                    "description": "the index into the specimen_info list",
-                    "pattern": "^[0-9]+$",
-                    "type": "integer"
-                }
-            },
-            "required": [
-                "sequencing_info_id",
-                "specimen_id",
-                "panel_id",
-                "experiment_sample_name"
-            ],
-            "title": "ExperimentInfo",
             "type": "object"
         },
         "GenomeInfo": {
@@ -278,9 +223,12 @@
                     "type": "string"
                 },
                 "taxon_id": {
-                    "description": "the NCBI taxonomy number",
-                    "pattern": "^[0-9]$",
-                    "type": "integer"
+                    "description": "the NCBI taxonomy number, can be a list of values",
+                    "items": {
+                        "pattern": "^[0-9]$",
+                        "type": "integer"
+                    },
+                    "type": "array"
                 },
                 "url": {
                     "description": "a link to the where this genome file could be downloaded",
@@ -355,6 +303,77 @@
             "title": "GenomicLocation",
             "type": "object"
         },
+        "LibrarySampleInfo": {
+            "additionalProperties": true,
+            "description": "Information about a specific amplification and sequencing of a specimen",
+            "properties": {
+                "fastqs_loc": {
+                    "description": "the location (url or filename path) of the fastqs for a library run",
+                    "pattern": "^[A-z-.;,_0-9\\(\\),\\/\\ ]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "library_prep_plate_info": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/PlateInfo"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "plate location of where library was prepared for sequencing "
+                },
+                "library_sample_name": {
+                    "description": "a unique identifier for this sequence/amplification run on a specimen_name",
+                    "pattern": "^[A-z-._0-9 ]+$",
+                    "type": "string"
+                },
+                "panel_id": {
+                    "description": "the index into the panel_info list",
+                    "pattern": "^[0-9]+$",
+                    "type": "integer"
+                },
+                "qpcr_parasite_density_info": {
+                    "description": "qpcr parasite density measurement ",
+                    "items": {
+                        "$ref": "#/$defs/ParasiteDensity"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "run_accession": {
+                    "description": "ERA/SRA run accession number for the sample if it was submitted",
+                    "pattern": "^[A-z-._0-9]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sequencing_info_id": {
+                    "description": "the index into the sequencing_info list",
+                    "pattern": "^[0-9]+$",
+                    "type": "integer"
+                },
+                "specimen_id": {
+                    "description": "the index into the specimen_info list",
+                    "pattern": "^[0-9]+$",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "sequencing_info_id",
+                "specimen_id",
+                "panel_id",
+                "library_sample_name"
+            ],
+            "title": "LibrarySampleInfo",
+            "type": "object"
+        },
         "MarkerOfInterest": {
             "additionalProperties": true,
             "description": "A specific genomic location of interest, e.g. drug resistance, or other phenotypical marker",
@@ -385,6 +404,14 @@
             "additionalProperties": true,
             "description": "information about a subsegment of the sequence that should be masked",
             "properties": {
+                "masking_generation_description": {
+                    "description": "a description of how the masking information was generated ",
+                    "pattern": "^[A-z-._0-9\\(\\),\\/\\ ]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
                 "replacement_size": {
                     "description": "the size of replacement mask",
                     "type": "integer"
@@ -611,10 +638,10 @@
                     },
                     "type": "array"
                 },
-                "experiment_info": {
-                    "description": "a list of experiments of all the seq/amp of the specimens within this project",
+                "library_info": {
+                    "description": "a list of librarys of all the seq/amp of the specimens within this project",
                     "items": {
-                        "$ref": "#/$defs/ExperimentInfo"
+                        "$ref": "#/$defs/LibrarySampleInfo"
                     },
                     "type": "array"
                 },
@@ -680,7 +707,7 @@
                 }
             },
             "required": [
-                "experiment_info",
+                "library_info",
                 "specimen_info",
                 "sequencing_info",
                 "panel_info",
@@ -779,6 +806,35 @@
             "title": "ProjectInfo",
             "type": "object"
         },
+        "Pseudocigar": {
+            "additionalProperties": true,
+            "description": "information on pseudocigar for a sequence",
+            "properties": {
+                "pseudocigar_generation_description": {
+                    "description": "a description of how the pseudocigar information was generated ",
+                    "pattern": "^[A-z-._0-9\\(\\),\\/\\ ]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "pseudocigar_seq": {
+                    "description": "the pseudocigar itself",
+                    "pattern": "^[A-z-._0-9]+$",
+                    "type": "string"
+                },
+                "ref_loc": {
+                    "$ref": "#/$defs/GenomicLocation",
+                    "description": "the genomic location the pseudocigar is in reference to"
+                }
+            },
+            "required": [
+                "pseudocigar_seq",
+                "ref_loc"
+            ],
+            "title": "Pseudocigar",
+            "type": "object"
+        },
         "ReactionInfo": {
             "additionalProperties": true,
             "description": "information on a panel of targeted amplicon primer pairs",
@@ -812,27 +868,27 @@
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
-                "read_counts_by_experimental_sample_by_stage": {
-                    "description": "a list by experiment_sample for the counts at each stage",
+                "read_counts_by_library_sample_by_stage": {
+                    "description": "a list by library_sample for the counts at each stage",
                     "items": {
-                        "$ref": "#/$defs/ReadCountsByStageForExperimentalSample"
+                        "$ref": "#/$defs/ReadCountsByStageForLibrarySample"
                     },
                     "type": "array"
                 }
             },
             "required": [
                 "bioinformatics_run_id",
-                "read_counts_by_experimental_sample_by_stage"
+                "read_counts_by_library_sample_by_stage"
             ],
             "title": "ReadCountsByStage",
             "type": "object"
         },
-        "ReadCountsByStageForExperimentalSample": {
+        "ReadCountsByStageForLibrarySample": {
             "additionalProperties": true,
-            "description": "Information on the reads counts at several stages of a pipeline for a experimental_sample",
+            "description": "Information on the reads counts at several stages of a pipeline for a library_sample",
             "properties": {
-                "experiment_sample_id": {
-                    "description": "the index into the experiment_info list",
+                "library_sample_id": {
+                    "description": "the index into the library_info list",
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -853,10 +909,10 @@
                 }
             },
             "required": [
-                "experiment_sample_id",
+                "library_sample_id",
                 "total_raw_count"
             ],
-            "title": "ReadCountsByStageForExperimentalSample",
+            "title": "ReadCountsByStageForLibrarySample",
             "type": "object"
         },
         "ReadCountsByStageForTarget": {
@@ -916,12 +972,16 @@
                     ]
                 },
                 "pseudocigar": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Pseudocigar"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "description": "the pseudocigar of the haplotype",
-                    "pattern": "^[A-z-._0-9]+$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "pattern": "^[A-z-._0-9]+$"
                 },
                 "quality": {
                     "description": "the ansi fastq per base quality score for this sequence, this is optional",
@@ -1135,6 +1195,13 @@
                         "null"
                     ]
                 },
+                "blood_meal": {
+                    "description": "whether host specimen has had a recent blood meal  ",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
                 "collection_country": {
                     "description": "the name of country collected in, would be the same as admin level 0",
                     "pattern": "^[A-Za-z0-9 ,._:'\u2013-]+$",
@@ -1201,6 +1268,21 @@
                         "null"
                     ]
                 },
+                "gravid": {
+                    "description": "whether host specimen is currently pregnant",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "gravidity": {
+                    "description": "the gravidity of the specimen host (number of previous pregnancies)",
+                    "pattern": "^[0-9]+$",
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
                 "host_age": {
                     "description": "if specimen is from a person, the age in years of the person, can be float value so for 3 month old put 0.25",
                     "pattern": "^\\d*\\.?\\d+$",
@@ -1252,6 +1334,14 @@
                     "description": "the index into the project_info list",
                     "pattern": "^[0-9]+$",
                     "type": "integer"
+                },
+                "specimen_accession": {
+                    "description": "if specimen is deposited in a database, what accession is it associated with",
+                    "pattern": "^[A-z-._0-9 ]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
                 },
                 "specimen_collect_device": {
                     "description": "the way the specimen was collected, e.g. whole blood, dried blood spot",
@@ -1450,10 +1540,10 @@
             },
             "type": "array"
         },
-        "experiment_info": {
-            "description": "a list of experiments of all the seq/amp of the specimens within this project",
+        "library_info": {
+            "description": "a list of librarys of all the seq/amp of the specimens within this project",
             "items": {
-                "$ref": "#/$defs/ExperimentInfo"
+                "$ref": "#/$defs/LibrarySampleInfo"
             },
             "type": "array"
         },
@@ -1519,7 +1609,7 @@
         }
     },
     "required": [
-        "experiment_info",
+        "library_info",
         "specimen_info",
         "sequencing_info",
         "panel_info",

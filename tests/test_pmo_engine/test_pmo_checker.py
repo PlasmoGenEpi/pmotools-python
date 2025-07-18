@@ -15,7 +15,7 @@ class TestPMOChecker(unittest.TestCase):
         with open(self.pmo_jsonschema_fnp) as f: 
             self.pmo_jsonschema_data = json.load(f)
         self.checker = PMOChecker(self.pmo_jsonschema_data)
-        self.pmo_required_base_fields = ["experiment_info",
+        self.pmo_required_base_fields = ["library_info",
                                          "specimen_info",
                                          "sequencing_info",
                                          "panel_info",
@@ -40,7 +40,7 @@ class TestPMOChecker(unittest.TestCase):
     def test_pmo_checker_check_for_required_base_fields(self):
 
         pmo_test_object = {
-            "experiment_info":[],
+            "library_info":[],
             "specimen_info":[],
             "sequencing_info":[],
             "panel_info":[],
@@ -57,7 +57,7 @@ class TestPMOChecker(unittest.TestCase):
 
     def test_pmo_checker_check_for_required_base_fields_fail(self):
         pmo_test_object = {
-            "experiment_info":[],
+            "library_info":[],
             "specimen_info":[],
             "sequencing_info":[],
             "panel_info":[],

@@ -65,10 +65,10 @@
 	[
 		{
 			"bioinformatics_run_id" : 0,
-			"experiment_samples" : 
+			"library_samples" : 
 			[
 				{
-					"experiment_sample_id" : 1,
+					"library_sample_id" : 1,
 					"target_results" : 
 					[
 						{
@@ -1054,7 +1054,7 @@
 					]
 				},
 				{
-					"experiment_sample_id" : 0,
+					"library_sample_id" : 0,
 					"target_results" : 
 					[
 						{
@@ -2162,16 +2162,16 @@
 			]
 		}
 	],
-	"experiment_info" : 
+	"library_info" : 
 	[
 		{
-			"experiment_sample_name" : "5tbx",
+			"library_sample_name" : "5tbx",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
 			"specimen_id" : 0
 		},
 		{
-			"experiment_sample_name" : "XUC009",
+			"library_sample_name" : "XUC009",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
 			"specimen_id" : 1
@@ -2294,7 +2294,7 @@
 	],
 	"pmo_header" : 
 	{
-		"creation_date" : "2025-07-11",
+		"creation_date" : "2025-07-18",
 		"generation_method" : 
 		{
 			"program_name" : "elucidator combingallintopmojson",
@@ -8500,7 +8500,10 @@
 			"genome_version" : "2020-09-01",
 			"gff_url" : "https://plasmodb.org/common/downloads/release-65/Pfalciparum3D7/gff/data/PlasmoDB-65_Pfalciparum3D7.gff",
 			"name" : "3D7",
-			"taxon_id" : 5833,
+			"taxon_id" : 
+			[
+				5833
+			],
 			"url" : "https://plasmodb.org/common/downloads/release-65/Pfalciparum3D7/fasta/data/PlasmoDB-65_Pfalciparum3D7_Genome.fasta"
 		}
 	]

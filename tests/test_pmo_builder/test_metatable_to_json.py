@@ -388,27 +388,27 @@ class TestMetatableToJson(unittest.TestCase):
         self.assertEqual(
             "contents must be a pandas DataFrame.", str(context.exception))
 
-    def test_experiment_info_table_to_json_default(self):
+    def test_library_info_table_to_json_default(self):
         df = pd.DataFrame({
-            'experiment_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
+            'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
             'specimen_name': ['sample1', 'sample2'],
             'panel_name': ['MH', 'MH'],
         })
 
-        result = experiment_info_table_to_json(df)
-        self.assertEqual([{'experiment_sample_name': 'sample1_MH_run1',
+        result = library_info_table_to_json(df)
+        self.assertEqual([{'library_sample_name': 'sample1_MH_run1',
                            'sequencing_info_name': 'run1',
                            'specimen_name': 'sample1',
                            'panel_name': 'MH'},
-                          {'experiment_sample_name': 'sample2_MH_run1',
+                          {'library_sample_name': 'sample2_MH_run1',
                            'sequencing_info_name': 'run1',
                            'specimen_name': 'sample2',
                            'panel_name': 'MH'}], result)
 
-    def test_experiment_info_table_to_json_with_plate(self):
+    def test_library_info_table_to_json_with_plate(self):
         df = pd.DataFrame({
-            'experiment_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
+            'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
             'specimen_name': ['sample1', 'sample2'],
             'panel_name': ['MH', 'MH'],
@@ -417,9 +417,9 @@ class TestMetatableToJson(unittest.TestCase):
             'plate_row': ['A', 'B']
         })
 
-        result = experiment_info_table_to_json(df, extraction_plate_name_col='plate_name', extraction_plate_col_col='plate_col', extraction_plate_row_col='plate_row',
+        result = library_info_table_to_json(df, extraction_plate_name_col='plate_name', extraction_plate_col_col='plate_col', extraction_plate_row_col='plate_row',
                                                sequencing_plate_name_col='plate_name', sequencing_plate_col_col='plate_col', sequencing_plate_row_col='plate_row')
-        self.assertEqual([{'experiment_sample_name': 'sample1_MH_run1',
+        self.assertEqual([{'library_sample_name': 'sample1_MH_run1',
                            'sequencing_info_name': 'run1',
                            'specimen_name': 'sample1',
                            'panel_name': 'MH',
@@ -435,7 +435,7 @@ class TestMetatableToJson(unittest.TestCase):
                            }
                            },
                           {
-                         'experiment_sample_name': 'sample2_MH_run1',
+                         'library_sample_name': 'sample2_MH_run1',
                          'sequencing_info_name': 'run1',
                          'specimen_name': 'sample2',
                          'panel_name': 'MH',
@@ -450,9 +450,9 @@ class TestMetatableToJson(unittest.TestCase):
                              'plate_col': 2
                          }}], result)
 
-    def test_experiment_info_table_to_json_with_additional_columns(self):
+    def test_library_info_table_to_json_with_additional_columns(self):
         df = pd.DataFrame({
-            'experiment_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
+            'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
             'specimen_name': ['sample1', 'sample2'],
             'panel_name': ['MH', 'MH'],
@@ -460,47 +460,47 @@ class TestMetatableToJson(unittest.TestCase):
             'new_col2': ['add', 'one'],
         })
 
-        result = experiment_info_table_to_json(
-            df, additional_experiment_info_cols=['new_col1', 'new_col2'])
-        self.assertEqual([{'experiment_sample_name': 'sample1_MH_run1',
+        result = library_info_table_to_json(
+            df, additional_library_info_cols=['new_col1', 'new_col2'])
+        self.assertEqual([{'library_sample_name': 'sample1_MH_run1',
                            'sequencing_info_name': 'run1',
                            'specimen_name': 'sample1',
                            'panel_name': 'MH',
                            'new_col1': 'test',
                            'new_col2': 'add'},
-                          {'experiment_sample_name': 'sample2_MH_run1',
+                          {'library_sample_name': 'sample2_MH_run1',
                            'sequencing_info_name': 'run1',
                            'specimen_name': 'sample2',
                            'panel_name': 'MH',
                            'new_col1': 'this',
                            'new_col2': 'one'}], result)
 
-    def test_experiment_info_table_to_json_fails_with_duplicate_cols(self):
+    def test_library_info_table_to_json_fails_with_duplicate_cols(self):
         df = pd.DataFrame({
-            'experiment_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
+            'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
             'specimen_name': ['sample1', 'sample2'],
             'panel_name': ['MH', 'MH'],
         })
 
         with self.assertRaises(ValueError) as context:
-            experiment_info_table_to_json(
+            library_info_table_to_json(
                 df, specimen_name_col='panel_name')
         self.assertEqual(
             "Selected columns must be unique.", str(context.exception))
 
-    def test_experiment_info_table_to_json_fails_with_missing_cols(self):
+    def test_library_info_table_to_json_fails_with_missing_cols(self):
         df = pd.DataFrame({
-            'experiment_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
+            'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
         })
 
         with self.assertRaises(ValueError) as context:
-            experiment_info_table_to_json(df)
+            library_info_table_to_json(df)
         self.assertEqual(
             "The following columns are not in the DataFrame: ['specimen_name', 'panel_name']", str(context.exception))
 
-    def test_experiment_info_table_to_json_fails_without_df(self):
+    def test_library_info_table_to_json_fails_without_df(self):
         with self.assertRaises(ValueError) as context:
             specimen_info_table_to_json('test')
         self.assertEqual(

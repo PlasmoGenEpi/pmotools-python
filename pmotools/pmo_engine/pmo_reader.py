@@ -141,7 +141,7 @@ class PMOReader:
         # really shouldn't be possible to have the same sequencing_info in different pmos so
         # just concatenate sequencing infos. Only way this could have happened is if files were split into different
         # pmos and then rejoined but even if we concatenate sequencing_info of the same, they will still properly
-        # have the right info per experiment
+        # have the right info per library
         pmo_out["sequencing_info"] = pmos[0]["sequencing_info"]
         #key1 pmo_index, key2 old_index, val new_index
         sequencing_info_old_index_key = defaultdict(dict)
@@ -171,7 +171,7 @@ class PMOReader:
                     pmo_out["project_info"].append(project_info)
                     project_info_old_index_key[pmo_index][project_info_index] = new_index
 
-        # combine specimen_info and experiment_info
+        # combine specimen_info and library_info
         # update project_id
         pmo_out["specimen_info"] = pmos[0]["specimen_info"]
         specimen_names = []
@@ -195,35 +195,35 @@ class PMOReader:
                 pmo_out["specimen_info"].append(specimen_info)
                 specimen_info_old_index_key[pmo_index][specimen_info_index] = new_index
 
-        ## experiment_info
-        pmo_out["experiment_info"] = pmos[0]["experiment_info"]
+        ## library_info
+        pmo_out["library_info"] = pmos[0]["library_info"]
         #key1 pmo_index, key2 old_index, val new_index
-        experiment_info_old_index_key = defaultdict(dict)
-        duplicate_experiment_sample_names = []
-        experiment_sample_names = []
+        library_info_old_index_key = defaultdict(dict)
+        duplicate_library_sample_names = []
+        library_sample_names = []
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
-            for experiment_info_index, experiment_info in enumerate(pmo["experiment_info"]):
+            for library_info_index, library_info in enumerate(pmo["library_info"]):
                 # checkin for duplicates
-                if experiment_info["experiment_sample_name"] in experiment_sample_names:
-                    duplicate_experiment_sample_names.append(experiment_info["experiment_sample_name"])
-                experiment_sample_names.append(experiment_info["experiment_sample_name"])
+                if library_info["library_sample_name"] in library_sample_names:
+                    duplicate_library_sample_names.append(library_info["library_sample_name"])
+                library_sample_names.append(library_info["library_sample_name"])
                 # update indexes
-                experiment_info["specimen_id"] = specimen_info_old_index_key[pmo_index][experiment_info["specimen_id"]]
-                experiment_info["panel_id"] = panel_info_old_index_key[pmo_index][experiment_info["panel_id"]]
-                experiment_info["sequencing_info_id"] = sequencing_info_old_index_key[pmo_index][experiment_info["sequencing_info_id"]]
-                # append to the out experiment_info after getting new index
-                new_index = len(pmo_out["experiment_info"])
-                pmo_out["experiment_info"].append(experiment_info)
-                experiment_info_old_index_key[pmo_index][experiment_info_index] = new_index
+                library_info["specimen_id"] = specimen_info_old_index_key[pmo_index][library_info["specimen_id"]]
+                library_info["panel_id"] = panel_info_old_index_key[pmo_index][library_info["panel_id"]]
+                library_info["sequencing_info_id"] = sequencing_info_old_index_key[pmo_index][library_info["sequencing_info_id"]]
+                # append to the out library_info after getting new index
+                new_index = len(pmo_out["library_info"])
+                pmo_out["library_info"].append(library_info)
+                library_info_old_index_key[pmo_index][library_info_index] = new_index
 
         warnings = []
         if len(duplicate_specimen_names) > 0:
             warnings.append("Duplicate specimen names were supplied for the following specimens: " + ",".join(
                 duplicate_specimen_names))
-        if len(duplicate_experiment_sample_names) > 0:
+        if len(duplicate_library_sample_names) > 0:
             warnings.append(
-                "Duplicate experiment sample names were supplied for the following experiments: " + ",".join(
-                    duplicate_experiment_sample_names))
+                "Duplicate library sample names were supplied for the following librarys: " + ",".join(
+                    duplicate_library_sample_names))
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
 
@@ -293,12 +293,12 @@ class PMOReader:
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
             # update indexes
             for detected_microhaplotypes in pmo["detected_microhaplotypes"]:
-                for experiment_sample in detected_microhaplotypes["experiment_samples"]:
-                    for target_result in experiment_sample["target_results"]:
+                for library_sample in detected_microhaplotypes["library_samples"]:
+                    for target_result in library_sample["target_results"]:
                         for hap in target_result["mhaps"]:
                             hap["mhap_id"] = representative_microhaplotypes_hmap_for_target_index_old_index_key[pmo_index][target_result["mhaps_target_id"]][hap["mhap_id"]]
                         target_result["mhaps_target_id"] = representative_microhaplotypes_old_index_key[pmo_index][target_result["mhaps_target_id"]]
-                    experiment_sample["experiment_sample_id"] = experiment_info_old_index_key[pmo_index][experiment_sample["experiment_sample_id"]]
+                    library_sample["library_sample_id"] = library_info_old_index_key[pmo_index][library_sample["library_sample_id"]]
                 detected_microhaplotypes["bioinformatics_run_id"] = bioinformatics_run_info_old_index_key[pmo_index][detected_microhaplotypes["bioinformatics_run_id"]]
                 # append after the indexes have been updated
                 pmo_out["detected_microhaplotypes"].append(detected_microhaplotypes)
@@ -316,11 +316,11 @@ class PMOReader:
             else:
                 # update index and then append to out
                 for read_counts_by_stage in pmos[pmo_index]["read_counts_by_stage"]:
-                    for read_counts_by_experimental_sample_by_stage in read_counts_by_stage["read_counts_by_experimental_sample_by_stage"]:
-                        if "read_counts_for_targets" in read_counts_by_experimental_sample_by_stage:
-                            for read_counts_for_target in read_counts_by_experimental_sample_by_stage["read_counts_for_targets"]:
+                    for read_counts_by_library_sample_by_stage in read_counts_by_stage["read_counts_by_library_sample_by_stage"]:
+                        if "read_counts_for_targets" in read_counts_by_library_sample_by_stage:
+                            for read_counts_for_target in read_counts_by_library_sample_by_stage["read_counts_for_targets"]:
                                 read_counts_for_target["target_id"] = target_info_old_index_key[pmo_index][read_counts_for_target["target_id"]]
-                        read_counts_by_experimental_sample_by_stage["experiment_sample_id"] = experiment_info_old_index_key[pmo_index][read_counts_by_experimental_sample_by_stage["experiment_sample_id"]]
+                        read_counts_by_library_sample_by_stage["library_sample_id"] = library_info_old_index_key[pmo_index][read_counts_by_library_sample_by_stage["library_sample_id"]]
                     read_counts_by_stage["bioinformatics_run_id"] = bioinformatics_run_info_old_index_key[pmo_index][read_counts_by_stage["bioinformatics_run_id"]]
                     pmo_out["read_counts_by_stage"].append(read_counts_by_stage)
         return pmo_out
