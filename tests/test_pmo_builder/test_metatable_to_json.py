@@ -136,13 +136,14 @@ class TestMetatableToJson(unittest.TestCase):
             'method': ['qPCR', 'microscopy']
         })
         result = add_parasite_density_info(
-            'density', 'method', self.small_json_example, df, 'specimen_name')
-        self.assertEqual(result[0]['parasite_density_info'][0]['density'], 10)
+            'density', 'method', self.small_json_example, df, 'specimen_name',
+        "microscopy_parasite_density_info")
+        self.assertEqual(result[0]['microscopy_parasite_density_info'][0]['density'], 10)
         self.assertEqual(
-            result[1]['parasite_density_info'][0]['density'], 100)
+            result[1]['microscopy_parasite_density_info'][0]['density'], 100)
         self.assertEqual(
-            result[0]['parasite_density_info'][0]['method'], 'qPCR')
-        self.assertEqual(result[1]['parasite_density_info'][0]
+            result[0]['microscopy_parasite_density_info'][0]['method'], 'qPCR')
+        self.assertEqual(result[1]['microscopy_parasite_density_info'][0]
                          ['method'], 'microscopy')
 
     def test_add_parasite_density_info_from_list(self):
@@ -154,21 +155,22 @@ class TestMetatableToJson(unittest.TestCase):
             'method2': ['microscopy', 'microscopy']
         })
         result = add_parasite_density_info(
-            ['density1', 'density2'], ['method1', 'method2'], self.small_json_example, df, 'specimen_name')
+            ['density1', 'density2'], ['method1', 'method2'], self.small_json_example, df, 'specimen_name',
+        "microscopy_parasite_density_info")
         self.assertEqual(
-            result[0]['parasite_density_info'][0]['density'], 15)
-        self.assertEqual(result[1]['parasite_density_info'][0]['density'], 107)
+            result[0]['microscopy_parasite_density_info'][0]['density'], 15)
+        self.assertEqual(result[1]['microscopy_parasite_density_info'][0]['density'], 107)
         self.assertEqual(
-            result[0]['parasite_density_info'][1]['density'], 10)
+            result[0]['microscopy_parasite_density_info'][1]['density'], 10)
         self.assertEqual(
-            result[1]['parasite_density_info'][1]['density'], 100)
+            result[1]['microscopy_parasite_density_info'][1]['density'], 100)
         self.assertEqual(
-            result[0]['parasite_density_info'][0]['method'], 'qPCR')
-        self.assertEqual(result[1]['parasite_density_info'][0]
+            result[0]['microscopy_parasite_density_info'][0]['method'], 'qPCR')
+        self.assertEqual(result[1]['microscopy_parasite_density_info'][0]
                          ['method'], 'qPCR')
         self.assertEqual(
-            result[0]['parasite_density_info'][1]['method'], 'microscopy')
-        self.assertEqual(result[1]['parasite_density_info'][1]
+            result[0]['microscopy_parasite_density_info'][1]['method'], 'microscopy')
+        self.assertEqual(result[1]['microscopy_parasite_density_info'][1]
                          ['method'], 'microscopy')
 
     def test_add_parasite_density_adds_nothing(self):
@@ -176,7 +178,8 @@ class TestMetatableToJson(unittest.TestCase):
             'specimen_name': ['sample1', 'sample2'],
         })
         result = add_parasite_density_info(
-            None, None, self.small_json_example, df, 'specimen_name')
+            None, None, self.small_json_example, df, 'specimen_name',
+        "microscopy_parasite_density_info")
         self.assertEqual(result, [{'specimen_name': 'sample1'}, {
                          'specimen_name': 'sample2'}])
 
@@ -190,7 +193,8 @@ class TestMetatableToJson(unittest.TestCase):
         })
         with self.assertRaises(ValueError) as context:
             add_parasite_density_info(
-                ['density1'], ['method1', 'method2'], self.small_json_example, df, 'specimen_name')
+                ['density1'], ['method1', 'method2'], self.small_json_example, df, 'specimen_name',
+            "qpcr_parasite_density_info")
 
         self.assertEqual(
             "If both parasite_density_col and parasite_density_method_col are lists, they must be the same length.", str(context.exception))
@@ -203,7 +207,8 @@ class TestMetatableToJson(unittest.TestCase):
 
         with self.assertRaises(ValueError) as context:
             add_parasite_density_info(
-                None, 'method1', self.small_json_example, df, 'specimen_name')
+                None, 'method1', self.small_json_example, df, 'specimen_name',
+            "microscopy_parasite_density_info")
 
         self.assertEqual(
             "parasite_density_method_col is set but parasite_density_col is None. Cannot proceed.", str(context.exception))
@@ -218,7 +223,8 @@ class TestMetatableToJson(unittest.TestCase):
         })
         with self.assertRaises(TypeError) as context:
             add_parasite_density_info(
-                'density1', ['method1', 'method2'], self.small_json_example, df, 'specimen_name')
+                'density1', ['method1', 'method2'], self.small_json_example, df, 'specimen_name',
+            "microscopy_parasite_density_info")
 
         self.assertEqual(
             "If parasite_density_col is a string, parasite_density_method_col must be a string or None.", str(context.exception))
@@ -255,20 +261,20 @@ class TestMetatableToJson(unittest.TestCase):
             'collection_date': ['01/02/2023', '01/02/2023'],
             'collection_country': ['Mozambique', 'Ghana'],
             'project_name': ['project1', 'project2'],
-            'plate_col': [1, 2],
-            'plate_name': ['plate1', 'plate1'],
-            'plate_row': ['A', 'B']
+            'storage_plate_col': [1, 2],
+            'storage_plate_name': ['plate1', 'plate1'],
+            'storage_plate_row': ['A', 'B']
         })
 
         result = specimen_info_table_to_json(
-            df, plate_col_col='plate_col', plate_name_col='plate_name', plate_row_col='plate_row')
+            df, storage_plate_col_col='storage_plate_col', storage_plate_name_col='storage_plate_name', storage_plate_row_col='storage_plate_row')
         self.assertEqual([{'specimen_name': 'sample1',
                            'specimen_taxon_id': 5833,
                            'host_taxon_id': 9606,
                            'collection_date': '01/02/2023',
                            'collection_country': 'Mozambique',
                            'project_name': 'project1',
-                           'plate_info': {
+                           'storage_plate_info': {
                                'plate_name': 'plate1',
                                'plate_row': 'A',
                                'plate_col': 1
@@ -279,7 +285,7 @@ class TestMetatableToJson(unittest.TestCase):
                            'collection_date': '01/02/2023',
                            'collection_country': 'Ghana',
                            'project_name': 'project2',
-                           'plate_info': {
+                           'storage_plate_info': {
                                'plate_name': 'plate1',
                                'plate_row': 'B',
                                'plate_col': 2
@@ -298,14 +304,14 @@ class TestMetatableToJson(unittest.TestCase):
         })
 
         result = specimen_info_table_to_json(
-            df, parasite_density_col='density', parasite_density_method_col='method')
+            df, microscopy_parasite_density_col='density', microscopy_parasite_density_method_col='method')
         self.assertEqual([{'specimen_name': 'sample1',
                            'specimen_taxon_id': 5833,
                            'host_taxon_id': 9606,
                            'collection_date': '01/02/2023',
                            'collection_country': 'Mozambique',
                            'project_name': 'project1',
-                           'parasite_density_info': [{
+                           'microscopy_parasite_density_info': [{
                                'density': 10,
                                'method': 'qPCR'
                            }]},
@@ -315,7 +321,7 @@ class TestMetatableToJson(unittest.TestCase):
                            'collection_date': '01/02/2023',
                            'collection_country': 'Ghana',
                            'project_name': 'project2',
-                           'parasite_density_info': [{
+                           'microscopy_parasite_density_info': [{
                                'density': 100,
                                'method': 'microscopy'
                            }]}], result)
@@ -412,23 +418,18 @@ class TestMetatableToJson(unittest.TestCase):
             'sequencing_info_name': ['run1', 'run1'],
             'specimen_name': ['sample1', 'sample2'],
             'panel_name': ['MH', 'MH'],
-            'plate_col': [1, 2],
-            'plate_name': ['plate1', 'plate1'],
-            'plate_row': ['A', 'B']
+            'library_prep_plate_col': [1, 2],
+            'library_prep_plate_name': ['plate1', 'plate1'],
+            'library_prep_plate_row': ['A', 'B']
         })
 
-        result = library_info_table_to_json(df, extraction_plate_name_col='plate_name', extraction_plate_col_col='plate_col', extraction_plate_row_col='plate_row',
-                                               sequencing_plate_name_col='plate_name', sequencing_plate_col_col='plate_col', sequencing_plate_row_col='plate_row')
+        result = library_info_table_to_json(df,
+                                               library_prep_plate_name_col='library_prep_plate_name', library_prep_plate_col_col='library_prep_plate_col', library_prep_plate_row_col='library_prep_plate_row')
         self.assertEqual([{'library_sample_name': 'sample1_MH_run1',
                            'sequencing_info_name': 'run1',
                            'specimen_name': 'sample1',
                            'panel_name': 'MH',
-                           'extraction_plate_info': {
-                               'plate_name': 'plate1',
-                               'plate_row': 'A',
-                               'plate_col': 1
-                           },
-                           'sequencing_prep_plate_info': {
+                           'library_prep_plate_info': {
                                'plate_name': 'plate1',
                                'plate_row': 'A',
                                'plate_col': 1
@@ -439,12 +440,7 @@ class TestMetatableToJson(unittest.TestCase):
                          'sequencing_info_name': 'run1',
                          'specimen_name': 'sample2',
                          'panel_name': 'MH',
-                         'extraction_plate_info': {
-                             'plate_name': 'plate1',
-                             'plate_row': 'B',
-                             'plate_col': 2
-                         },
-                         'sequencing_prep_plate_info': {
+                         'library_prep_plate_info': {
                              'plate_name': 'plate1',
                              'plate_row': 'B',
                              'plate_col': 2
