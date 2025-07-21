@@ -26,9 +26,9 @@ def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = Fal
     return contents_json
 
 
-def experiment_info_table_to_json(
+def library_info_table_to_json(
         contents: pd.DataFrame,
-        experiment_sample_name_col: str = 'experiment_sample_name',
+        library_sample_name_col: str = 'library_sample_name',
         sequencing_info_name_col: str = 'sequencing_info_name',
         specimen_name_col: str = 'specimen_name',
         panel_name_col: str = 'panel_name',
@@ -41,13 +41,13 @@ def experiment_info_table_to_json(
         sequencing_plate_col_col: str = None,
         sequencing_plate_row_col: str = None,
         sequencing_plate_position_col: str = None,
-        additional_experiment_info_cols: list | None = None,
+        additional_library_info_cols: list | None = None,
 ):
     """
     Converts a DataFrame containing experiment information into JSON.
 
     :param contents (pd.DataFrame): Input DataFrame containing experiment data.
-    :param experiment_sample_name_col (str): Column name for experiment sample names. Default: experiment_sample_name
+    :param library_sample_name_col (str): Column name for experiment sample names. Default: library_sample_name
     :param sequencing_info_name_col (str): Column name for sequencing information names. Default: sequencing_info_name
     :param specimen_name_col (str): Column name for specimen IDs. Default: specimen_name
     :param panel_name_col (str): Column name for panel IDs. Default: panel_name
@@ -60,9 +60,9 @@ def experiment_info_table_to_json(
     :param sequencing_plate_col_col (Optional[str]): Column name for col of sample on sequencing plate.
     :param sequencing_plate_row_col (Optional[str]): Column name for row of sample on sequencing plate.
     :param sequencing_plate_position_col (Optional[str]): Column name for position on sequencing plate (e.g. A01). Can't be set if sequencing_plate_col_col and sequencing_plate_row_col are specified. 
-    :param additional_experiment_info_cols (Optional[List[str], None]]): Additional column names to include.
+    :param additional_library_info_cols (Optional[List[str], None]]): Additional column names to include.
 
-    :return: JSON format where keys are `experiment_sample_id` and values are corresponding row data.
+    :return: JSON format where keys are `library_sample_id` and values are corresponding row data.
     """
     # Check contents is a dataframe
     if not isinstance(contents, pd.DataFrame):
@@ -70,7 +70,7 @@ def experiment_info_table_to_json(
 
     copy_contents = contents.copy()
     column_mapping = {
-        experiment_sample_name_col: "experiment_sample_name",
+        library_sample_name_col: "library_sample_name",
         sequencing_info_name_col: "sequencing_info_name",
         specimen_name_col: "specimen_name",
         panel_name_col: "panel_name"
@@ -82,12 +82,12 @@ def experiment_info_table_to_json(
         {k: v for k, v in optional_column_mapping.items() if k is not None})
 
     # Include additional user-defined columns if provided
-    if additional_experiment_info_cols:
-        for col in additional_experiment_info_cols:
+    if additional_library_info_cols:
+        for col in additional_library_info_cols:
             column_mapping[col] = col
 
     # Checks on columns selected
-    check_unique_columns([experiment_sample_name_col, sequencing_info_name_col,
+    check_unique_columns([library_sample_name_col, sequencing_info_name_col,
                          specimen_name_col, panel_name_col, accession_col])
     check_columns_exist(copy_contents, list(column_mapping.keys()))
 
@@ -137,8 +137,9 @@ def specimen_info_table_to_json(
         specimen_comments_col: str = None,
         specimen_store_loc_col: str = None,
         additional_specimen_cols: list | None = None,
-        list_values_specimen_columns: list | None = ["alternate_identifiers_col"],
-        list_values_specimen_columns_delimiter : str = ","
+        list_values_specimen_columns: list | None = [
+            "alternate_identifiers_col"],
+        list_values_specimen_columns_delimiter: str = ","
 ):
     """
     Converts a DataFrame containing specimen information into JSON.
@@ -263,7 +264,8 @@ def specimen_info_table_to_json(
 
     for col in list_values_specimen_columns:
         if col in meta_json:
-            meta_json[col] = meta_json[col].split(list_values_specimen_columns_delimiter)
+            meta_json[col] = meta_json[col].split(
+                list_values_specimen_columns_delimiter)
     return meta_json
 
 
