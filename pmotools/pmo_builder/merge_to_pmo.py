@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
-import pandas as pd
-import numpy as np
 from datetime import date
 import json
 import warnings
-
-from ..pmo_builder.json_convert_utils import check_additional_columns_exist
-from ..pmo_engine.pmo_processor import PMOProcessor
 
 
 def panel_info_table_to_json(
@@ -19,75 +14,89 @@ def panel_info_table_to_json(
     bioinfo_run_info: list,
     project_info: list,
 ):
-    # TODO: make sure it isn't editing the original
-    # TODO: write function to generate look ups
+    # Make copies to avoid editing input
+    specimen_info = [dict(d) for d in specimen_info]
+    library_info = [dict(d) for d in library_info]
+    sequencing_info = [dict(d) for d in sequencing_info]
+    bioinfo_method_info = [dict(d) for d in bioinfo_method_info]
+    bioinfo_run_info = [dict(d) for d in bioinfo_run_info]
+    project_info = [dict(d) for d in project_info]
+    panel_info = json.loads(json.dumps(panel_info))
+    mhap_info = json.loads(json.dumps(mhap_info))
     # TODO: add checks if the entry doesn't exist in the lookup table
     # TODO: decide whether to take json or dict
 
     # SPECIMEN INFO
     # replace name with project ID
-    project_lookup = {proj["project_name"]
-        : idx for idx, proj in enumerate(project_info)}
-    for specimen_dict in specimen_info:
-        name = specimen_dict["project_name"]
-        specimen_dict["project_id"] = project_lookup.get(name)
-        del specimen_dict["project_name"]
+    replace_key_with_id(specimen_info, project_info,
+                        "project_name", "project_id")
 
     # EXPERIMENT INFO
     # replace with sequencing_info_id, specimen_id, panel_id
-    seq_lookup = {seq_run['sequencing_info_name']
-        : idx for idx, seq_run in enumerate(sequencing_info)}
-    spec_lookup = {specimen['specimen_name']
-        : idx for idx, specimen in enumerate(specimen_info)}
-    panel_lookup = {panel['panel_name']: idx for idx,
-                    panel in enumerate(panel_info["panel_info"])}
-    for library_dict in library_info:
-        library_dict['sequencing_info_id'] = seq_lookup.get(
-            library_dict["sequencing_info_name"])
-        library_dict['specimen_id'] = spec_lookup.get(
-            library_dict["specimen_name"])
-        library_dict['panel_id'] = panel_lookup.get(library_dict["panel_name"])
-        del library_dict["sequencing_info_name"]
-        del library_dict["specimen_name"]
-        del library_dict["panel_name"]
+    replace_key_with_id(library_info, sequencing_info,
+                        'sequencing_info_name', "sequencing_info_id")
+    replace_key_with_id(library_info, specimen_info,
+                        'specimen_name', "specimen_id")
+    replace_key_with_id(
+        library_info, panel_info["panel_info"], 'panel_name', "panel_id")
 
     # REP MHAPS
-    # target id
-    target_lookup = {target["target_name"]: idx for idx,
-                     target in enumerate(panel_info["target_info"])}
-    rep_dicts = mhap_info["representative_microhaplotypes"]['targets']
-    for target_dict in rep_dicts:
-        target_dict["target_id"] = target_lookup.get(
-            str(target_dict["target_name"]))
-        del target_dict["target_name"]
+    # replace target_name with ID
+    replace_key_with_id(
+        mhap_info["representative_microhaplotypes"]["targets"],
+        panel_info["target_info"],
+        "target_name",
+        "target_id"
+    )
 
     # DETECTED MHAPS
-    # set bioinformatics_run_id and library_sample_id
-    bioinfo_run_lookup = {run['bioinformatics_run_name']: idx for idx, run in enumerate(bioinfo_run_info)}
-    library_sample_lookup = {
-        lib_sample['library_sample_name']: idx for idx, lib_sample in enumerate(library_info)}
-    detected_dicts = mhap_info["detected_microhaplotypes"]
-    for detected_dict in detected_dicts:
-        detected_dict["bioinformatics_run_id"] = bioinfo_run_lookup.get(
-            detected_dict["bioinformatics_run_name"])
-        del detected_dict["bioinformatics_run_name"]
-        for sample_dict in detected_dict["library_samples"]:
-            sample_dict["library_sample_id"] = library_sample_lookup.get(
-                sample_dict["library_sample_name"])
-            del sample_dict["library_sample_name"]
+    # Replace library_sample_name and bioinformatics_run_name
+    replace_key_with_id(
+        mhap_info["detected_microhaplotypes"],
+        bioinfo_run_info,
+        "bioinformatics_run_name",
+        "bioinformatics_run_id"
+    )
+    lib_sample_lookup = make_lookup(library_info, 'library_sample_name')
+    for detected in mhap_info["detected_microhaplotypes"]:
+        replace_key_with_id(detected["library_samples"],
+                            library_info, 'library_sample_name', 'library_sample_id', lookup=lib_sample_lookup)
 
+    # Build PMO
     pmo_header = generate_pmo_header()
     pmo = {
+        "pmo_header": pmo_header,
         "library_sample_info": library_info,
         "specimen_info": specimen_info,
         "sequencing_info": sequencing_info,
         "bioinformatics_methods_info": bioinfo_method_info,
         "bioinformatics_run_info": bioinfo_run_info,
         "project_info": project_info,
-        "pmo_header": pmo_header
     } | panel_info | mhap_info
+    pmo_json = json.dumps(pmo, indent=4)
+    return pmo_json
 
-    return pmo
+
+def make_lookup(dict, key):
+    lookup = {entry[key]: idx for idx,
+              entry in enumerate(dict)}
+    return lookup
+
+
+def replace_key_with_id(
+    target_list,
+    reference_list,
+    name_key,
+    id_key,
+    lookup=None
+):
+    """
+    Replaces name_key in target_list with id_key, based on lookup from reference_list.
+    """
+    if not lookup:
+        lookup = make_lookup(reference_list, name_key)
+    for entry in target_list:
+        entry[id_key] = lookup.get(str(entry.pop(name_key)))
 
 
 def generate_pmo_header():
