@@ -9,7 +9,7 @@ from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 def mhap_table_to_pmo_json(
     microhaplotype_table: pd.DataFrame,
     bioinformatics_run_name: str,
-    library_sample_name_col: str = 'library_sample_name',
+    experiment_sample_name_col: str = 'experiment_sample_name',
     target_name_col: str = 'target_name',
     seq_col: str = 'seq',
     reads_col: str = 'reads',
@@ -36,7 +36,7 @@ def mhap_table_to_pmo_json(
 
     :param microhaplotype_table (pd.DataFrame): The dataframe containing microhaplotype calls
     :param bioinformatics_run_name (str) : Unique name for the bioinformatics run that generated the data
-    :param library_sample_name_col (str) : the name of the column containing the experiment sample names. Default: library_sample_name
+    :param experiment_sample_name_col (str) : the name of the column containing the experiment sample names. Default: experiment_sample_name
     :param target_name_col (str) : the name of the column containing the targets. Default: target_name
     :param seq_col (str) : the name of the column containing the microhaplotype sequences. Default: seq
     :param reads_col (str) : the name of the column containing the reads counts. Default: reads
@@ -65,11 +65,10 @@ def mhap_table_to_pmo_json(
                                                                                    masking_seq_start_col, masking_seq_segment_size_col, masking_replacement_size_col, masking_delim, microhaplotype_name_col, pseudocigar_col, quality_col, additional_representative_mhap_cols)
 
     detected_mhap_dict = create_detected_microhaplotype_dict(microhaplotype_table, bioinformatics_run_name, representative_microhaplotype_dict,
-                                                             library_sample_name_col, target_name_col, seq_col, reads_col, umis_col, additional_mhap_detected_cols)
+                                                             experiment_sample_name_col, target_name_col, seq_col, reads_col, umis_col, additional_mhap_detected_cols)
 
     output_data_dict = {"representative_microhaplotypes": representative_microhaplotype_dict,
-                        "detected_microhaplotypes": [detected_mhap_dict]}
-    output_data = json.dumps(output_data_dict, indent=4)
+                        "detected_microhaplotypes": detected_mhap_dict}
     return output_data_dict
 
 
@@ -227,7 +226,7 @@ def create_detected_microhaplotype_dict(
         microhaplotype_table: pd.DataFrame,
         bioinformatics_run_name: str,
         representative_microhaplotype_dict: dict,
-        library_sample_name_col: str = 'library_sample_name',
+        experiment_sample_name_col: str = 'experiment_sample_name',
         target_name_col: str = 'target_name',
         seq_col: str = 'seq',
         reads_col: str = 'reads',
@@ -240,7 +239,7 @@ def create_detected_microhaplotype_dict(
     :param microhaplotype_table: Parsed microhaplotype calls table.
     :param bioinformatics_run_name:  Unique name for the bioinformatics run that generated the data.
     :param representative_microhaplotype_dict: Dictionary of representative microhaplotypes.
-    :param library_sample_name_col: Column containing the sample IDs.
+    :param experiment_sample_name_col: Column containing the sample IDs.
     :param target_name_col: Column containing the locus IDs.
     :param seq_col: Column containing the microhaplotype sequences.
     :param reads_col: Column containing the read counts.
@@ -249,7 +248,7 @@ def create_detected_microhaplotype_dict(
     :return: A dictionary of detected microhaplotype results.
     """
     # Rename columns in dataframe and gather columns
-    column_mapping = {library_sample_name_col: 'library_sample_name', target_name_col: 'target_name',
+    column_mapping = {experiment_sample_name_col: 'experiment_sample_name', target_name_col: 'target_name',
                       seq_col: 'seq', reads_col: 'reads'}
     mhap_cols = ['mhap_id', 'reads']
     if umis_col:
@@ -280,9 +279,9 @@ def build_detected_mhap_dict(df, bioinformatics_run_name, mhap_cols, always_incl
         always_include = ['mhap_id', 'reads']
 
     mhap_detected = {
-        "bioinformatics_run_name": bioinformatics_run_name, "library_samples": []}
+        "bioinformatics_run_name": bioinformatics_run_name, "experiment_samples": []}
 
-    for sample, sample_df in df.groupby('library_sample_name'):
+    for sample, sample_df in df.groupby('experiment_sample_name'):
         target_results = []
         for target_id, target_df in sample_df.groupby("mhaps_target_id"):
             mhaps = target_df.apply(
@@ -295,8 +294,8 @@ def build_detected_mhap_dict(df, bioinformatics_run_name, mhap_cols, always_incl
             ).to_list()
             target_results.append(
                 {"mhaps_target_id": target_id, "mhaps": mhaps})
-        mhap_detected['library_samples'].append(
-            {"library_sample_name": sample, "target_results": target_results})
+        mhap_detected['experiment_samples'].append(
+            {"experiment_sample_name": sample, "target_results": target_results})
 
     return mhap_detected
 
