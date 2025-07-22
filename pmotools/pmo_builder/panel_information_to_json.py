@@ -240,7 +240,7 @@ class PMOPanelBuilder:
                             self.reverse_primers_seq_col]
         if self.location_info_cols:
             columns_to_check += [col for col in self.location_info_cols if col]
-        self.check_unique_target_info(columns_to_check)
+        self.check_unique_target_info(list(set(columns_to_check)))
         missing_insert_loc, missing_fwd_primer_loc, missing_rev_primer_loc = self.summarise_targets_missing_optional_info()
 
         # Put targets together in dictionary
