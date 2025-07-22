@@ -34,12 +34,12 @@ class PMOProcessor:
     @staticmethod
     def get_index_key_of_library_sample_names(pmodata):
         """
-        Get key of library_sample_name to index in pmodata["library_info"]
+        Get key of library_sample_name to index in pmodata["library_sample_info"]
         :param pmodata: the PMO to get indexes from
         :return: a dictionary of indexes keyed by library_sample_name
         """
         ret = {}
-        for idx, library in enumerate(pmodata["library_info"]):
+        for idx, library in enumerate(pmodata["library_sample_info"]):
             ret[library["library_sample_name"]] = idx
         return ret
 
@@ -93,10 +93,10 @@ class PMOProcessor:
     @staticmethod
     def get_index_of_library_sample_names(pmodata, library_sample_names: list[str]):
         """
-        Get index of library_sample_name in pmodata["library_info"]
+        Get index of library_sample_name in pmodata["library_sample_info"]
         :param pmodata: the PMO to get indexes from
         :param library_sample_names: a list of library_sample_names
-        :return: the index of library_sample_names in pmodata["library_info"] returned in the same order as library_sample_names
+        :return: the index of library_sample_names in pmodata["library_sample_info"] returned in the same order as library_sample_names
         """
         library_sample_key = PMOProcessor.get_index_key_of_library_sample_names(pmodata)
         return [library_sample_key[name] for name in library_sample_names]
@@ -150,7 +150,7 @@ class PMOProcessor:
                 warnings.append(f"{specimen_id} id is beyond the length of specimen_info: " + str(len(pmodata["specimen_info"])) )
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
-        for library_sample_id, library_sample in enumerate(pmodata["library_info"]):
+        for library_sample_id, library_sample in enumerate(pmodata["library_sample_info"]):
             if library_sample["specimen_id"] in specimen_ids:
                 ret[library_sample["specimen_id"]].add(library_sample_id)
         return ret
@@ -166,13 +166,13 @@ class PMOProcessor:
         :return: a pandas DataFrame, columns = [bioinformatics_run_id, library_sample_name, target_number]
         """
         records = []
-        library_info = pmodata["library_info"]
+        library_sample_info = pmodata["library_sample_info"]
 
         for result in pmodata["detected_microhaplotypes"]:
             run_id = result["bioinformatics_run_id"]
             for sample in result["library_samples"]:
                 sample_id = sample["library_sample_id"]
-                sample_name = library_info[sample_id]["library_sample_name"]
+                sample_name = library_sample_info[sample_id]["library_sample_name"]
 
                 target_count = sum(
                     sum(hap["reads"] for hap in target["mhaps"]) >= min_reads
@@ -241,7 +241,7 @@ class PMOProcessor:
         :return: a pandas dataframe with 3 columns, specimen_id, library_sample_id, and library_sample_id_count(the number of library_sample_ids per specimen_id)
         """
         exp_samples_per_spec = defaultdict(list[str])
-        for exp_sample in pmodata["library_info"]:
+        for exp_sample in pmodata["library_sample_info"]:
             if select_specimen_ids is None or exp_sample["specimen_id"] in select_specimen_ids:
                 exp_samples_per_spec[pmodata["specimen_info"][exp_sample["specimen_id"]]["specimen_name"]].append(exp_sample["library_sample_name"])
 
@@ -340,7 +340,7 @@ class PMOProcessor:
             if bioinformatics_run_ids is not None and bioid not in bioinformatics_run_ids:
                 continue
             for sample_data in data_for_run["library_samples"]:
-                sample_name = pmodata["library_info"][sample_data["library_sample_id"]]["library_sample_name"]
+                sample_name = pmodata["library_sample_info"][sample_data["library_sample_id"]]["library_sample_name"]
                 if library_sample_names is not None and sample_name not in library_sample_names:
                     continue
                 for target_data in sample_data["target_results"]:
@@ -396,7 +396,7 @@ class PMOProcessor:
     @staticmethod
     def extract_alleles_per_sample_table(pmodata,
                                        additional_specimen_info_fields: list[str] = None,
-                                       additional_library_info_fields: list[str] = None,
+                                       additional_library_sample_info_fields: list[str] = None,
                                        additional_microhap_fields: list[str] = None,
                                        additional_representative_info_fields: list[str] = None,
                                        default_base_col_names: list[str] = ["library_sample_name", "target_name", "mhap_id"]) -> pd.DataFrame:
@@ -406,7 +406,7 @@ class PMOProcessor:
         :param output_delimiter: the delimiter used to write the output file
         :param pmodata: the data to write from
         :param additional_specimen_info_fields: any additional fields to write from the specimen_info object
-        :param additional_library_info_fields: any additional fields to write from the library_samples object
+        :param additional_library_sample_info_fields: any additional fields to write from the library_samples object
         :param additional_microhap_fields: any additional fields to write from the microhap object
         :param additional_representative_info_fields: any additional fields to write from the representative_microhaplotype_sequences object
         :param default_base_col_names: The default column name for the sample, locus and allele
@@ -437,19 +437,19 @@ class PMOProcessor:
                 raise Exception(f"No specimen_info have data for fields: {', '.join(meta_fields_with_no_samples)}")
         # Check to see if at least 1 sample has supplied meta field
         # samples without this meta field will have NA
-        if additional_library_info_fields is not None:
+        if additional_library_sample_info_fields is not None:
             # Find meta fields that have at least some data
             meta_fields_with_data = {
                 metafield
-                for metafield in additional_library_info_fields
-                for library_data in pmodata["library_info"]
+                for metafield in additional_library_sample_info_fields
+                for library_data in pmodata["library_sample_info"]
                 if metafield in library_data
             }
             # Determine meta fields with no samples having data
-            meta_fields_with_no_samples = set(additional_library_info_fields) - meta_fields_with_data
+            meta_fields_with_no_samples = set(additional_library_sample_info_fields) - meta_fields_with_data
 
             if meta_fields_with_no_samples:
-                raise Exception(f"No library_info have data for fields: {', '.join(meta_fields_with_no_samples)}")
+                raise Exception(f"No library_sample_info have data for fields: {', '.join(meta_fields_with_no_samples)}")
 
         # Check to see if at least 1 haplotype has this field
         # samples without this meta field will have NA
@@ -496,15 +496,15 @@ class PMOProcessor:
         rows = []
         specimen_info = pmodata["specimen_info"]
         target_info = pmodata["target_info"]
-        library_info = pmodata["library_info"]
+        library_sample_info = pmodata["library_sample_info"]
         detected_microhaps = pmodata["detected_microhaplotypes"]
         rep_haps = pmodata["representative_microhaplotypes"]["targets"]
         for bio_run_for_detected_microhaps in detected_microhaps:
             bioinformatics_run_id = bio_run_for_detected_microhaps["bioinformatics_run_id"]
             for sample_data in bio_run_for_detected_microhaps["library_samples"]:
                 library_sample_id = sample_data["library_sample_id"]
-                specimen_id = library_info[library_sample_id]["specimen_id"]
-                library_meta = library_info[library_sample_id]
+                specimen_id = library_sample_info[library_sample_id]["specimen_id"]
+                library_meta = library_sample_info[library_sample_id]
                 specimen_meta = specimen_info[specimen_id]
                 for target_data in sample_data["target_results"]:
                     target_name = target_info[rep_haps[target_data["mhaps_target_id"]]["target_id"]]["target_name"]
@@ -518,8 +518,8 @@ class PMOProcessor:
                             default_base_col_names[1]: target_name,
                             default_base_col_names[2]: allele_id
                         }
-                        if additional_library_info_fields is not None:
-                            for field in additional_library_info_fields:
+                        if additional_library_sample_info_fields is not None:
+                            for field in additional_library_sample_info_fields:
                                 row[field] =library_meta.get(field, "NA")
                         if additional_specimen_info_fields is not None:
                             for field in additional_specimen_info_fields:
@@ -546,14 +546,14 @@ class PMOProcessor:
 
         # create a new pmo out
         # pmo_name, panel_info, sequencing_info, taramp_bioinformatics_info will stay the same
-        # specimen_info, library_info, detected_microhaplotypes, representative_microhaplotype_sequences will be
+        # specimen_info, library_sample_info, detected_microhaplotypes, representative_microhaplotype_sequences will be
         # created based on the supplied library ids
 
         # check to make sure the supplied specimens actually exist within the data
         warnings = []
         for library_sample_id in library_sample_ids:
-            if library_sample_id > len(pmodata["library_info"]):
-                warnings.append(f"{library_sample_id} id is beyond the length of library_info: " + str(len(pmodata["library_info"])) )
+            if library_sample_id > len(pmodata["library_sample_info"]):
+                warnings.append(f"{library_sample_id} id is beyond the length of library_sample_info: " + str(len(pmodata["library_sample_info"])) )
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
 
@@ -566,31 +566,31 @@ class PMOProcessor:
                    "bioinformatics_methods_info": pmodata["bioinformatics_methods_info"],
                    "bioinformatics_run_info": pmodata["bioinformatics_run_info"],
                    "specimen_info" : [],
-                   "library_info" : [],
+                   "library_sample_info" : [],
                    "project_info" : pmodata["project_info"],
                    "detected_microhaplotypes" : []
                    }
         if "read_counts_by_stage" in pmodata:
             pmo_out["read_counts_by_stage"] = []
-        # need to update read_counts_by_stage, library_info, specimen_info, detected_microhaplotypes
+        # need to update read_counts_by_stage, library_sample_info, specimen_info, detected_microhaplotypes
 
         # specimen_info
         # first get the specimen_ids needed and then build
         specimen_ids = set()
         specimen_id_index_key = {}
         for library_sample_id in library_sample_ids:
-            specimen_ids.add(pmodata["library_info"][library_sample_id]["specimen_id"])
+            specimen_ids.add(pmodata["library_sample_info"][library_sample_id]["specimen_id"])
         for specimen_id in specimen_ids:
             specimen_id_index_key[specimen_id] = len(pmo_out["specimen_info"])
             pmo_out["specimen_info"].append(pmodata["specimen_info"][specimen_id])
 
-        # library_info
+        # library_sample_info
         library_id_index_key = {}
         for library_sample_id in library_sample_ids:
-            library_id_index_key[library_sample_id] = len(pmo_out["library_info"])
-            pmo_out["library_info"].append(pmodata["library_info"][library_sample_id])
+            library_id_index_key[library_sample_id] = len(pmo_out["library_sample_info"])
+            pmo_out["library_sample_info"].append(pmodata["library_sample_info"][library_sample_id])
             # update specimen_id
-            pmo_out["library_info"][len(pmo_out["library_info"])-1]["specimen_id"] = specimen_id_index_key[pmodata["library_info"][library_sample_id]["specimen_id"]]
+            pmo_out["library_sample_info"][len(pmo_out["library_sample_info"])-1]["specimen_id"] = specimen_id_index_key[pmodata["library_sample_info"][library_sample_id]["specimen_id"]]
 
         # detected_microhaplotypes
         for detected_microhaplotypes in pmodata["detected_microhaplotypes"]:
@@ -684,7 +684,7 @@ class PMOProcessor:
                    "sequencing_info": pmodata["sequencing_info"],
                    "specimen_info": pmodata["specimen_info"],
                    "project_info": pmodata["project_info"],
-                   "library_info": pmodata["library_info"],
+                   "library_sample_info": pmodata["library_sample_info"],
                    "bioinformatics_methods_info": pmodata["bioinformatics_methods_info"],
                    "bioinformatics_run_info": pmodata["bioinformatics_run_info"],
                    "targeted_genomes": pmodata["targeted_genomes"], "target_info": []}
@@ -867,7 +867,7 @@ class PMOProcessor:
                    "sequencing_info": pmodata["sequencing_info"],
                    "target_info": pmodata["target_info"],
                    "specimen_info": pmodata["specimen_info"],
-                   "library_info": pmodata["library_info"],
+                   "library_sample_info": pmodata["library_sample_info"],
                    "project_info": pmodata["project_info"],
                    "targeted_genomes": pmodata["targeted_genomes"],
                    "representative_microhaplotypes": pmodata["representative_microhaplotypes"],

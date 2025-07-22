@@ -146,7 +146,7 @@
             "description": "Microhaplotypes detected for a sample for all targets",
             "properties": {
                 "library_sample_id": {
-                    "description": "the index into the library_info list",
+                    "description": "the index into the library_sample_info list",
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -307,6 +307,14 @@
             "additionalProperties": true,
             "description": "Information about a specific amplification and sequencing of a specimen",
             "properties": {
+                "experiment_accession": {
+                    "description": "ERA/SRA experiment accession number for the sample if it was submitted",
+                    "pattern": "^[A-z-._0-9]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
                 "fastqs_loc": {
                     "description": "the location (url or filename path) of the fastqs for a library run",
                     "pattern": "^[A-z-.;,_0-9\\(\\),\\/\\ ]+$",
@@ -337,7 +345,7 @@
                     "type": "integer"
                 },
                 "qpcr_parasite_density_info": {
-                    "description": "qpcr parasite density measurement ",
+                    "description": "qpcr parasite density measurement for this extracted sample",
                     "items": {
                         "$ref": "#/$defs/ParasiteDensity"
                     },
@@ -497,11 +505,6 @@
                         "null"
                     ]
                 },
-                "density_method": {
-                    "description": "the method of how this density was obtained",
-                    "pattern": "^[A-z-._0-9 ]+$",
-                    "type": "string"
-                },
                 "density_method_comments": {
                     "description": "additional comments about how the density was performed",
                     "pattern": "^[A-z-._0-9\\(\\),\\/\\ ]+$",
@@ -515,10 +518,15 @@
                     "minimum": 0,
                     "pattern": "^[-+]?\\\\d*\\\\.?\\\\d+(?:[eE][-+]?\\\\d+)?$",
                     "type": "number"
+                },
+                "parasite_density_method": {
+                    "description": "the method of how this density was obtained",
+                    "pattern": "^[A-z-._0-9 ]+$",
+                    "type": "string"
                 }
             },
             "required": [
-                "density_method",
+                "parasite_density_method",
                 "parasite_density"
             ],
             "title": "ParasiteDensity",
@@ -638,8 +646,8 @@
                     },
                     "type": "array"
                 },
-                "library_info": {
-                    "description": "a list of librarys of all the seq/amp of the specimens within this project",
+                "library_sample_info": {
+                    "description": "a list of libraries of all the seq/amp of the specimens within this project",
                     "items": {
                         "$ref": "#/$defs/LibrarySampleInfo"
                     },
@@ -707,7 +715,7 @@
                 }
             },
             "required": [
-                "library_info",
+                "library_sample_info",
                 "specimen_info",
                 "sequencing_info",
                 "panel_info",
@@ -888,7 +896,7 @@
             "description": "Information on the reads counts at several stages of a pipeline for a library_sample",
             "properties": {
                 "library_sample_id": {
-                    "description": "the index into the library_info list",
+                    "description": "the index into the library_sample_info list",
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -1320,7 +1328,7 @@
                         "null"
                     ]
                 },
-                "microscopy_parasite_density_info": {
+                "parasite_density_info": {
                     "description": "one or more parasite densities in microliters for this specimen",
                     "items": {
                         "$ref": "#/$defs/ParasiteDensity"
@@ -1540,8 +1548,8 @@
             },
             "type": "array"
         },
-        "library_info": {
-            "description": "a list of librarys of all the seq/amp of the specimens within this project",
+        "library_sample_info": {
+            "description": "a list of libraries of all the seq/amp of the specimens within this project",
             "items": {
                 "$ref": "#/$defs/LibrarySampleInfo"
             },
@@ -1609,7 +1617,7 @@
         }
     },
     "required": [
-        "library_info",
+        "library_sample_info",
         "specimen_info",
         "sequencing_info",
         "panel_info",

@@ -2178,30 +2178,30 @@
 			]
 		}
 	],
-	"library_info" : 
+	"library_sample_info" : 
 	[
 		{
-			"library_sample_name" : "8025874217",
-			"panel_id" : 0,
-			"sequencing_info_id" : 0,
-			"sequencing_prep_plate_info" : 
+			"library_prep_plate_info" : 
 			{
 				"plate_col" : 12,
 				"plate_name" : "8",
 				"plate_row" : "C"
 			},
+			"library_sample_name" : "8025874217",
+			"panel_id" : 0,
+			"sequencing_info_id" : 0,
 			"specimen_id" : 0
 		},
 		{
-			"library_sample_name" : "8025874266",
-			"panel_id" : 0,
-			"sequencing_info_id" : 0,
-			"sequencing_prep_plate_info" : 
+			"library_prep_plate_info" : 
 			{
 				"plate_col" : 7,
 				"plate_name" : "8",
 				"plate_row" : "B"
 			},
+			"library_sample_name" : "8025874266",
+			"panel_id" : 0,
+			"sequencing_info_id" : 0,
 			"specimen_id" : 1
 		}
 	],
@@ -2322,7 +2322,7 @@
 	],
 	"pmo_header" : 
 	{
-		"creation_date" : "2025-07-18",
+		"creation_date" : "2025-07-22",
 		"generation_method" : 
 		{
 			"program_name" : "elucidator combingallintopmojson",
@@ -6638,16 +6638,10 @@
 			"parasite_density_info" : 
 			[
 				{
-					"density" : 477719.34375,
-					"method" : "qpcr"
+					"parasite_density" : 477719.34375,
+					"parasite_density_method" : "qpcr"
 				}
 			],
-			"plate_info" : 
-			{
-				"plate_col" : 12,
-				"plate_name" : "8",
-				"plate_row" : "C"
-			},
 			"project_id" : 0,
 			"specimen_collect_device" : "dried blood spot",
 			"specimen_name" : "8025874217",
@@ -6655,7 +6649,13 @@
 			"specimen_taxon_id" : 
 			[
 				5833
-			]
+			],
+			"storage_plate_info" : 
+			{
+				"plate_col" : 12,
+				"plate_name" : "8",
+				"plate_row" : "C"
+			}
 		},
 		{
 			"collection_country" : "Mozambique",
@@ -6666,16 +6666,10 @@
 			"parasite_density_info" : 
 			[
 				{
-					"density" : 875.13098144531205,
-					"method" : "qpcr"
+					"parasite_density" : 875.13098144531205,
+					"parasite_density_method" : "qpcr"
 				}
 			],
-			"plate_info" : 
-			{
-				"plate_col" : 7,
-				"plate_name" : "8",
-				"plate_row" : "B"
-			},
 			"project_id" : 0,
 			"specimen_collect_device" : "dried blood spot",
 			"specimen_name" : "8025874266",
@@ -6683,7 +6677,13 @@
 			"specimen_taxon_id" : 
 			[
 				5833
-			]
+			],
+			"storage_plate_info" : 
+			{
+				"plate_col" : 7,
+				"plate_name" : "8",
+				"plate_row" : "B"
+			}
 		}
 	],
 	"target_info" : 

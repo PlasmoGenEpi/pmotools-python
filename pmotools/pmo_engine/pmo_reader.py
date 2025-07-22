@@ -171,7 +171,7 @@ class PMOReader:
                     pmo_out["project_info"].append(project_info)
                     project_info_old_index_key[pmo_index][project_info_index] = new_index
 
-        # combine specimen_info and library_info
+        # combine specimen_info and library_sample_info
         # update project_id
         pmo_out["specimen_info"] = pmos[0]["specimen_info"]
         specimen_names = []
@@ -195,26 +195,26 @@ class PMOReader:
                 pmo_out["specimen_info"].append(specimen_info)
                 specimen_info_old_index_key[pmo_index][specimen_info_index] = new_index
 
-        ## library_info
-        pmo_out["library_info"] = pmos[0]["library_info"]
+        ## library_sample_info
+        pmo_out["library_sample_info"] = pmos[0]["library_sample_info"]
         #key1 pmo_index, key2 old_index, val new_index
-        library_info_old_index_key = defaultdict(dict)
+        library_sample_info_old_index_key = defaultdict(dict)
         duplicate_library_sample_names = []
         library_sample_names = []
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
-            for library_info_index, library_info in enumerate(pmo["library_info"]):
+            for library_sample_info_index, library_sample_info in enumerate(pmo["library_sample_info"]):
                 # checkin for duplicates
-                if library_info["library_sample_name"] in library_sample_names:
-                    duplicate_library_sample_names.append(library_info["library_sample_name"])
-                library_sample_names.append(library_info["library_sample_name"])
+                if library_sample_info["library_sample_name"] in library_sample_names:
+                    duplicate_library_sample_names.append(library_sample_info["library_sample_name"])
+                library_sample_names.append(library_sample_info["library_sample_name"])
                 # update indexes
-                library_info["specimen_id"] = specimen_info_old_index_key[pmo_index][library_info["specimen_id"]]
-                library_info["panel_id"] = panel_info_old_index_key[pmo_index][library_info["panel_id"]]
-                library_info["sequencing_info_id"] = sequencing_info_old_index_key[pmo_index][library_info["sequencing_info_id"]]
-                # append to the out library_info after getting new index
-                new_index = len(pmo_out["library_info"])
-                pmo_out["library_info"].append(library_info)
-                library_info_old_index_key[pmo_index][library_info_index] = new_index
+                library_sample_info["specimen_id"] = specimen_info_old_index_key[pmo_index][library_sample_info["specimen_id"]]
+                library_sample_info["panel_id"] = panel_info_old_index_key[pmo_index][library_sample_info["panel_id"]]
+                library_sample_info["sequencing_info_id"] = sequencing_info_old_index_key[pmo_index][library_sample_info["sequencing_info_id"]]
+                # append to the out library_sample_info after getting new index
+                new_index = len(pmo_out["library_sample_info"])
+                pmo_out["library_sample_info"].append(library_sample_info)
+                library_sample_info_old_index_key[pmo_index][library_sample_info_index] = new_index
 
         warnings = []
         if len(duplicate_specimen_names) > 0:
@@ -298,7 +298,7 @@ class PMOReader:
                         for hap in target_result["mhaps"]:
                             hap["mhap_id"] = representative_microhaplotypes_hmap_for_target_index_old_index_key[pmo_index][target_result["mhaps_target_id"]][hap["mhap_id"]]
                         target_result["mhaps_target_id"] = representative_microhaplotypes_old_index_key[pmo_index][target_result["mhaps_target_id"]]
-                    library_sample["library_sample_id"] = library_info_old_index_key[pmo_index][library_sample["library_sample_id"]]
+                    library_sample["library_sample_id"] = library_sample_info_old_index_key[pmo_index][library_sample["library_sample_id"]]
                 detected_microhaplotypes["bioinformatics_run_id"] = bioinformatics_run_info_old_index_key[pmo_index][detected_microhaplotypes["bioinformatics_run_id"]]
                 # append after the indexes have been updated
                 pmo_out["detected_microhaplotypes"].append(detected_microhaplotypes)
@@ -320,7 +320,7 @@ class PMOReader:
                         if "read_counts_for_targets" in read_counts_by_library_sample_by_stage:
                             for read_counts_for_target in read_counts_by_library_sample_by_stage["read_counts_for_targets"]:
                                 read_counts_for_target["target_id"] = target_info_old_index_key[pmo_index][read_counts_for_target["target_id"]]
-                        read_counts_by_library_sample_by_stage["library_sample_id"] = library_info_old_index_key[pmo_index][read_counts_by_library_sample_by_stage["library_sample_id"]]
+                        read_counts_by_library_sample_by_stage["library_sample_id"] = library_sample_info_old_index_key[pmo_index][read_counts_by_library_sample_by_stage["library_sample_id"]]
                     read_counts_by_stage["bioinformatics_run_id"] = bioinformatics_run_info_old_index_key[pmo_index][read_counts_by_stage["bioinformatics_run_id"]]
                     pmo_out["read_counts_by_stage"].append(read_counts_by_stage)
         return pmo_out

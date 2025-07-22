@@ -2162,7 +2162,7 @@
 			]
 		}
 	],
-	"library_info" : 
+	"library_sample_info" : 
 	[
 		{
 			"library_sample_name" : "5tbx",
@@ -2294,7 +2294,7 @@
 	],
 	"pmo_header" : 
 	{
-		"creation_date" : "2025-07-18",
+		"creation_date" : "2025-07-22",
 		"generation_method" : 
 		{
 			"program_name" : "elucidator combingallintopmojson",

@@ -33,7 +33,7 @@ class TestPMOWriter(unittest.TestCase):
         PMOWriter.write_out_pmo(pmo_data, "out_pmo.json", True)
         with open("out_pmo.json", 'rb') as file_to_check:
             md5_returned = hashlib.md5(file_to_check.read()).hexdigest()
-        self.assertEqual("17441a44512e44cb7a4ce88d78e45280", md5_returned)
+        self.assertEqual("f56b922855f471346376e6d928894e4d", md5_returned)
 
     def test_write_out_pmo_gzip(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json")) as f:
@@ -43,7 +43,7 @@ class TestPMOWriter(unittest.TestCase):
         with gzip.open("out_pmo.json.gz", "rb") as f:
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_md5.update(chunk)
-        self.assertEqual("17441a44512e44cb7a4ce88d78e45280", hash_md5.hexdigest())
+        self.assertEqual("f56b922855f471346376e6d928894e4d", hash_md5.hexdigest())
 
     def test_write_out_pmo_fail_overwrite(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json")) as f:
