@@ -26,43 +26,35 @@ def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = Fal
     return contents_json
 
 
-def experiment_info_table_to_json(
+def library_sample_info_table_to_json(
         contents: pd.DataFrame,
-        experiment_sample_name_col: str = 'experiment_sample_name',
+        library_sample_name_col: str = 'library_sample_name',
         sequencing_info_name_col: str = 'sequencing_info_name',
         specimen_name_col: str = 'specimen_name',
         panel_name_col: str = 'panel_name',
         accession_col: str = None,
-        extraction_plate_name_col: str = None,
-        extraction_plate_col_col: str = None,
-        extraction_plate_row_col: str = None,
-        extraction_plate_position_col: str = None,
-        sequencing_plate_name_col: str = None,
-        sequencing_plate_col_col: str = None,
-        sequencing_plate_row_col: str = None,
-        sequencing_plate_position_col: str = None,
-        additional_experiment_info_cols: list | None = None,
+        library_prep_plate_name_col: str = None,
+        library_prep_plate_col_col: str = None,
+        library_prep_plate_row_col: str = None,
+        library_prep_plate_position_col: str = None,
+        additional_library_sample_info_cols: list | None = None,
 ):
     """
-    Converts a DataFrame containing experiment information into JSON.
+    Converts a DataFrame containing library information into JSON.
 
-    :param contents (pd.DataFrame): Input DataFrame containing experiment data.
-    :param experiment_sample_name_col (str): Column name for experiment sample names. Default: experiment_sample_name
+    :param contents (pd.DataFrame): Input DataFrame containing library data.
+    :param library_sample_name_col (str): Column name for library sample names. Default: library_sample_name
     :param sequencing_info_name_col (str): Column name for sequencing information names. Default: sequencing_info_name
     :param specimen_name_col (str): Column name for specimen IDs. Default: specimen_name
     :param panel_name_col (str): Column name for panel IDs. Default: panel_name
     :param accession_col (Optional[str]): Column name for accession information.
-    :param extraction_plate_name_col (Optional[str]): Column name containing plate name for extraction.
-    :param extraction_plate_col_col (Optional[str]): Column name for col of sample on extraction plate.
-    :param extraction_plate_row_col (Optional[str]): Column name for row of sample on extraction plate.
-    :param extraction_plate_position_col (Optional[str]): Column name for position on extraction plate (e.g. A01). Can't be set if extraction_plate_col_col and extraction_plate_row_col are specified. 
-    :param sequencing_plate_name_col (Optional[str]): Column name containing plate name for sequencing.
-    :param sequencing_plate_col_col (Optional[str]): Column name for col of sample on sequencing plate.
-    :param sequencing_plate_row_col (Optional[str]): Column name for row of sample on sequencing plate.
-    :param sequencing_plate_position_col (Optional[str]): Column name for position on sequencing plate (e.g. A01). Can't be set if sequencing_plate_col_col and sequencing_plate_row_col are specified. 
-    :param additional_experiment_info_cols (Optional[List[str], None]]): Additional column names to include.
+    :param library_prep_plate_name_col (Optional[str]): Column name containing plate name for sequencing.
+    :param library_prep_plate_col_col (Optional[str]): Column name for col of sample on sequencing plate.
+    :param library_prep_plate_row_col (Optional[str]): Column name for row of sample on sequencing plate.
+    :param library_prep_plate_position_col (Optional[str]): Column name for position on sequencing plate (e.g. A01). Can't be set if library_prep_plate_col_col and library_prep_plate_row_col are specified.
+    :param additional_library_sample_info_cols (Optional[List[str], None]]): Additional column names to include.
 
-    :return: JSON format where keys are `experiment_sample_id` and values are corresponding row data.
+    :return: JSON format where keys are `library_sample_id` and values are corresponding row data.
     """
     # Check contents is a dataframe
     if not isinstance(contents, pd.DataFrame):
@@ -70,7 +62,7 @@ def experiment_info_table_to_json(
 
     copy_contents = contents.copy()
     column_mapping = {
-        experiment_sample_name_col: "experiment_sample_name",
+        library_sample_name_col: "library_sample_name",
         sequencing_info_name_col: "sequencing_info_name",
         specimen_name_col: "specimen_name",
         panel_name_col: "panel_name"
@@ -82,12 +74,12 @@ def experiment_info_table_to_json(
         {k: v for k, v in optional_column_mapping.items() if k is not None})
 
     # Include additional user-defined columns if provided
-    if additional_experiment_info_cols:
-        for col in additional_experiment_info_cols:
+    if additional_library_sample_info_cols:
+        for col in additional_library_sample_info_cols:
             column_mapping[col] = col
 
     # Checks on columns selected
-    check_unique_columns([experiment_sample_name_col, sequencing_info_name_col,
+    check_unique_columns([library_sample_name_col, sequencing_info_name_col,
                          specimen_name_col, panel_name_col, accession_col])
     check_columns_exist(copy_contents, list(column_mapping.keys()))
 
@@ -98,10 +90,9 @@ def experiment_info_table_to_json(
 
     # Convert to format
     meta_json = pandas_table_to_json(subset_contents)
-    meta_json = add_plate_info(extraction_plate_col_col, extraction_plate_name_col,
-                               extraction_plate_row_col, extraction_plate_position_col, meta_json, copy_contents, "specimen_name", "extraction_plate_info")
-    meta_json = add_plate_info(sequencing_plate_col_col, sequencing_plate_name_col,
-                               sequencing_plate_row_col, sequencing_plate_position_col, meta_json, copy_contents, "specimen_name", "sequencing_prep_plate_info")
+    meta_json = add_plate_info(library_prep_plate_col_col, library_prep_plate_name_col,
+                               library_prep_plate_row_col, library_prep_plate_position_col, meta_json, copy_contents,
+                               "specimen_name", "library_prep_plate_info")
 
     return meta_json
 
@@ -115,7 +106,7 @@ def specimen_info_table_to_json(
         collection_country_col: str = 'collection_country',
         project_name_col: str = 'project_name',
         alternate_identifiers_col: str = None,
-        collector_chief_scientist_col: str = None,
+        # collector_chief_scientist_col: str = None,
         drug_usage_col: str = None,
         env_broad_scale_col: str = None,
         env_local_scale_col: str = None,
@@ -129,10 +120,10 @@ def specimen_info_table_to_json(
         lat_lon_col: str = None,
         parasite_density_col: str = None,
         parasite_density_method_col: str = None,
-        plate_col_col: str = None,
-        plate_name_col: str = None,
-        plate_row_col: str = None,
-        plate_position_col: str = None,
+        storage_plate_col_col: str = None,
+        storage_plate_name_col: str = None,
+        storage_plate_row_col: str = None,
+        storage_plate_position_col: str = None,
         specimen_collect_device_col: str = None,
         specimen_comments_col: str = None,
         specimen_store_loc_col: str = None,
@@ -143,7 +134,7 @@ def specimen_info_table_to_json(
     """
     Converts a DataFrame containing specimen information into JSON.
 
-    :param contents (pd.DataFrame): The input DataFrame containing experiment data.
+    :param contents (pd.DataFrame): The input DataFrame containing library data.
     :param specimen_name_col (string): The column name for specimen sample IDs. Default: specimen_id
     :param specimen_taxon_id_col (string): NCBI taxonomy number of the organism. Default: samp_taxon_id
     :param host_taxon_id_col (string): NCBI taxonomy number of the host. Default: host_taxon_id
@@ -151,7 +142,6 @@ def specimen_info_table_to_json(
     :param collection_country_col (string): Name of country collected in (admin level 0). Default : collection_country
     :param project_name_col (string): Name of the project. Default : project_name
     :param alternate_identifiers_col (Optional[str]): List of optional alternative names for the samples
-    :param collector_chief_scientist_col (Optional[str]): Name of the primary person managing the specimen. Default: collector
     :param drug_usage_col (Optional[str]): Any drug used by subject and the frequency of usage; can include multiple drugs used
     :param env_broad_scale_col (Optional[str]): The broad environment from which the specimen was collected
     :param env_local_scale_col (Optional[str]): The local environment from which the specimen was collected
@@ -164,11 +154,11 @@ def specimen_info_table_to_json(
     :param host_subject_id (Optional[str]): ID for the individual a specimen was collected from
     :param lat_lon_col (Optional[str]): Latitude and longitude of the collection site
     :param parasite_density_col (Optional[str, list[str]]): The parasite density in parasites per microliters
-    :param parasite_density_method_col (Optional[str or list[str]]): The method of how the density was obtained. If set parasite_density_col must also be specified. 
-    :param plate_col_col (Optional[str]): Column the specimen was in in the plate. If set plate_row_col must also be specified. 
-    :param plate_name_col (Optional[str]): Name of plate the specimen was in
-    :param plate_row_col (Optional[str]): Row the specimen was in in the plate. If set plate_col_col must also be specified. 
-    :param plate_position_col (Optional[str]): Position of the specimen on the plate (e.g. A01). Can't be set if plate_col_col and plate_row_col are specified. 
+    :param parasite_density_method_col (Optional[str or list[str]]): The method of how the density was obtained. If set parasite_density_col must also be specified.
+    :param storage_plate_col_col (Optional[str]): Column the specimen was in in the plate. If set storage_plate_row_col must also be specified.
+    :param storage_plate_name_col (Optional[str]): Name of plate the specimen was in
+    :param storage_plate_row_col (Optional[str]): Row the specimen was in in the plate. If set storage_plate_col_col must also be specified.
+    :param storage_plate_position_col (Optional[str]): Position of the specimen on the plate (e.g. A01). Can't be set if storage_plate_col_col and storage_plate_row_col are specified.
     :param specimen_collect_device_col (Optional[str]): The way the specimen was collected
     :param specimen_comments_col (Optional[str]): Additional comments about the specimen
     :param specimen_store_loc_col (Optional[str]): Specimen storage site
@@ -195,7 +185,6 @@ def specimen_info_table_to_json(
 
     optional_column_mapping = {
         alternate_identifiers_col: "alternate_identifiers",
-        collector_chief_scientist_col: "collector_chief_scientist",
         drug_usage_col: "drug_usage",
         env_broad_scale_col: "env_broad_scale",
         env_local_scale_col: "env_local_scale",
@@ -229,7 +218,6 @@ def specimen_info_table_to_json(
                          collection_country_col,
                          project_name_col,
                          alternate_identifiers_col,
-                         collector_chief_scientist_col,
                          drug_usage_col,
                          env_broad_scale_col,
                          env_local_scale_col,
@@ -241,10 +229,10 @@ def specimen_info_table_to_json(
                          host_sex_col,
                          host_subject_id,
                          lat_lon_col,
-                         plate_col_col,
-                         plate_name_col,
-                         plate_row_col,
-                         plate_position_col,
+                         storage_plate_col_col,
+                         storage_plate_name_col,
+                         storage_plate_row_col,
+                         storage_plate_position_col,
                          specimen_collect_device_col,
                          specimen_comments_col,
                          specimen_store_loc_col,])
@@ -256,10 +244,12 @@ def specimen_info_table_to_json(
     subset_contents = copy_contents[selected_pmo_fields]
     meta_json = pandas_table_to_json(subset_contents)
     meta_json = add_parasite_density_info(
-        parasite_density_col, parasite_density_method_col, meta_json, copy_contents, "specimen_name")
+        parasite_density_col, parasite_density_method_col, meta_json, copy_contents, "specimen_name",
+        entry_name="parasite_density_info")
 
-    meta_json = add_plate_info(plate_col_col, plate_name_col,
-                               plate_row_col, plate_position_col, meta_json, copy_contents, "specimen_name")
+    meta_json = add_plate_info(storage_plate_col_col, storage_plate_name_col,
+                               storage_plate_row_col, storage_plate_position_col, meta_json, copy_contents, "specimen_name",
+                               entry_name = "storage_plate_info")
 
     for col in list_values_specimen_columns:
         if col in meta_json:
@@ -329,7 +319,7 @@ def add_plate_info(plate_col_col, plate_name_col, plate_row_col, plate_position_
     return meta_json
 
 
-def add_parasite_density_info(parasite_density_col, parasite_density_method_col, meta_json, df, specimen_name_col):
+def add_parasite_density_info(parasite_density_col, parasite_density_method_col, meta_json, df, specimen_name_col, entry_name):
     density_method_pairs = []
     if parasite_density_col is None and parasite_density_method_col is None:
         pass
@@ -376,10 +366,10 @@ def add_parasite_density_info(parasite_density_col, parasite_density_method_col,
             density_val = content_row[density_col].iloc[0] if density_col else None
             method_val = content_row[method_col].iloc[0] if method_col else None
             if density_val is not None:
-                info = {"density": density_val}
+                info = {"parasite_density": density_val}
                 if method_val is not None:
-                    info["method"] = method_val
+                    info["parasite_density_method"] = method_val
                 density_infos.append(info)
         if density_infos:
-            row["parasite_density_info"] = density_infos
+            row[entry_name] = density_infos
     return meta_json
