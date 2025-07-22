@@ -13,15 +13,15 @@ class TestMhapTableToJson(unittest.TestCase):
         self.small_representative_dict = {"targets": [{"target_name": 'target1', "microhaplotypes": [{"seq": "ACTG"}, {"seq": "ATTG"}, {"seq": "ATTA"}]}, {
             "target_name": 'target2', "microhaplotypes": [{"seq": "TTTT"}, {"seq": "TTTA"},]}, {"target_name": 'target3', "microhaplotypes": [{"seq": "GGG"}, {"seq": "AAG"}]}]}
         self.small_detected_dict = {"bioinformatics_run_name": 'run1', "library_samples": [{"library_sample_name": "sample1", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 10}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 0, "reads": 100}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 0, "reads": 10}]}]},
-                                                                                              {"library_sample_name": "sample2", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 1}]}, {"mhaps_target_id": 1, "mhaps": [
-                                                                                                  {"mhap_id": 0, "reads": 12}, {"mhap_id": 1, "reads": 53}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 1, "reads": 73}]}]},
-                                                                                              {"library_sample_name": "sample3", "target_results": [{"mhaps_target_id": 0, "mhaps": [
-                                                                                                  {"mhap_id": 1, "reads": 76}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 1, "reads": 6}]},]},
-                                                                                              {"library_sample_name": "sample4", "target_results": [
-                                                                                                  {"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 297}]}]},
-                                                                                              {"library_sample_name": "sample5", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 1, "reads": 123}, {
-                                                                                                  "mhap_id": 2, "reads": 1}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 0, "reads": 17}]}]},
-                                                                                              ]}
+                                                                                           {"library_sample_name": "sample2", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 1}]}, {"mhaps_target_id": 1, "mhaps": [
+                                                                                               {"mhap_id": 0, "reads": 12}, {"mhap_id": 1, "reads": 53}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 1, "reads": 73}]}]},
+                                                                                           {"library_sample_name": "sample3", "target_results": [{"mhaps_target_id": 0, "mhaps": [
+                                                                                               {"mhap_id": 1, "reads": 76}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 1, "reads": 6}]},]},
+                                                                                           {"library_sample_name": "sample4", "target_results": [
+                                                                                               {"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 297}]}]},
+                                                                                           {"library_sample_name": "sample5", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 1, "reads": 123}, {
+                                                                                               "mhap_id": 2, "reads": 1}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 0, "reads": 17}]}]},
+                                                                                           ]}
         small_mhap_data = {'library_sample_name': ['sample1', 'sample1', 'sample1', 'sample2', 'sample2', 'sample2', 'sample2', 'sample3', 'sample3', 'sample4', 'sample5', 'sample5', 'sample5'],
                            'target_name':            ['target1', 'target2', 'target3', 'target1', 'target2', 'target2', 'target3', 'target1', 'target2', 'target1', 'target1', 'target1', 'target3'],
                            'seq': ['ACTG', 'TTTT', 'GGG', 'ACTG', 'TTTT', 'TTTA', 'AAG', 'ATTG', 'TTTA', 'ACTG', 'ATTG', 'ATTA', 'GGG'],
@@ -42,7 +42,6 @@ class TestMhapTableToJson(unittest.TestCase):
             ['mhaps_target_id']
         actual = get_target_id_in_representative_mhaps(
             self.small_mhap_table.copy(), self.small_representative_dict)
-        # expected_col_values = [0, 1, 2, 0, 1, 1, 2, 0, 1, 0, 0, 0, 2]
         self.assertListEqual(actual.columns.to_list(), expected_cols)
         self.assertListEqual(
             actual.mhaps_target_id.to_list(), self.small_df_mhaps_target_id_values)
@@ -241,8 +240,8 @@ class TestMhapTableToJson(unittest.TestCase):
         mock_create_representative_microhaplotype_dict.return_value = self.small_representative_dict
         actual = mhap_table_to_pmo_json(
             self.small_mhap_table, self.bioinformatics_run_name)
-        self.assertEqual(actual, {"representative_microhaplotypes": {"targets": [{"target_name": "target1", "microhaplotypes": [{"seq": "ACTG"}, {"seq": "ATTG"}, {"seq": "ATTA"}]}, {"target_name": "target2", "microhaplotypes": [{"seq": "TTTT"}, {"seq": "TTTA"}]}, {"target_name": "target3", "microhaplotypes": [{"seq": "GGG"}, {"seq": "AAG"}]}]}, "detected_microhaplotypes": {"bioinformatics_run_name": "run1", "experiment_samples": [{"experiment_sample_name": "sample1", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 10}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 0, "reads": 100}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 0, "reads": 10}]}]}, {"experiment_sample_name": "sample2", "target_results": [
-                         {"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 1}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 0, "reads": 12}, {"mhap_id": 1, "reads": 53}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 1, "reads": 73}]}]}, {"experiment_sample_name": "sample3", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 1, "reads": 76}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 1, "reads": 6}]}]}, {"experiment_sample_name": "sample4", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 297}]}]}, {"experiment_sample_name": "sample5", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 1, "reads": 123}, {"mhap_id": 2, "reads": 1}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 0, "reads": 17}]}]}]}})
+        self.assertEqual(actual, {"representative_microhaplotypes": {"targets": [{"target_name": "target1", "microhaplotypes": [{"seq": "ACTG"}, {"seq": "ATTG"}, {"seq": "ATTA"}]}, {"target_name": "target2", "microhaplotypes": [{"seq": "TTTT"}, {"seq": "TTTA"}]}, {"target_name": "target3", "microhaplotypes": [{"seq": "GGG"}, {"seq": "AAG"}]}]}, "detected_microhaplotypes": {"bioinformatics_run_name": "run1", "library_samples": [{"library_sample_name": "sample1", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 10}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 0, "reads": 100}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 0, "reads": 10}]}]}, {"library_sample_name": "sample2", "target_results": [
+                         {"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 1}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 0, "reads": 12}, {"mhap_id": 1, "reads": 53}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 1, "reads": 73}]}]}, {"library_sample_name": "sample3", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 1, "reads": 76}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 1, "reads": 6}]}]}, {"library_sample_name": "sample4", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 297}]}]}, {"library_sample_name": "sample5", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 1, "reads": 123}, {"mhap_id": 2, "reads": 1}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 0, "reads": 17}]}]}]}})
 
 
 if __name__ == '__main__':

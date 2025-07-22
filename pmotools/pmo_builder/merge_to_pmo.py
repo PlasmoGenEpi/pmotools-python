@@ -116,7 +116,7 @@ def _replace_names_with_IDs(specimen_info, project_info, library_sample_info, se
     missing_projects = _replace_key_with_id(specimen_info, project_info,
                                             "project_name", "project_id")
 
-    # EXPERIMENT INFO
+    # LIBRARY SAMPLE INFO
     # replace with sequencing_info_id, specimen_id, panel_id
     missing_sequencing = _replace_key_with_id(library_sample_info, sequencing_info,
                                               'sequencing_info_name', "sequencing_info_id")
