@@ -51,8 +51,7 @@ def merge_to_pmo(
         "bioinformatics_run_info": bioinfo_run_info,
         "project_info": project_info,
     } | panel_info | mhap_info
-    pmo_json = json.dumps(pmo, indent=4)
-    return pmo_json
+    return pmo
 
 
 def _make_lookup(dict, key):
