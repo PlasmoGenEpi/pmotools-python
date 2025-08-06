@@ -194,27 +194,27 @@ class TestPMOProcessor(unittest.TestCase):
     def test_extract_alleles_per_sample_table(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             pmo_data = json.load(f)
-        allele_data = PMOProcessor.extract_alleles_per_sample_table(pmo_data).sort_values(by=['bioinformatics_run_id', 'library_sample_name', 'target_name', 'mhap_id'])
+        allele_data = PMOProcessor.extract_alleles_per_sample_table(pmo_data).sort_values(by=['bioinformatics_run_name', 'library_sample_name', 'target_name', 'mhap_id'])
         output_fnp = os.path.join(self.test_dir.name, "extracted_alleles_per_sample_table_no_extra_args.csv")
         allele_data.to_csv(output_fnp, index = False)
-        self.assertEqual("af878df56d1cc86e9b3ed18d5a838ab6", md5sum_of_fnp(output_fnp))
-#library_sample_name", "target_name", "mhap_id
+        self.assertEqual("d1775ec03eb38743cd4dd92d0a832bff", md5sum_of_fnp(output_fnp))
+
         allele_data_with_seq_reads = PMOProcessor.extract_alleles_per_sample_table(pmo_data,
                                                                                    additional_microhap_fields = ["reads"],
-                                                                                   additional_representative_info_fields = ["seq"]).sort_values(by=['bioinformatics_run_id', 'library_sample_name', 'target_name', 'mhap_id'])
+                                                                                   additional_representative_info_fields = ["seq"]).sort_values(by=['bioinformatics_run_name', 'library_sample_name', 'target_name', 'mhap_id'])
         output_fnp = os.path.join(self.test_dir.name, "extracted_alleles_per_sample_table_no_extra_args_with_seq_reads.csv")
         allele_data_with_seq_reads.to_csv(output_fnp, index = False)
-        self.assertEqual("2aafd69d6e4994527eaa362963d0a5bc", md5sum_of_fnp(output_fnp))
+        self.assertEqual("0e5da30c561c748fb2553f852db76607", md5sum_of_fnp(output_fnp))
 
         allele_data_with_seq_reads_panel_id_collection_country = PMOProcessor.extract_alleles_per_sample_table(pmo_data,
                                                                                    additional_microhap_fields = ["reads"],
                                                                                    additional_representative_info_fields = ["seq"],
                                                                                    additional_library_sample_info_fields = ["panel_id"],
                                                                                    additional_specimen_info_fields = ["collection_country"],
-                                                                                   ).sort_values(by=['bioinformatics_run_id', 'library_sample_name', 'target_name', 'mhap_id'])
+                                                                                   ).sort_values(by=['bioinformatics_run_name', 'library_sample_name', 'target_name', 'mhap_id'])
         output_fnp = os.path.join(self.test_dir.name, "extracted_alleles_per_sample_table_no_extra_args_with_seq_reads_panel_id_collection_country.csv")
         allele_data_with_seq_reads_panel_id_collection_country.to_csv(output_fnp, index = False)
-        self.assertEqual("8ea87727837044f4ba23b671ea5ed304", md5sum_of_fnp(output_fnp))
+        self.assertEqual("13aed17cbdff88f0a80c685c42d89cb8", md5sum_of_fnp(output_fnp))
 
     def test_extract_from_pmo_with_read_filter(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
@@ -344,6 +344,46 @@ class TestPMOProcessor(unittest.TestCase):
         checker = PMOChecker(pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_meta)
 
+    def test_get_sorted_bioinformatics_run_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_sorted_bioinformatics_run_names(pmo_data_combined)
+        self.assertEqual(['Mozambique2018-SeekDeep', 'PathWeaver-Heome1'], names)
+
+
+    def test_get_sorted_specimen_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_sorted_specimen_names(pmo_data_combined)
+        self.assertEqual(['5tbx', '8025874217', '8025874266', 'XUC009'], names)
+
+
+    def test_get_sorted_library_sample_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_sorted_library_sample_names(pmo_data_combined)
+        self.assertEqual(['5tbx', '8025874217', '8025874266', 'XUC009'], names)
+
+    def test_sorted_get_target_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_sorted_target_names(pmo_data_combined)
+        self.assertEqual(['t1', 't10', 't100', 't11', 't12', 't13', 't14', 't15', 't16', 't17', 't18', 't19',
+        't2', 't20', 't21', 't22', 't23', 't24', 't25', 't26', 't27', 't28', 't29',
+        't3', 't30', 't31', 't32', 't33', 't34', 't35', 't36', 't37', 't38', 't39',
+        't4', 't40', 't41', 't42', 't43', 't44', 't45', 't46', 't47', 't48', 't49',
+        't5', 't50', 't51', 't52', 't53', 't54', 't55', 't56', 't57', 't58', 't59',
+        't6', 't60', 't61', 't62', 't63', 't64', 't65', 't66', 't67', 't68', 't69',
+        't7', 't70', 't71', 't72', 't73', 't74', 't75', 't76', 't77', 't78', 't79',
+        't8', 't80', 't81', 't82', 't83', 't84', 't85', 't86', 't87', 't88', 't89',
+        't9', 't90', 't91', 't92', 't93', 't94', 't95', 't96', 't97', 't98', 't99'], names)
+
+    def test_get_sorted_panel_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_sorted_panel_names(pmo_data_combined)
+        self.assertEqual(['heomev1'], names)
+
     def test_get_bioinformatics_run_names(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             pmo_data_combined = json.load(f)
@@ -355,28 +395,26 @@ class TestPMOProcessor(unittest.TestCase):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             pmo_data_combined = json.load(f)
         names = PMOProcessor.get_specimen_names(pmo_data_combined)
-        self.assertEqual(['5tbx', '8025874217', '8025874266', 'XUC009'], names)
-
+        self.assertEqual(['8025874217', '8025874266', '5tbx', 'XUC009'], names)
 
     def test_get_library_sample_names(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             pmo_data_combined = json.load(f)
         names = PMOProcessor.get_library_sample_names(pmo_data_combined)
-        self.assertEqual(['5tbx', '8025874217', '8025874266', 'XUC009'], names)
+        self.assertEqual(['8025874217', '8025874266', '5tbx', 'XUC009'], names)
 
     def test_get_target_names(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             pmo_data_combined = json.load(f)
         names = PMOProcessor.get_target_names(pmo_data_combined)
-        self.assertEqual(['t1', 't10', 't100', 't11', 't12', 't13', 't14', 't15', 't16', 't17', 't18', 't19',
-        't2', 't20', 't21', 't22', 't23', 't24', 't25', 't26', 't27', 't28', 't29',
-        't3', 't30', 't31', 't32', 't33', 't34', 't35', 't36', 't37', 't38', 't39',
-        't4', 't40', 't41', 't42', 't43', 't44', 't45', 't46', 't47', 't48', 't49',
-        't5', 't50', 't51', 't52', 't53', 't54', 't55', 't56', 't57', 't58', 't59',
-        't6', 't60', 't61', 't62', 't63', 't64', 't65', 't66', 't67', 't68', 't69',
-        't7', 't70', 't71', 't72', 't73', 't74', 't75', 't76', 't77', 't78', 't79',
-        't8', 't80', 't81', 't82', 't83', 't84', 't85', 't86', 't87', 't88', 't89',
-        't9', 't90', 't91', 't92', 't93', 't94', 't95', 't96', 't97', 't98', 't99'], names)
+        self.assertEqual(['t96', 't95', 't94', 't50', 't36', 't88', 't86', 't85', 't81', 't80', 't82', 't83',
+                          't98', 't78', 't74', 't23', 't73', 't79', 't71', 't69', 't66', 't70', 't65', 't64', 't6',
+                          't55', 't54', 't37', 't53', 't40', 't52', 't99', 't51', 't33', 't62', 't45', 't77', 't15',
+                          't5', 't39', 't7', 't42', 't11', 't21', 't38', 't44', 't35', 't87', 't19', 't34', 't97',
+                          't58', 't28', 't76', 't32', 't89', 't67', 't16', 't26', 't41', 't68', 't31', 't4', 't60',
+                          't3', 't61', 't93', 't30', 't84', 't72', 't22', 't63', 't25', 't14', 't20', 't43', 't9',
+                          't56', 't12', 't1', 't48', 't29', 't2', 't90', 't8', 't47', 't46', 't59', 't92', 't57',
+                          't18', 't75', 't27', 't49', 't17', 't13', 't24', 't91', 't10', 't100'], names)
 
     def test_get_panel_names(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os, argparse, json
 import pandas as pd
-from pmotools.json_convertors.metatable_to_json_meta import pandas_table_to_json
+from pmotools.pmo_builder.metatable_to_json import pandas_table_to_json
 from pmotools.utils.small_utils import Utils
 
 def parse_args_excel_meta_to_json_meta():
