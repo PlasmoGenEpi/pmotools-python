@@ -22,7 +22,7 @@ from validate_pmo import validate_pmo
 from list_specimen_meta_fields import list_specimen_meta_fields
 from list_tar_amp_bioinformatics_info_ids import list_tar_amp_bioinformatics_info_ids
 from count_specimen_meta import count_specimen_meta
-from count_targets_per_sample import count_targets_per_sample
+from count_targets_per_library_sample import count_targets_per_library_sample
 from count_library_samples_per_target import count_library_samples_per_target
 from terra_amp_output_to_json import terra_amp_output_to_json
 from list_experiment_sample_ids_per_specimen_id import list_experiment_sample_ids_per_specimen_id
@@ -71,7 +71,7 @@ class pmotools_runner   :
                                                          "List out all the tar_amp_bioinformatics_info_ids in a PMO file"),
                 "count_specimen_meta": pmofunction(count_specimen_meta,
                                                          "Count the values of specific specimen meta fields in the specimen_info section"),
-                "count_targets_per_sample": pmofunction(count_targets_per_sample,
+                "count_targets_per_library_sample": pmofunction(count_targets_per_library_sample,
                                                    "Count the number of targets per sample"),
                 "count_library_samples_per_target": pmofunction(count_library_samples_per_target,
                                                         "Count the number of samples per target"),

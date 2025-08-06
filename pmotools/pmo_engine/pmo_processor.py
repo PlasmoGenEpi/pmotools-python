@@ -157,7 +157,7 @@ class PMOProcessor:
 
 
     @staticmethod
-    def count_targets_per_sample(pmodata, min_reads: float = 0.0) -> pd.DataFrame:
+    def count_targets_per_library_sample(pmodata, min_reads: float = 0.0) -> pd.DataFrame:
         """
         Count the number of targets per library sample, with optional collapsing across bioinformatics runs.
 

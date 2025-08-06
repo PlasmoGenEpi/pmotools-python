@@ -34,7 +34,7 @@ def count_targets_per_sample():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # count
-    counts_df = PMOProcessor.count_targets_per_sample(pmo, args.read_count_minimum)
+    counts_df = PMOProcessor.count_targets_per_library_sample(pmo, args.read_count_minimum)
 
     #write out
     counts_df.to_csv(sys.stdout if "STDOUT" == args.output else args.output, sep = output_delim, index=False)

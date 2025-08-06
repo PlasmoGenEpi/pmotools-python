@@ -49,10 +49,10 @@ class TestPMOProcessor(unittest.TestCase):
         id_counts_check_df_2 = pd.DataFrame(id_counts_check_data_2)
         pd.testing.assert_frame_equal(id_counts_check_df_2,id_counts_2)
 
-    def test_count_targets_per_sample(self):
+    def test_count_targets_per_library_sample(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json")) as f:
             pmo_data = json.load(f)
-        targets_per_sample_counts = PMOProcessor.count_targets_per_sample(pmo_data)
+        targets_per_sample_counts = PMOProcessor.count_targets_per_library_sample(pmo_data)
         targets_per_sample_check_data = {
             "bioinformatics_run_id": [0, 0],
             "library_sample_name": ["8025874266", "8025874217"],
@@ -61,7 +61,7 @@ class TestPMOProcessor(unittest.TestCase):
         targets_per_sample_check_df = pd.DataFrame(targets_per_sample_check_data)
         pd.testing.assert_frame_equal(targets_per_sample_check_df,targets_per_sample_counts)
 
-        targets_per_sample_counts_read_count_off1000 = PMOProcessor.count_targets_per_sample(pmo_data, 1000)
+        targets_per_sample_counts_read_count_off1000 = PMOProcessor.count_targets_per_library_sample(pmo_data, 1000)
         targets_per_sample_read_count_off1000_check_data = {
             "bioinformatics_run_id": [0, 0],
             "library_sample_name": ["8025874266", "8025874217"],
@@ -72,7 +72,7 @@ class TestPMOProcessor(unittest.TestCase):
 
         with open(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json")) as f:
             pmo_data_2 = json.load(f)
-        targets_per_sample_counts_2 = PMOProcessor.count_targets_per_sample(pmo_data_2)
+        targets_per_sample_counts_2 = PMOProcessor.count_targets_per_library_sample(pmo_data_2)
         targets_per_sample_check_data_2 = {
             "bioinformatics_run_id": [0, 0],
             "library_sample_name": ["XUC009", "5tbx"],
@@ -81,7 +81,7 @@ class TestPMOProcessor(unittest.TestCase):
         targets_per_sample_check_df_2 = pd.DataFrame(targets_per_sample_check_data_2)
         pd.testing.assert_frame_equal(targets_per_sample_check_df_2,targets_per_sample_check_df_2)
 
-        targets_per_sample_counts_2_read_count_off200 = PMOProcessor.count_targets_per_sample(pmo_data_2, 200)
+        targets_per_sample_counts_2_read_count_off200 = PMOProcessor.count_targets_per_library_sample(pmo_data_2, 200)
         targets_per_sample_check_data_2_read_count_off200 = {
             "bioinformatics_run_id": [0, 0],
             "library_sample_name": ["XUC009", "5tbx"],
@@ -92,7 +92,7 @@ class TestPMOProcessor(unittest.TestCase):
 
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             pmo_data_combined = json.load(f)
-        pmo_data_combined_targets_per_sample = PMOProcessor.count_targets_per_sample(pmo_data_combined)
+        pmo_data_combined_targets_per_sample = PMOProcessor.count_targets_per_library_sample(pmo_data_combined)
         pmo_data_combined_targets_per_sample_check = pd.DataFrame([
             {"bioinformatics_run_id": 0, "library_sample_name": "8025874266", "target_number": 85},
             {"bioinformatics_run_id": 0, "library_sample_name": "8025874217", "target_number": 99},
