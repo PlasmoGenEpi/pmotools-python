@@ -10,7 +10,7 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_list_experiment_sample_ids_per_specimen_id():
+def parse_args_list_library_sample_names_per_specimen_name():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', type=str, required=True, help='PMO file')
     parser.add_argument('--output', type=str, default="STDOUT", required=False, help='output file')
@@ -19,8 +19,8 @@ def parse_args_list_experiment_sample_ids_per_specimen_id():
 
     return parser.parse_args()
 
-def list_experiment_sample_ids_per_specimen_id():
-    args = parse_args_list_experiment_sample_ids_per_specimen_id()
+def list_library_sample_names_per_specimen_name():
+    args = parse_args_list_library_sample_names_per_specimen_name()
 
 
     # check files
@@ -38,5 +38,5 @@ def list_experiment_sample_ids_per_specimen_id():
     info_df.to_csv(sys.stdout if "STDOUT" == args.output else args.output, sep = output_delim, index=False)
 
 if __name__ == "__main__":
-    list_experiment_sample_ids_per_specimen_id()
+    list_library_sample_names_per_specimen_name()
 

@@ -10,7 +10,7 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_count_targets_per_sample():
+def parse_args_count_targets_per_library_sample():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', type=str, required=True, help='PMO file')
     parser.add_argument('--output', type=str, default="STDOUT", required=False, help='output file')
@@ -21,8 +21,8 @@ def parse_args_count_targets_per_sample():
     return parser.parse_args()
 
 
-def count_targets_per_sample():
-    args = parse_args_count_targets_per_sample()
+def count_targets_per_library_sample():
+    args = parse_args_count_targets_per_library_sample()
 
 
     # check files
@@ -41,5 +41,5 @@ def count_targets_per_sample():
 
 
 if __name__ == "__main__":
-    count_targets_per_sample()
+    count_targets_per_library_sample()
 
