@@ -13,7 +13,7 @@ from text_meta_to_json_meta import text_meta_to_json_meta
 from excel_meta_to_json_meta import excel_meta_to_json_meta
 from extract_pmo_with_selected_meta import extract_pmo_with_selected_meta
 from extract_pmo_with_select_specimen_names import extract_pmo_with_select_specimen_names
-from extract_pmo_with_select_experiment_sample_names import extract_pmo_with_select_experiment_sample_names
+from extract_pmo_with_select_library_sample_names import extract_pmo_with_select_library_sample_names
 from extract_pmo_with_select_targets import extract_pmo_with_select_targets
 from microhaplotype_table_to_json_file import microhaplotype_table_to_json_file
 from extract_allele_table import extract_for_allele_table
@@ -50,7 +50,7 @@ class pmotools_runner   :
             "extractors_from_pmo" : {
                 "extract_pmo_with_selected_meta": pmofunction(extract_pmo_with_selected_meta, "Extract from PMO samples and associated haplotypes with selected meta"),
                 "extract_pmo_with_select_specimen_names": pmofunction(extract_pmo_with_select_specimen_names,"Extract from PMO specific samples from the specimens table"),
-                "extract_pmo_with_select_experiment_sample_names": pmofunction(extract_pmo_with_select_experiment_sample_names,
+                "extract_pmo_with_select_library_sample_names": pmofunction(extract_pmo_with_select_library_sample_names,
                                                                     "Extract from PMO specific experiment sample names from the experiment_info table"),
                 "extract_pmo_with_select_targets" : pmofunction(extract_pmo_with_select_targets,"Extract from PMO specific targets"),
                 "extract_pmo_with_read_filter": pmofunction(extract_pmo_with_read_filter,
