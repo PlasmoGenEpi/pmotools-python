@@ -69,8 +69,7 @@ def mhap_table_to_pmo_json(
 
     output_data_dict = {"representative_microhaplotypes": representative_microhaplotype_dict,
                         "detected_microhaplotypes": detected_mhap_dict}
-    output_data = json.dumps(output_data_dict, indent=4)
-    return output_data
+    return output_data_dict
 
 
 def create_representative_microhaplotype_dict(
