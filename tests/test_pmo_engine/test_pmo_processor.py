@@ -101,12 +101,12 @@ class TestPMOProcessor(unittest.TestCase):
         ])
         pd.testing.assert_frame_equal(pmo_data_combined_targets_per_sample_check,pmo_data_combined_targets_per_sample)
 
-    def test_count_samples_per_target(self):
+    def test_count_library_samples_per_target(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
             pmo_data = json.load(f)
 
         # counts per bio run
-        targets_per_sample_counts = PMOProcessor.count_samples_per_target(pmo_data)
+        targets_per_sample_counts = PMOProcessor.count_library_samples_per_target(pmo_data)
         targets_per_sample_counts_check = pd.read_csv(
             os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example_sample_per_target_counts.csv"),
             sep=','
@@ -114,7 +114,7 @@ class TestPMOProcessor(unittest.TestCase):
         pd.testing.assert_frame_equal(targets_per_sample_counts_check, targets_per_sample_counts)
 
         # collapsing across bio runs
-        targets_per_sample_counts_collapsed = PMOProcessor.count_samples_per_target(pmo_data, collapse_across_runs=True)
+        targets_per_sample_counts_collapsed = PMOProcessor.count_library_samples_per_target(pmo_data, collapse_across_runs=True)
         targets_per_sample_counts_collapsed_check = pd.read_csv(
             os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example_sample_per_target_counts_collapsed.csv"),
             sep=','

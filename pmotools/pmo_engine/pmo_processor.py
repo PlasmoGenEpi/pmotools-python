@@ -189,8 +189,8 @@ class PMOProcessor:
         return pd.DataFrame.from_records(records)
 
     @staticmethod
-    def count_samples_per_target(pmodata, min_reads: float = 0.0,
-                                 collapse_across_runs: bool = False) -> pd.DataFrame:
+    def count_library_samples_per_target(pmodata, min_reads: float = 0.0,
+                                         collapse_across_runs: bool = False) -> pd.DataFrame:
         """
         Count the number of library samples per target, optionally collapsing across bioinformatics runs.
 
