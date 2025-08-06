@@ -344,6 +344,45 @@ class TestPMOProcessor(unittest.TestCase):
         checker = PMOChecker(pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_meta)
 
+    def test_get_bioinformatics_run_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_bioinformatics_run_names(pmo_data_combined)
+        self.assertEqual(['Mozambique2018-SeekDeep', 'PathWeaver-Heome1'], names)
+
+
+    def test_get_specimen_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_specimen_names(pmo_data_combined)
+        self.assertEqual(['5tbx', '8025874217', '8025874266', 'XUC009'], names)
+
+
+    def test_get_library_sample_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_library_sample_names(pmo_data_combined)
+        self.assertEqual(['5tbx', '8025874217', '8025874266', 'XUC009'], names)
+
+    def test_get_target_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_target_names(pmo_data_combined)
+        self.assertEqual(['t1', 't10', 't100', 't11', 't12', 't13', 't14', 't15', 't16', 't17', 't18', 't19',
+        't2', 't20', 't21', 't22', 't23', 't24', 't25', 't26', 't27', 't28', 't29',
+        't3', 't30', 't31', 't32', 't33', 't34', 't35', 't36', 't37', 't38', 't39',
+        't4', 't40', 't41', 't42', 't43', 't44', 't45', 't46', 't47', 't48', 't49',
+        't5', 't50', 't51', 't52', 't53', 't54', 't55', 't56', 't57', 't58', 't59',
+        't6', 't60', 't61', 't62', 't63', 't64', 't65', 't66', 't67', 't68', 't69',
+        't7', 't70', 't71', 't72', 't73', 't74', 't75', 't76', 't77', 't78', 't79',
+        't8', 't80', 't81', 't82', 't83', 't84', 't85', 't86', 't87', 't88', 't89',
+        't9', 't90', 't91', 't92', 't93', 't94', 't95', 't96', 't97', 't98', 't99'], names)
+
+    def test_get_panel_names(self):
+        with open(os.path.join(os.path.dirname(self.working_dir), "data/combined_pmo_example.json")) as f:
+            pmo_data_combined = json.load(f)
+        names = PMOProcessor.get_panel_names(pmo_data_combined)
+        self.assertEqual(['heomev1'], names)
 
 if __name__ == "__main__":
     unittest.main()

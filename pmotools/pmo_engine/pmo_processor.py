@@ -20,6 +20,18 @@ class PMOProcessor:
     """
 
     @staticmethod
+    def get_index_key_of_bioinformatics_run_names(pmodata):
+        """
+        Get key of bioinformatics_run_name to index in pmodata["bioinformatics_run_info"]
+        :param pmodata: the PMO to get indexes from
+        :return: a dictionary of indexes keyed by bioinformatics_run_name
+        """
+        ret = {}
+        for idx, bioinformatics_run in enumerate(pmodata["bioinformatics_run_info"]):
+            ret[bioinformatics_run["bioinformatics_run_name"]] = idx
+        return ret
+
+    @staticmethod
     def get_index_key_of_specimen_names(pmodata):
         """
         Get key of specimen_name to index in pmodata["specimen_info"]
@@ -68,6 +80,55 @@ class PMOProcessor:
         return ret
 
     @staticmethod
+    def get_bioinformatics_run_names(pmodata) -> list[str]:
+        """
+        Get a list of bioinformatics_run_names in pmodata["bioinformatics_run_info"]
+        :param pmodata: the PMO to get bioinformatics_run_names from
+        :return: a list of all bioinformatics_run_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_bioinformatics_run_names(pmodata).keys())
+
+    @staticmethod
+    def get_specimen_names(pmodata) -> list[str]:
+        """
+        Get a list of specimen_names in pmodata["specimen_info"]
+        :param pmodata: the PMO to get specimen_names from
+        :return: a list of all specimen_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_specimen_names(pmodata).keys())
+
+
+    @staticmethod
+    def get_library_sample_names(pmodata) -> list[str]:
+        """
+        Get a list of library_sample_names in pmodata["library_sample_info"]
+        :param pmodata: the PMO to get library_sample_names from
+        :return: a list of all library_sample_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_library_sample_names(pmodata).keys())
+
+
+    @staticmethod
+    def get_target_names(pmodata) -> list[str]:
+        """
+        Get a list of target_names in pmodata["target_info"]
+        :param pmodata: the PMO to get target_names from
+        :return: a list of all target_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_target_names(pmodata).keys())
+
+
+    @staticmethod
+    def get_panel_names(pmodata) -> list[str]:
+        """
+        Get a list of panel_names in pmodata["panel_info"]
+        :param pmodata: the PMO to get panel_names from
+        :return: a list of all panel_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_panel_names(pmodata).keys())
+
+
+    @staticmethod
     def get_index_key_of_target_in_representative_microhaplotypes(pmodata):
         """
         Get key of target_name to index for the representative microhaplotypes for the target_name in pmodata["representative_microhaplotypes"]
@@ -78,6 +139,17 @@ class PMOProcessor:
         for idx, representative_microhaplotypes_for_target in enumerate(pmodata["representative_microhaplotypes"]["targets"]):
             ret[pmodata["target_info"][representative_microhaplotypes_for_target["target_id"]]["target_name"]] = idx
         return ret
+
+    @staticmethod
+    def get_index_of_bioinformatics_run_names(pmodata, bioinformatics_run_names: list[str]):
+        """
+        Get index of bioinformatics_run_name in pmodata["bioinformatics_run_info"]
+        :param pmodata: the PMO to get indexes from
+        :param bioinformatics_run_names: a list of bioinformatics_run_names
+        :return: the index of bioinformatics_run_names in pmodata["bioinformatics_run_name"] returned in the same order as bioinformatics_run_names
+        """
+        bioinformatics_run_key = PMOProcessor.get_index_key_of_bioinformatics_run_names(pmodata)
+        return [bioinformatics_run_key[name] for name in bioinformatics_run_names]
 
     @staticmethod
     def get_index_of_specimen_names(pmodata, specimen_names: list[str]):

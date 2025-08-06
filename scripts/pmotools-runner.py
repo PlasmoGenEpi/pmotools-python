@@ -20,7 +20,7 @@ from extract_allele_table import extract_for_allele_table
 from combine_pmos import combine_pmos
 from validate_pmo import validate_pmo
 from list_specimen_meta_fields import list_specimen_meta_fields
-from list_tar_amp_bioinformatics_info_ids import list_tar_amp_bioinformatics_info_ids
+from list_bioinformatics_run_names import list_bioinformatics_run_names
 from count_specimen_meta import count_specimen_meta
 from count_targets_per_library_sample import count_targets_per_library_sample
 from count_library_samples_per_target import count_library_samples_per_target
@@ -67,7 +67,7 @@ class pmotools_runner   :
                                                          "Each specimen_id can have multiple experiment_sample_ids, list out all in a PMO"),
                 "list_specimen_meta_fields": pmofunction(list_specimen_meta_fields,
                                                     "List out the specimen meta fields in the specimen_info section"),
-                "list_tar_amp_bioinformatics_info_ids": pmofunction(list_tar_amp_bioinformatics_info_ids,
+                "list_bioinformatics_run_names": pmofunction(list_bioinformatics_run_names,
                                                          "List out all the tar_amp_bioinformatics_info_ids in a PMO file"),
                 "count_specimen_meta": pmofunction(count_specimen_meta,
                                                          "Count the values of specific specimen meta fields in the specimen_info section"),
