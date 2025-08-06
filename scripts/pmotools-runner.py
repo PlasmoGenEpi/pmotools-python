@@ -25,7 +25,7 @@ from count_specimen_meta import count_specimen_meta
 from count_targets_per_library_sample import count_targets_per_library_sample
 from count_library_samples_per_target import count_library_samples_per_target
 from terra_amp_output_to_json import terra_amp_output_to_json
-from list_experiment_sample_ids_per_specimen_id import list_experiment_sample_ids_per_specimen_id
+from list_library_sample_names_per_specimen_name import list_library_sample_names_per_specimen_name
 from extract_insert_of_panels import extract_insert_of_panels
 from extract_refseq_of_inserts_of_panels import extract_refseq_of_inserts_of_panels
 from extract_pmo_with_read_filter import extract_pmo_with_read_filter
@@ -63,7 +63,7 @@ class pmotools_runner   :
                                                     "Combine multiple pmos of the same panel into a single pmo"),
             },
             "extract_basic_info_from_pmo" : {
-                "list_experiment_sample_ids_per_specimen_id": pmofunction(list_experiment_sample_ids_per_specimen_id,
+                "list_library_sample_names_per_specimen_name": pmofunction(list_library_sample_names_per_specimen_name,
                                                          "Each specimen_id can have multiple experiment_sample_ids, list out all in a PMO"),
                 "list_specimen_meta_fields": pmofunction(list_specimen_meta_fields,
                                                     "List out the specimen meta fields in the specimen_info section"),

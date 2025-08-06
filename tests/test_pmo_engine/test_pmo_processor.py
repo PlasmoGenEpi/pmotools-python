@@ -26,10 +26,10 @@ class TestPMOProcessor(unittest.TestCase):
     def tearDown(self):
         self.test_dir.cleanup()
 
-    def test_list_library_sample_ids_per_specimen_id(self):
+    def test_list_library_sample_names_per_specimen_name(self):
         with open(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example.json")) as f:
             pmo_data = json.load(f)
-        id_counts = PMOProcessor.list_library_sample_ids_per_specimen_id(pmo_data)
+        id_counts = PMOProcessor.list_library_sample_names_per_specimen_name(pmo_data)
         id_counts_check_data = {
             "specimen_name": ["8025874217", "8025874266"],
             "library_sample_name": ["8025874217", "8025874266"],
@@ -40,7 +40,7 @@ class TestPMOProcessor(unittest.TestCase):
 
         with open(os.path.join(os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json")) as f:
             pmo_data_2 = json.load(f)
-        id_counts_2 = PMOProcessor.list_library_sample_ids_per_specimen_id(pmo_data_2)
+        id_counts_2 = PMOProcessor.list_library_sample_names_per_specimen_name(pmo_data_2)
         id_counts_check_data_2 = {
             "specimen_name": ["5tbx", "XUC009"],
             "library_sample_name": ["5tbx", "XUC009"],

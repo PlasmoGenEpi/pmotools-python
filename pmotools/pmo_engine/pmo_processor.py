@@ -233,26 +233,33 @@ class PMOProcessor:
         return ret.sort_values(by=["bioinformatics_run_id", "target_name"]).reset_index(drop=True)
 
     @staticmethod
-    def list_library_sample_ids_per_specimen_id(pmodata, select_specimen_ids: list[str] = None) -> pandas.DataFrame:
+    def list_library_sample_names_per_specimen_name(pmodata,
+                                                    select_specimen_ids: list[int] = None,
+                                                    select_specimen_names: list[str] = None) -> pandas.DataFrame:
         """
-        List the library_sample_id per specimen_id
+        List all the library_sample_names per specimen_name
         :param pmodata: the PMO
         :param select_specimen_ids: a list of specimen_ids to select, if None, all specimen_ids are used
+        :param select_specimen_names: a list of specimen_names to select, if None, all specimen_names are used
         :return: a pandas dataframe with 3 columns, specimen_id, library_sample_id, and library_sample_id_count(the number of library_sample_ids per specimen_id)
         """
-        exp_samples_per_spec = defaultdict(list[str])
-        for exp_sample in pmodata["library_sample_info"]:
-            if select_specimen_ids is None or exp_sample["specimen_id"] in select_specimen_ids:
-                exp_samples_per_spec[pmodata["specimen_info"][exp_sample["specimen_id"]]["specimen_name"]].append(exp_sample["library_sample_name"])
+        if select_specimen_ids is not None and select_specimen_names is not None:
+            raise ValueError("Cannot specify both select_specimen_ids and select_specimen_names")
+        lib_samples_per_spec = defaultdict(list[str])
+        if select_specimen_names is not None:
+            select_specimen_ids = PMOProcessor.get_index_of_specimen_names(pmodata, select_specimen_names)
+        for lib_sample in pmodata["library_sample_info"]:
+            if select_specimen_ids is None or lib_sample["specimen_id"] in select_specimen_ids:
+                lib_samples_per_spec[pmodata["specimen_info"][lib_sample["specimen_id"]]["specimen_name"]].append(lib_sample["library_sample_name"])
 
         specimens_not_list = []
         for specimen in pmodata["specimen_info"]:
-            if specimen["specimen_name"] not in exp_samples_per_spec:
+            if specimen["specimen_name"] not in lib_samples_per_spec:
                 specimens_not_list.append(specimen["specimen_name"])
 
         # Prepare the data for DataFrame creation
         data = []
-        for specimen_name, library_sample_names in exp_samples_per_spec.items():
+        for specimen_name, library_sample_names in lib_samples_per_spec.items():
             for library_sample_name in library_sample_names:
                 data.append({
                     "specimen_name": specimen_name,
