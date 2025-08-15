@@ -32,18 +32,16 @@ def extract_insert_of_panels():
     panel_bed_locs = PMOProcessor.extract_panels_insert_bed_loc(pmo)
 
     # write
-    output_target = sys.stdout if args.output == "STDOUT" else open(args.output, "w")
-    with output_target as f:
+    with Utils.smart_open_write(args.output) as f:
         f.write("\t".join(["#chrom", "start", "end", "target_id", "length", "strand", "extra_info"]))
         if args.add_ref_seqs:
             f.write("\tref_seq")
         f.write("\n")
-        for panel_id, bed_locs in panel_bed_locs.items():
-            for loc in bed_locs:
-                f.write("\t".join([loc.chrom, str(loc.start), str(loc.end), loc.name, str(loc.score), loc.strand, loc.extra_info]))
-                if args.add_ref_seqs:
-                    f.write("\t" + str(loc.ref_seq))
-                f.write("\n")
+        for loc in panel_bed_locs:
+            f.write("\t".join([loc.chrom, str(loc.start), str(loc.end), loc.name, str(loc.score), loc.strand, loc.extra_info]))
+            if args.add_ref_seqs:
+                f.write("\t" + str(loc.ref_seq))
+            f.write("\n")
 
 if __name__ == "__main__":
     extract_insert_of_panels()

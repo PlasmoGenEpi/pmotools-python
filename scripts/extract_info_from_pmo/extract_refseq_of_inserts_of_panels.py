@@ -31,12 +31,10 @@ def extract_refseq_of_inserts_of_panels():
     panel_bed_locs = PMOProcessor.extract_panels_insert_bed_loc(pmo)
 
     # write
-    output_target = sys.stdout if args.output == "STDOUT" else open(args.output, "w")
-    with output_target as f:
-        f.write("\t".join(["panel_id", "target_id", "ref_seq"]) + "\n")
-        for panel_id, bed_locs in panel_bed_locs.items():
-            for loc in bed_locs:
-                f.write("\t".join([str(panel_id), loc.name, loc.ref_seq]) + "\n")
+    with Utils.smart_open_write(args.output) as f:
+        f.write("\t".join(["target_id", "ref_seq"]) + "\n")
+        for loc in panel_bed_locs:
+            f.write("\t".join([loc.name, loc.ref_seq]) + "\n")
 
 if __name__ == "__main__":
     extract_refseq_of_inserts_of_panels()
