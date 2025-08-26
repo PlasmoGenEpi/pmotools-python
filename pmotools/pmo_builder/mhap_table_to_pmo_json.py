@@ -68,7 +68,7 @@ def mhap_table_to_pmo_json(
                                                              library_sample_name_col, target_name_col, seq_col, reads_col, umis_col, additional_mhap_detected_cols)
 
     output_data_dict = {"representative_microhaplotypes": representative_microhaplotype_dict,
-                        "detected_microhaplotypes": detected_mhap_dict}
+                        "detected_microhaplotypes": [detected_mhap_dict]}
     return output_data_dict
 
 
