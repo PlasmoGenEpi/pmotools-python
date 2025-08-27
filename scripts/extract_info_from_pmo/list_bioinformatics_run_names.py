@@ -27,16 +27,13 @@ def list_bioinformatics_run_names():
     # read in PMO
     pmo = PMOReader.read_in_pmo(args.file)
 
-    # extract all taramp_bioinformatics_ids
-    bioids = pmo["taramp_bioinformatics_infos"].keys()
+    # extract all bio run names
+    bio_run_names = PMOProcessor.get_bioinformatics_run_names(pmo)
 
     # write
     output_target = sys.stdout if args.output == "STDOUT" else open(args.output, "w")
     with output_target as f:
-        f.write("\n".join(bioids) + "\n")
-
-
-
+        f.write("\n".join(bio_run_names) + "\n")
 
 if __name__ == "__main__":
     list_bioinformatics_run_names()
