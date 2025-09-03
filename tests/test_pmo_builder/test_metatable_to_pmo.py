@@ -1,10 +1,10 @@
 import unittest
 import pandas as pd
 
-from pmotools.pmo_builder.metatable_to_json import *
+from pmotools.pmo_builder.metatable_to_pmo import *
 
 
-class TestMetatableToJson(unittest.TestCase):
+class TestMetatableToPMO(unittest.TestCase):
 
     def setUp(self):
         self.small_json_example = [
@@ -137,8 +137,9 @@ class TestMetatableToJson(unittest.TestCase):
         })
         result = add_parasite_density_info(
             'parasite_density', 'parasite_density_method', self.small_json_example, df, 'specimen_name',
-        "parasite_density_info")
-        self.assertEqual(result[0]['parasite_density_info'][0]['parasite_density'], 10)
+            "parasite_density_info")
+        self.assertEqual(result[0]['parasite_density_info']
+                         [0]['parasite_density'], 10)
         self.assertEqual(
             result[1]['parasite_density_info'][0]['parasite_density'], 100)
         self.assertEqual(
@@ -155,11 +156,13 @@ class TestMetatableToJson(unittest.TestCase):
             'method2': ['microscopy', 'microscopy']
         })
         result = add_parasite_density_info(
-            ['density1', 'density2'], ['method1', 'method2'], self.small_json_example, df, 'specimen_name',
-        "parasite_density_info")
+            ['density1', 'density2'], ['method1',
+                                       'method2'], self.small_json_example, df, 'specimen_name',
+            "parasite_density_info")
         self.assertEqual(
             result[0]['parasite_density_info'][0]['parasite_density'], 15)
-        self.assertEqual(result[1]['parasite_density_info'][0]['parasite_density'], 107)
+        self.assertEqual(result[1]['parasite_density_info']
+                         [0]['parasite_density'], 107)
         self.assertEqual(
             result[0]['parasite_density_info'][1]['parasite_density'], 10)
         self.assertEqual(
@@ -179,7 +182,7 @@ class TestMetatableToJson(unittest.TestCase):
         })
         result = add_parasite_density_info(
             None, None, self.small_json_example, df, 'specimen_name',
-        "parasite_density_info")
+            "parasite_density_info")
         self.assertEqual(result, [{'specimen_name': 'sample1'}, {
                          'specimen_name': 'sample2'}])
 
@@ -193,8 +196,9 @@ class TestMetatableToJson(unittest.TestCase):
         })
         with self.assertRaises(ValueError) as context:
             add_parasite_density_info(
-                ['density1'], ['method1', 'method2'], self.small_json_example, df, 'specimen_name',
-            "qpcr_parasite_density_info")
+                ['density1'], ['method1',
+                               'method2'], self.small_json_example, df, 'specimen_name',
+                "qpcr_parasite_density_info")
 
         self.assertEqual(
             "If both parasite_density_col and parasite_density_method_col are lists, they must be the same length.", str(context.exception))
@@ -208,7 +212,7 @@ class TestMetatableToJson(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             add_parasite_density_info(
                 None, 'method1', self.small_json_example, df, 'specimen_name',
-            "parasite_density_info")
+                "parasite_density_info")
 
         self.assertEqual(
             "parasite_density_method_col is set but parasite_density_col is None. Cannot proceed.", str(context.exception))
@@ -223,13 +227,14 @@ class TestMetatableToJson(unittest.TestCase):
         })
         with self.assertRaises(TypeError) as context:
             add_parasite_density_info(
-                'density1', ['method1', 'method2'], self.small_json_example, df, 'specimen_name',
-            "parasite_density_info")
+                'density1', [
+                    'method1', 'method2'], self.small_json_example, df, 'specimen_name',
+                "parasite_density_info")
 
         self.assertEqual(
             "If parasite_density_col is a string, parasite_density_method_col must be a string or None.", str(context.exception))
 
-    def test_specimen_info_table_to_json_default(self):
+    def test_specimen_info_table_to_pmo_default(self):
         df = pd.DataFrame({
             'specimen_name': ['sample1', 'sample2'],
             'specimen_taxon_id': [5833, 5833],
@@ -239,7 +244,7 @@ class TestMetatableToJson(unittest.TestCase):
             'project_name': ['project1', 'project2']
         })
 
-        result = specimen_info_table_to_json(df)
+        result = specimen_info_table_to_pmo(df)
         self.assertEqual([{'specimen_name': 'sample1',
                            'specimen_taxon_id': 5833,
                            'host_taxon_id': 9606,
@@ -253,7 +258,7 @@ class TestMetatableToJson(unittest.TestCase):
                            'collection_country': 'Ghana',
                            'project_name': 'project2'}], result)
 
-    def test_specimen_info_table_to_json_with_plate_info(self):
+    def test_specimen_info_table_to_pmo_with_plate_info(self):
         df = pd.DataFrame({
             'specimen_name': ['sample1', 'sample2'],
             'specimen_taxon_id': [5833, 5833],
@@ -266,7 +271,7 @@ class TestMetatableToJson(unittest.TestCase):
             'storage_plate_row': ['A', 'B']
         })
 
-        result = specimen_info_table_to_json(
+        result = specimen_info_table_to_pmo(
             df, storage_plate_col_col='storage_plate_col', storage_plate_name_col='storage_plate_name', storage_plate_row_col='storage_plate_row')
         self.assertEqual([{'specimen_name': 'sample1',
                            'specimen_taxon_id': 5833,
@@ -291,7 +296,7 @@ class TestMetatableToJson(unittest.TestCase):
                                'plate_col': 2
                            }}], result)
 
-    def test_specimen_info_table_to_json_with_parasitemia(self):
+    def test_specimen_info_table_to_pmo_with_parasitemia(self):
         df = pd.DataFrame({
             'specimen_name': ['sample1', 'sample2'],
             'specimen_taxon_id': [5833, 5833],
@@ -303,7 +308,7 @@ class TestMetatableToJson(unittest.TestCase):
             'parasite_density_method': ['qPCR', 'microscopy']
         })
 
-        result = specimen_info_table_to_json(
+        result = specimen_info_table_to_pmo(
             df, parasite_density_col='parasite_density', parasite_density_method_col='parasite_density_method')
         self.assertEqual([{'specimen_name': 'sample1',
                            'specimen_taxon_id': 5833,
@@ -326,7 +331,7 @@ class TestMetatableToJson(unittest.TestCase):
                                'parasite_density_method': 'microscopy'
                            }]}], result)
 
-    def test_specimen_info_table_to_json_with_additional_columns(self):
+    def test_specimen_info_table_to_pmo_with_additional_columns(self):
         df = pd.DataFrame({
             'specimen_name': ['sample1', 'sample2'],
             'specimen_taxon_id': [5833, 5833],
@@ -338,7 +343,7 @@ class TestMetatableToJson(unittest.TestCase):
             'special_field_2': ['this', 'that']
         })
 
-        result = specimen_info_table_to_json(
+        result = specimen_info_table_to_pmo(
             df, additional_specimen_cols=['special_field_1', 'special_field_2'])
         self.assertEqual([{'specimen_name': 'sample1',
                            'specimen_taxon_id': 5833,
@@ -358,7 +363,7 @@ class TestMetatableToJson(unittest.TestCase):
                            'special_field_2': 'that'
                            }], result)
 
-    def test_specimen_info_table_to_json_fails_with_col_duplicate(self):
+    def test_specimen_info_table_to_pmo_fails_with_col_duplicate(self):
         df = pd.DataFrame({
             'specimen_name': ['sample1', 'sample2'],
             'specimen_taxon_id': [5833, 5833],
@@ -368,12 +373,12 @@ class TestMetatableToJson(unittest.TestCase):
             'project_name': ['project1', 'project2']
         })
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_json(
+            specimen_info_table_to_pmo(
                 df, drug_usage_col='specimen_name')
         self.assertEqual(
             "Selected columns must be unique.", str(context.exception))
 
-    def test_specimen_info_table_to_json_fails_with_missing_col(self):
+    def test_specimen_info_table_to_pmo_fails_with_missing_col(self):
         df = pd.DataFrame({
             'specimen_name': ['sample1', 'sample2'],
             'specimen_taxon_id': [5833, 5833],
@@ -383,18 +388,18 @@ class TestMetatableToJson(unittest.TestCase):
             'project_name': ['project1', 'project2']
         })
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_json(
+            specimen_info_table_to_pmo(
                 df, drug_usage_col='drug_usage')
         self.assertEqual(
             "The following columns are not in the DataFrame: ['drug_usage']", str(context.exception))
 
-    def test_specimen_info_table_to_json_fails_without_df(self):
+    def test_specimen_info_table_to_pmo_fails_without_df(self):
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_json('test')
+            specimen_info_table_to_pmo('test')
         self.assertEqual(
             "contents must be a pandas DataFrame.", str(context.exception))
 
-    def test_library_sample_info_table_to_json_default(self):
+    def test_library_sample_info_table_to_pmo_default(self):
         df = pd.DataFrame({
             'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
@@ -402,7 +407,7 @@ class TestMetatableToJson(unittest.TestCase):
             'panel_name': ['MH', 'MH'],
         })
 
-        result = library_sample_info_table_to_json(df)
+        result = library_sample_info_table_to_pmo(df)
         self.assertEqual([{'library_sample_name': 'sample1_MH_run1',
                            'sequencing_info_name': 'run1',
                            'specimen_name': 'sample1',
@@ -412,7 +417,7 @@ class TestMetatableToJson(unittest.TestCase):
                            'specimen_name': 'sample2',
                            'panel_name': 'MH'}], result)
 
-    def test_library_sample_info_table_to_json_with_plate(self):
+    def test_library_sample_info_table_to_pmo_with_plate(self):
         df = pd.DataFrame({
             'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
@@ -423,8 +428,8 @@ class TestMetatableToJson(unittest.TestCase):
             'library_prep_plate_row': ['A', 'B']
         })
 
-        result = library_sample_info_table_to_json(df,
-                                               library_prep_plate_name_col='library_prep_plate_name', library_prep_plate_col_col='library_prep_plate_col', library_prep_plate_row_col='library_prep_plate_row')
+        result = library_sample_info_table_to_pmo(df,
+                                                  library_prep_plate_name_col='library_prep_plate_name', library_prep_plate_col_col='library_prep_plate_col', library_prep_plate_row_col='library_prep_plate_row')
         self.assertEqual([{'library_sample_name': 'sample1_MH_run1',
                            'sequencing_info_name': 'run1',
                            'specimen_name': 'sample1',
@@ -446,7 +451,7 @@ class TestMetatableToJson(unittest.TestCase):
                              'plate_col': 2
                          }}], result)
 
-    def test_library_sample_info_table_to_json_with_additional_columns(self):
+    def test_library_sample_info_table_to_pmo_with_additional_columns(self):
         df = pd.DataFrame({
             'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
@@ -456,7 +461,7 @@ class TestMetatableToJson(unittest.TestCase):
             'new_col2': ['add', 'one'],
         })
 
-        result = library_sample_info_table_to_json(
+        result = library_sample_info_table_to_pmo(
             df, additional_library_sample_info_cols=['new_col1', 'new_col2'])
         self.assertEqual([{'library_sample_name': 'sample1_MH_run1',
                            'sequencing_info_name': 'run1',
@@ -471,7 +476,7 @@ class TestMetatableToJson(unittest.TestCase):
                            'new_col1': 'this',
                            'new_col2': 'one'}], result)
 
-    def test_library_sample_info_table_to_json_fails_with_duplicate_cols(self):
+    def test_library_sample_info_table_to_pmo_fails_with_duplicate_cols(self):
         df = pd.DataFrame({
             'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
@@ -480,25 +485,25 @@ class TestMetatableToJson(unittest.TestCase):
         })
 
         with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_json(
+            library_sample_info_table_to_pmo(
                 df, specimen_name_col='panel_name')
         self.assertEqual(
             "Selected columns must be unique.", str(context.exception))
 
-    def test_library_sample_info_table_to_json_fails_with_missing_cols(self):
+    def test_library_sample_info_table_to_pmo_fails_with_missing_cols(self):
         df = pd.DataFrame({
             'library_sample_name': ['sample1_MH_run1', 'sample2_MH_run1'],
             'sequencing_info_name': ['run1', 'run1'],
         })
 
         with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_json(df)
+            library_sample_info_table_to_pmo(df)
         self.assertEqual(
             "The following columns are not in the DataFrame: ['specimen_name', 'panel_name']", str(context.exception))
 
-    def test_library_sample_info_table_to_json_fails_without_df(self):
+    def test_library_sample_info_table_to_pmo_fails_without_df(self):
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_json('test')
+            specimen_info_table_to_pmo('test')
         self.assertEqual(
             "contents must be a pandas DataFrame.", str(context.exception))
 

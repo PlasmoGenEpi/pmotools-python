@@ -2,10 +2,10 @@ import unittest
 import pandas as pd
 from unittest.mock import patch
 
-from pmotools.pmo_builder.panel_information_to_json import *
+from pmotools.pmo_builder.panel_information_to_pmo import *
 
 
-class TestPanelInformationToJson(unittest.TestCase):
+class TestPanelInformationToPMO(unittest.TestCase):
 
     def setUp(self):
         self.min_target_table = pd.DataFrame({'target_name': ['target1', 'target2', 'target3'], 'fwd_primer': [
@@ -125,17 +125,17 @@ class TestPanelInformationToJson(unittest.TestCase):
             'panel_name': 'test_panel', "reactions": [{'reaction_name': "reaction1", 'panel_targets': [0]}, {'reaction_name': "reaction2", 'panel_targets': [1, 2]}]}
         self.assertEqual(panel_info, expected_panel_info)
 
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.check_targets_are_unique")
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.check_unique_target_info")
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.summarise_targets_missing_optional_info")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info")
     def test_create_targets_dict_min_info(self, mock_summarise_targets_missing_optional_info, mock_check_unique_target_info, mock_check_targets_are_unique):
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
         target_info = self.min_builder.create_targets_dict()
         self.assertEqual(self.min_target_json, target_info)
 
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.check_targets_are_unique")
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.check_unique_target_info")
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.summarise_targets_missing_optional_info")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info")
     def test_create_targets_dict_full_info(self, mock_summarise_targets_missing_optional_info, mock_check_unique_target_info, mock_check_targets_are_unique):
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
         target_info = self.builder_with_locations.create_targets_dict()
@@ -148,9 +148,9 @@ class TestPanelInformationToJson(unittest.TestCase):
                 'genome_id': 0, 'chrom': 'chrom1', 'end': 1, 'start': 2}}, 'reverse_primer': {'seq': 'ATT', 'location': {'genome_id': 0, 'chrom': 'chrom1', 'start': 3, 'end': 5}}}]
         self.assertEqual(expected_json, target_info)
 
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.check_targets_are_unique")
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.check_unique_target_info")
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.summarise_targets_missing_optional_info")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info")
     def test_create_targets_dict_missing_info(self, mock_summarise_targets_missing_optional_info, mock_check_unique_target_info, mock_check_targets_are_unique):
         missing_insert_loc = ['target2', 'target3']
         missing_fwd_primer_loc = ['target2', 'target3']
@@ -166,9 +166,9 @@ class TestPanelInformationToJson(unittest.TestCase):
             {'target_name': 'target3', 'forward_primer': {'seq': 'TTG'}, 'reverse_primer': {'seq': 'ATT'}}]
         self.assertEqual(expected_json, target_info)
 
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.check_targets_are_unique")
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.check_unique_target_info")
-    @patch("pmotools.pmo_builder.panel_information_to_json.PMOPanelBuilder.summarise_targets_missing_optional_info")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info")
+    @patch("pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info")
     def test_create_targets_dict_additional_info(self, mock_summarise_targets_missing_optional_info, mock_check_unique_target_info, mock_check_targets_are_unique):
         target_table = self.min_target_table.copy()
         target_table['extra_col'] = 'my target description'

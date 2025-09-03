@@ -8,26 +8,26 @@ from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 from ..pmo_engine.pmo_processor import PMOProcessor
 
 
-def panel_info_table_to_json(target_table: pd.DataFrame,
-                             panel_name: str,
-                             genome_info: dict,
-                             target_name_col: str = 'target_name',
-                             forward_primers_seq_col: str = 'fwd_primer',
-                             reverse_primers_seq_col: str = 'rev_primer',
-                             reaction_name_col: str | None = None,
-                             forward_primers_start_col: int | None = None,
-                             forward_primers_end_col: int | None = None,
-                             reverse_primers_start_col: int | None = None,
-                             reverse_primers_end_col: int | None = None,
-                             insert_start_col: int | None = None,
-                             insert_end_col: int | None = None,
-                             chrom_col: str | None = None,
-                             strand_col: str | None = None,
-                             ref_seq_col: str | None = None,
-                             gene_name_col: str | None = None,
-                             target_attributes_col: str | None = None,
-                             additional_target_info_cols: list | None = None,
-                             ):
+def panel_info_table_to_pmo(target_table: pd.DataFrame,
+                            panel_name: str,
+                            genome_info: dict,
+                            target_name_col: str = 'target_name',
+                            forward_primers_seq_col: str = 'fwd_primer',
+                            reverse_primers_seq_col: str = 'rev_primer',
+                            reaction_name_col: str | None = None,
+                            forward_primers_start_col: int | None = None,
+                            forward_primers_end_col: int | None = None,
+                            reverse_primers_start_col: int | None = None,
+                            reverse_primers_end_col: int | None = None,
+                            insert_start_col: int | None = None,
+                            insert_end_col: int | None = None,
+                            chrom_col: str | None = None,
+                            strand_col: str | None = None,
+                            ref_seq_col: str | None = None,
+                            gene_name_col: str | None = None,
+                            target_attributes_col: str | None = None,
+                            additional_target_info_cols: list | None = None,
+                            ):
     """
     Convert a dataframe containing panel information into dictionary of targets and reference information
 

@@ -3,10 +3,10 @@ import pandas as pd
 import copy
 from unittest.mock import patch
 
-from pmotools.pmo_builder.mhap_table_to_pmo_json import *
+from pmotools.pmo_builder.mhap_table_to_pmo import *
 
 
-class TestMhapTableToJson(unittest.TestCase):
+class TestMhapTableToPMO(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = None
@@ -146,10 +146,10 @@ class TestMhapTableToJson(unittest.TestCase):
             df_with_ad_cols, self.bioinformatics_run_name, mhap_cols)
         self.assertDictEqual(actual, small_detected_dict_with_ad_cols)
 
-    @patch("pmotools.pmo_builder.mhap_table_to_pmo_json.check_additional_columns_exist")
-    @patch("pmotools.pmo_builder.mhap_table_to_pmo_json.get_target_id_in_representative_mhaps")
-    @patch("pmotools.pmo_builder.mhap_table_to_pmo_json.get_mhap_index_in_representative_mhaps")
-    @patch("pmotools.pmo_builder.mhap_table_to_pmo_json.build_detected_mhap_dict")
+    @patch("pmotools.pmo_builder.mhap_table_to_pmo.check_additional_columns_exist")
+    @patch("pmotools.pmo_builder.mhap_table_to_pmo.get_target_id_in_representative_mhaps")
+    @patch("pmotools.pmo_builder.mhap_table_to_pmo.get_mhap_index_in_representative_mhaps")
+    @patch("pmotools.pmo_builder.mhap_table_to_pmo.build_detected_mhap_dict")
     def test_create_detected_microhaplotype_dict(self, mock_build_detected_mhap_dict, mock_get_mhap_index_in_representative_mhaps, mock_get_target_id_in_representative_mhaps, mock_check_additional_columns_exist):
         mock_get_target_id_in_representative_mhaps.return_value = self.small_df_mhaps_target_id_values
         mock_get_mhap_index_in_representative_mhaps.return_value = self.small_df_mhap_id_values
@@ -233,12 +233,12 @@ class TestMhapTableToJson(unittest.TestCase):
             mhap_table_ad_cols, additional_representative_mhap_cols=['adcol1', 'adcol2'], pseudocigar_col='cig')
         self.assertEqual(actual, rep_dict_with_ad_cols)
 
-    @patch("pmotools.pmo_builder.mhap_table_to_pmo_json.create_representative_microhaplotype_dict")
-    @patch("pmotools.pmo_builder.mhap_table_to_pmo_json.create_detected_microhaplotype_dict")
-    def test_mhap_table_to_pmo_json(self, mock_create_detected_microhaplotype_dict, mock_create_representative_microhaplotype_dict):
+    @patch("pmotools.pmo_builder.mhap_table_to_pmo.create_representative_microhaplotype_dict")
+    @patch("pmotools.pmo_builder.mhap_table_to_pmo.create_detected_microhaplotype_dict")
+    def test_mhap_table_to_pmo(self, mock_create_detected_microhaplotype_dict, mock_create_representative_microhaplotype_dict):
         mock_create_detected_microhaplotype_dict.return_value = self.small_detected_dict
         mock_create_representative_microhaplotype_dict.return_value = self.small_representative_dict
-        actual = mhap_table_to_pmo_json(
+        actual = mhap_table_to_pmo(
             self.small_mhap_table, self.bioinformatics_run_name)
         self.assertEqual(actual, {"representative_microhaplotypes": {"targets": [{"target_name": "target1", "microhaplotypes": [{"seq": "ACTG"}, {"seq": "ATTG"}, {"seq": "ATTA"}]}, {"target_name": "target2", "microhaplotypes": [{"seq": "TTTT"}, {"seq": "TTTA"}]}, {"target_name": "target3", "microhaplotypes": [{"seq": "GGG"}, {"seq": "AAG"}]}]}, "detected_microhaplotypes": [{"bioinformatics_run_name": "run1", "library_samples": [{"library_sample_name": "sample1", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 10}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 0, "reads": 100}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 0, "reads": 10}]}]}, {"library_sample_name": "sample2", "target_results": [
                          {"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 1}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 0, "reads": 12}, {"mhap_id": 1, "reads": 53}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 1, "reads": 73}]}]}, {"library_sample_name": "sample3", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 1, "reads": 76}]}, {"mhaps_target_id": 1, "mhaps": [{"mhap_id": 1, "reads": 6}]}]}, {"library_sample_name": "sample4", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 0, "reads": 297}]}]}, {"library_sample_name": "sample5", "target_results": [{"mhaps_target_id": 0, "mhaps": [{"mhap_id": 1, "reads": 123}, {"mhap_id": 2, "reads": 1}]}, {"mhaps_target_id": 2, "mhaps": [{"mhap_id": 0, "reads": 17}]}]}]}]})
