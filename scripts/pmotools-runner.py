@@ -13,19 +13,19 @@ from text_meta_to_json_meta import text_meta_to_json_meta
 from excel_meta_to_json_meta import excel_meta_to_json_meta
 from extract_pmo_with_selected_meta import extract_pmo_with_selected_meta
 from extract_pmo_with_select_specimen_names import extract_pmo_with_select_specimen_names
-from extract_pmo_with_select_experiment_sample_names import extract_pmo_with_select_experiment_sample_names
+from extract_pmo_with_select_library_sample_names import extract_pmo_with_select_library_sample_names
 from extract_pmo_with_select_targets import extract_pmo_with_select_targets
 from microhaplotype_table_to_json_file import microhaplotype_table_to_json_file
 from extract_allele_table import extract_for_allele_table
 from combine_pmos import combine_pmos
 from validate_pmo import validate_pmo
 from list_specimen_meta_fields import list_specimen_meta_fields
-from list_tar_amp_bioinformatics_info_ids import list_tar_amp_bioinformatics_info_ids
+from list_bioinformatics_run_names import list_bioinformatics_run_names
 from count_specimen_meta import count_specimen_meta
-from count_targets_per_sample import count_targets_per_sample
-from count_samples_per_target import count_samples_per_target
+from count_targets_per_library_sample import count_targets_per_library_sample
+from count_library_samples_per_target import count_library_samples_per_target
 from terra_amp_output_to_json import terra_amp_output_to_json
-from list_experiment_sample_ids_per_specimen_id import list_experiment_sample_ids_per_specimen_id
+from list_library_sample_names_per_specimen_name import list_library_sample_names_per_specimen_name
 from extract_insert_of_panels import extract_insert_of_panels
 from extract_refseq_of_inserts_of_panels import extract_refseq_of_inserts_of_panels
 from extract_pmo_with_read_filter import extract_pmo_with_read_filter
@@ -50,7 +50,7 @@ class pmotools_runner   :
             "extractors_from_pmo" : {
                 "extract_pmo_with_selected_meta": pmofunction(extract_pmo_with_selected_meta, "Extract from PMO samples and associated haplotypes with selected meta"),
                 "extract_pmo_with_select_specimen_names": pmofunction(extract_pmo_with_select_specimen_names,"Extract from PMO specific samples from the specimens table"),
-                "extract_pmo_with_select_experiment_sample_names": pmofunction(extract_pmo_with_select_experiment_sample_names,
+                "extract_pmo_with_select_library_sample_names": pmofunction(extract_pmo_with_select_library_sample_names,
                                                                     "Extract from PMO specific experiment sample names from the experiment_info table"),
                 "extract_pmo_with_select_targets" : pmofunction(extract_pmo_with_select_targets,"Extract from PMO specific targets"),
                 "extract_pmo_with_read_filter": pmofunction(extract_pmo_with_read_filter,
@@ -63,17 +63,17 @@ class pmotools_runner   :
                                                     "Combine multiple pmos of the same panel into a single pmo"),
             },
             "extract_basic_info_from_pmo" : {
-                "list_experiment_sample_ids_per_specimen_id": pmofunction(list_experiment_sample_ids_per_specimen_id,
+                "list_library_sample_names_per_specimen_name": pmofunction(list_library_sample_names_per_specimen_name,
                                                          "Each specimen_id can have multiple experiment_sample_ids, list out all in a PMO"),
                 "list_specimen_meta_fields": pmofunction(list_specimen_meta_fields,
                                                     "List out the specimen meta fields in the specimen_info section"),
-                "list_tar_amp_bioinformatics_info_ids": pmofunction(list_tar_amp_bioinformatics_info_ids,
+                "list_bioinformatics_run_names": pmofunction(list_bioinformatics_run_names,
                                                          "List out all the tar_amp_bioinformatics_info_ids in a PMO file"),
                 "count_specimen_meta": pmofunction(count_specimen_meta,
                                                          "Count the values of specific specimen meta fields in the specimen_info section"),
-                "count_targets_per_sample": pmofunction(count_targets_per_sample,
+                "count_targets_per_library_sample": pmofunction(count_targets_per_library_sample,
                                                    "Count the number of targets per sample"),
-                "count_samples_per_target": pmofunction(count_samples_per_target,
+                "count_library_samples_per_target": pmofunction(count_library_samples_per_target,
                                                         "Count the number of samples per target"),
             },
             "extract_panel_info_from_pmo" : {

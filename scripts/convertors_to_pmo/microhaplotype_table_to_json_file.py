@@ -4,7 +4,7 @@ import json
 import os
 import pandas as pd
 
-from pmotools.json_convertors.microhaplotype_table_to_pmo_dict import microhaplotype_table_to_pmo_dict
+from pmotools.pmo_builder.mhap_table_to_pmo_json import mhap_table_to_pmo_json
 from pmotools.utils.small_utils import Utils
 
 

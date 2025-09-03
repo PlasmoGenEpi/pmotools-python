@@ -10,7 +10,7 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_count_targets_per_sample():
+def parse_args_count_library_samples_per_target():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', type=str, required=True, help='PMO file')
     parser.add_argument('--output', type=str, default="STDOUT", required=False, help='output file')
@@ -21,9 +21,8 @@ def parse_args_count_targets_per_sample():
     return parser.parse_args()
 
 
-def count_targets_per_sample():
-    args = parse_args_count_targets_per_sample()
-
+def count_library_samples_per_target():
+    args = parse_args_count_library_samples_per_target()
 
     # check files
     output_delim, output_extension = Utils.process_delimiter_and_output_extension(args.delim, gzip=args.output.endswith(".gz"))
@@ -34,12 +33,12 @@ def count_targets_per_sample():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # count
-    counts_df = PMOProcessor.count_targets_per_sample(pmo, args.read_count_minimum)
+    counts_df = PMOProcessor.count_library_samples_per_target(pmo, args.read_count_minimum)
 
     #write out
     counts_df.to_csv(sys.stdout if "STDOUT" == args.output else args.output, sep = output_delim, index=False)
 
 
 if __name__ == "__main__":
-    count_targets_per_sample()
+    count_library_samples_per_target()
 

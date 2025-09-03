@@ -164,3 +164,4 @@ cython_debug/
 docs/api/generated
 *.DS_Store*
 
+.vscode

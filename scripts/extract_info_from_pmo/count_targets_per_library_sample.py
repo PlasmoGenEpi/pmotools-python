@@ -10,18 +10,19 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_list_experiment_sample_ids_per_specimen_id():
+def parse_args_count_targets_per_library_sample():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', type=str, required=True, help='PMO file')
     parser.add_argument('--output', type=str, default="STDOUT", required=False, help='output file')
     parser.add_argument('--delim', default="tab", type=str, required=False, help='the delimiter of the output text file, examples input tab,comma but can also be the actual delimiter')
-
-    parser.add_argument('--overwrite', action = 'store_true', help='If output file exists, overwrite it')
+    parser.add_argument('--overwrite', action='store_true', help='If output file exists, overwrite it')
+    parser.add_argument('--read_count_minimum', default=0.0, type=float, required=False, help='the minimum read count (inclusive) to be counted as covered by sample')
 
     return parser.parse_args()
 
-def list_experiment_sample_ids_per_specimen_id():
-    args = parse_args_list_experiment_sample_ids_per_specimen_id()
+
+def count_targets_per_library_sample():
+    args = parse_args_count_targets_per_library_sample()
 
 
     # check files
@@ -32,12 +33,13 @@ def list_experiment_sample_ids_per_specimen_id():
     # read in PMO
     pmo = PMOReader.read_in_pmo(args.file)
 
-    # count fields
-    info_df = PMOProcessor.list_experiment_sample_ids_per_specimen_id(pmo)
+    # count
+    counts_df = PMOProcessor.count_targets_per_library_sample(pmo, args.read_count_minimum)
 
-    # output
-    info_df.to_csv(sys.stdout if "STDOUT" == args.output else args.output, sep = output_delim, index=False)
+    #write out
+    counts_df.to_csv(sys.stdout if "STDOUT" == args.output else args.output, sep = output_delim, index=False)
+
 
 if __name__ == "__main__":
-    list_experiment_sample_ids_per_specimen_id()
+    count_targets_per_library_sample()
 

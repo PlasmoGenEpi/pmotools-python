@@ -20,6 +20,18 @@ class PMOProcessor:
     """
 
     @staticmethod
+    def get_index_key_of_bioinformatics_run_names(pmodata):
+        """
+        Get key of bioinformatics_run_name to index in pmodata["bioinformatics_run_info"]
+        :param pmodata: the PMO to get indexes from
+        :return: a dictionary of indexes keyed by bioinformatics_run_name
+        """
+        ret = {}
+        for idx, bioinformatics_run in enumerate(pmodata["bioinformatics_run_info"]):
+            ret[bioinformatics_run["bioinformatics_run_name"]] = idx
+        return ret
+
+    @staticmethod
     def get_index_key_of_specimen_names(pmodata):
         """
         Get key of specimen_name to index in pmodata["specimen_info"]
@@ -68,6 +80,113 @@ class PMOProcessor:
         return ret
 
     @staticmethod
+    def get_sorted_bioinformatics_run_names(pmodata) -> list[str]:
+        """
+        Get a sorted list of bioinformatics_run_names in pmodata["bioinformatics_run_info"]
+        :param pmodata: the PMO to get bioinformatics_run_names from
+        :return: a list of all bioinformatics_run_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_bioinformatics_run_names(pmodata).keys())
+
+    @staticmethod
+    def get_sorted_specimen_names(pmodata) -> list[str]:
+        """
+        Get a sorted list of specimen_names in pmodata["specimen_info"]
+        :param pmodata: the PMO to get specimen_names from
+        :return: a list of all specimen_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_specimen_names(pmodata).keys())
+
+    @staticmethod
+    def get_sorted_library_sample_names(pmodata) -> list[str]:
+        """
+        Get a sorted list of library_sample_names in pmodata["library_sample_info"]
+        :param pmodata: the PMO to get library_sample_names from
+        :return: a list of all library_sample_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_library_sample_names(pmodata).keys())
+
+    @staticmethod
+    def get_sorted_target_names(pmodata) -> list[str]:
+        """
+        Get a sorted list of target_names in pmodata["target_info"]
+        :param pmodata: the PMO to get target_names from
+        :return: a list of all target_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_target_names(pmodata).keys())
+
+    @staticmethod
+    def get_sorted_panel_names(pmodata) -> list[str]:
+        """
+        Get a sorted list of panel_names in pmodata["panel_info"]
+        :param pmodata: the PMO to get panel_names from
+        :return: a list of all panel_names
+        """
+        return sorted(PMOProcessor.get_index_key_of_panel_names(pmodata).keys())
+
+
+
+    @staticmethod
+    def get_bioinformatics_run_names(pmodata) -> list[str]:
+        """
+        Get a list of bioinformatics_run_names in pmodata["bioinformatics_run_info"] in order they appear
+        :param pmodata: the PMO to get bioinformatics_run_names from
+        :return: a list of all bioinformatics_run_names
+        """
+        ret = []
+        for bioinformatics_run in pmodata["bioinformatics_run_info"]:
+            ret.append(bioinformatics_run["bioinformatics_run_name"])
+        return ret
+
+    @staticmethod
+    def get_specimen_names(pmodata) -> list[str]:
+        """
+        Get a list of specimen_names in pmodata["specimen_info"] in the order they appear
+        :param pmodata: the PMO to get specimen_names from
+        :return: a list of all specimen_names
+        """
+        ret = []
+        for specimen in pmodata["specimen_info"]:
+            ret.append(specimen["specimen_name"])
+        return ret
+
+    @staticmethod
+    def get_library_sample_names(pmodata) -> list[str]:
+        """
+        Get a list of library_sample_names in pmodata["library_sample_info"] in the order they appear
+        :param pmodata: the PMO to get library_sample_names from
+        :return: a list of all library_sample_names
+        """
+        ret = []
+        for library_sample in pmodata["library_sample_info"]:
+            ret.append(library_sample["library_sample_name"])
+        return ret
+
+    @staticmethod
+    def get_target_names(pmodata) -> list[str]:
+        """
+        Get a list of target_names in pmodata["target_info"] in the order they appear
+        :param pmodata: the PMO to get target_names from
+        :return: a list of all target_names
+        """
+        ret = []
+        for target in pmodata["target_info"]:
+            ret.append(target["target_name"])
+        return ret
+
+    @staticmethod
+    def get_panel_names(pmodata) -> list[str]:
+        """
+        Get a list of panel_names in pmodata["panel_info"] in the order they appear
+        :param pmodata: the PMO to get panel_names from
+        :return: a list of all panel_names
+        """
+        ret = []
+        for panel in pmodata["panel_info"]:
+            ret.append(panel["panel_name"])
+        return ret
+
+    @staticmethod
     def get_index_key_of_target_in_representative_microhaplotypes(pmodata):
         """
         Get key of target_name to index for the representative microhaplotypes for the target_name in pmodata["representative_microhaplotypes"]
@@ -78,6 +197,17 @@ class PMOProcessor:
         for idx, representative_microhaplotypes_for_target in enumerate(pmodata["representative_microhaplotypes"]["targets"]):
             ret[pmodata["target_info"][representative_microhaplotypes_for_target["target_id"]]["target_name"]] = idx
         return ret
+
+    @staticmethod
+    def get_index_of_bioinformatics_run_names(pmodata, bioinformatics_run_names: list[str]):
+        """
+        Get index of bioinformatics_run_name in pmodata["bioinformatics_run_info"]
+        :param pmodata: the PMO to get indexes from
+        :param bioinformatics_run_names: a list of bioinformatics_run_names
+        :return: the index of bioinformatics_run_names in pmodata["bioinformatics_run_name"] returned in the same order as bioinformatics_run_names
+        """
+        bioinformatics_run_key = PMOProcessor.get_index_key_of_bioinformatics_run_names(pmodata)
+        return [bioinformatics_run_key[name] for name in bioinformatics_run_names]
 
     @staticmethod
     def get_index_of_specimen_names(pmodata, specimen_names: list[str]):
@@ -157,7 +287,7 @@ class PMOProcessor:
 
 
     @staticmethod
-    def count_targets_per_sample(pmodata, min_reads: float = 0.0) -> pd.DataFrame:
+    def count_targets_per_library_sample(pmodata, min_reads: float = 0.0) -> pd.DataFrame:
         """
         Count the number of targets per library sample, with optional collapsing across bioinformatics runs.
 
@@ -189,8 +319,8 @@ class PMOProcessor:
         return pd.DataFrame.from_records(records)
 
     @staticmethod
-    def count_samples_per_target(pmodata, min_reads: float = 0.0,
-                                 collapse_across_runs: bool = False) -> pd.DataFrame:
+    def count_library_samples_per_target(pmodata, min_reads: float = 0.0,
+                                         collapse_across_runs: bool = False) -> pd.DataFrame:
         """
         Count the number of library samples per target, optionally collapsing across bioinformatics runs.
 
@@ -233,26 +363,33 @@ class PMOProcessor:
         return ret.sort_values(by=["bioinformatics_run_id", "target_name"]).reset_index(drop=True)
 
     @staticmethod
-    def list_library_sample_ids_per_specimen_id(pmodata, select_specimen_ids: list[str] = None) -> pandas.DataFrame:
+    def list_library_sample_names_per_specimen_name(pmodata,
+                                                    select_specimen_ids: list[int] = None,
+                                                    select_specimen_names: list[str] = None) -> pandas.DataFrame:
         """
-        List the library_sample_id per specimen_id
+        List all the library_sample_names per specimen_name
         :param pmodata: the PMO
         :param select_specimen_ids: a list of specimen_ids to select, if None, all specimen_ids are used
+        :param select_specimen_names: a list of specimen_names to select, if None, all specimen_names are used
         :return: a pandas dataframe with 3 columns, specimen_id, library_sample_id, and library_sample_id_count(the number of library_sample_ids per specimen_id)
         """
-        exp_samples_per_spec = defaultdict(list[str])
-        for exp_sample in pmodata["library_sample_info"]:
-            if select_specimen_ids is None or exp_sample["specimen_id"] in select_specimen_ids:
-                exp_samples_per_spec[pmodata["specimen_info"][exp_sample["specimen_id"]]["specimen_name"]].append(exp_sample["library_sample_name"])
+        if select_specimen_ids is not None and select_specimen_names is not None:
+            raise ValueError("Cannot specify both select_specimen_ids and select_specimen_names")
+        lib_samples_per_spec = defaultdict(list[str])
+        if select_specimen_names is not None:
+            select_specimen_ids = PMOProcessor.get_index_of_specimen_names(pmodata, select_specimen_names)
+        for lib_sample in pmodata["library_sample_info"]:
+            if select_specimen_ids is None or lib_sample["specimen_id"] in select_specimen_ids:
+                lib_samples_per_spec[pmodata["specimen_info"][lib_sample["specimen_id"]]["specimen_name"]].append(lib_sample["library_sample_name"])
 
         specimens_not_list = []
         for specimen in pmodata["specimen_info"]:
-            if specimen["specimen_name"] not in exp_samples_per_spec:
+            if specimen["specimen_name"] not in lib_samples_per_spec:
                 specimens_not_list.append(specimen["specimen_name"])
 
         # Prepare the data for DataFrame creation
         data = []
-        for specimen_name, library_sample_names in exp_samples_per_spec.items():
+        for specimen_name, library_sample_names in lib_samples_per_spec.items():
             for library_sample_name in library_sample_names:
                 data.append({
                     "specimen_name": specimen_name,
@@ -399,25 +536,29 @@ class PMOProcessor:
                                        additional_library_sample_info_fields: list[str] = None,
                                        additional_microhap_fields: list[str] = None,
                                        additional_representative_info_fields: list[str] = None,
-                                       default_base_col_names: list[str] = ["library_sample_name", "target_name", "mhap_id"]) -> pd.DataFrame:
+                                       default_base_col_names: list[str] = ["library_sample_name", "target_name", "mhap_id"],
+                                       jsonschema_fnp = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                               "etc/portable_microhaplotype_object.schema.json"),
+                                        validate_pmo: bool = False) -> pd.DataFrame:
         """
         Create a pd.Dataframe of sample, target and allele. Can optionally add on any other additional fields
 
-        :param output_delimiter: the delimiter used to write the output file
         :param pmodata: the data to write from
         :param additional_specimen_info_fields: any additional fields to write from the specimen_info object
         :param additional_library_sample_info_fields: any additional fields to write from the library_samples object
         :param additional_microhap_fields: any additional fields to write from the microhap object
         :param additional_representative_info_fields: any additional fields to write from the representative_microhaplotype_sequences object
         :param default_base_col_names: The default column name for the sample, locus and allele
+        :param jsonschema_fnp: path to the jsonschema schema file to validate the PMO against
+        :param validate_pmo: whether to validate the PMO with a jsonschema
         :return: pandas dataframe
         """
 
         # check input
-        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-                               "etc/portable_microhaplotype_object.schema.json")) as f:
-            checker = PMOChecker(json.load(f))
-            checker.check_for_required_base_fields(pmodata)
+        if validate_pmo:
+            with open(jsonschema_fnp) as f:
+                checker = PMOChecker(json.load(f))
+                checker.validate_pmo_json(pmodata)
 
         # Check to see if at least 1 sample has supplied meta field
         # samples without this meta field will have NA
@@ -499,6 +640,7 @@ class PMOProcessor:
         library_sample_info = pmodata["library_sample_info"]
         detected_microhaps = pmodata["detected_microhaplotypes"]
         rep_haps = pmodata["representative_microhaplotypes"]["targets"]
+        bioinformatics_run_names = PMOProcessor.get_bioinformatics_run_names(pmodata)
         for bio_run_for_detected_microhaps in detected_microhaps:
             bioinformatics_run_id = bio_run_for_detected_microhaps["bioinformatics_run_id"]
             for sample_data in bio_run_for_detected_microhaps["library_samples"]:
@@ -513,7 +655,7 @@ class PMOProcessor:
                         #print(rep_haps[target_data["mhaps_target_id"]])
                         rep_hap_meta = rep_haps[target_data["mhaps_target_id"]]["microhaplotypes"][allele_id]
                         row = {
-                            "bioinformatics_run_id"  : bioinformatics_run_id,
+                            "bioinformatics_run_name"  : bioinformatics_run_names[bioinformatics_run_id],
                             default_base_col_names[0]: specimen_meta["specimen_name"],
                             default_base_col_names[1]: target_name,
                             default_base_col_names[2]: allele_id

@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-
-
+import bz2
+import gzip
+import lzma
 import urllib.request, urllib.parse, urllib.error, os, shutil, tarfile, multiprocessing, subprocess, sys, socket
+from contextlib import contextmanager
+
 from pmotools.utils.color_text import ColorText as CT
 
 
@@ -245,6 +248,7 @@ class Utils:
         elif delim == "comma" or delim == ",":
             out_delim = ","
             out_output_extension = ".csv"
+
         if gzip:
             out_output_extension += ".gz"
         return out_delim, out_output_extension
@@ -288,3 +292,87 @@ class Utils:
         :return:
         """
         Utils.inputOutputFileCheck(args.file, args.output, args.overwrite)
+
+
+    @staticmethod
+    @contextmanager
+    def smart_open_write(filename):
+        """
+        Context manager for writing to a file, stdout, or a gzip-compressed file.
+
+        Args:
+            filename (str): Output filename, "STDOUT" for standard output,
+                            or a filename ending in ".gz" for gzip compression.
+
+        Yields:
+            file object: A writable file-like object.
+        """
+        if filename == "STDOUT":
+            yield sys.stdout
+        elif filename.endswith(".gz"):
+            with gzip.open(filename, 'wt', encoding="utf-8") as f:
+                yield f
+        else:
+            with open(filename, 'w', encoding="utf-8") as f:
+                yield f
+
+    @staticmethod
+    @contextmanager
+    def smart_open_read_by_ext(filename):
+        """
+        Context manager for reading a file, using extension-based detection.
+
+        Args:
+            filename (str): "STDIN", or a filename ending in .gz, .bz2, .xz, .lzma, or uncompressed.
+
+        Yields:
+            file object: Readable file-like object.
+        """
+        if filename == "STDIN":
+            yield sys.stdin
+        elif filename.endswith(".gz"):
+            with gzip.open(filename, 'rt', encoding="utf-8") as f:
+                yield f
+        elif filename.endswith(".bz2"):
+            with bz2.open(filename, 'rt', encoding="utf-8") as f:
+                yield f
+        elif filename.endswith(".xz") or filename.endswith(".lzma"):
+            with lzma.open(filename, 'rt', encoding="utf-8") as f:
+                yield f
+        else:
+            with open(filename, 'r', encoding="utf-8") as f:
+                yield f
+
+    @staticmethod
+    @contextmanager
+    def smart_open_read_autodetect(filename):
+        """
+        Context manager for reading a file, using magic number autodetection of compression type.
+
+        Supports gzip, bzip2, lzma/xz, or plain text regardless of extension.
+
+        Args:
+            filename (str): "STDIN" or a file path
+
+        Yields:
+            file object: Readable file-like object.
+        """
+        if filename == "STDIN":
+            yield sys.stdin
+            return
+
+        # Read magic number
+        with open(filename, 'rb') as raw_file:
+            magic = raw_file.read(6)
+
+        if magic.startswith(b'\x1f\x8b'):  # gzip
+            opener = gzip.open
+        elif magic.startswith(b'BZh'):  # bz2
+            opener = bz2.open
+        elif magic.startswith(b'\xfd7zXZ') or magic.startswith(b'\x5d\x00\x00'):  # xz/lzma
+            opener = lzma.open
+        else:
+            opener = open
+
+        with opener(filename, 'rt', encoding='utf-8') as f:
+            yield f

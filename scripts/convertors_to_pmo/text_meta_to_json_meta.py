@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os, argparse, json
 import pandas as pd
-from pmotools.json_convertors.metatable_to_json_meta import pandas_table_to_json
+from pmotools.pmo_builder.mhap_table_to_pmo_json import mhap_table_to_pmo_json
 from pmotools.utils.small_utils import Utils
 
 
