@@ -6,7 +6,7 @@ import warnings
 from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 
 
-def mhap_table_to_pmo_json(
+def mhap_table_to_pmo(
     microhaplotype_table: pd.DataFrame,
     bioinformatics_run_name: str,
     library_sample_name_col: str = 'library_sample_name',

@@ -26,7 +26,7 @@ def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = Fal
     return contents_json
 
 
-def library_sample_info_table_to_json(
+def library_sample_info_table_to_pmo(
         contents: pd.DataFrame,
         library_sample_name_col: str = 'library_sample_name',
         sequencing_info_name_col: str = 'sequencing_info_name',
@@ -97,7 +97,7 @@ def library_sample_info_table_to_json(
     return meta_json
 
 
-def specimen_info_table_to_json(
+def specimen_info_table_to_pmo(
         contents: pd.DataFrame,
         specimen_name_col: str = 'specimen_name',
         specimen_taxon_id_col: int = 'specimen_taxon_id',
@@ -128,8 +128,9 @@ def specimen_info_table_to_json(
         specimen_comments_col: str = None,
         specimen_store_loc_col: str = None,
         additional_specimen_cols: list | None = None,
-        list_values_specimen_columns: list | None = ["alternate_identifiers_col"],
-        list_values_specimen_columns_delimiter : str = ","
+        list_values_specimen_columns: list | None = [
+            "alternate_identifiers_col"],
+        list_values_specimen_columns_delimiter: str = ","
 ):
     """
     Converts a DataFrame containing specimen information into JSON.
@@ -249,11 +250,12 @@ def specimen_info_table_to_json(
 
     meta_json = add_plate_info(storage_plate_col_col, storage_plate_name_col,
                                storage_plate_row_col, storage_plate_position_col, meta_json, copy_contents, "specimen_name",
-                               entry_name = "storage_plate_info")
+                               entry_name="storage_plate_info")
 
     for col in list_values_specimen_columns:
         if col in meta_json:
-            meta_json[col] = meta_json[col].split(list_values_specimen_columns_delimiter)
+            meta_json[col] = meta_json[col].split(
+                list_values_specimen_columns_delimiter)
     return meta_json
 
 

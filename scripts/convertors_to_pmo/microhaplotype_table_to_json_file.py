@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import os
 import pandas as pd
 
-from pmotools.pmo_builder.mhap_table_to_pmo_json import mhap_table_to_pmo_json
+from pmotools.pmo_builder.mhap_table_to_pmo import mhap_table_to_pmo
 from pmotools.utils.small_utils import Utils
 
 
@@ -57,7 +56,7 @@ def microhaplotype_table_to_json_file():
     Utils.inputOutputFileCheckFromArgParse(args)
 
     contents = pd.read_csv(args.file, sep=args.delim)
-    output_data = microhaplotype_table_to_pmo_dict(
+    output_data = mhap_table_to_pmo(
         contents, args.bioinfo_id, args.sampleID_col, args.locus_col, args.mhap_col, args.reads_col, addCols)
     # Write output as json
     json_str = json.dumps(output_data, indent=4)
