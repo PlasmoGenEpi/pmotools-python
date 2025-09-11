@@ -2,13 +2,13 @@ name: Run Tests
 
 on:
   push:
-    branches: 
+    branches:
       - main
-      - develop 
+      - develop
   pull_request:
-    branches: 
-      - main 
-      - develop 
+    branches:
+      - main
+      - develop
 
 jobs:
   test:
@@ -18,17 +18,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          activate-environment: pmotools
-          environment-file: envs/pmotools-env.yml
-          python-version: 3.11
-          auto-activate-base: false
+          python-version: "3.11"
 
-      - name: Verify Conda Environment
-        run: conda info --envs
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
 
-      - name: Run Unittests
-        shell: bash -l {0}
-        run: python -m unittest discover -s tests -p "*.py"
+      - name: Run tests
+        run: uv run pytest -v
