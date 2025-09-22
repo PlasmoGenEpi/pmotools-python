@@ -25,4 +25,3 @@ Various small utilities
 
 .. automodule:: pmotools.utils.small_utils
     :members:
-

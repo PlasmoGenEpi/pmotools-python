@@ -15,29 +15,32 @@ def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = Fal
     # Custom object_hook to replace None with an empty string
     def custom_object_hook(d):
         return {k: ("" if v is None else v) for k, v in d.items()}
+
     if return_indexed_dict:
-        contents_json = json.loads(contents.to_json(orient="index",
-                                                    index=True,
-                                                    date_format="iso"),
-                                   object_hook=custom_object_hook)
+        contents_json = json.loads(
+            contents.to_json(orient="index", index=True, date_format="iso"),
+            object_hook=custom_object_hook,
+        )
     else:
-        contents_json = json.loads(contents.to_json(
-            orient="records", date_format="iso"), object_hook=custom_object_hook)
+        contents_json = json.loads(
+            contents.to_json(orient="records", date_format="iso"),
+            object_hook=custom_object_hook,
+        )
     return contents_json
 
 
 def library_sample_info_table_to_pmo(
-        contents: pd.DataFrame,
-        library_sample_name_col: str = 'library_sample_name',
-        sequencing_info_name_col: str = 'sequencing_info_name',
-        specimen_name_col: str = 'specimen_name',
-        panel_name_col: str = 'panel_name',
-        accession_col: str = None,
-        library_prep_plate_name_col: str = None,
-        library_prep_plate_col_col: str = None,
-        library_prep_plate_row_col: str = None,
-        library_prep_plate_position_col: str = None,
-        additional_library_sample_info_cols: list | None = None,
+    contents: pd.DataFrame,
+    library_sample_name_col: str = "library_sample_name",
+    sequencing_info_name_col: str = "sequencing_info_name",
+    specimen_name_col: str = "specimen_name",
+    panel_name_col: str = "panel_name",
+    accession_col: str = None,
+    library_prep_plate_name_col: str = None,
+    library_prep_plate_col_col: str = None,
+    library_prep_plate_row_col: str = None,
+    library_prep_plate_position_col: str = None,
+    additional_library_sample_info_cols: list | None = None,
 ):
     """
     Converts a DataFrame containing library information into JSON.
@@ -65,13 +68,14 @@ def library_sample_info_table_to_pmo(
         library_sample_name_col: "library_sample_name",
         sequencing_info_name_col: "sequencing_info_name",
         specimen_name_col: "specimen_name",
-        panel_name_col: "panel_name"
+        panel_name_col: "panel_name",
     }
 
     # Add optional columns
     optional_column_mapping = {accession_col: "accession"}
     column_mapping.update(
-        {k: v for k, v in optional_column_mapping.items() if k is not None})
+        {k: v for k, v in optional_column_mapping.items() if k is not None}
+    )
 
     # Include additional user-defined columns if provided
     if additional_library_sample_info_cols:
@@ -79,8 +83,15 @@ def library_sample_info_table_to_pmo(
             column_mapping[col] = col
 
     # Checks on columns selected
-    check_unique_columns([library_sample_name_col, sequencing_info_name_col,
-                         specimen_name_col, panel_name_col, accession_col])
+    check_unique_columns(
+        [
+            library_sample_name_col,
+            sequencing_info_name_col,
+            specimen_name_col,
+            panel_name_col,
+            accession_col,
+        ]
+    )
     check_columns_exist(copy_contents, list(column_mapping.keys()))
 
     # Rename and subset columns
@@ -90,47 +101,53 @@ def library_sample_info_table_to_pmo(
 
     # Convert to format
     meta_json = pandas_table_to_json(subset_contents)
-    meta_json = add_plate_info(library_prep_plate_col_col, library_prep_plate_name_col,
-                               library_prep_plate_row_col, library_prep_plate_position_col, meta_json, copy_contents,
-                               "specimen_name", "library_prep_plate_info")
+    meta_json = add_plate_info(
+        library_prep_plate_col_col,
+        library_prep_plate_name_col,
+        library_prep_plate_row_col,
+        library_prep_plate_position_col,
+        meta_json,
+        copy_contents,
+        "specimen_name",
+        "library_prep_plate_info",
+    )
 
     return meta_json
 
 
 def specimen_info_table_to_pmo(
-        contents: pd.DataFrame,
-        specimen_name_col: str = 'specimen_name',
-        specimen_taxon_id_col: int = 'specimen_taxon_id',
-        host_taxon_id_col: str = 'host_taxon_id',
-        collection_date_col: str = 'collection_date',
-        collection_country_col: str = 'collection_country',
-        project_name_col: str = 'project_name',
-        alternate_identifiers_col: str = None,
-        # collector_chief_scientist_col: str = None,
-        drug_usage_col: str = None,
-        env_broad_scale_col: str = None,
-        env_local_scale_col: str = None,
-        env_medium_col: str = None,
-        geo_admin1_col: str = None,
-        geo_admin2_col: str = None,
-        geo_admin3_col: str = None,
-        host_age_col: str = None,
-        host_sex_col: str = None,
-        host_subject_id: str = None,
-        lat_lon_col: str = None,
-        parasite_density_col: str = None,
-        parasite_density_method_col: str = None,
-        storage_plate_col_col: str = None,
-        storage_plate_name_col: str = None,
-        storage_plate_row_col: str = None,
-        storage_plate_position_col: str = None,
-        specimen_collect_device_col: str = None,
-        specimen_comments_col: str = None,
-        specimen_store_loc_col: str = None,
-        additional_specimen_cols: list | None = None,
-        list_values_specimen_columns: list | None = [
-            "alternate_identifiers_col"],
-        list_values_specimen_columns_delimiter: str = ","
+    contents: pd.DataFrame,
+    specimen_name_col: str = "specimen_name",
+    specimen_taxon_id_col: int = "specimen_taxon_id",
+    host_taxon_id_col: str = "host_taxon_id",
+    collection_date_col: str = "collection_date",
+    collection_country_col: str = "collection_country",
+    project_name_col: str = "project_name",
+    alternate_identifiers_col: str = None,
+    # collector_chief_scientist_col: str = None,
+    drug_usage_col: str = None,
+    env_broad_scale_col: str = None,
+    env_local_scale_col: str = None,
+    env_medium_col: str = None,
+    geo_admin1_col: str = None,
+    geo_admin2_col: str = None,
+    geo_admin3_col: str = None,
+    host_age_col: str = None,
+    host_sex_col: str = None,
+    host_subject_id: str = None,
+    lat_lon_col: str = None,
+    parasite_density_col: str = None,
+    parasite_density_method_col: str = None,
+    storage_plate_col_col: str = None,
+    storage_plate_name_col: str = None,
+    storage_plate_row_col: str = None,
+    storage_plate_position_col: str = None,
+    specimen_collect_device_col: str = None,
+    specimen_comments_col: str = None,
+    specimen_store_loc_col: str = None,
+    additional_specimen_cols: list | None = None,
+    list_values_specimen_columns: list | None = ["alternate_identifiers_col"],
+    list_values_specimen_columns_delimiter: str = ",",
 ):
     """
     Converts a DataFrame containing specimen information into JSON.
@@ -203,7 +220,8 @@ def specimen_info_table_to_pmo(
     }
 
     column_mapping.update(
-        {k: v for k, v in optional_column_mapping.items() if k is not None})
+        {k: v for k, v in optional_column_mapping.items() if k is not None}
+    )
 
     # Include additional user-defined columns if provided
     if additional_specimen_cols:
@@ -212,31 +230,35 @@ def specimen_info_table_to_pmo(
             column_mapping[col] = col
 
     # Check column selection
-    check_unique_columns([specimen_name_col,
-                         specimen_taxon_id_col,
-                         host_taxon_id_col,
-                         collection_date_col,
-                         collection_country_col,
-                         project_name_col,
-                         alternate_identifiers_col,
-                         drug_usage_col,
-                         env_broad_scale_col,
-                         env_local_scale_col,
-                         env_medium_col,
-                         geo_admin1_col,
-                         geo_admin2_col,
-                         geo_admin3_col,
-                         host_age_col,
-                         host_sex_col,
-                         host_subject_id,
-                         lat_lon_col,
-                         storage_plate_col_col,
-                         storage_plate_name_col,
-                         storage_plate_row_col,
-                         storage_plate_position_col,
-                         specimen_collect_device_col,
-                         specimen_comments_col,
-                         specimen_store_loc_col,])
+    check_unique_columns(
+        [
+            specimen_name_col,
+            specimen_taxon_id_col,
+            host_taxon_id_col,
+            collection_date_col,
+            collection_country_col,
+            project_name_col,
+            alternate_identifiers_col,
+            drug_usage_col,
+            env_broad_scale_col,
+            env_local_scale_col,
+            env_medium_col,
+            geo_admin1_col,
+            geo_admin2_col,
+            geo_admin3_col,
+            host_age_col,
+            host_sex_col,
+            host_subject_id,
+            lat_lon_col,
+            storage_plate_col_col,
+            storage_plate_name_col,
+            storage_plate_row_col,
+            storage_plate_position_col,
+            specimen_collect_device_col,
+            specimen_comments_col,
+            specimen_store_loc_col,
+        ]
+    )
     check_columns_exist(copy_contents, list(column_mapping.keys()))
 
     # Rename and subset columns
@@ -245,24 +267,37 @@ def specimen_info_table_to_pmo(
     subset_contents = copy_contents[selected_pmo_fields]
     meta_json = pandas_table_to_json(subset_contents)
     meta_json = add_parasite_density_info(
-        parasite_density_col, parasite_density_method_col, meta_json, copy_contents, "specimen_name",
-        entry_name="parasite_density_info")
+        parasite_density_col,
+        parasite_density_method_col,
+        meta_json,
+        copy_contents,
+        "specimen_name",
+        entry_name="parasite_density_info",
+    )
 
-    meta_json = add_plate_info(storage_plate_col_col, storage_plate_name_col,
-                               storage_plate_row_col, storage_plate_position_col, meta_json, copy_contents, "specimen_name",
-                               entry_name="storage_plate_info")
+    meta_json = add_plate_info(
+        storage_plate_col_col,
+        storage_plate_name_col,
+        storage_plate_row_col,
+        storage_plate_position_col,
+        meta_json,
+        copy_contents,
+        "specimen_name",
+        entry_name="storage_plate_info",
+    )
 
     for col in list_values_specimen_columns:
         if col in meta_json:
             meta_json[col] = meta_json[col].split(
-                list_values_specimen_columns_delimiter)
+                list_values_specimen_columns_delimiter
+            )
     return meta_json
 
 
 def check_unique_columns(columns):
     cols_to_check = [col for col in columns if col is not None]
     if len(cols_to_check) != len(set(cols_to_check)):
-        raise ValueError(f"Selected columns must be unique.")
+        raise ValueError("Selected columns must be unique.")
 
 
 def check_columns_exist(df, columns):
@@ -273,40 +308,59 @@ def check_columns_exist(df, columns):
             missing_cols.append(col)
     if missing_cols:
         raise ValueError(
-            f"The following columns are not in the DataFrame: {missing_cols}")
+            f"The following columns are not in the DataFrame: {missing_cols}"
+        )
 
 
-def add_plate_info(plate_col_col, plate_name_col, plate_row_col, plate_position_col, meta_json, df, specimen_name_col, entry_name="plate_info"):
-    if all(col is None for col in [plate_col_col, plate_name_col, plate_row_col, plate_position_col]):
+def add_plate_info(
+    plate_col_col,
+    plate_name_col,
+    plate_row_col,
+    plate_position_col,
+    meta_json,
+    df,
+    specimen_name_col,
+    entry_name="plate_info",
+):
+    if all(
+        col is None
+        for col in [plate_col_col, plate_name_col, plate_row_col, plate_position_col]
+    ):
         return meta_json
 
     # If one of col or row are set both must be
     if (plate_row_col is None) != (plate_col_col is None):
-        raise ValueError(
-            'If either plate row or column is set, then both must be.')
+        raise ValueError("If either plate row or column is set, then both must be.")
     # Check position isn't specified in multiple ways
     if plate_position_col:
         if plate_col_col:
             raise ValueError(
-                'Plate position can be specified using either row and col, or position, but not both.')
+                "Plate position can be specified using either row and col, or position, but not both."
+            )
         else:
             plate_row_col = "plate_row"
             plate_col_col = "plate_col"
 
             try:
-                df[plate_row_col] = df[plate_position_col].str.extract(
-                    r"(?i)^([A-H])")[0].str.upper()
-                df[plate_col_col] = df[plate_position_col].str.extract(
-                    r"(?i)^[A-H]0*([1-9]|1[0-2])$")[0].astype(int)
-            except:
+                df[plate_row_col] = (
+                    df[plate_position_col].str.extract(r"(?i)^([A-H])")[0].str.upper()
+                )
+                df[plate_col_col] = (
+                    df[plate_position_col]
+                    .str.extract(r"(?i)^[A-H]0*([1-9]|1[0-2])$")[0]
+                    .astype(int)
+                )
+            except (AttributeError, ValueError, IndexError, KeyError) as e:
                 raise ValueError(
-                    f"Values in '{plate_position_col}' must start with a single letter A-H/a-h followed by number 1-12.")
+                    f"Values in '{plate_position_col}' must start with a single letter A-H/a-h followed by number 1-12."
+                ) from e
 
     for row in meta_json:
         content_row = df[df[specimen_name_col] == row[specimen_name_col]]
         plate_name_val = content_row[plate_name_col].iloc[0] if plate_name_col else None
-        plate_row_val = content_row[plate_row_col].iloc[0].upper(
-        ) if plate_row_col else None
+        plate_row_val = (
+            content_row[plate_row_col].iloc[0].upper() if plate_row_col else None
+        )
         plate_col_val = content_row[plate_col_col].iloc[0] if plate_col_col else None
         plate_info = {}
         if plate_name_val:
@@ -321,48 +375,60 @@ def add_plate_info(plate_col_col, plate_name_col, plate_row_col, plate_position_
     return meta_json
 
 
-def add_parasite_density_info(parasite_density_col, parasite_density_method_col, meta_json, df, specimen_name_col, entry_name):
+def add_parasite_density_info(
+    parasite_density_col,
+    parasite_density_method_col,
+    meta_json,
+    df,
+    specimen_name_col,
+    entry_name,
+):
     density_method_pairs = []
     if parasite_density_col is None and parasite_density_method_col is None:
         pass
 
     elif isinstance(parasite_density_col, list):
         if parasite_density_method_col is None:
-            density_method_pairs = [(d_col, None)
-                                    for d_col in parasite_density_col]
+            density_method_pairs = [(d_col, None) for d_col in parasite_density_col]
         elif isinstance(parasite_density_method_col, list):
             if len(parasite_density_col) != len(parasite_density_method_col):
                 raise ValueError(
-                    "If both parasite_density_col and parasite_density_method_col are lists, they must be the same length.")
+                    "If both parasite_density_col and parasite_density_method_col are lists, they must be the same length."
+                )
             density_method_pairs = list(
-                zip(parasite_density_col, parasite_density_method_col))
+                zip(parasite_density_col, parasite_density_method_col)
+            )
         else:
             raise TypeError(
-                "If parasite_density_col is a list, parasite_density_method_col must be a list or None.")
+                "If parasite_density_col is a list, parasite_density_method_col must be a list or None."
+            )
 
     elif isinstance(parasite_density_col, str):
         if parasite_density_method_col is None:
             density_method_pairs = [(parasite_density_col, None)]
         elif isinstance(parasite_density_method_col, str):
-            density_method_pairs = [
-                (parasite_density_col, parasite_density_method_col)]
+            density_method_pairs = [(parasite_density_col, parasite_density_method_col)]
         else:
             raise TypeError(
-                "If parasite_density_col is a string, parasite_density_method_col must be a string or None.")
+                "If parasite_density_col is a string, parasite_density_method_col must be a string or None."
+            )
 
     elif parasite_density_col is None:
-        if isinstance(parasite_density_method_col, list) or isinstance(parasite_density_method_col, str):
+        if isinstance(parasite_density_method_col, list) or isinstance(
+            parasite_density_method_col, str
+        ):
             raise ValueError(
-                "parasite_density_method_col is set but parasite_density_col is None. Cannot proceed.")
+                "parasite_density_method_col is set but parasite_density_col is None. Cannot proceed."
+            )
 
     else:
         raise TypeError(
-            "Invalid types for parasite_density_col and parasite_density_method_col.")
+            "Invalid types for parasite_density_col and parasite_density_method_col."
+        )
 
     # Add parasite density info to meta_json
     for row in meta_json:
-        content_row = df[df[specimen_name_col]
-                         == row[specimen_name_col]]
+        content_row = df[df[specimen_name_col] == row[specimen_name_col]]
         density_infos = []
         for density_col, method_col in density_method_pairs:
             density_val = content_row[density_col].iloc[0] if density_col else None

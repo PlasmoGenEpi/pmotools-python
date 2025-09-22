@@ -2,7 +2,14 @@
 import bz2
 import gzip
 import lzma
-import urllib.request, urllib.parse, urllib.error, os, shutil, tarfile, multiprocessing, subprocess, sys, socket
+import urllib.request
+import os
+import shutil
+import tarfile
+import multiprocessing
+import subprocess
+import sys
+import socket
 from contextlib import contextmanager
 
 from pmotools.utils.color_text import ColorText as CT
@@ -26,9 +33,9 @@ class Utils:
             host = socket.gethostbyname("www.google.com")
             # connect to the host -- tells us if the host is actually
             # reachable
-            s = socket.create_connection((host, 80), 2)
+            socket.create_connection((host, 80), 2)
             return True
-        except:
+        except (AttributeError, ValueError, IndexError, KeyError):
             pass
         return False
 
@@ -53,7 +60,7 @@ class Utils:
     @staticmethod
     def hasProgram(program):
         whichOutput = Utils.which(program)
-        return None != whichOutput
+        return whichOutput is not None
 
     @staticmethod
     def run_in_dir(cmd, d):
@@ -66,33 +73,37 @@ class Utils:
     @staticmethod
     def run(cmd):
         # from http://stackoverflow.com/a/4418193
-        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        process = subprocess.Popen(
+            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
         # output, errors = process.communicate()
         # sys.stdout.write(output.decode('utf-8'))
         # sys.stdout.flush()
-        output = "";
+        output = ""
         while True:
-            nextline = process.stdout.readline().decode('utf-8')
-            if nextline == '' and process.poll() != None:
+            nextline = process.stdout.readline().decode("utf-8")
+            if nextline == "" and process.poll() is not None:
                 break
             sys.stdout.write(nextline)
             output = output + nextline
             sys.stdout.flush()
         exitCode = process.returncode
-        if (exitCode == 0):
+        if exitCode == 0:
             return output
         raise Exception(cmd, exitCode, output)
 
     @staticmethod
     def runAndCapture(cmd):
         # from http://stackoverflow.com/a/4418193
-        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        process = subprocess.Popen(
+            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
         output, errors = process.communicate()
         # this is suppose to capture the output but it isn't for some reason so capturing it with the above
         exitCode = process.returncode
-        if (exitCode == 0):
-            return output.decode('utf-8')
-        raise Exception(cmd, exitCode, output.decode('utf-8'), errors)
+        if exitCode == 0:
+            return output.decode("utf-8")
+        raise Exception(cmd, exitCode, output.decode("utf-8"), errors)
 
     @staticmethod
     def shellquote(s):
@@ -105,15 +116,15 @@ class Utils:
 
     @staticmethod
     def mkdir(d):
-        """mkdir if it doesn't already exist """
+        """mkdir if it doesn't already exist"""
         if not os.path.exists(d):
             print(CT.boldText("mkdir"), CT.boldGreen(d))
             os.makedirs(d)
 
     @staticmethod
     def get_file(url, d):
-        """get file from url and put it into directory d, return new name """
-        fn = url.split('/')[-1]
+        """get file from url and put it into directory d, return new name"""
+        fn = url.split("/")[-1]
         out_fnp = os.path.join(d, fn)
         urllib.request.urlretrieve(url, out_fnp)
         return out_fnp
@@ -121,17 +132,23 @@ class Utils:
     @staticmethod
     def get_file_if_size_diff(url, d):
         """only download the file if it's needed, not completely fail proof since it is
-        just a size check but fairly likely not to be the same for a difference """
-        fn = url.split('/')[-1]
+        just a size check but fairly likely not to be the same for a difference"""
+        fn = url.split("/")[-1]
         out_fnp = os.path.join(d, fn)
-        net_file_size = int(urllib.request.urlopen(url).info()['Content-Length'])
+        net_file_size = int(urllib.request.urlopen(url).info()["Content-Length"])
         if os.path.exists(out_fnp):
             fn_size = os.path.getsize(out_fnp)
             if fn_size == net_file_size:
                 print("skipping download of", CT.boldGreen(fn))
                 return out_fnp
             else:
-                print("files sizes differed:", "on disk:", fn_size, "from net:", net_file_size)
+                print(
+                    "files sizes differed:",
+                    "on disk:",
+                    fn_size,
+                    "from net:",
+                    net_file_size,
+                )
         print("retrieving", CT.boldGreen(fn), "from", CT.boldBlue(url))
         urllib.request.urlretrieve(url, out_fnp)
         return out_fnp
@@ -145,7 +162,7 @@ class Utils:
 
     @staticmethod
     def untar(fnp, d):
-        """ un pack compressed file, guessing format based on extension"""
+        """un pack compressed file, guessing format based on extension"""
         if fnp.endswith(".tar.gz"):
             tar = tarfile.open(fnp, "r:gz")
         elif fnp.endswith(".tgz"):
@@ -171,12 +188,12 @@ class Utils:
 
     @staticmethod
     def clear_dir(d):
-        """ forcibly delete directory and then re-make it"""
+        """forcibly delete directory and then re-make it"""
         Utils.rm_rf(d)
         Utils.mkdir(d)
 
     @staticmethod
-    def appendStrAsNeeded(input : str, ending : str):
+    def appendStrAsNeeded(input: str, ending: str):
         """
         if a string doesn't end with a specific ending, append it, this is useful for ensuring file extensions are in output names without accidentally doubling it
 
@@ -189,7 +206,7 @@ class Utils:
         return input
 
     @staticmethod
-    def appendStrAsNeededDoubleEnding(input : str, ending1 : str, ending2 : str):
+    def appendStrAsNeededDoubleEnding(input: str, ending1: str, ending2: str):
         """
         if a string doesn't end with a specific combination of endings (e.g. if ending of input does not equal ending1 + ending2), append it, this is useful for ensuring file extensions plus .gz for zipped files are in output names without accidentally doubling it
 
@@ -207,7 +224,7 @@ class Utils:
         return input
 
     @staticmethod
-    def parse_delimited_input_or_file(input_args : str, delim : str = ",") -> list[str]:
+    def parse_delimited_input_or_file(input_args: str, delim: str = ",") -> list[str]:
         """
         If the input is a file name then read in each line of the file for the argument, otherwise return a list of items delimited by delimiter
 
@@ -216,7 +233,7 @@ class Utils:
         :return: a list of strings
         """
         ret = []
-        if len(input_args) <=255 and os.path.exists(input_args):
+        if len(input_args) <= 255 and os.path.exists(input_args):
             with open(input_args) as file:
                 ret = [line.rstrip() for line in file if line.strip()]
         elif "STDIN" == input_args:
@@ -225,10 +242,10 @@ class Utils:
             ret = input_args.split(delim)
         return ret
 
-
-
     @staticmethod
-    def process_delimiter_and_output_extension(delim : str, output_extension : str = ".txt", gzip : bool = False) -> tuple[str, str]:
+    def process_delimiter_and_output_extension(
+        delim: str, output_extension: str = ".txt", gzip: bool = False
+    ) -> tuple[str, str]:
         """
         Process delimiter and extension, this allows for delim to be listed as tab or comma and it will replace appropriately the
 
@@ -254,7 +271,7 @@ class Utils:
         return out_delim, out_output_extension
 
     @staticmethod
-    def outputfile_check(output_file : str, overwrite : bool = False):
+    def outputfile_check(output_file: str, overwrite: bool = False):
         """
         Check to see if the output file exists if overwrite is turned on or not
 
@@ -265,10 +282,13 @@ class Utils:
         # only overwrite an existing file if --overwrite is on
         if "STDOUT" != output_file and os.path.exists(output_file) and not overwrite:
             raise Exception(
-                "Output file " + output_file + " already exists, use --overwrite to overwrite it")
+                "Output file "
+                + output_file
+                + " already exists, use --overwrite to overwrite it"
+            )
 
     @staticmethod
-    def inputOutputFileCheck(inputFile : str, outputFile : str, overwrite : bool = False):
+    def inputOutputFileCheck(inputFile: str, outputFile: str, overwrite: bool = False):
         """
         Check to see if an input file exists and if the output file exists if overwrite is turned on or not
 
@@ -293,7 +313,6 @@ class Utils:
         """
         Utils.inputOutputFileCheck(args.file, args.output, args.overwrite)
 
-
     @staticmethod
     @contextmanager
     def smart_open_write(filename):
@@ -310,10 +329,10 @@ class Utils:
         if filename == "STDOUT":
             yield sys.stdout
         elif filename.endswith(".gz"):
-            with gzip.open(filename, 'wt', encoding="utf-8") as f:
+            with gzip.open(filename, "wt", encoding="utf-8") as f:
                 yield f
         else:
-            with open(filename, 'w', encoding="utf-8") as f:
+            with open(filename, "w", encoding="utf-8") as f:
                 yield f
 
     @staticmethod
@@ -331,16 +350,16 @@ class Utils:
         if filename == "STDIN":
             yield sys.stdin
         elif filename.endswith(".gz"):
-            with gzip.open(filename, 'rt', encoding="utf-8") as f:
+            with gzip.open(filename, "rt", encoding="utf-8") as f:
                 yield f
         elif filename.endswith(".bz2"):
-            with bz2.open(filename, 'rt', encoding="utf-8") as f:
+            with bz2.open(filename, "rt", encoding="utf-8") as f:
                 yield f
         elif filename.endswith(".xz") or filename.endswith(".lzma"):
-            with lzma.open(filename, 'rt', encoding="utf-8") as f:
+            with lzma.open(filename, "rt", encoding="utf-8") as f:
                 yield f
         else:
-            with open(filename, 'r', encoding="utf-8") as f:
+            with open(filename, "r", encoding="utf-8") as f:
                 yield f
 
     @staticmethod
@@ -362,17 +381,19 @@ class Utils:
             return
 
         # Read magic number
-        with open(filename, 'rb') as raw_file:
+        with open(filename, "rb") as raw_file:
             magic = raw_file.read(6)
 
-        if magic.startswith(b'\x1f\x8b'):  # gzip
+        if magic.startswith(b"\x1f\x8b"):  # gzip
             opener = gzip.open
-        elif magic.startswith(b'BZh'):  # bz2
+        elif magic.startswith(b"BZh"):  # bz2
             opener = bz2.open
-        elif magic.startswith(b'\xfd7zXZ') or magic.startswith(b'\x5d\x00\x00'):  # xz/lzma
+        elif magic.startswith(b"\xfd7zXZ") or magic.startswith(
+            b"\x5d\x00\x00"
+        ):  # xz/lzma
             opener = lzma.open
         else:
             opener = open
 
-        with opener(filename, 'rt', encoding='utf-8') as f:
+        with opener(filename, "rt", encoding="utf-8") as f:
             yield f

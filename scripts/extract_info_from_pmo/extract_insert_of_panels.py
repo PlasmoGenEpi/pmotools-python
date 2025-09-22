@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
-import os, argparse, json
-import sys
-from collections import defaultdict
+import argparse
 
-import pandas as pd
 
 from pmotools.pmo_engine.pmo_processor import PMOProcessor
 from pmotools.pmo_engine.pmo_reader import PMOReader
@@ -12,12 +9,21 @@ from pmotools.utils.small_utils import Utils
 
 def parse_args_extract_insert_of_panels():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file', type=str, required=True, help='PMO file')
-    parser.add_argument('--output', type=str, default="STDOUT", required=False, help='output file')
-    parser.add_argument('--overwrite', action = 'store_true', help='If output file exists, overwrite it')
-    parser.add_argument('--add_ref_seqs', action = 'store_true', help='add ref seqs to the output as ref_seq')
+    parser.add_argument("--file", type=str, required=True, help="PMO file")
+    parser.add_argument(
+        "--output", type=str, default="STDOUT", required=False, help="output file"
+    )
+    parser.add_argument(
+        "--overwrite", action="store_true", help="If output file exists, overwrite it"
+    )
+    parser.add_argument(
+        "--add_ref_seqs",
+        action="store_true",
+        help="add ref seqs to the output as ref_seq",
+    )
 
     return parser.parse_args()
+
 
 def extract_insert_of_panels():
     args = parse_args_extract_insert_of_panels()
@@ -33,15 +39,40 @@ def extract_insert_of_panels():
 
     # write
     with Utils.smart_open_write(args.output) as f:
-        f.write("\t".join(["#chrom", "start", "end", "target_id", "length", "strand", "extra_info"]))
+        f.write(
+            "\t".join(
+                [
+                    "#chrom",
+                    "start",
+                    "end",
+                    "target_id",
+                    "length",
+                    "strand",
+                    "extra_info",
+                ]
+            )
+        )
         if args.add_ref_seqs:
             f.write("\tref_seq")
         f.write("\n")
         for loc in panel_bed_locs:
-            f.write("\t".join([loc.chrom, str(loc.start), str(loc.end), loc.name, str(loc.score), loc.strand, loc.extra_info]))
+            f.write(
+                "\t".join(
+                    [
+                        loc.chrom,
+                        str(loc.start),
+                        str(loc.end),
+                        loc.name,
+                        str(loc.score),
+                        loc.strand,
+                        loc.extra_info,
+                    ]
+                )
+            )
             if args.add_ref_seqs:
                 f.write("\t" + str(loc.ref_seq))
             f.write("\n")
+
 
 if __name__ == "__main__":
     extract_insert_of_panels()

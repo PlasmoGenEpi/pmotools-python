@@ -35,7 +35,8 @@ class PMOChecker:
 
         if pmo_class not in self.pmo_jsonschema["$defs"]:
             raise Exception(
-                f"PMO class {pmo_class} is not found in pmo_jsonschema, available fields are {', '.join(self.pmo_jsonschema['$defs'].keys())}")
+                f"PMO class {pmo_class} is not found in pmo_jsonschema, available fields are {', '.join(self.pmo_jsonschema['$defs'].keys())}"
+            )
         return self.pmo_jsonschema["$defs"][pmo_class]["required"]
 
     def validate_pmo_json(self, pmo_json):
@@ -57,4 +58,5 @@ class PMOChecker:
                 missing_base_fields.append(base_field)
         if len(missing_base_fields) > 0:
             raise Exception(
-                "Missing required base fields: {}".format(missing_base_fields))
+                "Missing required base fields: {}".format(missing_base_fields)
+            )

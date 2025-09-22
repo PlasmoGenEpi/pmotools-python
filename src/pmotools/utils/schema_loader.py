@@ -23,5 +23,7 @@ def load_schema(name: str) -> dict:
     json.JSONDecodeError
         If the schema file is not valid JSON.
     """
-    with resources.files("pmotools.schemas").joinpath(name).open("r", encoding="utf-8") as f:
+    with resources.files("pmotools.schemas").joinpath(name).open(
+        "r", encoding="utf-8"
+    ) as f:
         return json.load(f)
