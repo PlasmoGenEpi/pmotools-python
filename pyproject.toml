@@ -23,8 +23,3 @@ build-backend = "uv_build"
 dev = [
     "pytest>=8.4.1",
 ]
-
-[tool.uv]
-include = [
-    "src/pmotools/schemas/*.json",
-]
