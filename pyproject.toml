@@ -13,6 +13,7 @@ dependencies = [
     "pandas>=2.2.2",
     "biopython>=1.83",
     "jsonschema>=4.23.0",
+    "pre-commit"
 ]
 
 [build-system]
@@ -22,9 +23,4 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "pytest>=8.4.1",
-]
-
-[tool.uv]
-include = [
-    "src/pmotools/schemas/*.json",
 ]

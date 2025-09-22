@@ -1,33 +1,33 @@
 #!/usr/bin/env python3
 import pandas as pd
 import numpy as np
-import json
 import warnings
 
 from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 from ..pmo_engine.pmo_processor import PMOProcessor
 
 
-def panel_info_table_to_pmo(target_table: pd.DataFrame,
-                            panel_name: str,
-                            genome_info: dict,
-                            target_name_col: str = 'target_name',
-                            forward_primers_seq_col: str = 'fwd_primer',
-                            reverse_primers_seq_col: str = 'rev_primer',
-                            reaction_name_col: str | None = None,
-                            forward_primers_start_col: int | None = None,
-                            forward_primers_end_col: int | None = None,
-                            reverse_primers_start_col: int | None = None,
-                            reverse_primers_end_col: int | None = None,
-                            insert_start_col: int | None = None,
-                            insert_end_col: int | None = None,
-                            chrom_col: str | None = None,
-                            strand_col: str | None = None,
-                            ref_seq_col: str | None = None,
-                            gene_name_col: str | None = None,
-                            target_attributes_col: str | None = None,
-                            additional_target_info_cols: list | None = None,
-                            ):
+def panel_info_table_to_pmo(
+    target_table: pd.DataFrame,
+    panel_name: str,
+    genome_info: dict,
+    target_name_col: str = "target_name",
+    forward_primers_seq_col: str = "fwd_primer",
+    reverse_primers_seq_col: str = "rev_primer",
+    reaction_name_col: str | None = None,
+    forward_primers_start_col: int | None = None,
+    forward_primers_end_col: int | None = None,
+    reverse_primers_start_col: int | None = None,
+    reverse_primers_end_col: int | None = None,
+    insert_start_col: int | None = None,
+    insert_end_col: int | None = None,
+    chrom_col: str | None = None,
+    strand_col: str | None = None,
+    ref_seq_col: str | None = None,
+    gene_name_col: str | None = None,
+    target_attributes_col: str | None = None,
+    additional_target_info_cols: list | None = None,
+):
     """
     Convert a dataframe containing panel information into dictionary of targets and reference information
 
@@ -59,59 +59,62 @@ def panel_info_table_to_pmo(target_table: pd.DataFrame,
 
     # Check additional columns if any are added
     check_additional_columns_exist(target_table, additional_target_info_cols)
-    builder = PMOPanelBuilder(target_table,
-                              panel_name,
-                              genome_info,
-                              target_name_col,
-                              forward_primers_seq_col,
-                              reverse_primers_seq_col,
-                              reaction_name_col,
-                              forward_primers_start_col,
-                              forward_primers_end_col,
-                              reverse_primers_start_col,
-                              reverse_primers_end_col,
-                              insert_start_col,
-                              insert_end_col,
-                              chrom_col,
-                              strand_col,
-                              ref_seq_col,
-                              gene_name_col,
-                              target_attributes_col,
-                              additional_target_info_cols,)
+    builder = PMOPanelBuilder(
+        target_table,
+        panel_name,
+        genome_info,
+        target_name_col,
+        forward_primers_seq_col,
+        reverse_primers_seq_col,
+        reaction_name_col,
+        forward_primers_start_col,
+        forward_primers_end_col,
+        reverse_primers_start_col,
+        reverse_primers_end_col,
+        insert_start_col,
+        insert_end_col,
+        chrom_col,
+        strand_col,
+        ref_seq_col,
+        gene_name_col,
+        target_attributes_col,
+        additional_target_info_cols,
+    )
 
     # Create dictionary of targets and panels
     targets_dict = builder.create_targets_dict()
     panel_dict = builder.build_panel_info(targets_dict)
     # Put together components
-    panel_info_dict = {"panel_info": [panel_dict], "targeted_genomes": [
-        genome_info], "target_info": targets_dict}
-    panel_info_json = json.dumps(panel_info_dict, indent=4)
+    panel_info_dict = {
+        "panel_info": [panel_dict],
+        "targeted_genomes": [genome_info],
+        "target_info": targets_dict,
+    }
     return panel_info_dict
 
 
 class PMOPanelBuilder:
     def __init__(
-            self,
-            target_table: pd.DataFrame,
-            panel_name: str,
-            genome_info: dict,
-            target_name_col: str = 'target_name',
-            forward_primers_seq_col: str = 'fwd_primer',
-            reverse_primers_seq_col: str = 'rev_primer',
-            reaction_name_col: str | None = None,
-            forward_primers_start_col: int | None = None,
-            forward_primers_end_col: int | None = None,
-            reverse_primers_start_col: int | None = None,
-            reverse_primers_end_col: int | None = None,
-            insert_start_col: int | None = None,
-            insert_end_col: int | None = None,
-            chrom_col: str | None = None,
-            strand_col: str | None = None,
-            ref_seq_col: str | None = None,
-            gene_name_col: str | None = None,
-            target_attributes_col: str | None = None,
-            additional_target_info_cols: list | None = None,
-
+        self,
+        target_table: pd.DataFrame,
+        panel_name: str,
+        genome_info: dict,
+        target_name_col: str = "target_name",
+        forward_primers_seq_col: str = "fwd_primer",
+        reverse_primers_seq_col: str = "rev_primer",
+        reaction_name_col: str | None = None,
+        forward_primers_start_col: int | None = None,
+        forward_primers_end_col: int | None = None,
+        reverse_primers_start_col: int | None = None,
+        reverse_primers_end_col: int | None = None,
+        insert_start_col: int | None = None,
+        insert_end_col: int | None = None,
+        chrom_col: str | None = None,
+        strand_col: str | None = None,
+        ref_seq_col: str | None = None,
+        gene_name_col: str | None = None,
+        target_attributes_col: str | None = None,
+        additional_target_info_cols: list | None = None,
     ):
         self.target_table = target_table
         self.panel_name = panel_name
@@ -145,7 +148,7 @@ class PMOPanelBuilder:
             self.insert_end_col,
             self.chrom_col,
             self.strand_col,
-            self.ref_seq_col
+            self.ref_seq_col,
         ]
         if any(location_cols):
             collect_warnings = []
@@ -153,11 +156,15 @@ class PMOPanelBuilder:
                 collect_warnings.append(
                     "If including location information (any of forward_primers_start_col, forward_primers_end_col, reverse_primers_start_col, reverse_primers_end_col, insert_start_col, insert_end_col) chrom_col must be set."
                 )
-            if (self.forward_primers_start_col is None) != (self.forward_primers_end_col is None):
+            if (self.forward_primers_start_col is None) != (
+                self.forward_primers_end_col is None
+            ):
                 collect_warnings.append(
                     "If one of forward_primers_start_col or forward_primers_end_col is set, then both must be."
                 )
-            if (self.reverse_primers_start_col is None) != (self.reverse_primers_end_col is None):
+            if (self.reverse_primers_start_col is None) != (
+                self.reverse_primers_end_col is None
+            ):
                 collect_warnings.append(
                     "If one of reverse_primers_start_col or reverse_primers_end_col is set, then both must be."
                 )
@@ -167,16 +174,20 @@ class PMOPanelBuilder:
                 )
             if collect_warnings:
                 raise ValueError(
-                    "Errors with location column configuration:\n- " + "\n- ".join(collect_warnings))
+                    "Errors with location column configuration:\n- "
+                    + "\n- ".join(collect_warnings)
+                )
             return location_cols
         return None
 
     def check_targets_are_unique(self):
-        duplications = self.target_table[self.target_table[self.target_name_col].duplicated(
-            keep=False)]
+        duplications = self.target_table[
+            self.target_table[self.target_name_col].duplicated(keep=False)
+        ]
         if not duplications.empty:
             raise ValueError(
-                f"The following target_ids are duplicated: {duplications[self.target_name_col].unique()}")
+                f"The following target_ids are duplicated: {duplications[self.target_name_col].unique()}"
+            )
 
     def check_unique_target_info(self, columns_to_check):
         groups = (
@@ -191,8 +202,7 @@ class PMOPanelBuilder:
         if not duplicated_groups.empty:
             msg_lines = ["The following targets have duplicated information:"]
             for _, row in duplicated_groups.iterrows():
-                cols_info = ", ".join(
-                    f"{col}={row[col]}" for col in columns_to_check)
+                cols_info = ", ".join(f"{col}={row[col]}" for col in columns_to_check)
                 targets = ", ".join(map(str, row[self.target_name_col]))
                 msg_lines.append(f"targets: {targets} → {cols_info}")
 
@@ -204,23 +214,53 @@ class PMOPanelBuilder:
         missing_rev_primer_loc = None
 
         def check_missing(name, cols):
-            missing = self.target_table[self.target_table[cols].isnull().any(
-                axis=1)][self.target_name_col].tolist()
+            missing = self.target_table[self.target_table[cols].isnull().any(axis=1)][
+                self.target_name_col
+            ].tolist()
             if len(missing) > 0:
                 warnings.warn(
-                    f"{name} location information was not added for the following targets that had empty fields: {', '.join(missing)}")
+                    f"{name} location information was not added for the following targets that had empty fields: {', '.join(missing)}"
+                )
             return missing
 
-        missing_insert_loc = check_missing(
-            'Insert', [self.chrom_col, self.insert_start_col, self.insert_end_col]) if self.insert_start_col else None
-        missing_fwd_primer_loc = check_missing('Forward primer', [
-            self.chrom_col, self.forward_primers_start_col, self.forward_primers_end_col]) if self.forward_primers_start_col else None
-        missing_rev_primer_loc = check_missing('Reverse primer', [
-            self.chrom_col, self.reverse_primers_start_col, self.reverse_primers_end_col]) if self.reverse_primers_start_col else None
+        missing_insert_loc = (
+            check_missing(
+                "Insert", [self.chrom_col, self.insert_start_col, self.insert_end_col]
+            )
+            if self.insert_start_col
+            else None
+        )
+        missing_fwd_primer_loc = (
+            check_missing(
+                "Forward primer",
+                [
+                    self.chrom_col,
+                    self.forward_primers_start_col,
+                    self.forward_primers_end_col,
+                ],
+            )
+            if self.forward_primers_start_col
+            else None
+        )
+        missing_rev_primer_loc = (
+            check_missing(
+                "Reverse primer",
+                [
+                    self.chrom_col,
+                    self.reverse_primers_start_col,
+                    self.reverse_primers_end_col,
+                ],
+            )
+            if self.reverse_primers_start_col
+            else None
+        )
 
         return missing_insert_loc, missing_fwd_primer_loc, missing_rev_primer_loc
 
-    def create_targets_dict(self, genome_id: int = 0,):
+    def create_targets_dict(
+        self,
+        genome_id: int = 0,
+    ):
         # Check targets before putting into JSON
         (
             forward_primers_start_col,
@@ -236,12 +276,15 @@ class PMOPanelBuilder:
 
         # Check target information in the dataframe
         self.check_targets_are_unique()
-        columns_to_check = [self.forward_primers_seq_col,
-                            self.reverse_primers_seq_col]
+        columns_to_check = [self.forward_primers_seq_col, self.reverse_primers_seq_col]
         if self.location_info_cols:
             columns_to_check += [col for col in self.location_info_cols if col]
         self.check_unique_target_info(list(set(columns_to_check)))
-        missing_insert_loc, missing_fwd_primer_loc, missing_rev_primer_loc = self.summarise_targets_missing_optional_info()
+        (
+            missing_insert_loc,
+            missing_fwd_primer_loc,
+            missing_rev_primer_loc,
+        ) = self.summarise_targets_missing_optional_info()
 
         # Put targets together in dictionary
         targets_dicts = []
@@ -308,7 +351,7 @@ class PMOPanelBuilder:
         return targets_dicts
 
     def build_panel_info(self, targets_dict):
-        panel_dict = {'panel_name': self.panel_name, "reactions": []}
+        panel_dict = {"panel_name": self.panel_name, "reactions": []}
         if self.reaction_name_col:
             reactions = self.target_table[self.reaction_name_col].unique()
         else:
@@ -316,11 +359,14 @@ class PMOPanelBuilder:
             self.target_table["reaction"] = "1"
             self.reaction_name_col = "reaction"
         for reaction in reactions:
-            reaction_target_table = self.target_table[self.target_table[self.reaction_name_col] == reaction]
+            reaction_target_table = self.target_table[
+                self.target_table[self.reaction_name_col] == reaction
+            ]
             target_indeces = PMOProcessor.get_index_of_target_names(
-                {'target_info': targets_dict}, reaction_target_table[self.target_name_col].to_list())
-            reaction_dict = {'reaction_name': reaction,
-                             'panel_targets': target_indeces}
+                {"target_info": targets_dict},
+                reaction_target_table[self.target_name_col].to_list(),
+            )
+            reaction_dict = {"reaction_name": reaction, "panel_targets": target_indeces}
             panel_dict["reactions"].append(reaction_dict)
         return panel_dict
 
@@ -331,7 +377,9 @@ def check_genome_info(genome_info):
         missing_keys = required_keys - genome_info.keys()
         if missing_keys:
             raise ValueError(
-                f"genome_info missing required keys: {', '.join(missing_keys)}")
+                f"genome_info missing required keys: {', '.join(missing_keys)}"
+            )
     else:
         raise TypeError(
-            f"genome_info must be a dict, but got {type(genome_info).__name__}")
+            f"genome_info must be a dict, but got {type(genome_info).__name__}"
+        )

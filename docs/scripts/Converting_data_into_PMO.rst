@@ -46,4 +46,3 @@ By default it will convert the data into a list of objects of the input data, to
 ..  code-block:: bash
 
     pmotools-runner.py excel_meta_to_json_meta --file metadata.xlsx --output metadata.json --overwrite --sheet Sheet2 --index_col_name experiment_id
-

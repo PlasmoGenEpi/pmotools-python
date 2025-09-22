@@ -18,4 +18,3 @@ _comp_pmotools_runner()
 
 
 complete -F _comp_pmotools_runner pmotools-runner.py
-
