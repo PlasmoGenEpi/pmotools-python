@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 
-import json
 from jsonschema import Draft7Validator, validate
 
 
@@ -10,7 +9,7 @@ class PMOChecker:
     A class to house utilities to help check the formatting of read in PMO files.
     """
 
-    def __init__(self, pmo_jsonschema : dict):
+    def __init__(self, pmo_jsonschema: dict):
         """
         Constructor for PMOChecker with the json read from the json schema file
 
@@ -35,7 +34,8 @@ class PMOChecker:
         """
 
         if pmo_class not in self.pmo_jsonschema["$defs"]:
-            raise Exception(f"PMO class {pmo_class} is not found in pmo_jsonschema, available fields are {', '.join(self.pmo_jsonschema['$defs'].keys())}")
+            raise Exception(
+                f"PMO class {pmo_class} is not found in pmo_jsonschema, available fields are {', '.join(self.pmo_jsonschema['$defs'].keys())}")
         return self.pmo_jsonschema["$defs"][pmo_class]["required"]
 
     def validate_pmo_json(self, pmo_json):
@@ -56,4 +56,5 @@ class PMOChecker:
             if base_field not in pmo_object:
                 missing_base_fields.append(base_field)
         if len(missing_base_fields) > 0:
-            raise Exception("Missing required base fields: {}".format(missing_base_fields))
+            raise Exception(
+                "Missing required base fields: {}".format(missing_base_fields))

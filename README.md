@@ -1,36 +1,22 @@
 # pmotools
 
-
 A collection of tools to interact with [portable microhaplotype object (pmo) file format](https://github.com/PlasmoGenEpi/portable-microhaplotype-object)
 
-# Setup 
+# Setup
 
-Download repo 
-```bash
-git clone git@github.com:PlasmoGenEpi/pmotools-python.git
-```
-
-Recommend using the conda environment file to ensure all python modules tested with tool are installed 
-```bash
-cd pmotools-python
-conda env create -f envs/pmotools-env.yml 
-
-conda activate pmotools
-```
-
-Install using pip 
+Install using pip
 ```bash
 pip install .
 ```
 
-# Usage 
+# Usage
 
-This package is built to either be used as a library in python projects and then are also command line already created which can be found within the scripts directory. All scripts are also all wrapped into the main runner file `scripts/pmotools-runner.py`. The scripts do require the pmotools-python package to be installed like with pip above. 
+This package is built to either be used as a library in python projects and then are also command line already created which can be found within the scripts directory. All scripts are also all wrapped into the main runner file `scripts/pmotools-runner.py`. The scripts do require the pmotools-python package to be installed like with pip above.
 
 
-## Auto completion 
+## Auto completion
 
-If you want to add auto-completion to the scripts master function [scripts/pmotools-runner.py](scripts/pmotools-runner.py) you can add the following to your `~/.bash_completion`. This can also be found in etc/.bash_completion in current directory. 
+If you want to add auto-completion to the scripts master function [scripts/pmotools-runner.py](scripts/pmotools-runner.py) you can add the following to your `~/.bash_completion`. This can also be found in etc/.bash_completion in current directory.
 
 ```bash
 _comp_pmotools_runner()
@@ -56,24 +42,51 @@ complete -F _comp_pmotools_runner pmotools-runner.py
 
 ```
 
-# Development  
-Development is done the development branch while the master branch will point to the most recent released version following [git-flow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) standards
+## Developer Setup
 
+To contribute to `pmotools`, follow these steps:
+
+1. **Clone the repository** and switch to the develop branch:
 ```bash
-# navigate to git directory
-cd pmotools-python
+git clone git@github.com:your-org/pmotools.git
+cd pmotools
+git checkout develop
+```
 
-# install the environment 
-conda env create -f envs/pmotools-env.yml 
+2. **Create your feature branch**:
+```bash
+git checkout -b feature/my-feature
+```
 
-# install the current state of the tool in edit mode to continue to work and then update afterwards
-conda activate pmotools
-pip install -e ./ 
+3. **Install and set up UV.** This creates .venv/ and installs everything from pyproject.toml:
+```bash
+pip install -U uv
+uv sync --dev
+```
 
-# run main runner to list all currently loaded tools
-./scripts/pmotools-runner.py
+4. **Install pre-commit hooks** (for formatting & linting):
+```bash
+uv run pre-commit install
+```
 
-## or add to path (must be done when within the git directory, or replace $(pwd) with the full path nmae to the git repo
-export PATH="$(pwd)/scripts:$PATH"
+5. **Run pre-commit** manually on all files (first time):
+```bash
+uv run pre-commit run --all-files
+```
 
+6. **Develop your code**. Pre-commit will automatically run on staged files before each commit, checking:
+* Formatting (Ruff)
+* Linting (Ruff)
+* Trailing whitespace, YAML syntax, large files
+
+7. **Run tests**:
+```bash
+uv run pytest
+```
+
+8. **Commit and push** your changes:
+```bash
+git add .
+git commit -m "Your message"
+git push origin feature/my-feature
 ```
