@@ -3,6 +3,8 @@ channels:
 - bioconda
 - conda-forge
 dependencies:
+- python=3.12
+- pip
 - pandas=2.2.2
 - biopython=1.83
 - jsonschema=4.23.0
