@@ -139,6 +139,21 @@ class TestMhapTableToPMO(unittest.TestCase):
                 "GGG",
             ],
             "reads": [10, 100, 10, 1, 12, 53, 73, 76, 6, 297, 123, 1, 17],
+            "bioinf_run": [
+                "run1",
+                "run1",
+                "run1",
+                "run2",
+                "run2",
+                "run2",
+                "run2",
+                "run1",
+                "run1",
+                "run2",
+                "run3",
+                "run3",
+                "run3",
+            ],
         }
         self.small_mhap_table = pd.DataFrame(data=small_mhap_data)
         self.small_df_mhaps_target_id_values = [0, 1, 2, 0, 1, 1, 2, 0, 1, 0, 0, 0, 2]
@@ -643,6 +658,137 @@ class TestMhapTableToPMO(unittest.TestCase):
                         ],
                     }
                 ],
+            },
+        )
+
+    @patch(
+        "pmotools.pmo_builder.mhap_table_to_pmo.create_representative_microhaplotype_dict"
+    )
+    def test_mhap_table_to_pmo_multi_bioinf_run_name(
+        self,
+        mock_create_representative_microhaplotype_dict,
+    ):
+        mock_create_representative_microhaplotype_dict.return_value = (
+            self.small_representative_dict
+        )
+        expected_detected = [
+            {
+                "bioinformatics_run_name": "run1",
+                "library_samples": [
+                    {
+                        "library_sample_name": "sample1",
+                        "target_results": [
+                            {
+                                "mhaps_target_id": 0,
+                                "mhaps": [{"mhap_id": 0, "reads": 10}],
+                            },
+                            {
+                                "mhaps_target_id": 1,
+                                "mhaps": [{"mhap_id": 0, "reads": 100}],
+                            },
+                            {
+                                "mhaps_target_id": 2,
+                                "mhaps": [{"mhap_id": 0, "reads": 10}],
+                            },
+                        ],
+                    },
+                    {
+                        "library_sample_name": "sample3",
+                        "target_results": [
+                            {
+                                "mhaps_target_id": 0,
+                                "mhaps": [{"mhap_id": 1, "reads": 76}],
+                            },
+                            {
+                                "mhaps_target_id": 1,
+                                "mhaps": [{"mhap_id": 1, "reads": 6}],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                "bioinformatics_run_name": "run2",
+                "library_samples": [
+                    {
+                        "library_sample_name": "sample2",
+                        "target_results": [
+                            {
+                                "mhaps_target_id": 0,
+                                "mhaps": [{"mhap_id": 0, "reads": 1}],
+                            },
+                            {
+                                "mhaps_target_id": 1,
+                                "mhaps": [
+                                    {"mhap_id": 0, "reads": 12},
+                                    {"mhap_id": 1, "reads": 53},
+                                ],
+                            },
+                            {
+                                "mhaps_target_id": 2,
+                                "mhaps": [{"mhap_id": 1, "reads": 73}],
+                            },
+                        ],
+                    },
+                    {
+                        "library_sample_name": "sample4",
+                        "target_results": [
+                            {
+                                "mhaps_target_id": 0,
+                                "mhaps": [{"mhap_id": 0, "reads": 297}],
+                            }
+                        ],
+                    },
+                ],
+            },
+            {
+                "bioinformatics_run_name": "run3",
+                "library_samples": [
+                    {
+                        "library_sample_name": "sample5",
+                        "target_results": [
+                            {
+                                "mhaps_target_id": 0,
+                                "mhaps": [
+                                    {"mhap_id": 1, "reads": 123},
+                                    {"mhap_id": 2, "reads": 1},
+                                ],
+                            },
+                            {
+                                "mhaps_target_id": 2,
+                                "mhaps": [{"mhap_id": 0, "reads": 17}],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]
+
+        actual = mhap_table_to_pmo(self.small_mhap_table, "bioinf_run")
+        self.assertEqual(
+            actual,
+            {
+                "representative_microhaplotypes": {
+                    "targets": [
+                        {
+                            "target_name": "target1",
+                            "microhaplotypes": [
+                                {"seq": "ACTG"},
+                                {"seq": "ATTG"},
+                                {"seq": "ATTA"},
+                            ],
+                        },
+                        {
+                            "target_name": "target2",
+                            "microhaplotypes": [{"seq": "TTTT"}, {"seq": "TTTA"}],
+                        },
+                        {
+                            "target_name": "target3",
+                            "microhaplotypes": [{"seq": "GGG"}, {"seq": "AAG"}],
+                        },
+                    ]
+                },
+                "detected_microhaplotypes": expected_detected,
             },
         )
 

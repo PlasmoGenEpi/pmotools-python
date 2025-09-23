@@ -34,7 +34,7 @@ def mhap_table_to_pmo(
     Convert a dataframe of a microhaplotype calls into a dictionary containing a dictionary for the haplotypes_detected and a dictionary for the representative_haplotype_sequences.
 
     :param microhaplotype_table (pd.DataFrame): The dataframe containing microhaplotype calls
-    :param bioinformatics_run_name (str) : Unique name for the bioinformatics run that generated the data
+    :param bioinformatics_run_name (str) : Unique name for the bioinformatics run that generated the data (column name or individual run name).
     :param library_sample_name_col (str) : the name of the column containing the experiment sample names. Default: library_sample_name
     :param target_name_col (str) : the name of the column containing the targets. Default: target_name
     :param seq_col (str) : the name of the column containing the microhaplotype sequences. Default: seq
@@ -81,21 +81,41 @@ def mhap_table_to_pmo(
         additional_representative_mhap_cols,
     )
 
-    detected_mhap_dict = create_detected_microhaplotype_dict(
-        microhaplotype_table,
-        bioinformatics_run_name,
-        representative_microhaplotype_dict,
-        library_sample_name_col,
-        target_name_col,
-        seq_col,
-        reads_col,
-        umis_col,
-        additional_mhap_detected_cols,
-    )
+    detected_mhap_dict_list = []
+    if bioinformatics_run_name in microhaplotype_table.columns:
+        for bioinfo_run in microhaplotype_table[bioinformatics_run_name].unique():
+            microhaplotype_table_per_run = microhaplotype_table[
+                microhaplotype_table[bioinformatics_run_name] == bioinfo_run
+            ]
+            detected_mhap_dict = create_detected_microhaplotype_dict(
+                microhaplotype_table_per_run,
+                bioinfo_run,
+                representative_microhaplotype_dict,
+                library_sample_name_col,
+                target_name_col,
+                seq_col,
+                reads_col,
+                umis_col,
+                additional_mhap_detected_cols,
+            )
+            detected_mhap_dict_list.append(detected_mhap_dict)
+    else:
+        detected_mhap_dict = create_detected_microhaplotype_dict(
+            microhaplotype_table,
+            bioinformatics_run_name,
+            representative_microhaplotype_dict,
+            library_sample_name_col,
+            target_name_col,
+            seq_col,
+            reads_col,
+            umis_col,
+            additional_mhap_detected_cols,
+        )
+        detected_mhap_dict_list.append(detected_mhap_dict)
 
     output_data_dict = {
         "representative_microhaplotypes": representative_microhaplotype_dict,
-        "detected_microhaplotypes": [detected_mhap_dict],
+        "detected_microhaplotypes": detected_mhap_dict_list,
     }
     return output_data_dict
 
