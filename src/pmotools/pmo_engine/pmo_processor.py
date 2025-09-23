@@ -773,7 +773,9 @@ class PMOProcessor:
                             "bioinformatics_run_name": bioinformatics_run_names[
                                 bioinformatics_run_id
                             ],
-                            default_base_col_names[0]: specimen_meta["specimen_name"],
+                            default_base_col_names[0]: library_meta[
+                                "library_sample_name"
+                            ],
                             default_base_col_names[1]: target_name,
                             default_base_col_names[2]: allele_id,
                         }
