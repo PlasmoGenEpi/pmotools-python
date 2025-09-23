@@ -1,6 +1,6 @@
 [project]
 name = "pmotools"
-version = "0.1.0"
+version = "0.1.0.dev1"
 description = "Tools for building and analyzing PMO files"
 readme = "README.md"
 authors = [
@@ -22,9 +22,4 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "pytest>=8.4.1",
-]
-
-[tool.uv]
-include = [
-    "src/pmotools/schemas/*.json",
 ]
