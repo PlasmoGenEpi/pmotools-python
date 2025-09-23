@@ -8,6 +8,7 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.pmo_engine.pmo_processor import PMOProcessor
+from pmotools import __version__ as __pmotools_version__
 
 
 def parse_args_extract_for_allele_table():
@@ -16,8 +17,11 @@ def parse_args_extract_for_allele_table():
     parser.add_argument(
         "--jsonschema",
         default=os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            "etc/portable_microhaplotype_object.schema.json",
+            os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            ),
+            "schemas/",
+            f"portable_microhaplotype_object_v{__pmotools_version__}.schema.json",
         ),
         type=str,
         required=False,

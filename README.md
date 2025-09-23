@@ -11,35 +11,50 @@ pip install .
 
 # Usage
 
-This package is built to either be used as a library in python projects and then are also command line already created which can be found within the scripts directory. All scripts are also all wrapped into the main runner file `scripts/pmotools-runner.py`. The scripts do require the pmotools-python package to be installed like with pip above.
+This package is built to either be used as a library in python projects and a command line interface already created which can be called from the commandline `pmotools-python` which will install with `pip install .`.
 
 
 ## Auto completion
 
-If you want to add auto-completion to the scripts master function [scripts/pmotools-runner.py](scripts/pmotools-runner.py) you can add the following to your `~/.bash_completion`. This can also be found in etc/.bash_completion in current directory.
+If you want to add auto-completion to the scripts master function [pmotools-python](scripts/pmotools-runner.py) you can add the following to your `~/.bash_completion`. This can also be found in etc/bash_completion in the current directory. Or can be generated with `pmotools-python --bash-completion`
 
 ```bash
-_comp_pmotools_runner()
+_pmotools_python_complete()
 {
-    local cur prev opts base
+    local cur prev
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    if [[ $COMP_CWORD -lt 2 ]] ; then
-    	opts=$(for x in `${COMP_WORDS[0]} | grep "^\s.*-" | sed 's/ -.*//g' | tr -d '[:blank:]'`; do echo ${x} ; done )
-		COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
-    elif [[ ${cur} == -* ]]; then
-    	opts=$(for x in `${COMP_WORDS[0]} ${COMP_WORDS[1]} -h | grep " -" | sed "s/^. *-/-/g" | sed "s/   .*//g" | sed "s/, / /g"`; do echo ${x} ; done )
-		COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
-    else
-    	_filedir
+
+    # 1) Completing the command name (1st arg): list all commands
+    if [[ ${COMP_CWORD} -eq 1 ]]; then
+        # Our CLI prints machine-friendly list via --list-plain:
+        # "<command>\t<group>\t<help>"
+        local lines cmds
+        lines="$(${COMP_WORDS[0]} --list-plain 2>/dev/null)"
+        cmds="$(printf '%s\n' "${lines}" | awk -F'\t' '{print $1}')"
+        COMPREPLY=( $(compgen -W "${cmds}" -- "${cur}") )
+        return 0
     fi
-   return 0
+
+    # 2) Completing flags for a leaf command: scrape leaf -h
+    if [[ "${cur}" == -* ]]; then
+        local helps opts
+        helps="$(${COMP_WORDS[0]} ${COMP_WORDS[1]} -h 2>/dev/null)"
+        # Pull out flag tokens and split comma-separated forms
+        opts="$(printf '%s\n' "${helps}" \
+            | sed -n 's/^[[:space:]]\{0,\}\(-[-[:alnum:]][-[:alnum:]]*\)\(, *-[[:alnum:]][-[:alnum:]]*\)\{0,\}.*/\1/p' \
+            | sed 's/, / /g')"
+        COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+        return 0
+    fi
+
+    # 3) Otherwise, fall back to filename completion for positional args
+    COMPREPLY=( $(compgen -f -- "${cur}") )
+    return 0
 }
 
-
-complete -F _comp_pmotools_runner pmotools-runner.py
-
+complete -F _pmotools_python_complete pmotools-python
 ```
 
 ## Developer Setup

@@ -9,6 +9,7 @@ from collections import defaultdict
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.utils.schema_loader import load_schema
 
+from pmotools import __version__ as __pmotools_version__
 
 bed_loc_tuple = NamedTuple(
     "bed_loc",
@@ -626,7 +627,8 @@ class PMOProcessor:
             os.path.dirname(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             ),
-            "etc/portable_microhaplotype_object.schema.json",
+            "schemas/",
+            f"portable_microhaplotype_object_v{__pmotools_version__}.schema.json",
         ),
         validate_pmo: bool = False,
     ) -> pd.DataFrame:
