@@ -93,6 +93,7 @@
             "properties": {
                 "bioinformatics_methods_id": {
                     "description": "the index into the bioinformatics_methods_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -123,6 +124,7 @@
             "properties": {
                 "bioinformatics_run_id": {
                     "description": "the index into bioinformatics_run_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -147,6 +149,7 @@
             "properties": {
                 "library_sample_id": {
                     "description": "the index into the library_sample_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -178,6 +181,7 @@
                 },
                 "mhaps_target_id": {
                     "description": "the index for a target in the representative_microhaplotypes list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 }
@@ -225,6 +229,7 @@
                 "taxon_id": {
                     "description": "the NCBI taxonomy number, can be a list of values",
                     "items": {
+                        "minimum": 0,
                         "pattern": "^[0-9]$",
                         "type": "integer"
                     },
@@ -264,11 +269,13 @@
                 },
                 "end": {
                     "description": "the end of the location, 0-based positioning",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
                 "genome_id": {
                     "description": "the index to the genome in the targeted_genomes list that this location refers to",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -282,6 +289,7 @@
                 },
                 "start": {
                     "description": "the start of the location, 0-based positioning",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -307,6 +315,17 @@
             "additionalProperties": true,
             "description": "Information about a specific amplification and sequencing of a specimen",
             "properties": {
+                "alternate_identifiers": {
+                    "description": "a list of optional alternative names",
+                    "items": {
+                        "pattern": "^[A-z-._0-9 ]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
                 "experiment_accession": {
                     "description": "ERA/SRA experiment accession number for the sample if it was submitted",
                     "pattern": "^[A-z-._0-9]+$",
@@ -341,6 +360,7 @@
                 },
                 "panel_id": {
                     "description": "the index into the panel_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -364,11 +384,13 @@
                 },
                 "sequencing_info_id": {
                     "description": "the index into the sequencing_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
                 "specimen_id": {
                     "description": "the index into the specimen_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 }
@@ -422,14 +444,17 @@
                 },
                 "replacement_size": {
                     "description": "the size of replacement mask",
+                    "minimum": 0,
                     "type": "integer"
                 },
                 "seq_segment_size": {
                     "description": "the size of the masking",
+                    "minimum": 0,
                     "type": "integer"
                 },
                 "seq_start": {
                     "description": "the start of the masking",
+                    "minimum": 0,
                     "type": "integer"
                 }
             },
@@ -447,15 +472,18 @@
             "properties": {
                 "mhap_id": {
                     "description": "the index for a microhaplotype for a target in the representative_microhaplotypes list, e.g. representative_microhaplotypes[mhaps_target_id][mhap_id]",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
                 "reads": {
                     "description": "the read count associated with this microhaplotype",
+                    "minimum": 0,
                     "type": "integer"
                 },
                 "umis": {
                     "description": "the unique molecular identifier (umi) count associated with this microhaplotype",
+                    "minimum": 0,
                     "type": [
                         "integer",
                         "null"
@@ -538,6 +566,7 @@
             "properties": {
                 "plate_col": {
                     "description": "the column the specimen was in",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": [
                         "integer",
@@ -814,6 +843,48 @@
             "title": "ProjectInfo",
             "type": "object"
         },
+        "ProteinVariant": {
+            "additionalProperties": true,
+            "description": "information on a variant in protein sequence",
+            "properties": {
+                "alternative_gene_name": {
+                    "description": "an alternative gene name",
+                    "pattern": "^[A-z-._0-9]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "codon_genomic_location": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/GenomicLocation"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "the position within the genomic sequence of the codon"
+                },
+                "gene_name": {
+                    "description": "an identifier of the gene, if any, is being covered with this targeted",
+                    "pattern": "^[A-z-._0-9]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "protein_location": {
+                    "$ref": "#/$defs/GenomicLocation",
+                    "description": "the position within the protein, the chromosome in this case would be the transcript name"
+                }
+            },
+            "required": [
+                "protein_location"
+            ],
+            "title": "ProteinVariant",
+            "type": "object"
+        },
         "Pseudocigar": {
             "additionalProperties": true,
             "description": "information on pseudocigar for a sequence",
@@ -850,6 +921,7 @@
                 "panel_targets": {
                     "description": "a list of the target indexes in the target_info list",
                     "items": {
+                        "minimum": 0,
                         "type": "integer"
                     },
                     "type": "array"
@@ -873,6 +945,7 @@
             "properties": {
                 "bioinformatics_run_id": {
                     "description": "the index into bioinformatics_run_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -897,6 +970,7 @@
             "properties": {
                 "library_sample_id": {
                     "description": "the index into the library_sample_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -912,6 +986,7 @@
                 },
                 "total_raw_count": {
                     "description": "the raw counts off the sequencing machine that a sample began with",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 }
@@ -936,6 +1011,7 @@
                 },
                 "target_id": {
                     "description": "the index into the target_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 }
@@ -952,9 +1028,29 @@
             "description": "the representative sequence for a microhaplotype, similar to a fast(a/q) format",
             "properties": {
                 "alt_annotations": {
-                    "description": "a list of additional annotations associated with this microhaplotype, e.g. wildtype, amino acid changes etc",
+                    "description": "a list of additional annotations associated with this microhaplotype, e.g. wildtype",
                     "items": {
                         "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "associated_protein_variants": {
+                    "description": "a list of associated protein variants with this haplotype, e.g. amino acid changes/INDELS",
+                    "items": {
+                        "$ref": "#/$defs/ProteinVariant"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "associated_seq_variants": {
+                    "description": "a list of associated sequence variants with this haplotype, e.g. SNPS, indels",
+                    "items": {
+                        "$ref": "#/$defs/GenomicLocation"
                     },
                     "type": [
                         "array",
@@ -1053,6 +1149,7 @@
                 },
                 "target_id": {
                     "description": "the index into the target_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 }
@@ -1193,7 +1290,7 @@
             "description": "Information on specimen info",
             "properties": {
                 "alternate_identifiers": {
-                    "description": "a list of optional alternative names for the specimens",
+                    "description": "a list of optional alternative names",
                     "items": {
                         "pattern": "^[A-z-._0-9 ]+$",
                         "type": "string"
@@ -1285,14 +1382,23 @@
                 },
                 "gravidity": {
                     "description": "the gravidity of the specimen host (number of previous pregnancies)",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": [
                         "integer",
                         "null"
                     ]
                 },
+                "has_travel_out_six_month": {
+                    "description": "has travelled out from local region in the last six months",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
                 "host_age": {
                     "description": "if specimen is from a person, the age in years of the person, can be float value so for 3 month old put 0.25",
+                    "minimum": 0,
                     "pattern": "^\\d*\\.?\\d+$",
                     "type": [
                         "number",
@@ -1309,6 +1415,7 @@
                 },
                 "host_subject_id": {
                     "description": "an identifier for the individual a specimen was collected from",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": [
                         "integer",
@@ -1317,11 +1424,12 @@
                 },
                 "host_taxon_id": {
                     "description": "the NCBI taxonomy number of the host that the specimen was collected from",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
                 "lat_lon": {
-                    "description": "the latitude and longitude of the collection site of the specimen",
+                    "description": "the latitude and longitude of a specific site",
                     "pattern": "^[-+]?\\d{1,2}(?:\\.\\d+)?,[-+]?\\d{1,3}(?:\\.\\d+)?$",
                     "type": [
                         "string",
@@ -1340,6 +1448,7 @@
                 },
                 "project_id": {
                     "description": "the index into the project_info list",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -1386,6 +1495,7 @@
                 "specimen_taxon_id": {
                     "description": "the NCBI taxonomy number of the organism in specimen, can list multiple if a mixed sample",
                     "items": {
+                        "minimum": 0,
                         "pattern": "^[0-9]+$",
                         "type": "integer"
                     },
@@ -1413,7 +1523,17 @@
                 "travel_out_six_month": {
                     "description": "Specification of the countries travelled in the last six months; can include multiple travels",
                     "items": {
-                        "pattern": "^[A-z-._0-9\\(\\),\\/\\ ]+$",
+                        "$ref": "#/$defs/TravelInfo"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "treatment_status": {
+                    "description": "If person has been treated with drugs, what was the treatment outcome",
+                    "items": {
+                        "pattern": "^[A-z-._0-9;|\\(\\),\\/\\ ]+$",
                         "type": "string"
                     },
                     "type": [
@@ -1439,6 +1559,7 @@
             "properties": {
                 "read_count": {
                     "description": "the read counts",
+                    "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
@@ -1518,6 +1639,71 @@
                 "reverse_primer"
             ],
             "title": "TargetInfo",
+            "type": "object"
+        },
+        "TravelInfo": {
+            "additionalProperties": true,
+            "description": "Information on travel info",
+            "properties": {
+                "bed_net_usage": {
+                    "description": "approximate usage of bed net while traveling, 1 = 100% nights with bed net, 0 = 0% no bed net usage",
+                    "minimum": 0,
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "geo_admin1": {
+                    "description": "geographical admin level 1, the secondary large demarcation of a nation (nation = admin level 0)",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "geo_admin2": {
+                    "description": "geographical admin level 2, the third large demarcation of a nation (nation = admin level 0)",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "geo_admin3": {
+                    "description": "geographical admin level 3, the third large demarcation of a nation (nation = admin level 0)",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "lat_lon": {
+                    "description": "the latitude and longitude of a specific site",
+                    "pattern": "^[-+]?\\d{1,2}(?:\\.\\d+)?,[-+]?\\d{1,3}(?:\\.\\d+)?$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "travel_country": {
+                    "description": "the name of country, would be the same as admin level 0",
+                    "pattern": "^[A-Za-z0-9 ,._:'\u2013-]+$",
+                    "type": "string"
+                },
+                "travel_end_date": {
+                    "description": "the date of the end of travel, can be approximate, should be YYYY-MM or YYYY-MM-DD (preferred)",
+                    "pattern": "\\d{4}-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12][0-9]|3[01]))?",
+                    "type": "string"
+                },
+                "travel_start_date": {
+                    "description": "the date of the start of travel, can be approximate, should be YYYY-MM or YYYY-MM-DD (preferred)",
+                    "pattern": "\\d{4}-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12][0-9]|3[01]))?",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "travel_country",
+                "travel_start_date",
+                "travel_end_date"
+            ],
+            "title": "TravelInfo",
             "type": "object"
         }
     },
