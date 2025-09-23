@@ -13,8 +13,9 @@ class PMOWriter:
     """
     A class for writing a PMO to file
     """
+
     @staticmethod
-    def write_out_pmo(pmo, fnp : str | os.PathLike[str], overwrite : bool = False):
+    def write_out_pmo(pmo, fnp: str | os.PathLike[str], overwrite: bool = False):
         """
         Write out a PMO, will write to zip file if the output fnp name ends with .gz
         :param pmo: the PMO to write
@@ -25,15 +26,15 @@ class PMOWriter:
         Utils.outputfile_check(fnp, overwrite)
         if fnp == "STDOUT":
             json.dump(pmo, sys.stdout, indent=2)
-        elif fnp.endswith('.gz'):
-            with gzip.open(fnp, 'wt', encoding="utf-8") as zipfile:
+        elif fnp.endswith(".gz"):
+            with gzip.open(fnp, "wt", encoding="utf-8") as zipfile:
                 json.dump(pmo, zipfile, indent=2)
         else:
-            with open(fnp, 'w', encoding="utf-8") as f:
+            with open(fnp, "w", encoding="utf-8") as f:
                 json.dump(pmo, f, indent=2)
 
     @staticmethod
-    def add_pmo_extension_as_needed(output_fnp, gzip : bool = True):
+    def add_pmo_extension_as_needed(output_fnp, gzip: bool = True):
         """
         Add on json or json.gz as needed to output pmo file
 

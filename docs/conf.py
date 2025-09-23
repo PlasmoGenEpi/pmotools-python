@@ -9,43 +9,42 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath(".."))
 
-project = 'pmotools-python'
-copyright = '2024, Plasmogenepi'
-author = 'Plasmogenepi'
-release = '1.0.0'
+project = "pmotools-python"
+copyright = "2024, Plasmogenepi"
+author = "Plasmogenepi"
+release = "1.0.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.duration', # will report duration while building
-    'sphinx.ext.doctest', # can run doc checks
-    'sphinx.ext.autodoc', # allows for autofucntion documentation from documented code
-    'sphinx.ext.autosummary', # allows for doing a summary of code with autodoc from code
-    'sphinx.ext.githubpages',  # add .nojekyll to gh-pages
-    'sphinx_copybutton',  # add copy button to code chunks
-    'sphinx_toolbox.github',  # link to github
-    'sphinx_licenseinfo',  # add license information
-    'notfound.extension',  # 404 page
-    'sphinx.ext.autosectionlabel',  # reference sections using their title
-    'sphinx.ext.coverage',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.linkcode'
+    "sphinx.ext.duration",  # will report duration while building
+    "sphinx.ext.doctest",  # can run doc checks
+    "sphinx.ext.autodoc",  # allows for autofucntion documentation from documented code
+    "sphinx.ext.autosummary",  # allows for doing a summary of code with autodoc from code
+    "sphinx.ext.githubpages",  # add .nojekyll to gh-pages
+    "sphinx_copybutton",  # add copy button to code chunks
+    "sphinx_toolbox.github",  # link to github
+    "sphinx_licenseinfo",  # add license information
+    "notfound.extension",  # 404 page
+    "sphinx.ext.autosectionlabel",  # reference sections using their title
+    "sphinx.ext.coverage",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.linkcode",
 ]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
-html_static_path = ['_static']
+html_theme = "alabaster"
+html_static_path = ["_static"]
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -82,13 +81,15 @@ autosectionlabel_prefix_document = True
 
 # -- linkcode configuration ----------------------------------------------------
 def linkcode_resolve(domain, info):
-    if domain != 'py':
+    if domain != "py":
         return None
-    if not info['module']:
+    if not info["module"]:
         return None
-    filename = info['module'].replace('.', '/')
-    return "https://github.com/PlasmoGenEpi/pmotools-python/tree/develop/%s.py" % filename
+    filename = info["module"].replace(".", "/")
+    return (
+        "https://github.com/PlasmoGenEpi/pmotools-python/tree/develop/%s.py" % filename
+    )
+
 
 # code blocks
-pygments_style = 'sphinx'
-
+pygments_style = "sphinx"
