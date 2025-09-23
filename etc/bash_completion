@@ -1,0 +1,39 @@
+# bash completion for pmotools-python
+# add the below to your ~/.bash_completion
+
+_pmotools_python_complete()
+{
+    local cur prev
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    # 1) Completing the command name (1st arg): list all commands
+    if [[ ${COMP_CWORD} -eq 1 ]]; then
+        # Our CLI prints machine-friendly list via --list-plain:
+        # "<command>\t<group>\t<help>"
+        local lines cmds
+        lines="$(${COMP_WORDS[0]} --list-plain 2>/dev/null)"
+        cmds="$(printf '%s\n' "${lines}" | awk -F'\t' '{print $1}')"
+        COMPREPLY=( $(compgen -W "${cmds}" -- "${cur}") )
+        return 0
+    fi
+
+    # 2) Completing flags for a leaf command: scrape leaf -h
+    if [[ "${cur}" == -* ]]; then
+        local helps opts
+        helps="$(${COMP_WORDS[0]} ${COMP_WORDS[1]} -h 2>/dev/null)"
+        # Pull out flag tokens and split comma-separated forms
+        opts="$(printf '%s\n' "${helps}" \
+            | sed -n 's/^[[:space:]]\{0,\}\(-[-[:alnum:]][-[:alnum:]]*\)\(, *-[[:alnum:]][-[:alnum:]]*\)\{0,\}.*/\1/p' \
+            | sed 's/, / /g')"
+        COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+        return 0
+    fi
+
+    # 3) Otherwise, fall back to filename completion for positional args
+    COMPREPLY=( $(compgen -f -- "${cur}") )
+    return 0
+}
+
+complete -F _pmotools_python_complete pmotools-python

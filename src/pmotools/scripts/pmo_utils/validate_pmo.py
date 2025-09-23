@@ -7,6 +7,7 @@ import json
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.utils.small_utils import Utils
+from pmotools import __version__ as __pmotools_version__
 
 
 def parse_args_validate_pmo():
@@ -18,7 +19,8 @@ def parse_args_validate_pmo():
             os.path.dirname(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             ),
-            "etc/portable_microhaplotype_object.schema.json",
+            "schemas/",
+            f"portable_microhaplotype_object_v{__pmotools_version__}.schema.json",
         ),
         type=str,
         required=False,
