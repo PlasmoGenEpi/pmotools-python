@@ -32,4 +32,4 @@ jobs:
 
       - name: Publish to TestPyPI
         if: startsWith(github.ref, 'refs/tags/test')
-        run: uv publish --repository https://test.pypi.org/legacy/ --username __token__ --password ${{ secrets.TEST_PYPI_API_TOKEN }}
+        run: uv publish --index testpypi --username __token__ --password ${{ secrets.TEST_PYPI_API_TOKEN }}
