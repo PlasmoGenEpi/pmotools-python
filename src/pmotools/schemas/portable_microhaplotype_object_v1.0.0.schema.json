@@ -51,38 +51,18 @@
         },
         "BioinformaticsMethodInfo": {
             "additionalProperties": true,
-            "description": "the targeted amplicon bioinformatics pipeline",
+            "description": "the targeted amplicon bioinformatics methods used to generate the amplicon data in this PMO",
             "properties": {
-                "additional_methods": {
-                    "description": "any additional methods used to analyze the data",
+                "methods": {
+                    "description": "methodology used to generate the amplicon data stored in this PMO, e.g. demultiplexing method, denosing method or just a pipeline method info",
                     "items": {
                         "$ref": "#/$defs/BioMethod"
                     },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "bioinformatics_method_name": {
-                    "description": "name of the collection of methods is called, e.g. pipeline ",
-                    "pattern": "^[A-z-._0-9 ]+$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "demultiplexing_method": {
-                    "$ref": "#/$defs/BioMethod",
-                    "description": "the demultiplexing method used to separate raw reads from barcodes and primer targets"
-                },
-                "denoising_method": {
-                    "$ref": "#/$defs/BioMethod",
-                    "description": "the method used to de-noise and/or cluster the raw reads"
+                    "type": "array"
                 }
             },
             "required": [
-                "demultiplexing_method",
-                "denoising_method"
+                "methods"
             ],
             "title": "BioinformaticsMethodInfo",
             "type": "object"
@@ -1557,10 +1537,9 @@
             "additionalProperties": true,
             "description": "Information on the reads counts at several stages",
             "properties": {
-                "read_count": {
-                    "description": "the read counts",
+                "reads": {
+                    "description": "the read counts for this stage",
                     "minimum": 0,
-                    "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
                 "stage": {
@@ -1570,7 +1549,7 @@
                 }
             },
             "required": [
-                "read_count",
+                "reads",
                 "stage"
             ],
             "title": "StageReadCounts",

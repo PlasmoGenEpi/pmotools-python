@@ -53,7 +53,7 @@ class TestPMOWriter(unittest.TestCase):
         PMOWriter.write_out_pmo(pmo_data, output_fnp, True)
         with open(output_fnp, "rb") as file_to_check:
             md5_returned = hashlib.md5(file_to_check.read()).hexdigest()
-        self.assertEqual("f56b922855f471346376e6d928894e4d", md5_returned)
+        self.assertEqual("947659479b1924a40e91dedcb5f558fb", md5_returned)
 
     def test_write_out_pmo_gzip(self):
         with open(
@@ -68,7 +68,7 @@ class TestPMOWriter(unittest.TestCase):
         with gzip.open(output_fnp, "rb") as f:
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_md5.update(chunk)
-        self.assertEqual("f56b922855f471346376e6d928894e4d", hash_md5.hexdigest())
+        self.assertEqual("947659479b1924a40e91dedcb5f558fb", hash_md5.hexdigest())
 
     def test_write_out_pmo_fail_overwrite(self):
         with open(

@@ -2,8 +2,34 @@
 	"bioinformatics_methods_info" :
 	[
 		{
-			"additional_methods" :
+			"methods" :
 			[
+				{
+					"additional_argument" :
+					[
+						"--bamExtractTrimToRegion",
+						"--bed /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_withPrimers.bed",
+						"--genomeDir /tank/data/genomes/plasmodium/genomes/pf/genomes/",
+						"--primaryGenome Pf3D7",
+						"--bam bams/{SAMPLE}.sorted.bam"
+					],
+					"program" : "PathWeaver BamExtractPathwaysFromRegion",
+					"program_description" : "Extract reads from a bam file for a specific genomic locatioon and then assembles local haplotypes for that region",
+					"program_version" : "1.0.0-dev"
+				},
+				{
+					"additional_argument" :
+					[
+						"--bamExtractTrimToRegion",
+						"--bed /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_withPrimers.bed",
+						"--genomeDir /tank/data/genomes/plasmodium/genomes/pf/genomes/",
+						"--primaryGenome Pf3D7",
+						"--bam bams/{SAMPLE}.sorted.bam"
+					],
+					"program" : "PathWeaver BamExtractPathwaysFromRegion",
+					"program_description" : "Extract reads from a bam file for a specific genomic locatioon and then assembles local haplotypes for that region",
+					"program_version" : "1.0.0-dev"
+				},
 				{
 					"additional_argument" :
 					[
@@ -22,35 +48,7 @@
 					"program_description" : "Compare across samples for each target to create population level identifiers and do post artifact cleanup",
 					"program_version" : "1.0.0-dev"
 				}
-			],
-			"demultiplexing_method" :
-			{
-				"additional_argument" :
-				[
-					"--bamExtractTrimToRegion",
-					"--bed /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_withPrimers.bed",
-					"--genomeDir /tank/data/genomes/plasmodium/genomes/pf/genomes/",
-					"--primaryGenome Pf3D7",
-					"--bam bams/{SAMPLE}.sorted.bam"
-				],
-				"program" : "PathWeaver BamExtractPathwaysFromRegion",
-				"program_description" : "Extract reads from a bam file for a specific genomic locatioon and then assembles local haplotypes for that region",
-				"program_version" : "1.0.0-dev"
-			},
-			"denoising_method" :
-			{
-				"additional_argument" :
-				[
-					"--bamExtractTrimToRegion",
-					"--bed /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_withPrimers.bed",
-					"--genomeDir /tank/data/genomes/plasmodium/genomes/pf/genomes/",
-					"--primaryGenome Pf3D7",
-					"--bam bams/{SAMPLE}.sorted.bam"
-				],
-				"program" : "PathWeaver BamExtractPathwaysFromRegion",
-				"program_description" : "Extract reads from a bam file for a specific genomic locatioon and then assembles local haplotypes for that region",
-				"program_version" : "1.0.0-dev"
-			}
+			]
 		}
 	],
 	"bioinformatics_run_info" :
@@ -2165,13 +2163,13 @@
 	"library_sample_info" :
 	[
 		{
-			"library_sample_name" : "5tbx",
+			"library_sample_name" : "5tbx_lib_name",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
 			"specimen_id" : 0
 		},
 		{
-			"library_sample_name" : "XUC009",
+			"library_sample_name" : "XUC009_lib_name",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
 			"specimen_id" : 1
@@ -2294,7 +2292,7 @@
 	],
 	"pmo_header" :
 	{
-		"creation_date" : "2025-07-22",
+		"creation_date" : "2025-11-03",
 		"generation_method" :
 		{
 			"program_name" : "elucidator combingallintopmojson",

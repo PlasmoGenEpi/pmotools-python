@@ -534,7 +534,7 @@ class PMOProcessor:
         :param collapse_across_runs: whether to collapse count/freqs across bioinformatics_run_id runs
         :return: DataFrame with columns: bioinformatics_run_id, target, mhap_id, count, freq, target_total
         """
-        schema = load_schema("portable_microhaplotype_object_v0.1.0.schema.json")
+        schema = load_schema("portable_microhaplotype_object_v1.0.0.schema.json")
         checker = PMOChecker(schema)
         checker.check_for_required_base_fields(pmodata)
 

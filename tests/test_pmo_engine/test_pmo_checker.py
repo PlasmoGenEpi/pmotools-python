@@ -12,7 +12,7 @@ class TestPMOChecker(unittest.TestCase):
     def setUp(self):
         self.working_dir = os.path.dirname(os.path.abspath(__file__))
         self.pmo_jsonschema_data = load_schema(
-            "portable_microhaplotype_object_v0.1.0.schema.json"
+            "portable_microhaplotype_object_v1.0.0.schema.json"
         )
 
         self.checker = PMOChecker(self.pmo_jsonschema_data)

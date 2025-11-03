@@ -23,7 +23,7 @@ class TestPMOProcessor(unittest.TestCase):
         self.working_dir = os.path.dirname(os.path.abspath(__file__))
         self.test_dir = tempfile.TemporaryDirectory()
         self.pmo_jsonschema_data = load_schema(
-            "portable_microhaplotype_object_v0.1.0.schema.json"
+            "portable_microhaplotype_object_v1.0.0.schema.json"
         )
         with open(
             os.path.join(
@@ -47,7 +47,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         id_counts_check_data = {
             "specimen_name": ["8025874217", "8025874266"],
-            "library_sample_name": ["8025874217", "8025874266"],
+            "library_sample_name": ["8025874217_lib_name", "8025874266_lib_name"],
             "library_sample_count": [1, 1],
         }
         id_counts_check_df = pd.DataFrame(id_counts_check_data)
@@ -64,7 +64,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         id_counts_check_data_2 = {
             "specimen_name": ["5tbx", "XUC009"],
-            "library_sample_name": ["5tbx", "XUC009"],
+            "library_sample_name": ["5tbx_lib_name", "XUC009_lib_name"],
             "library_sample_count": [1, 1],
         }
         id_counts_check_df_2 = pd.DataFrame(id_counts_check_data_2)
@@ -76,7 +76,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         targets_per_sample_check_data = {
             "bioinformatics_run_id": [0, 0],
-            "library_sample_name": ["8025874266", "8025874217"],
+            "library_sample_name": ["8025874266_lib_name", "8025874217_lib_name"],
             "target_number": [85, 99],
         }
         targets_per_sample_check_df = pd.DataFrame(targets_per_sample_check_data)
@@ -89,7 +89,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         targets_per_sample_read_count_off1000_check_data = {
             "bioinformatics_run_id": [0, 0],
-            "library_sample_name": ["8025874266", "8025874217"],
+            "library_sample_name": ["8025874266_lib_name", "8025874217_lib_name"],
             "target_number": [61, 99],
         }
         targets_per_sample_read_count_off1000_check_df = pd.DataFrame(
@@ -111,7 +111,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         targets_per_sample_check_data_2 = {
             "bioinformatics_run_id": [0, 0],
-            "library_sample_name": ["XUC009", "5tbx"],
+            "library_sample_name": ["XUC009_lib_name", "5tbx_lib_name"],
             "target_number": [98, 100],
         }
         targets_per_sample_check_df_2 = pd.DataFrame(targets_per_sample_check_data_2)
@@ -124,7 +124,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         targets_per_sample_check_data_2_read_count_off200 = {
             "bioinformatics_run_id": [0, 0],
-            "library_sample_name": ["XUC009", "5tbx"],
+            "library_sample_name": ["XUC009_lib_name", "5tbx_lib_name"],
             "target_number": [96, 100],
         }
         targets_per_sample_check_df_2_read_count_off200 = pd.DataFrame(
@@ -148,22 +148,22 @@ class TestPMOProcessor(unittest.TestCase):
             [
                 {
                     "bioinformatics_run_id": 0,
-                    "library_sample_name": "8025874266",
+                    "library_sample_name": "8025874266_lib_name",
                     "target_number": 85,
                 },
                 {
                     "bioinformatics_run_id": 0,
-                    "library_sample_name": "8025874217",
+                    "library_sample_name": "8025874217_lib_name",
                     "target_number": 99,
                 },
                 {
                     "bioinformatics_run_id": 1,
-                    "library_sample_name": "XUC009",
+                    "library_sample_name": "XUC009_lib_name",
                     "target_number": 98,
                 },
                 {
                     "bioinformatics_run_id": 1,
-                    "library_sample_name": "5tbx",
+                    "library_sample_name": "5tbx_lib_name",
                     "target_number": 100,
                 },
             ]
@@ -387,7 +387,7 @@ class TestPMOProcessor(unittest.TestCase):
             self.test_dir.name, "extracted_alleles_per_sample_table_no_extra_args.csv"
         )
         allele_data.to_csv(output_fnp, index=False)
-        self.assertEqual("d1775ec03eb38743cd4dd92d0a832bff", md5sum_of_fnp(output_fnp))
+        self.assertEqual("2898d87133e2e381612f3c0dea70122f", md5sum_of_fnp(output_fnp))
 
         allele_data_with_seq_reads = PMOProcessor.extract_alleles_per_sample_table(
             self.combined_pmo_data,
@@ -406,7 +406,7 @@ class TestPMOProcessor(unittest.TestCase):
             "extracted_alleles_per_sample_table_no_extra_args_with_seq_reads.csv",
         )
         allele_data_with_seq_reads.to_csv(output_fnp, index=False)
-        self.assertEqual("0e5da30c561c748fb2553f852db76607", md5sum_of_fnp(output_fnp))
+        self.assertEqual("744c1c0233066f030881c8b595b9ad5c", md5sum_of_fnp(output_fnp))
 
         allele_data_with_seq_reads_panel_id_collection_country = (
             PMOProcessor.extract_alleles_per_sample_table(
@@ -431,7 +431,7 @@ class TestPMOProcessor(unittest.TestCase):
         allele_data_with_seq_reads_panel_id_collection_country.to_csv(
             output_fnp, index=False
         )
-        self.assertEqual("13aed17cbdff88f0a80c685c42d89cb8", md5sum_of_fnp(output_fnp))
+        self.assertEqual("c425004244e6af1386b6e7776da76fed", md5sum_of_fnp(output_fnp))
 
     def test_extract_from_pmo_with_read_filter(self):
         pmo_data_filtered = PMOProcessor.extract_from_pmo_with_read_filter(
@@ -442,7 +442,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_filtered, f)
-        self.assertEqual("cde277533e44e64c3ef980106024275f", md5sum_of_fnp(output_fnp))
+        self.assertEqual("4a9f04348758dd684847dfd6d8555f93", md5sum_of_fnp(output_fnp))
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_filtered)
 
@@ -455,7 +455,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("7bb125130685a955d658fe5c03634024", md5sum_of_fnp(output_fnp))
+        self.assertEqual("911bac290439bf8d560f9a6bc6239c08", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -469,7 +469,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("4d546b332b264cf58ed0d44a687728b9", md5sum_of_fnp(output_fnp))
+        self.assertEqual("8baa9e81dd8c61a13655c8258899dd65", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -483,7 +483,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("96e9ddc3a3d582617d856b01dd3f5083", md5sum_of_fnp(output_fnp))
+        self.assertEqual("5eedbb3df7ce897f3e6d7a8fd8bab4f9", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -491,7 +491,7 @@ class TestPMOProcessor(unittest.TestCase):
     def test_filter_pmo_by_library_sample_names(self):
         pmo_data_select_library_sample_names = (
             PMOProcessor.filter_pmo_by_library_sample_names(
-                self.combined_pmo_data, {"8025874217", "XUC009"}
+                self.combined_pmo_data, {"8025874217_lib_name", "XUC009_lib_name"}
             )
         )
         output_fnp = os.path.join(
@@ -499,7 +499,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_library_sample_names, f)
-        self.assertEqual("f7637b5f2b100ca316102c13283493b0", md5sum_of_fnp(output_fnp))
+        self.assertEqual("d1e96a4884a4c32b190891fdebb59f0c", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_library_sample_names)
@@ -513,7 +513,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("ce94ed180bd6672d69371e3e0fcf0c4e", md5sum_of_fnp(output_fnp))
+        self.assertEqual("a70e00a2fce7fc7fd3a7a7a0f136ccdb", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -527,7 +527,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("ce94ed180bd6672d69371e3e0fcf0c4e", md5sum_of_fnp(output_fnp))
+        self.assertEqual("a70e00a2fce7fc7fd3a7a7a0f136ccdb", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -544,7 +544,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_meta, f)
-        self.assertEqual("b7c0c2c1c5fbfd9a023af3dfd6bf44c0", md5sum_of_fnp(output_fnp))
+        self.assertEqual("aeaa3c81a1c3ba7f748c0479bfcdcdd7", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_meta)
@@ -577,7 +577,15 @@ class TestPMOProcessor(unittest.TestCase):
         ) as f:
             pmo_data_combined = json.load(f)
         names = PMOProcessor.get_sorted_library_sample_names(pmo_data_combined)
-        self.assertEqual(["5tbx", "8025874217", "8025874266", "XUC009"], names)
+        self.assertEqual(
+            [
+                "5tbx_lib_name",
+                "8025874217_lib_name",
+                "8025874266_lib_name",
+                "XUC009_lib_name",
+            ],
+            names,
+        )
 
     def test_sorted_get_target_names(self):
         with open(
@@ -731,7 +739,15 @@ class TestPMOProcessor(unittest.TestCase):
         ) as f:
             pmo_data_combined = json.load(f)
         names = PMOProcessor.get_library_sample_names(pmo_data_combined)
-        self.assertEqual(["8025874217", "8025874266", "5tbx", "XUC009"], names)
+        self.assertEqual(
+            [
+                "8025874217_lib_name",
+                "8025874266_lib_name",
+                "5tbx_lib_name",
+                "XUC009_lib_name",
+            ],
+            names,
+        )
 
     def test_get_target_names(self):
         with open(
