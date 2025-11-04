@@ -33,6 +33,8 @@ class TestMergeToPMO(unittest.TestCase):
             [],
             [],
             [],
+            [],
+            [],
         )
 
     def test_report_missing_IDs_fails_correctly(self):
@@ -45,11 +47,87 @@ class TestMergeToPMO(unittest.TestCase):
                 ["something else", "something else2"],
                 [],
                 [],
+                [],
+                [],
             )
         self.assertEqual(
             "The following fields were found in one table and not another:\nProject names in Specimen Info not in Project Info: ['something']\nTarget names in Representative Microhaplotypes not in Target Info: ['something else', 'something else2']\n",
             str(context.exception),
         )
+
+    def test_merge_to_pmo_with_read_counts_by_stage(self):
+        """Test merge_to_pmo with read_counts_by_stage_info."""
+        # Sample data
+        specimen_info = [{"specimen_name": "spec1", "project_name": "proj1"}]
+        library_sample_info = [
+            {
+                "library_sample_name": "lib1",
+                "specimen_name": "spec1",
+                "sequencing_info_name": "seq1",
+                "panel_name": "panel1",
+            }
+        ]
+        sequencing_info = [{"sequencing_info_name": "seq1"}]
+        panel_info = {
+            "panel_info": [{"panel_name": "panel1"}],
+            "target_info": [{"target_name": "target1"}],
+        }
+        mhap_info = {
+            "representative_microhaplotypes": {
+                "targets": [{"target_name": "target1", "microhaplotypes": []}]
+            },
+            "detected_microhaplotypes": [],
+        }
+        bioinfo_method_info = []
+        bioinfo_run_info = [{"bioinformatics_run_name": "run1"}]
+        project_info = [{"project_name": "proj1"}]
+
+        # Read counts by stage data
+        read_counts_by_stage_info = [
+            {
+                "bioinformatics_run_name": "run1",
+                "read_counts_by_library_sample_by_stage": [
+                    {
+                        "library_sample_name": "lib1",
+                        "total_raw_count": 1000,
+                        "read_counts_for_targets": [
+                            {
+                                "target_name": "target1",
+                                "stages": [
+                                    {"stage": "demultiplexed", "read_count": 100}
+                                ],
+                            }
+                        ],
+                    }
+                ],
+            }
+        ]
+
+        result = merge_to_pmo(
+            specimen_info=specimen_info,
+            library_sample_info=library_sample_info,
+            sequencing_info=sequencing_info,
+            panel_info=panel_info,
+            mhap_info=mhap_info,
+            bioinfo_method_info=bioinfo_method_info,
+            bioinfo_run_info=bioinfo_run_info,
+            project_info=project_info,
+            read_counts_by_stage_info=read_counts_by_stage_info,
+        )
+
+        # Check that read_counts_by_stage is included
+        self.assertIn("read_counts_by_stage", result)
+        self.assertEqual(len(result["read_counts_by_stage"]), 1)
+
+        # Check that names have been replaced with IDs
+        read_counts_run = result["read_counts_by_stage"][0]
+        self.assertIn("bioinformatics_run_id", read_counts_run)
+        self.assertNotIn("bioinformatics_run_name", read_counts_run)
+
+        # Check library sample names have been replaced
+        library_sample = read_counts_run["read_counts_by_library_sample_by_stage"][0]
+        self.assertIn("library_sample_id", library_sample)
+        self.assertNotIn("library_sample_name", library_sample)
 
     @patch("pmotools.pmo_builder.merge_to_pmo.date")
     def test_generate_pmo_header(self, mock_date):

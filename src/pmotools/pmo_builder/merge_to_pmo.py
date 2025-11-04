@@ -12,6 +12,7 @@ def merge_to_pmo(
     bioinfo_method_info: list,
     bioinfo_run_info: list,
     project_info: list,
+    read_counts_by_stage_info: list | None = None,
 ):
     """
     Merge components into PMO, replacing names with indeces.
@@ -24,6 +25,7 @@ def merge_to_pmo(
     :param bioinfo_method_info (list) : the bioinformatics pipeline/methods used to generated the amplicon analysis for this project
     :param bioinfo_run_info (list) : the runtime info for the bioinformatics pipeline used to generated the amplicon analysis for this project
     :param project_info (list) : the information about the projects stored in this PMO
+    :param read_counts_by_stage_info (Optional[list]) : the read counts by stage information for this project
 
     :return: a json formatted PMO string.
     """
@@ -37,6 +39,10 @@ def merge_to_pmo(
     panel_info = json.loads(json.dumps(panel_info))
     mhap_info = json.loads(json.dumps(mhap_info))
 
+    # Handle read_counts_by_stage_info if provided
+    if read_counts_by_stage_info is not None:
+        read_counts_by_stage_info = [dict(d) for d in read_counts_by_stage_info]
+
     _replace_names_with_IDs(
         specimen_info,
         project_info,
@@ -45,6 +51,7 @@ def merge_to_pmo(
         panel_info,
         mhap_info,
         bioinfo_run_info,
+        read_counts_by_stage_info,
     )
 
     # Build PMO
@@ -62,6 +69,11 @@ def merge_to_pmo(
         | panel_info
         | mhap_info
     )
+
+    # Add read_counts_by_stage_info if provided
+    if read_counts_by_stage_info is not None:
+        pmo["read_counts_by_stage"] = read_counts_by_stage_info
+
     return pmo
 
 
@@ -107,6 +119,8 @@ def _report_missing_IDs(
     missing_targets,
     missing_bioinfo_runs,
     missing_libs,
+    missing_read_counts_bioinfo_runs,
+    missing_read_counts_libs,
 ):
     if any(
         [
@@ -117,6 +131,8 @@ def _report_missing_IDs(
             missing_targets,
             missing_bioinfo_runs,
             missing_libs,
+            missing_read_counts_bioinfo_runs,
+            missing_read_counts_libs,
         ]
     ):
         error_message = (
@@ -136,6 +152,10 @@ def _report_missing_IDs(
             error_message += f"Bioinformatics run names in Detected Microhaplotypes not in Bioinformatic Run Info: {missing_bioinfo_runs}\n"
         if missing_libs:
             error_message += f"Library Sample names in Detected Microhaplotypes not in Library Sample Info: {missing_libs}\n"
+        if missing_read_counts_bioinfo_runs:
+            error_message += f"Bioinformatics run names in Read Counts by Stage not in Bioinformatic Run Info: {missing_read_counts_bioinfo_runs}\n"
+        if missing_read_counts_libs:
+            error_message += f"Library Sample names in Read Counts by Stage not in Library Sample Info: {missing_read_counts_libs}\n"
         raise ValueError(error_message)
 
 
@@ -147,6 +167,7 @@ def _replace_names_with_IDs(
     panel_info,
     mhap_info,
     bioinfo_run_info,
+    read_counts_by_stage_info,
 ):
     # SPECIMEN INFO
     # replace name with project ID
@@ -197,6 +218,29 @@ def _replace_names_with_IDs(
             lookup=lib_sample_lookup,
         )
 
+    # READ COUNTS BY STAGE
+    # Replace bioinformatics_run_name and library_sample_name if provided
+    missing_read_counts_bioinfo_runs = []
+    missing_read_counts_libs = []
+    if read_counts_by_stage_info is not None:
+        # Replace bioinformatics_run_name with bioinformatics_run_id
+        missing_read_counts_bioinfo_runs = _replace_key_with_id(
+            read_counts_by_stage_info,
+            bioinfo_run_info,
+            "bioinformatics_run_name",
+            "bioinformatics_run_id",
+        )
+
+        # Replace library_sample_name with library_sample_id in each run
+        for read_counts_run in read_counts_by_stage_info:
+            missing_read_counts_libs += _replace_key_with_id(
+                read_counts_run["read_counts_by_library_sample_by_stage"],
+                library_sample_info,
+                "library_sample_name",
+                "library_sample_id",
+                lookup=lib_sample_lookup,
+            )
+
     # If any names were missing from reference tables error
     _report_missing_IDs(
         missing_projects,
@@ -206,4 +250,6 @@ def _replace_names_with_IDs(
         missing_targets,
         missing_bioinfo_runs,
         missing_libs,
+        missing_read_counts_bioinfo_runs,
+        missing_read_counts_libs,
     )
