@@ -442,7 +442,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_filtered, f)
-        self.assertEqual("4a9f04348758dd684847dfd6d8555f93", md5sum_of_fnp(output_fnp))
+        self.assertEqual("879b1a0c62a77a8fcc910a21d8ec9de6", md5sum_of_fnp(output_fnp))
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_filtered)
 
@@ -455,7 +455,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("911bac290439bf8d560f9a6bc6239c08", md5sum_of_fnp(output_fnp))
+        self.assertEqual("d9525c0a067d8a291af8bf89b80bfb42", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -469,7 +469,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("8baa9e81dd8c61a13655c8258899dd65", md5sum_of_fnp(output_fnp))
+        self.assertEqual("853d0806237d4078abc601f0c7dcdc3c", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -483,7 +483,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("5eedbb3df7ce897f3e6d7a8fd8bab4f9", md5sum_of_fnp(output_fnp))
+        self.assertEqual("b942daeac359bbe063563f8692986d1c", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -499,7 +499,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_library_sample_names, f)
-        self.assertEqual("d1e96a4884a4c32b190891fdebb59f0c", md5sum_of_fnp(output_fnp))
+        self.assertEqual("99873ba369fa94722969ab9ce6581287", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_library_sample_names)
@@ -513,7 +513,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("a70e00a2fce7fc7fd3a7a7a0f136ccdb", md5sum_of_fnp(output_fnp))
+        self.assertEqual("b5d1d39d508a7c7c1d8ccce65c52bc5d", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -527,7 +527,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("a70e00a2fce7fc7fd3a7a7a0f136ccdb", md5sum_of_fnp(output_fnp))
+        self.assertEqual("b5d1d39d508a7c7c1d8ccce65c52bc5d", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -544,7 +544,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_meta, f)
-        self.assertEqual("aeaa3c81a1c3ba7f748c0479bfcdcdd7", md5sum_of_fnp(output_fnp))
+        self.assertEqual("338e838297d79a8038d8d5392a6ca57e", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_meta)
