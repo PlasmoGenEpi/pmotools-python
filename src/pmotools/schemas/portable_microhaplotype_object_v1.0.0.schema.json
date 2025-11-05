@@ -1461,7 +1461,7 @@
                 },
                 "specimen_name": {
                     "description": "an identifier for the specimen, should be unique within this sample set",
-                    "pattern": "^[A-z-._0-9 ]+$",
+                    "pattern": "^[A-z-._0-9\\(\\),\\/\\ ]+$",
                     "type": "string"
                 },
                 "specimen_store_loc": {
