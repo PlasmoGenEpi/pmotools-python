@@ -3952,18 +3952,6 @@
                 },
                 {
                     "additional_argument": [
-                        "--bamExtractTrimToRegion",
-                        "--bed /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_withPrimers.bed",
-                        "--genomeDir /tank/data/genomes/plasmodium/genomes/pf/genomes/",
-                        "--primaryGenome Pf3D7",
-                        "--bam bams/{SAMPLE}.sorted.bam"
-                    ],
-                    "program": "PathWeaver BamExtractPathwaysFromRegion",
-                    "program_description": "Extract reads from a bam file for a specific genomic locatioon and then assembles local haplotypes for that region",
-                    "program_version": "1.0.0-dev"
-                },
-                {
-                    "additional_argument": [
                         "--overWriteDir",
                         "--fracCutOff 0.005",
                         "--dout popClusteringTrimmedParagon",
