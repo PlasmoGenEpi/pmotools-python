@@ -362,12 +362,17 @@ def add_plate_info(
             content_row[plate_row_col].iloc[0].upper() if plate_row_col else None
         )
         plate_col_val = content_row[plate_col_col].iloc[0] if plate_col_col else None
+        if plate_col_val is not None and not pd.isna(plate_col_val):
+            try:
+                plate_col_val = int(plate_col_val)
+            except (TypeError, ValueError):
+                plate_col_val = plate_col_val
         plate_info = {}
         if plate_name_val:
             plate_info["plate_name"] = plate_name_val
         if plate_row_val:
             plate_info["plate_row"] = plate_row_val
-        if plate_col_val:
+        if plate_col_val is not None and not pd.isna(plate_col_val):
             plate_info["plate_col"] = plate_col_val
 
         if plate_info:
