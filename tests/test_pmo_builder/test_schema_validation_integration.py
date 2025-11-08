@@ -41,6 +41,8 @@ def test_toy_pmo_validates_against_schema():
             "env_medium": ["Blood"],
             "alternate_ids": [["ALT1", "ALT2"]],
             "custom_note": ["Important specimen"],
+            "parasite_density": [1200],
+            "parasite_density_method": ["microscopy"],
         }
     )
     specimen_info = specimen_info_table_to_pmo(
@@ -56,6 +58,8 @@ def test_toy_pmo_validates_against_schema():
         specimen_comments_col="specimen_comments",
         specimen_store_loc_col="specimen_store_loc",
         lat_lon_col="lat_lon",
+        parasite_density_col="parasite_density",
+        parasite_density_method_col="parasite_density_method",
         additional_specimen_cols=["custom_note"],
     )
 
@@ -298,6 +302,11 @@ def test_toy_pmo_validates_against_schema():
     assert specimen_entry["host_age"] == 35
     assert specimen_entry["specimen_store_loc"] == "Freezer 1"
     assert specimen_entry["custom_note"] == "Important specimen"
+    assert specimen_entry["parasite_density_info"][0]["parasite_density"] == 1200
+    assert (
+        specimen_entry["parasite_density_info"][0]["parasite_density_method"]
+        == "microscopy"
+    )
 
     sequencing_entry = pmo["sequencing_info"][0]
     assert sequencing_entry["seq_center"] == "UCSF Core"
