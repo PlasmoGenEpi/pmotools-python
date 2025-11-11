@@ -2,8 +2,25 @@
 	"bioinformatics_methods_info" :
 	[
 		{
-			"additional_methods" :
+			"methods" :
 			[
+				{
+					"program" : "SeekDeep extractorPairedEnd",
+					"program_description" : "Takes raw paired-end reads and demultiplexes on primers and does QC filtering",
+					"program_version" : "v2.6.5"
+				},
+				{
+					"additional_argument" :
+					[
+						"--illumina",
+						"--qualThres 25,20",
+						"--trimFront 1",
+						"--trimBack 1"
+					],
+					"program" : "SeekDeep qluster",
+					"program_description" : "Takes sequences per sample per target and clusters them",
+					"program_version" : "v2.6.5"
+				},
 				{
 					"additional_argument" :
 					[
@@ -18,27 +35,7 @@
 					"program_description" : "Compare across samples for each target to create population level identifiers and do post artifact cleanup",
 					"program_version" : "v2.6.5"
 				}
-			],
-			"bioinformatics_method_name" : "SeekDeep",
-			"demultiplexing_method" :
-			{
-				"program" : "SeekDeep extractorPairedEnd",
-				"program_description" : "Takes raw paired-end reads and demultiplexes on primers and does QC filtering",
-				"program_version" : "v2.6.5"
-			},
-			"denoising_method" :
-			{
-				"additional_argument" :
-				[
-					"--illumina",
-					"--qualThres 25,20",
-					"--trimFront 1",
-					"--trimBack 1"
-				],
-				"program" : "SeekDeep qluster",
-				"program_description" : "Takes sequences per sample per target and clusters them",
-				"program_version" : "v2.6.5"
-			}
+			]
 		}
 	],
 	"bioinformatics_run_info" :
@@ -2187,7 +2184,7 @@
 				"plate_name" : "8",
 				"plate_row" : "C"
 			},
-			"library_sample_name" : "8025874217",
+			"library_sample_name" : "8025874217_lib_name",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
 			"specimen_id" : 0
@@ -2199,7 +2196,7 @@
 				"plate_name" : "8",
 				"plate_row" : "B"
 			},
-			"library_sample_name" : "8025874266",
+			"library_sample_name" : "8025874266_lib_name",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
 			"specimen_id" : 1
@@ -2322,7 +2319,7 @@
 	],
 	"pmo_header" :
 	{
-		"creation_date" : "2025-07-22",
+		"creation_date" : "2025-11-03",
 		"generation_method" :
 		{
 			"program_name" : "elucidator combingallintopmojson",
@@ -2352,11 +2349,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 15285,
+									"reads" : 15285,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 16686,
+									"reads" : 16686,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2366,11 +2363,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2278,
+									"reads" : 2278,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2448,
+									"reads" : 2448,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2380,11 +2377,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1089,
+									"reads" : 1089,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1172,
+									"reads" : 1172,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2394,11 +2391,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 19391,
+									"reads" : 19391,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 20615,
+									"reads" : 20615,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2408,11 +2405,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 10595,
+									"reads" : 10595,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 11645,
+									"reads" : 11645,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2422,11 +2419,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 378,
+									"reads" : 378,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 408,
+									"reads" : 408,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2436,11 +2433,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 16586,
+									"reads" : 16586,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 17719,
+									"reads" : 17719,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2450,11 +2447,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 869,
+									"reads" : 869,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 936,
+									"reads" : 936,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2464,11 +2461,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 6967,
+									"reads" : 6967,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 7810,
+									"reads" : 7810,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2478,11 +2475,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1010,
+									"reads" : 1010,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1080,
+									"reads" : 1080,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2492,11 +2489,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 20051,
+									"reads" : 20051,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 21658,
+									"reads" : 21658,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2506,11 +2503,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 24537,
+									"reads" : 24537,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 26316,
+									"reads" : 26316,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2520,11 +2517,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 300,
+									"reads" : 300,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 327,
+									"reads" : 327,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2534,11 +2531,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 4256,
+									"reads" : 4256,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 4550,
+									"reads" : 4550,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2548,11 +2545,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 958,
+									"reads" : 958,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1028,
+									"reads" : 1028,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2562,11 +2559,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 31313,
+									"reads" : 31313,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 34255,
+									"reads" : 34255,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2576,11 +2573,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2554,
+									"reads" : 2554,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2798,
+									"reads" : 2798,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2590,11 +2587,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1213,
+									"reads" : 1213,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1271,
+									"reads" : 1271,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2604,11 +2601,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1379,
+									"reads" : 1379,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1462,
+									"reads" : 1462,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2618,11 +2615,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2310,
+									"reads" : 2310,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2421,
+									"reads" : 2421,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2632,11 +2629,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2014,
+									"reads" : 2014,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2126,
+									"reads" : 2126,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2646,11 +2643,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 44681,
+									"reads" : 44681,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 47559,
+									"reads" : 47559,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2660,7 +2657,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 273,
+									"reads" : 273,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2670,11 +2667,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 384,
+									"reads" : 384,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 410,
+									"reads" : 410,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2684,11 +2681,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 507,
+									"reads" : 507,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 594,
+									"reads" : 594,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2698,7 +2695,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 226,
+									"reads" : 226,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2708,11 +2705,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 3895,
+									"reads" : 3895,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 4189,
+									"reads" : 4189,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2722,11 +2719,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1579,
+									"reads" : 1579,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1650,
+									"reads" : 1650,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2736,7 +2733,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 222,
+									"reads" : 222,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2746,7 +2743,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 170,
+									"reads" : 170,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2756,7 +2753,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 150,
+									"reads" : 150,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2766,11 +2763,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1450,
+									"reads" : 1450,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1537,
+									"reads" : 1537,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2780,11 +2777,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 23438,
+									"reads" : 23438,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 25268,
+									"reads" : 25268,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2794,7 +2791,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 128,
+									"reads" : 128,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2804,7 +2801,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 269,
+									"reads" : 269,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2814,11 +2811,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 11091,
+									"reads" : 11091,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 11848,
+									"reads" : 11848,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2828,11 +2825,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 6522,
+									"reads" : 6522,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 7079,
+									"reads" : 7079,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2842,11 +2839,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 25203,
+									"reads" : 25203,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 27285,
+									"reads" : 27285,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2856,11 +2853,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 26863,
+									"reads" : 26863,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 29317,
+									"reads" : 29317,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2870,11 +2867,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 13601,
+									"reads" : 13601,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 14870,
+									"reads" : 14870,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2884,11 +2881,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 282,
+									"reads" : 282,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 298,
+									"reads" : 298,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2898,11 +2895,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 33117,
+									"reads" : 33117,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 35774,
+									"reads" : 35774,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2912,11 +2909,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 7336,
+									"reads" : 7336,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 8382,
+									"reads" : 8382,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2926,11 +2923,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1995,
+									"reads" : 1995,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2099,
+									"reads" : 2099,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2940,11 +2937,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 982,
+									"reads" : 982,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1036,
+									"reads" : 1036,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2954,11 +2951,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 6197,
+									"reads" : 6197,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 6765,
+									"reads" : 6765,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2968,11 +2965,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 19559,
+									"reads" : 19559,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 20984,
+									"reads" : 20984,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2982,11 +2979,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1167,
+									"reads" : 1167,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1229,
+									"reads" : 1229,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -2996,11 +2993,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 5895,
+									"reads" : 5895,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 6380,
+									"reads" : 6380,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3010,11 +3007,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 733,
+									"reads" : 733,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 786,
+									"reads" : 786,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3024,11 +3021,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 3576,
+									"reads" : 3576,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 3856,
+									"reads" : 3856,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3038,11 +3035,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 4213,
+									"reads" : 4213,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 4575,
+									"reads" : 4575,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3052,11 +3049,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 860,
+									"reads" : 860,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 942,
+									"reads" : 942,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3066,11 +3063,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 506,
+									"reads" : 506,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 546,
+									"reads" : 546,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3080,11 +3077,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 17721,
+									"reads" : 17721,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 19024,
+									"reads" : 19024,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3094,11 +3091,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 516,
+									"reads" : 516,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 546,
+									"reads" : 546,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3108,11 +3105,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 283,
+									"reads" : 283,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 298,
+									"reads" : 298,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3122,11 +3119,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 7629,
+									"reads" : 7629,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 8260,
+									"reads" : 8260,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3136,11 +3133,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2117,
+									"reads" : 2117,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2224,
+									"reads" : 2224,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3150,11 +3147,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 784,
+									"reads" : 784,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 826,
+									"reads" : 826,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3164,11 +3161,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 579,
+									"reads" : 579,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 622,
+									"reads" : 622,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3178,11 +3175,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 527,
+									"reads" : 527,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 563,
+									"reads" : 563,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3192,11 +3189,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2247,
+									"reads" : 2247,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2384,
+									"reads" : 2384,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3206,11 +3203,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 419,
+									"reads" : 419,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 444,
+									"reads" : 444,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3220,11 +3217,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 14122,
+									"reads" : 14122,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 16039,
+									"reads" : 16039,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3234,11 +3231,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1009,
+									"reads" : 1009,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1071,
+									"reads" : 1071,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3248,11 +3245,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 274,
+									"reads" : 274,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 300,
+									"reads" : 300,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3262,11 +3259,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 392,
+									"reads" : 392,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 426,
+									"reads" : 426,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3276,11 +3273,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 3516,
+									"reads" : 3516,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 3818,
+									"reads" : 3818,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3290,11 +3287,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2317,
+									"reads" : 2317,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2458,
+									"reads" : 2458,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3304,11 +3301,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 16859,
+									"reads" : 16859,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 17934,
+									"reads" : 17934,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3318,11 +3315,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 4739,
+									"reads" : 4739,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 5188,
+									"reads" : 5188,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3332,7 +3329,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 19,
+									"reads" : 19,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3342,11 +3339,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 371,
+									"reads" : 371,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 413,
+									"reads" : 413,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3356,11 +3353,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 537,
+									"reads" : 537,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 595,
+									"reads" : 595,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3370,11 +3367,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 11176,
+									"reads" : 11176,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 12286,
+									"reads" : 12286,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3384,11 +3381,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2539,
+									"reads" : 2539,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2663,
+									"reads" : 2663,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3398,7 +3395,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 232,
+									"reads" : 232,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3408,7 +3405,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 172,
+									"reads" : 172,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3418,11 +3415,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1901,
+									"reads" : 1901,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2051,
+									"reads" : 2051,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3432,11 +3429,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 22789,
+									"reads" : 22789,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 25098,
+									"reads" : 25098,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3446,11 +3443,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 3622,
+									"reads" : 3622,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 3947,
+									"reads" : 3947,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3460,11 +3457,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2182,
+									"reads" : 2182,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 2296,
+									"reads" : 2296,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3474,11 +3471,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 5344,
+									"reads" : 5344,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 5849,
+									"reads" : 5849,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3488,11 +3485,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1206,
+									"reads" : 1206,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1279,
+									"reads" : 1279,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3502,11 +3499,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 16298,
+									"reads" : 16298,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 17431,
+									"reads" : 17431,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3516,7 +3513,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 106,
+									"reads" : 106,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3526,11 +3523,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 2857,
+									"reads" : 2857,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 3115,
+									"reads" : 3115,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3540,11 +3537,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 710,
+									"reads" : 710,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 774,
+									"reads" : 774,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3554,11 +3551,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 775,
+									"reads" : 775,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 813,
+									"reads" : 813,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3568,11 +3565,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 618,
+									"reads" : 618,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 655,
+									"reads" : 655,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3582,7 +3579,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 4,
+									"reads" : 4,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3592,11 +3589,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1545,
+									"reads" : 1545,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1630,
+									"reads" : 1630,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3606,7 +3603,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 170,
+									"reads" : 170,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3616,11 +3613,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 34752,
+									"reads" : 34752,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 37672,
+									"reads" : 37672,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3630,11 +3627,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1324,
+									"reads" : 1324,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1416,
+									"reads" : 1416,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3644,11 +3641,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 1590,
+									"reads" : 1590,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 1663,
+									"reads" : 1663,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3658,11 +3655,11 @@
 							"stages" :
 							[
 								{
-									"read_count" : 46824,
+									"reads" : 46824,
 									"stage" : "final"
 								},
 								{
-									"read_count" : 50413,
+									"reads" : 50413,
 									"stage" : "demultiplexed"
 								}
 							],
@@ -3679,7 +3676,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 31484,
+									"reads" : 31484,
 									"stage" : "final"
 								}
 							],
@@ -3689,7 +3686,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 24076,
+									"reads" : 24076,
 									"stage" : "final"
 								}
 							],
@@ -3699,7 +3696,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 35619,
+									"reads" : 35619,
 									"stage" : "final"
 								}
 							],
@@ -3709,7 +3706,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 33465,
+									"reads" : 33465,
 									"stage" : "final"
 								}
 							],
@@ -3719,7 +3716,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 32066,
+									"reads" : 32066,
 									"stage" : "final"
 								}
 							],
@@ -3729,7 +3726,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 38609,
+									"reads" : 38609,
 									"stage" : "final"
 								}
 							],
@@ -3739,7 +3736,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 48414,
+									"reads" : 48414,
 									"stage" : "final"
 								}
 							],
@@ -3749,7 +3746,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 36695,
+									"reads" : 36695,
 									"stage" : "final"
 								}
 							],
@@ -3759,7 +3756,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 25447,
+									"reads" : 25447,
 									"stage" : "final"
 								}
 							],
@@ -3769,7 +3766,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 21610,
+									"reads" : 21610,
 									"stage" : "final"
 								}
 							],
@@ -3779,7 +3776,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 42576,
+									"reads" : 42576,
 									"stage" : "final"
 								}
 							],
@@ -3789,7 +3786,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49627,
+									"reads" : 49627,
 									"stage" : "final"
 								}
 							],
@@ -3799,7 +3796,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 45595,
+									"reads" : 45595,
 									"stage" : "final"
 								}
 							],
@@ -3809,7 +3806,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 17913,
+									"reads" : 17913,
 									"stage" : "final"
 								}
 							],
@@ -3819,7 +3816,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 42252,
+									"reads" : 42252,
 									"stage" : "final"
 								}
 							],
@@ -3829,7 +3826,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49641,
+									"reads" : 49641,
 									"stage" : "final"
 								}
 							],
@@ -3839,7 +3836,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49953,
+									"reads" : 49953,
 									"stage" : "final"
 								}
 							],
@@ -3849,7 +3846,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 33844,
+									"reads" : 33844,
 									"stage" : "final"
 								}
 							],
@@ -3859,7 +3856,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 25697,
+									"reads" : 25697,
 									"stage" : "final"
 								}
 							],
@@ -3869,7 +3866,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 46915,
+									"reads" : 46915,
 									"stage" : "final"
 								}
 							],
@@ -3879,7 +3876,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49966,
+									"reads" : 49966,
 									"stage" : "final"
 								}
 							],
@@ -3889,7 +3886,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 38480,
+									"reads" : 38480,
 									"stage" : "final"
 								}
 							],
@@ -3899,7 +3896,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 18960,
+									"reads" : 18960,
 									"stage" : "final"
 								}
 							],
@@ -3909,7 +3906,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 33183,
+									"reads" : 33183,
 									"stage" : "final"
 								}
 							],
@@ -3919,7 +3916,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 31147,
+									"reads" : 31147,
 									"stage" : "final"
 								}
 							],
@@ -3929,7 +3926,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 35366,
+									"reads" : 35366,
 									"stage" : "final"
 								}
 							],
@@ -3939,7 +3936,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 29611,
+									"reads" : 29611,
 									"stage" : "final"
 								}
 							],
@@ -3949,7 +3946,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 27075,
+									"reads" : 27075,
 									"stage" : "final"
 								}
 							],
@@ -3959,7 +3956,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 36178,
+									"reads" : 36178,
 									"stage" : "final"
 								}
 							],
@@ -3969,7 +3966,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 28161,
+									"reads" : 28161,
 									"stage" : "final"
 								}
 							],
@@ -3979,7 +3976,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 48791,
+									"reads" : 48791,
 									"stage" : "final"
 								}
 							],
@@ -3989,7 +3986,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 15826,
+									"reads" : 15826,
 									"stage" : "final"
 								}
 							],
@@ -3999,7 +3996,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 43173,
+									"reads" : 43173,
 									"stage" : "final"
 								}
 							],
@@ -4009,7 +4006,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49946,
+									"reads" : 49946,
 									"stage" : "final"
 								}
 							],
@@ -4019,7 +4016,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 45402,
+									"reads" : 45402,
 									"stage" : "final"
 								}
 							],
@@ -4029,7 +4026,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 29636,
+									"reads" : 29636,
 									"stage" : "final"
 								}
 							],
@@ -4039,7 +4036,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 47034,
+									"reads" : 47034,
 									"stage" : "final"
 								}
 							],
@@ -4049,7 +4046,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49955,
+									"reads" : 49955,
 									"stage" : "final"
 								}
 							],
@@ -4059,7 +4056,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 16463,
+									"reads" : 16463,
 									"stage" : "final"
 								}
 							],
@@ -4069,7 +4066,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49802,
+									"reads" : 49802,
 									"stage" : "final"
 								}
 							],
@@ -4079,7 +4076,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 24539,
+									"reads" : 24539,
 									"stage" : "final"
 								}
 							],
@@ -4089,7 +4086,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 41530,
+									"reads" : 41530,
 									"stage" : "final"
 								}
 							],
@@ -4099,7 +4096,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 42184,
+									"reads" : 42184,
 									"stage" : "final"
 								}
 							],
@@ -4109,7 +4106,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 28057,
+									"reads" : 28057,
 									"stage" : "final"
 								}
 							],
@@ -4119,7 +4116,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 27730,
+									"reads" : 27730,
 									"stage" : "final"
 								}
 							],
@@ -4129,7 +4126,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49338,
+									"reads" : 49338,
 									"stage" : "final"
 								}
 							],
@@ -4139,7 +4136,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 44481,
+									"reads" : 44481,
 									"stage" : "final"
 								}
 							],
@@ -4149,7 +4146,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49365,
+									"reads" : 49365,
 									"stage" : "final"
 								}
 							],
@@ -4159,7 +4156,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 39009,
+									"reads" : 39009,
 									"stage" : "final"
 								}
 							],
@@ -4169,7 +4166,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 37407,
+									"reads" : 37407,
 									"stage" : "final"
 								}
 							],
@@ -4179,7 +4176,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 29934,
+									"reads" : 29934,
 									"stage" : "final"
 								}
 							],
@@ -4189,7 +4186,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49971,
+									"reads" : 49971,
 									"stage" : "final"
 								}
 							],
@@ -4199,7 +4196,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 23924,
+									"reads" : 23924,
 									"stage" : "final"
 								}
 							],
@@ -4209,7 +4206,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 29713,
+									"reads" : 29713,
 									"stage" : "final"
 								}
 							],
@@ -4219,7 +4216,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 38625,
+									"reads" : 38625,
 									"stage" : "final"
 								}
 							],
@@ -4229,7 +4226,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49969,
+									"reads" : 49969,
 									"stage" : "final"
 								}
 							],
@@ -4239,7 +4236,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 45069,
+									"reads" : 45069,
 									"stage" : "final"
 								}
 							],
@@ -4249,7 +4246,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 24050,
+									"reads" : 24050,
 									"stage" : "final"
 								}
 							],
@@ -4259,7 +4256,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 41999,
+									"reads" : 41999,
 									"stage" : "final"
 								}
 							],
@@ -4269,7 +4266,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 48335,
+									"reads" : 48335,
 									"stage" : "final"
 								}
 							],
@@ -4279,7 +4276,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 41343,
+									"reads" : 41343,
 									"stage" : "final"
 								}
 							],
@@ -4289,7 +4286,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49944,
+									"reads" : 49944,
 									"stage" : "final"
 								}
 							],
@@ -4299,7 +4296,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 37382,
+									"reads" : 37382,
 									"stage" : "final"
 								}
 							],
@@ -4309,7 +4306,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 44271,
+									"reads" : 44271,
 									"stage" : "final"
 								}
 							],
@@ -4319,7 +4316,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 24451,
+									"reads" : 24451,
 									"stage" : "final"
 								}
 							],
@@ -4329,7 +4326,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49746,
+									"reads" : 49746,
 									"stage" : "final"
 								}
 							],
@@ -4339,7 +4336,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49910,
+									"reads" : 49910,
 									"stage" : "final"
 								}
 							],
@@ -4349,7 +4346,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 25672,
+									"reads" : 25672,
 									"stage" : "final"
 								}
 							],
@@ -4359,7 +4356,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 35612,
+									"reads" : 35612,
 									"stage" : "final"
 								}
 							],
@@ -4369,7 +4366,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49786,
+									"reads" : 49786,
 									"stage" : "final"
 								}
 							],
@@ -4379,7 +4376,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 29564,
+									"reads" : 29564,
 									"stage" : "final"
 								}
 							],
@@ -4389,7 +4386,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 21816,
+									"reads" : 21816,
 									"stage" : "final"
 								}
 							],
@@ -4399,7 +4396,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 36326,
+									"reads" : 36326,
 									"stage" : "final"
 								}
 							],
@@ -4409,7 +4406,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 29426,
+									"reads" : 29426,
 									"stage" : "final"
 								}
 							],
@@ -4419,7 +4416,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 31697,
+									"reads" : 31697,
 									"stage" : "final"
 								}
 							],
@@ -4429,7 +4426,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 44365,
+									"reads" : 44365,
 									"stage" : "final"
 								}
 							],
@@ -4439,7 +4436,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 5984,
+									"reads" : 5984,
 									"stage" : "final"
 								}
 							],
@@ -4449,7 +4446,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 37749,
+									"reads" : 37749,
 									"stage" : "final"
 								}
 							],
@@ -4459,7 +4456,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 46063,
+									"reads" : 46063,
 									"stage" : "final"
 								}
 							],
@@ -4469,7 +4466,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 37213,
+									"reads" : 37213,
 									"stage" : "final"
 								}
 							],
@@ -4479,7 +4476,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 43031,
+									"reads" : 43031,
 									"stage" : "final"
 								}
 							],
@@ -4489,7 +4486,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 14142,
+									"reads" : 14142,
 									"stage" : "final"
 								}
 							],
@@ -4499,7 +4496,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49745,
+									"reads" : 49745,
 									"stage" : "final"
 								}
 							],
@@ -4509,7 +4506,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 34260,
+									"reads" : 34260,
 									"stage" : "final"
 								}
 							],
@@ -4519,7 +4516,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 30666,
+									"reads" : 30666,
 									"stage" : "final"
 								}
 							],
@@ -4529,7 +4526,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 47489,
+									"reads" : 47489,
 									"stage" : "final"
 								}
 							],
@@ -4539,7 +4536,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49972,
+									"reads" : 49972,
 									"stage" : "final"
 								}
 							],
@@ -4549,7 +4546,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 37605,
+									"reads" : 37605,
 									"stage" : "final"
 								}
 							],
@@ -4559,7 +4556,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 19230,
+									"reads" : 19230,
 									"stage" : "final"
 								}
 							],
@@ -4569,7 +4566,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49701,
+									"reads" : 49701,
 									"stage" : "final"
 								}
 							],
@@ -4579,7 +4576,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 41271,
+									"reads" : 41271,
 									"stage" : "final"
 								}
 							],
@@ -4589,7 +4586,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 32967,
+									"reads" : 32967,
 									"stage" : "final"
 								}
 							],
@@ -4599,7 +4596,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 3634,
+									"reads" : 3634,
 									"stage" : "final"
 								}
 							],
@@ -4609,7 +4606,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 28109,
+									"reads" : 28109,
 									"stage" : "final"
 								}
 							],
@@ -4619,7 +4616,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 37013,
+									"reads" : 37013,
 									"stage" : "final"
 								}
 							],
@@ -4629,7 +4626,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 29147,
+									"reads" : 29147,
 									"stage" : "final"
 								}
 							],
@@ -4639,7 +4636,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 34162,
+									"reads" : 34162,
 									"stage" : "final"
 								}
 							],
@@ -4649,7 +4646,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49728,
+									"reads" : 49728,
 									"stage" : "final"
 								}
 							],
@@ -4659,7 +4656,7 @@
 							"stages" :
 							[
 								{
-									"read_count" : 49740,
+									"reads" : 49740,
 									"stage" : "final"
 								}
 							],
