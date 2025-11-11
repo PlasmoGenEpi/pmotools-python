@@ -481,6 +481,41 @@ class PMOProcessor:
         return counts_df
 
     @staticmethod
+    def export_population_info_for_library_sample_name(
+        pmo, specimen_meta_fields: list[str]
+    ):
+        ret = {}
+        for lib_sample in pmo["library_sample_info"]:
+            pop_name = ""
+
+            for meta_field in specimen_meta_fields:
+                if "" != pop_name:
+                    pop_name += "-"
+                if meta_field in pmo["specimen_info"][lib_sample["specimen_id"]]:
+                    pop_name += pmo["specimen_info"][lib_sample["specimen_id"]][
+                        meta_field
+                    ]
+                else:
+                    pop_name += "NA"
+            ret[lib_sample["library_sample_name"]] = pop_name
+        return ret
+
+    @staticmethod
+    def export_population_info_for_specimen_name(pmo, specimen_meta_fields: list[str]):
+        ret = {}
+        for specimen in pmo["specimen_info"]:
+            pop_name = ""
+            for meta_field in specimen_meta_fields:
+                if "" != pop_name:
+                    pop_name += "-"
+                if meta_field in specimen:
+                    pop_name += specimen[meta_field]
+                else:
+                    pop_name += "NA"
+            ret[specimen["specimen_name"]] = pop_name
+        return ret
+
+    @staticmethod
     def count_specimen_by_field_value(pmodata, meta_fields: list[str]) -> pd.DataFrame:
         """
         Count the values of the meta fields. If a specimen doesn't have a field, it is marked as 'NA'.

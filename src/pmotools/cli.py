@@ -41,6 +41,7 @@ from pmotools.scripts.extractors_from_pmo.extract_allele_table import (
     extract_for_allele_table,
 )
 
+
 # pmo_utils
 from pmotools.scripts.pmo_utils.combine_pmos import combine_pmos
 from pmotools.scripts.pmo_utils.validate_pmo import validate_pmo
@@ -63,6 +64,10 @@ from pmotools.scripts.extract_info_from_pmo.count_targets_per_library_sample imp
 )
 from pmotools.scripts.extract_info_from_pmo.count_library_samples_per_target import (
     count_library_samples_per_target,
+)
+
+from pmotools.scripts.extract_info_from_pmo.export_population_names import (
+    export_population_names,
 )
 
 # panel info subset
@@ -153,6 +158,10 @@ REGISTRY: Dict[str, Dict[str, PmoCommand]] = {
         ),
         "count_library_samples_per_target": PmoCommand(
             count_library_samples_per_target, "Count number of samples per target"
+        ),
+        "export_population_names": PmoCommand(
+            export_population_names,
+            "Export a population name by comining meta fields for library_sample_names or specimen_names",
         ),
     },
     "validation": {
