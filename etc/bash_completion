@@ -3,6 +3,12 @@
 
 _pmotools_python_complete()
 {
+    # Make sure underscores (and =) are NOT treated as word breaks
+    # so options like --pmo_files or --file=path complete as one token.
+    local _OLD_WB="${COMP_WORDBREAKS-}"
+    COMP_WORDBREAKS="${COMP_WORDBREAKS//_/}"
+    COMP_WORDBREAKS="${COMP_WORDBREAKS//=}"
+
     local cur prev
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -16,6 +22,9 @@ _pmotools_python_complete()
         lines="$(${COMP_WORDS[0]} --list-plain 2>/dev/null)"
         cmds="$(printf '%s\n' "${lines}" | awk -F'\t' '{print $1}')"
         COMPREPLY=( $(compgen -W "${cmds}" -- "${cur}") )
+
+        # restore wordbreaks before returning
+        COMP_WORDBREAKS="$_OLD_WB"
         return 0
     fi
 
@@ -24,15 +33,21 @@ _pmotools_python_complete()
         local helps opts
         helps="$(${COMP_WORDS[0]} ${COMP_WORDS[1]} -h 2>/dev/null)"
         # Pull out flag tokens and split comma-separated forms
+        # Keep underscores intact in the tokens.
         opts="$(printf '%s\n' "${helps}" \
-            | sed -n 's/^[[:space:]]\{0,\}\(-[-[:alnum:]][-[:alnum:]]*\)\(, *-[[:alnum:]][-[:alnum:]]*\)\{0,\}.*/\1/p' \
+            | sed -n 's/^[[:space:]]\{0,\}\(-[-[:alnum:]_][-[:alnum:]_]*\)\(, *-[[:alnum:]_][-[:alnum:]_]*\)\{0,\}.*/\1/p' \
             | sed 's/, / /g')"
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+
+        COMP_WORDBREAKS="$_OLD_WB"
         return 0
     fi
 
     # 3) Otherwise, fall back to filename completion for positional args
     COMPREPLY=( $(compgen -f -- "${cur}") )
+
+    # restore original word breaks
+    COMP_WORDBREAKS="$_OLD_WB"
     return 0
 }
 

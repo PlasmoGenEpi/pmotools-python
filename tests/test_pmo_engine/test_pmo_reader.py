@@ -85,7 +85,7 @@ class TestPMOReader(unittest.TestCase):
         combined_pmo = PMOReader.combine_multiple_pmos(pmo_data_list)
         # validate with schema
         pmo_jsonschema_data = load_schema(
-            "portable_microhaplotype_object_v0.1.0.schema.json"
+            "portable_microhaplotype_object_v1.0.0.schema.json"
         )
         checker = PMOChecker(pmo_jsonschema_data)
         checker.validate_pmo_json(combined_pmo)

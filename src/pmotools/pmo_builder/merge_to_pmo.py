@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 from datetime import date
-
 import numpy as np
-
+import json
+from pmotools import __version__ as __pmotools_version__
 
 def _convert_numpy_scalars(obj):
     """Recursively convert numpy scalar types to native Python types."""
@@ -122,11 +122,11 @@ def _generate_pmo_header():
     today = date.today().isoformat()
     # TODO: update to grab pmo version - will put this in a seperate PR
     pmo_header = {
-        "pmo_version": "1.0.0",
+        "pmo_version": __pmotools_version__,
         "creation_date": today,
         "generation_method": {
             "program_name": "pmotools-python",
-            "program_version": "1.0.0",
+            "program_version": __pmotools_version__,
         },
     }
     return pmo_header

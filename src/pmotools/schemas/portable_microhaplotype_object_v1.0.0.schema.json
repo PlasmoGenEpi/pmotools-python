@@ -2,10 +2,10 @@
     "$defs": {
         "BioMethod": {
             "additionalProperties": true,
-            "description": "methodology description of a portion of a bioinformatics pipeline",
+            "description": "bioinformatics methodology description with info on program, version, and arguments different from the default",
             "properties": {
                 "additional_argument": {
-                    "description": "any additional arguments that differ from the default",
+                    "description": "any additional arguments that differ from the default arguments",
                     "items": {
                         "pattern": "^[A-z-._0-9{}\\(\\),\\/\\ ]+$",
                         "type": "string"
@@ -37,7 +37,7 @@
                     ]
                 },
                 "program_version": {
-                    "description": "the version of generation method, should be in the format of v[MAJOR].[MINOR].[PATCH]",
+                    "description": "the version of program, should be in the format of v[MAJOR].[MINOR].[PATCH]",
                     "pattern": "^[A-z-._0-9 ]+$",
                     "type": "string"
                 }
@@ -51,45 +51,25 @@
         },
         "BioinformaticsMethodInfo": {
             "additionalProperties": true,
-            "description": "the targeted amplicon bioinformatics pipeline",
+            "description": "the targeted amplicon bioinformatics methods used to generate the microhaplotype data in this PMO",
             "properties": {
-                "additional_methods": {
-                    "description": "any additional methods used to analyze the data",
+                "methods": {
+                    "description": "methodology used to generate the microhaplotype data stored in this PMO, e.g. demultiplexing method, denosing method, or a pipeline method that ties all th steps together",
                     "items": {
                         "$ref": "#/$defs/BioMethod"
                     },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "bioinformatics_method_name": {
-                    "description": "name of the collection of methods is called, e.g. pipeline ",
-                    "pattern": "^[A-z-._0-9 ]+$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "demultiplexing_method": {
-                    "$ref": "#/$defs/BioMethod",
-                    "description": "the demultiplexing method used to separate raw reads from barcodes and primer targets"
-                },
-                "denoising_method": {
-                    "$ref": "#/$defs/BioMethod",
-                    "description": "the method used to de-noise and/or cluster the raw reads"
+                    "type": "array"
                 }
             },
             "required": [
-                "demultiplexing_method",
-                "denoising_method"
+                "methods"
             ],
             "title": "BioinformaticsMethodInfo",
             "type": "object"
         },
         "BioinformaticsRunInfo": {
             "additionalProperties": true,
-            "description": "Information about the pipeline run that generated some of the microhaplotype detected and reads_by_stage",
+            "description": "Information about the pipeline run that generated microhaplotype_detected and reads_by_stage",
             "properties": {
                 "bioinformatics_methods_id": {
                     "description": "the index into the bioinformatics_methods_info list",
@@ -129,7 +109,7 @@
                     "type": "integer"
                 },
                 "library_samples": {
-                    "description": "a list of the microhaplotypes detected for a sample by targets ",
+                    "description": "a list of the microhaplotypes detected for all samples with a list for each target ",
                     "items": {
                         "$ref": "#/$defs/DetectedMicrohaplotypesForSample"
                     },
@@ -198,7 +178,7 @@
             "description": "information on a genome",
             "properties": {
                 "chromosomes": {
-                    "description": "a list of chromosomes found within this genome",
+                    "description": "a list of the chromosomes/contigs found within this genome",
                     "items": {
                         "pattern": "^[A-z-._0-9]+$",
                         "type": "string"
@@ -227,7 +207,7 @@
                     "type": "string"
                 },
                 "taxon_id": {
-                    "description": "the NCBI taxonomy number, can be a list of values",
+                    "description": "the NCBI taxonomy number, can be a list of values if it's a genome file that has been created by combining gnomes from different species",
                     "items": {
                         "minimum": 0,
                         "pattern": "^[0-9]$",
@@ -316,7 +296,7 @@
             "description": "Information about a specific amplification and sequencing of a specimen",
             "properties": {
                 "alternate_identifiers": {
-                    "description": "a list of optional alternative names",
+                    "description": "a list of alternative names",
                     "items": {
                         "pattern": "^[A-z-._0-9 ]+$",
                         "type": "string"
@@ -354,7 +334,7 @@
                     "description": "plate location of where library was prepared for sequencing "
                 },
                 "library_sample_name": {
-                    "description": "a unique identifier for this sequence/amplification run on a specimen_name",
+                    "description": "a unique identifier for this sequencing/amplification run",
                     "pattern": "^[A-z-._0-9 ]+$",
                     "type": "string"
                 },
@@ -477,12 +457,12 @@
                     "type": "integer"
                 },
                 "reads": {
-                    "description": "the read count associated with this microhaplotype",
+                    "description": "the read count for this microhaplotype",
                     "minimum": 0,
                     "type": "integer"
                 },
                 "umis": {
-                    "description": "the unique molecular identifier (umi) count associated with this microhaplotype",
+                    "description": "the unique molecular identifier (umi) count for this microhaplotype",
                     "minimum": 0,
                     "type": [
                         "integer",
@@ -562,10 +542,10 @@
         },
         "PlateInfo": {
             "additionalProperties": true,
-            "description": "Information about a plate location in a standard 96 well plate",
+            "description": "Information about a plate location, e.g. a standard 96 well plate with row having a letter and column having a number",
             "properties": {
                 "plate_col": {
-                    "description": "the column the specimen was in",
+                    "description": "the column position",
                     "minimum": 0,
                     "pattern": "^[0-9]+$",
                     "type": [
@@ -574,7 +554,7 @@
                     ]
                 },
                 "plate_name": {
-                    "description": "a name of plate the specimen was in",
+                    "description": "a name for the plate",
                     "pattern": "^[A-z-._0-9 ]+$",
                     "type": [
                         "string",
@@ -582,7 +562,7 @@
                     ]
                 },
                 "plate_row": {
-                    "description": "the row the specimen was in",
+                    "description": "the row position",
                     "pattern": "^[A-z]$",
                     "type": [
                         "string",
@@ -603,7 +583,7 @@
                     "type": "string"
                 },
                 "program_version": {
-                    "description": "the version of generation method, should be in the format of v[MAJOR].[MINOR].[PATCH]",
+                    "description": "the version of program, should be in the format of v[MAJOR].[MINOR].[PATCH]",
                     "pattern": "^[A-z-._0-9 ]+$",
                     "type": "string"
                 }
@@ -617,7 +597,7 @@
         },
         "PmoHeader": {
             "additionalProperties": true,
-            "description": "Information on the PMO file",
+            "description": "Information on the PMO file itself",
             "properties": {
                 "creation_date": {
                     "description": "the date of when the PMO file was created or modified, should be YYYY-MM-DD",
@@ -652,17 +632,17 @@
         },
         "PortableMicrohaplotypeObject": {
             "additionalProperties": true,
-            "description": "Information on final results from a targeted amplicon analysis",
+            "description": "Information on final microhaplotype results from a targeted amplicon analysis with associated meta data",
             "properties": {
                 "bioinformatics_methods_info": {
-                    "description": "the bioinformatics pipeline/methods used to generated the amplicon analysis for this project",
+                    "description": "the bioinformatics pipeline/methods used to generated the microhaplotype analysis for this project",
                     "items": {
                         "$ref": "#/$defs/BioinformaticsMethodInfo"
                     },
                     "type": "array"
                 },
                 "bioinformatics_run_info": {
-                    "description": "the runtime info for the bioinformatics pipeline used to generated the amplicon analysis for this project",
+                    "description": "the runtime info for the bioinformatics pipeline used to generated the microhaplotypes analysis for this project",
                     "items": {
                         "$ref": "#/$defs/BioinformaticsRunInfo"
                     },
@@ -676,7 +656,7 @@
                     "type": "array"
                 },
                 "library_sample_info": {
-                    "description": "a list of libraries of all the seq/amp of the specimens within this project",
+                    "description": "a list of libraries of all the seq/amp of the specimens within this PMO file",
                     "items": {
                         "$ref": "#/$defs/LibrarySampleInfo"
                     },
@@ -701,7 +681,7 @@
                     "type": "array"
                 },
                 "read_counts_by_stage": {
-                    "description": "the read counts for different stages of the pipeline",
+                    "description": "the read counts for library_samples for different stages of the pipeline",
                     "items": {
                         "$ref": "#/$defs/ReadCountsByStage"
                     },
@@ -715,14 +695,14 @@
                     "description": "a list of the information on the representative microhaplotypes"
                 },
                 "sequencing_info": {
-                    "description": "a list of sequencing info for this project",
+                    "description": "a list of sequencing infos for this PMO file",
                     "items": {
                         "$ref": "#/$defs/SequencingInfo"
                     },
                     "type": "array"
                 },
                 "specimen_info": {
-                    "description": "a list of all the specimens within this project",
+                    "description": "a list of all the specimens within this PMO file",
                     "items": {
                         "$ref": "#/$defs/SpecimenInfo"
                     },
@@ -736,7 +716,7 @@
                     "type": "array"
                 },
                 "targeted_genomes": {
-                    "description": "a list of genomes that the targets in TargetInfo refer to",
+                    "description": "a list of genomes that any genomic location information refers to",
                     "items": {
                         "$ref": "#/$defs/GenomeInfo"
                     },
@@ -776,7 +756,7 @@
                     "description": "what the intended genomic location of the primer is"
                 },
                 "seq": {
-                    "description": "the DNA sequence",
+                    "description": "the sequence",
                     "pattern": "^[A-z]+$",
                     "type": "string"
                 }
@@ -789,7 +769,7 @@
         },
         "ProjectInfo": {
             "additionalProperties": true,
-            "description": "Information on project info",
+            "description": "Information on a project underwhich a collection of specimens belong to",
             "properties": {
                 "BioProject_accession": {
                     "description": "an SRA bioproject accession e.g. PRJNA33823",
@@ -868,7 +848,7 @@
                 },
                 "gene_name": {
                     "description": "an identifier of the gene, if any, is being covered with this targeted",
-                    "pattern": "^[A-z-._0-9]+$",
+                    "pattern": "^[A-z-._0-9:]+$",
                     "type": [
                         "string",
                         "null"
@@ -1025,7 +1005,7 @@
         },
         "RepresentativeMicrohaplotype": {
             "additionalProperties": true,
-            "description": "the representative sequence for a microhaplotype, similar to a fast(a/q) format",
+            "description": "the representative sequence for a microhaplotype",
             "properties": {
                 "alt_annotations": {
                     "description": "a list of additional annotations associated with this microhaplotype, e.g. wildtype",
@@ -1038,7 +1018,7 @@
                     ]
                 },
                 "associated_protein_variants": {
-                    "description": "a list of associated protein variants with this haplotype, e.g. amino acid changes/INDELS",
+                    "description": "a list of protein variants for this haplotype, e.g. amino acid changes/INDELS",
                     "items": {
                         "$ref": "#/$defs/ProteinVariant"
                     },
@@ -1048,7 +1028,7 @@
                     ]
                 },
                 "associated_seq_variants": {
-                    "description": "a list of associated sequence variants with this haplotype, e.g. SNPS, indels",
+                    "description": "a list of sequence variants for this haplotype, e.g. SNPS, indels",
                     "items": {
                         "$ref": "#/$defs/GenomicLocation"
                     },
@@ -1088,7 +1068,7 @@
                     "pattern": "^[A-z-._0-9]+$"
                 },
                 "quality": {
-                    "description": "the ansi fastq per base quality score for this sequence, this is optional",
+                    "description": "the ASCII fastq per base quality score for this sequence, this is optional, must be same length as the sequence",
                     "pattern": "^[A-z-._0-9]+$",
                     "type": [
                         "string",
@@ -1096,7 +1076,7 @@
                     ]
                 },
                 "seq": {
-                    "description": "the DNA sequence",
+                    "description": "the sequence",
                     "pattern": "^[A-z]+$",
                     "type": "string"
                 }
@@ -1112,7 +1092,7 @@
             "description": "a collection of representative sequences for microhaplotypes for all targets",
             "properties": {
                 "targets": {
-                    "description": "a list of the microhaplotype for each targets ",
+                    "description": "a list of the microhaplotypes for each targets ",
                     "items": {
                         "$ref": "#/$defs/RepresentativeMicrohaplotypesForTarget"
                     },
@@ -1127,7 +1107,7 @@
         },
         "RepresentativeMicrohaplotypesForTarget": {
             "additionalProperties": true,
-            "description": "a list of the representative sequence for a microhaplotypes, similar to a fast(a/q) format",
+            "description": "a list of the representative sequence for the microhaplotypes for a target",
             "properties": {
                 "mhap_location": {
                     "anyOf": [
@@ -1138,10 +1118,10 @@
                             "type": "null"
                         }
                     ],
-                    "description": "a genomic location that was analyzed for this target info, this allows listing location that may be different from the full target location (e.g 1 base in from the full) "
+                    "description": "a genomic location that was analyzed for this target info, this allows listing location that may be different from the full target location (e.g 1 trimmed off the full length) "
                 },
                 "microhaplotypes": {
-                    "description": "a list of the microhaplotypes detected for a target",
+                    "description": "a list of all the microhaplotypes for a target",
                     "items": {
                         "$ref": "#/$defs/RepresentativeMicrohaplotype"
                     },
@@ -1192,7 +1172,7 @@
                     "type": "string"
                 },
                 "library_source": {
-                    "description": "Source of amplification material (common names GENOMIC, TRANSCRIPTOMIC)",
+                    "description": "Source of amplification material e.g. was it DNA (GENOMIC) or RNA (TRANSCRIPTOMIC) (common names GENOMIC, TRANSCRIPTOMIC)",
                     "pattern": "^[A-z-._0-9 ]+$",
                     "type": "string"
                 },
@@ -1268,7 +1248,7 @@
                     "type": "string"
                 },
                 "sequencing_info_name": {
-                    "description": "a name of for the sequencing done, e.g. batch1",
+                    "description": "a name for a specific sequencing run, e.g. batch1",
                     "pattern": "^[A-z-._0-9 ]+$",
                     "type": "string"
                 }
@@ -1290,7 +1270,7 @@
             "description": "Information on specimen info",
             "properties": {
                 "alternate_identifiers": {
-                    "description": "a list of optional alternative names",
+                    "description": "a list of alternative names",
                     "items": {
                         "pattern": "^[A-z-._0-9 ]+$",
                         "type": "string"
@@ -1406,7 +1386,7 @@
                     ]
                 },
                 "host_sex": {
-                    "description": "if specimen is from a person, the sex listed for that person",
+                    "description": "if specimen is collected from a host with a sex, the sex listed for that host",
                     "pattern": "^[A-z-._0-9 ]+$",
                     "type": [
                         "string",
@@ -1481,7 +1461,7 @@
                 },
                 "specimen_name": {
                     "description": "an identifier for the specimen, should be unique within this sample set",
-                    "pattern": "^[A-z-._0-9 ]+$",
+                    "pattern": "^[A-z-._0-9\\(\\),\\/\\ ]+$",
                     "type": "string"
                 },
                 "specimen_store_loc": {
@@ -1493,7 +1473,7 @@
                     ]
                 },
                 "specimen_taxon_id": {
-                    "description": "the NCBI taxonomy number of the organism in specimen, can list multiple if a mixed sample",
+                    "description": "the NCBI taxonomy number of the organism(s) in the specimen, can list multiple if a mixed sample",
                     "items": {
                         "minimum": 0,
                         "pattern": "^[0-9]+$",
@@ -1557,10 +1537,9 @@
             "additionalProperties": true,
             "description": "Information on the reads counts at several stages",
             "properties": {
-                "read_count": {
-                    "description": "the read counts",
+                "reads": {
+                    "description": "the read counts for this stage",
                     "minimum": 0,
-                    "pattern": "^[0-9]+$",
                     "type": "integer"
                 },
                 "stage": {
@@ -1570,7 +1549,7 @@
                 }
             },
             "required": [
-                "read_count",
+                "reads",
                 "stage"
             ],
             "title": "StageReadCounts",
@@ -1578,15 +1557,15 @@
         },
         "TargetInfo": {
             "additionalProperties": true,
-            "description": "Information about a specific target within a genome",
+            "description": "Information about a specific targeted microhaplotype",
             "properties": {
                 "forward_primer": {
                     "$ref": "#/$defs/PrimerInfo",
-                    "description": "the forward primer associated with this target"
+                    "description": "the forward primer for this target"
                 },
                 "gene_name": {
                     "description": "an identifier of the gene, if any, is being covered with this targeted",
-                    "pattern": "^[A-z-._0-9]+$",
+                    "pattern": "^[A-z-._0-9:]+$",
                     "type": [
                         "string",
                         "null"
@@ -1604,7 +1583,7 @@
                     "description": "the intended genomic location of the insert of the amplicon (the location between the end of the forward primer and the beginning of the reverse primer)"
                 },
                 "markers_of_interest": {
-                    "description": "a list of covered markers of interest",
+                    "description": "a list of markers of interest that are covered by this target",
                     "items": {
                         "$ref": "#/$defs/MarkerOfInterest"
                     },
@@ -1615,10 +1594,10 @@
                 },
                 "reverse_primer": {
                     "$ref": "#/$defs/PrimerInfo",
-                    "description": "the reverse primer associated with this target"
+                    "description": "the reverse primer for this target"
                 },
                 "target_attributes": {
-                    "description": "a list of classification type for the primer target",
+                    "description": "a list of classification types for this target",
                     "items": {
                         "type": "string"
                     },
@@ -1628,7 +1607,7 @@
                     ]
                 },
                 "target_name": {
-                    "description": "an identifier for this target",
+                    "description": "a name for this target",
                     "pattern": "^[A-z-._0-9]+$",
                     "type": "string"
                 }
@@ -1710,18 +1689,18 @@
     "$id": "https://plasmogenepi.github.io/portable-microhaplotype-object",
     "$schema": "https://json-schema.org/draft/2019-09/schema",
     "additionalProperties": true,
-    "description": "Information on final results from a targeted amplicon analysis",
+    "description": "Information on final microhaplotype results from a targeted amplicon analysis with associated meta data",
     "metamodel_version": "1.7.0",
     "properties": {
         "bioinformatics_methods_info": {
-            "description": "the bioinformatics pipeline/methods used to generated the amplicon analysis for this project",
+            "description": "the bioinformatics pipeline/methods used to generated the microhaplotype analysis for this project",
             "items": {
                 "$ref": "#/$defs/BioinformaticsMethodInfo"
             },
             "type": "array"
         },
         "bioinformatics_run_info": {
-            "description": "the runtime info for the bioinformatics pipeline used to generated the amplicon analysis for this project",
+            "description": "the runtime info for the bioinformatics pipeline used to generated the microhaplotypes analysis for this project",
             "items": {
                 "$ref": "#/$defs/BioinformaticsRunInfo"
             },
@@ -1735,7 +1714,7 @@
             "type": "array"
         },
         "library_sample_info": {
-            "description": "a list of libraries of all the seq/amp of the specimens within this project",
+            "description": "a list of libraries of all the seq/amp of the specimens within this PMO file",
             "items": {
                 "$ref": "#/$defs/LibrarySampleInfo"
             },
@@ -1760,7 +1739,7 @@
             "type": "array"
         },
         "read_counts_by_stage": {
-            "description": "the read counts for different stages of the pipeline",
+            "description": "the read counts for library_samples for different stages of the pipeline",
             "items": {
                 "$ref": "#/$defs/ReadCountsByStage"
             },
@@ -1774,14 +1753,14 @@
             "description": "a list of the information on the representative microhaplotypes"
         },
         "sequencing_info": {
-            "description": "a list of sequencing info for this project",
+            "description": "a list of sequencing infos for this PMO file",
             "items": {
                 "$ref": "#/$defs/SequencingInfo"
             },
             "type": "array"
         },
         "specimen_info": {
-            "description": "a list of all the specimens within this project",
+            "description": "a list of all the specimens within this PMO file",
             "items": {
                 "$ref": "#/$defs/SpecimenInfo"
             },
@@ -1795,7 +1774,7 @@
             "type": "array"
         },
         "targeted_genomes": {
-            "description": "a list of genomes that the targets in TargetInfo refer to",
+            "description": "a list of genomes that any genomic location information refers to",
             "items": {
                 "$ref": "#/$defs/GenomeInfo"
             },
