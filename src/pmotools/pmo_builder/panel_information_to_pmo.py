@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-import pandas as pd
+import copy
+import json
+
 import numpy as np
+import pandas as pd
 import warnings
 
 from ..pmo_builder.json_convert_utils import check_additional_columns_exist
@@ -383,3 +386,88 @@ def check_genome_info(genome_info):
         raise TypeError(
             f"genome_info must be a dict, but got {type(genome_info).__name__}"
         )
+
+
+def merge_panel_info_dicts(panel_info_dicts: list[dict]) -> dict:
+    """
+    Merge multiple panel_info dictionaries produced by panel_info_table_to_pmo.
+
+    Target lists are concatenated (deduplicated by target_name) and all
+    genome references are collapsed so that genome identifiers remain valid
+    across the merged structure.
+    """
+    if not panel_info_dicts:
+        raise ValueError("panel_info_dicts must contain at least one entry.")
+
+    merged_targets: list[dict] = []
+    target_name_to_index: dict[str, int] = {}
+    merged_panels: list[dict] = []
+
+    merged_genomes: list[dict] = []
+    genome_signature_to_index: dict[str, int] = {}
+
+    def canonicalise_genome(genome: dict) -> str:
+        return json.dumps(genome, sort_keys=True)
+
+    def remap_genome_ids(target_entry: dict, mapping: dict[int, int]) -> None:
+        insert_loc = target_entry.get("insert_location")
+        if insert_loc and "genome_id" in insert_loc:
+            old_id = insert_loc["genome_id"]
+            if old_id in mapping:
+                insert_loc["genome_id"] = mapping[old_id]
+
+        for primer_key in ("forward_primer", "reverse_primer"):
+            primer = target_entry.get(primer_key)
+            if primer and isinstance(primer, dict):
+                primer_loc = primer.get("location")
+                if primer_loc and "genome_id" in primer_loc:
+                    old_id = primer_loc["genome_id"]
+                    if old_id in mapping:
+                        primer_loc["genome_id"] = mapping[old_id]
+
+    for panel_dict in panel_info_dicts:
+        if "targeted_genomes" not in panel_dict:
+            raise ValueError("panel_info_dict missing 'targeted_genomes'.")
+
+        genome_mapping: dict[int, int] = {}
+        for idx, genome in enumerate(panel_dict["targeted_genomes"]):
+            signature = canonicalise_genome(genome)
+            if signature not in genome_signature_to_index:
+                genome_signature_to_index[signature] = len(merged_genomes)
+                merged_genomes.append(genome)
+            genome_mapping[idx] = genome_signature_to_index[signature]
+
+        if "target_info" not in panel_dict:
+            raise ValueError("panel_info_dict missing 'target_info'.")
+
+        for target in panel_dict["target_info"]:
+            target_name = target.get("target_name")
+            if target_name is None:
+                raise ValueError("Each target_info entry must include a 'target_name'.")
+
+            if target_name not in target_name_to_index:
+                target_copy = copy.deepcopy(target)
+                remap_genome_ids(target_copy, genome_mapping)
+                target_name_to_index[target_name] = len(merged_targets)
+                merged_targets.append(target_copy)
+
+        for panel in panel_dict.get("panel_info", []):
+            remapped_panel = {"panel_name": panel["panel_name"], "reactions": []}
+            for reaction in panel.get("reactions", []):
+                remapped_targets = []
+                for target_idx in reaction["panel_targets"]:
+                    target_name = panel_dict["target_info"][target_idx]["target_name"]
+                    remapped_targets.append(target_name_to_index[target_name])
+                remapped_panel["reactions"].append(
+                    {
+                        "reaction_name": reaction["reaction_name"],
+                        "panel_targets": remapped_targets,
+                    }
+                )
+            merged_panels.append(remapped_panel)
+
+    return {
+        "panel_info": merged_panels,
+        "target_info": merged_targets,
+        "targeted_genomes": merged_genomes,
+    }
