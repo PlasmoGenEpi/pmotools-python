@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 from datetime import date
 import numpy as np
-import json
 from pmotools import __version__ as __pmotools_version__
+
 
 def _convert_numpy_scalars(obj):
     """Recursively convert numpy scalar types to native Python types."""
