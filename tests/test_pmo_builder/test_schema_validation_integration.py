@@ -226,21 +226,20 @@ def test_toy_pmo_validates_against_schema():
     # Bioinformatics method and run information
     bioinfo_methods_info = [
         {
-            "bioinformatics_method_name": "Test Pipeline",
-            "demultiplexing_method": {
-                "program": "Cutadapt",
-                "program_version": "v1.0.0",
-            },
-            "denoising_method": {
-                "program": "DADA2",
-                "program_version": "v1.0.0",
-            },
-            "additional_methods": [
+            "methods": [
+                {
+                    "program": "Cutadapt",
+                    "program_version": "v1.0.0",
+                },
+                {
+                    "program": "DADA2",
+                    "program_version": "v1.0.0",
+                },
                 {
                     "program": "CustomFilter",
                     "program_version": "v2.0.0",
-                }
-            ],
+                },
+            ]
         }
     ]
     bioinfo_run_info = [
@@ -349,7 +348,3 @@ def test_toy_pmo_validates_against_schema():
     assert stage_entry["coverage_depth"] == 150
 
     assert pmo["project_info"][0]["project_type"] == "Surveillance"
-    assert (
-        pmo["bioinformatics_methods_info"][0]["additional_methods"][0]["program"]
-        == "CustomFilter"
-    )
