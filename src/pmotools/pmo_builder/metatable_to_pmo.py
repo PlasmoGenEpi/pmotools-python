@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import pandas as pd
 import json
+from .json_convert_utils import remove_optional_null_values, check_null_values
 
 
 def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = False):
@@ -124,7 +125,7 @@ def specimen_info_table_to_pmo(
     collection_country_col: str = "collection_country",
     project_name_col: str = "project_name",
     alternate_identifiers_col: str = None,
-    # collector_chief_scientist_col: str = None,
+    blood_meal_col: str = None,
     drug_usage_col: str = None,
     env_broad_scale_col: str = None,
     env_local_scale_col: str = None,
@@ -132,12 +133,16 @@ def specimen_info_table_to_pmo(
     geo_admin1_col: str = None,
     geo_admin2_col: str = None,
     geo_admin3_col: str = None,
+    gravid_col: str = None,
+    gravidity_col: str = None,
+    has_travel_out_six_month_col: str = None,
     host_age_col: str = None,
     host_sex_col: str = None,
     host_subject_id: str = None,
     lat_lon_col: str = None,
     parasite_density_col: str = None,
     parasite_density_method_col: str = None,
+    specimen_accession_col: str = None,
     storage_plate_col_col: str = None,
     storage_plate_name_col: str = None,
     storage_plate_row_col: str = None,
@@ -145,8 +150,15 @@ def specimen_info_table_to_pmo(
     specimen_collect_device_col: str = None,
     specimen_comments_col: str = None,
     specimen_store_loc_col: str = None,
+    specimen_type_col: str = None,
+    treatment_status_col: str = None,
     additional_specimen_cols: list | None = None,
-    list_values_specimen_columns: list | None = ["alternate_identifiers_col"],
+    list_values_specimen_columns: list | None = [
+        "alternate_identifiers_col",
+        "drug_usage_col",
+        "specimen_comments_col",
+        "treatment_status_col",
+    ],
     list_values_specimen_columns_delimiter: str = ",",
 ):
     """
@@ -160,6 +172,7 @@ def specimen_info_table_to_pmo(
     :param collection_country_col (string): Name of country collected in (admin level 0). Default : collection_country
     :param project_name_col (string): Name of the project. Default : project_name
     :param alternate_identifiers_col (Optional[str]): List of optional alternative names for the samples
+    :param blood_meal_col (Optional[str]): Whether host specimen has had a recent blood meal
     :param drug_usage_col (Optional[str]): Any drug used by subject and the frequency of usage; can include multiple drugs used
     :param env_broad_scale_col (Optional[str]): The broad environment from which the specimen was collected
     :param env_local_scale_col (Optional[str]): The local environment from which the specimen was collected
@@ -167,12 +180,16 @@ def specimen_info_table_to_pmo(
     :param geo_admin1_col (Optional[str]): Geographical admin level 1
     :param geo_admin2_col (Optional[str]): Geographical admin level 2
     :param geo_admin3_col (Optional[str]): Geographical admin level 3
+    :param gravid_col (Optional[str]): Whether host specimen is pregnant
+    :param gravidity_col (Optional[str]): The number of previous pregnancies
+    :param has_travel_out_six_month_col (Optional[str]): Whether host specimen has travelled out from local region in the last six months
     :param host_age_col (Optional[str]): The age in years of the person
     :param host_sex_col (Optional[str]): If specimen is from a person, the sex of that person
     :param host_subject_id (Optional[str]): ID for the individual a specimen was collected from
     :param lat_lon_col (Optional[str]): Latitude and longitude of the collection site
     :param parasite_density_col (Optional[str, list[str]]): The parasite density in parasites per microliters
     :param parasite_density_method_col (Optional[str or list[str]]): The method of how the density was obtained. If set parasite_density_col must also be specified.
+    :param specimen_accession_col (Optional[str]): The accession number of the specimen
     :param storage_plate_col_col (Optional[str]): Column the specimen was in in the plate. If set storage_plate_row_col must also be specified.
     :param storage_plate_name_col (Optional[str]): Name of plate the specimen was in
     :param storage_plate_row_col (Optional[str]): Row the specimen was in in the plate. If set storage_plate_col_col must also be specified.
@@ -180,6 +197,8 @@ def specimen_info_table_to_pmo(
     :param specimen_collect_device_col (Optional[str]): The way the specimen was collected
     :param specimen_comments_col (Optional[str]): Additional comments about the specimen
     :param specimen_store_loc_col (Optional[str]): Specimen storage site
+    :param specimen_type_col (Optional[str]): Type of specimen, e.g. negative_control, positive_control, field_sample
+    :param treatment_status_col (Optional[str]): If person has been treated with drugs, what was the treatment outcome
     :param additional_specimen_cols (Optional[List[str], None]]): Additional column names to include
     :param list_values_specimen_columns (Optional[List[str], None]): columns that contain values that could be list, are delimited by the argument list_values_specimen_columns_delimiter
     :param list_values_specimen_columns_delimiter (','): delimiter between list_values_specimen_columns
@@ -200,10 +219,14 @@ def specimen_info_table_to_pmo(
         collection_country_col: "collection_country",
         project_name_col: "project_name",
     }
-
+    required_columns = list(column_mapping.keys())
     optional_column_mapping = {
         alternate_identifiers_col: "alternate_identifiers",
         drug_usage_col: "drug_usage",
+        blood_meal_col: "blood_meal",
+        gravid_col: "gravid",
+        gravidity_col: "gravidity",
+        has_travel_out_six_month_col: "has_travel_out_six_month",
         env_broad_scale_col: "env_broad_scale",
         env_local_scale_col: "env_local_scale",
         env_medium_col: "env_medium",
@@ -214,6 +237,9 @@ def specimen_info_table_to_pmo(
         host_sex_col: "host_sex",
         host_subject_id: "host_subject_id",
         lat_lon_col: "lat_lon",
+        specimen_accession_col: "specimen_accession",
+        specimen_type_col: "specimen_type",
+        treatment_status_col: "treatment_status",
         specimen_collect_device_col: "specimen_collect_device",
         specimen_comments_col: "specimen_comments",
         specimen_store_loc_col: "specimen_store_loc",
@@ -250,6 +276,9 @@ def specimen_info_table_to_pmo(
             host_sex_col,
             host_subject_id,
             lat_lon_col,
+            specimen_accession_col,
+            specimen_type_col,
+            treatment_status_col,
             storage_plate_col_col,
             storage_plate_name_col,
             storage_plate_row_col,
@@ -257,9 +286,16 @@ def specimen_info_table_to_pmo(
             specimen_collect_device_col,
             specimen_comments_col,
             specimen_store_loc_col,
+            blood_meal_col,
+            gravid_col,
+            gravidity_col,
+            has_travel_out_six_month_col,
         ]
     )
     check_columns_exist(copy_contents, list(column_mapping.keys()))
+
+    # Check for null values in required columns
+    check_null_values(copy_contents, required_columns)
 
     # Rename and subset columns
     selected_pmo_fields = list(column_mapping.values())
@@ -291,6 +327,10 @@ def specimen_info_table_to_pmo(
             meta_json[col] = meta_json[col].split(
                 list_values_specimen_columns_delimiter
             )
+
+    meta_json = remove_optional_null_values(
+        meta_json, list(optional_column_mapping.values())
+    )
     return meta_json
 
 
