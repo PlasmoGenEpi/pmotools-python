@@ -25,6 +25,7 @@ def panel_info_table_to_pmo(
     strand_col: str | None = None,
     ref_seq_col: str | None = None,
     gene_name_col: str | None = None,
+    genome_id_col: str | None = None,
     target_attributes_col: str | None = None,
     additional_target_info_cols: list | None = None,
 ):
@@ -49,6 +50,7 @@ def panel_info_table_to_pmo(
     :param gene_name_col (Optional): the name of the column containing the gene id
     :param strand_col (Optional): the name of the column containing the strand for the target
     :param target_attributes_col (Optional): a list of classification type for the primer target
+    :param genome_id_col (Optional): the name of the column containing the genome ID (default is 0)
     :param additional_target_info_cols (Optional): dictionary of optional additional columns to add to the target information dictionary. Keys are column names and values are the type.
     :return: a dict of the panel information
     """
@@ -87,7 +89,7 @@ def panel_info_table_to_pmo(
     )
 
     # Create dictionary of targets and panels
-    targets_dict = builder.create_targets_dict()
+    targets_dict = builder.create_targets_dict(genome_id_col)
     panel_dict = builder.build_panel_info(targets_dict)
     # Put together components
     panel_info_dict = {
@@ -264,7 +266,7 @@ class PMOPanelBuilder:
 
     def create_targets_dict(
         self,
-        genome_id: int = 0,
+        genome_id_col: str | None = None,
     ):
         # Check targets before putting into JSON
         (
@@ -316,6 +318,10 @@ class PMOPanelBuilder:
 
             # Add insert location info if location_info_cols are provided
             if insert_start_col and target_name not in missing_insert_loc:
+                if genome_id_col:
+                    genome_id = int(row[genome_id_col])
+                else:
+                    genome_id = 0
                 target_dict["insert_location"] = {
                     "genome_id": genome_id,
                     "chrom": row[chrom_col],
@@ -331,6 +337,10 @@ class PMOPanelBuilder:
             fwd_primer_dict = {"seq": row[self.forward_primers_seq_col]}
             rev_primer_dict = {"seq": row[self.reverse_primers_seq_col]}
             if forward_primers_start_col and target_name not in missing_fwd_primer_loc:
+                if genome_id_col:
+                    genome_id = int(row[genome_id_col])
+                else:
+                    genome_id = 0
                 fwd_primer_dict["location"] = {
                     "genome_id": genome_id,
                     "chrom": row[chrom_col],
@@ -340,6 +350,10 @@ class PMOPanelBuilder:
                 if strand_col and pd.notna(row[strand_col]):
                     fwd_primer_dict["location"]["strand"] = row[strand_col]
             if reverse_primers_start_col and target_name not in missing_rev_primer_loc:
+                if genome_id_col:
+                    genome_id = int(row[genome_id_col])
+                else:
+                    genome_id = 0
                 rev_primer_dict["location"] = {
                     "genome_id": genome_id,
                     "chrom": row[chrom_col],

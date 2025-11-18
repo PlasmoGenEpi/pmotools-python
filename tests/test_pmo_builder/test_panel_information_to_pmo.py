@@ -550,6 +550,162 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.assertIn("panel_info", result)
         self.assertIn("target_info", result)
 
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
+    )
+    def test_create_targets_dict_with_genome_id_col(
+        self,
+        mock_summarise_targets_missing_optional_info,
+        mock_check_unique_target_info,
+        mock_check_targets_are_unique,
+    ):
+        """Test create_targets_dict with genome_id_col parameter"""
+        mock_summarise_targets_missing_optional_info.return_value = [], [], []
+        target_table = self.min_target_table.copy()
+        target_table["target_start"] = [1, 2, 3]
+        target_table["target_end"] = [5, 6, 7]
+        target_table["insert_start"] = [2, 3, 4]
+        target_table["insert_end"] = [3, 4, 5]
+        target_table["chrom"] = "chrom1"
+        target_table["genome_id"] = [
+            0,
+            1,
+            0,
+        ]  # Different genome_ids for different targets
+
+        builder = PMOPanelBuilder(
+            target_table,
+            "test_panel",
+            self.genome_info,
+            "target_name",
+            "fwd_primer",
+            "rev_primer",
+            forward_primers_start_col="target_start",
+            forward_primers_end_col="insert_start",
+            reverse_primers_start_col="insert_end",
+            reverse_primers_end_col="target_end",
+            insert_start_col="insert_start",
+            insert_end_col="insert_end",
+            chrom_col="chrom",
+        )
+
+        target_info = builder.create_targets_dict(genome_id_col="genome_id")
+
+        # Check that genome_id values come from the column
+        self.assertEqual(target_info[0]["insert_location"]["genome_id"], 0)
+        self.assertEqual(target_info[0]["forward_primer"]["location"]["genome_id"], 0)
+        self.assertEqual(target_info[0]["reverse_primer"]["location"]["genome_id"], 0)
+
+        self.assertEqual(target_info[1]["insert_location"]["genome_id"], 1)
+        self.assertEqual(target_info[1]["forward_primer"]["location"]["genome_id"], 1)
+        self.assertEqual(target_info[1]["reverse_primer"]["location"]["genome_id"], 1)
+
+        self.assertEqual(target_info[2]["insert_location"]["genome_id"], 0)
+        self.assertEqual(target_info[2]["forward_primer"]["location"]["genome_id"], 0)
+        self.assertEqual(target_info[2]["reverse_primer"]["location"]["genome_id"], 0)
+
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
+    )
+    def test_create_targets_dict_without_genome_id_col(
+        self,
+        mock_summarise_targets_missing_optional_info,
+        mock_check_unique_target_info,
+        mock_check_targets_are_unique,
+    ):
+        """Test create_targets_dict without genome_id_col (should default to 0)"""
+        mock_summarise_targets_missing_optional_info.return_value = [], [], []
+        target_table = self.min_target_table.copy()
+        target_table["target_start"] = [1, 2, 3]
+        target_table["target_end"] = [5, 6, 7]
+        target_table["insert_start"] = [2, 3, 4]
+        target_table["insert_end"] = [3, 4, 5]
+        target_table["chrom"] = "chrom1"
+
+        builder = PMOPanelBuilder(
+            target_table,
+            "test_panel",
+            self.genome_info,
+            "target_name",
+            "fwd_primer",
+            "rev_primer",
+            forward_primers_start_col="target_start",
+            forward_primers_end_col="insert_start",
+            reverse_primers_start_col="insert_end",
+            reverse_primers_end_col="target_end",
+            insert_start_col="insert_start",
+            insert_end_col="insert_end",
+            chrom_col="chrom",
+        )
+
+        target_info = builder.create_targets_dict()
+
+        # Check that genome_id defaults to 0 when genome_id_col is not provided
+        for target in target_info:
+            self.assertEqual(target["insert_location"]["genome_id"], 0)
+            self.assertEqual(target["forward_primer"]["location"]["genome_id"], 0)
+            self.assertEqual(target["reverse_primer"]["location"]["genome_id"], 0)
+
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
+    )
+    def test_panel_info_table_to_pmo_with_genome_id_col(
+        self,
+        mock_summarise_targets_missing_optional_info,
+        mock_check_unique_target_info,
+        mock_check_targets_are_unique,
+    ):
+        """Test panel_info_table_to_pmo with genome_id_col parameter"""
+        mock_summarise_targets_missing_optional_info.return_value = [], [], []
+        target_table = self.min_target_table.copy()
+        target_table["target_start"] = [1, 2, 3]
+        target_table["target_end"] = [5, 6, 7]
+        target_table["insert_start"] = [2, 3, 4]
+        target_table["insert_end"] = [3, 4, 5]
+        target_table["chrom"] = "chrom1"
+        target_table["genome_id"] = [0, 1, 0]
+
+        result = panel_info_table_to_pmo(
+            target_table,
+            "test_panel",
+            self.genome_info,
+            forward_primers_start_col="target_start",
+            forward_primers_end_col="insert_start",
+            reverse_primers_start_col="insert_end",
+            reverse_primers_end_col="target_end",
+            insert_start_col="insert_start",
+            insert_end_col="insert_end",
+            chrom_col="chrom",
+            genome_id_col="genome_id",
+        )
+
+        # Check that genome_id values come from the column in the result
+        target_info = result["target_info"]
+        self.assertEqual(target_info[0]["insert_location"]["genome_id"], 0)
+        self.assertEqual(target_info[1]["insert_location"]["genome_id"], 1)
+        self.assertEqual(target_info[2]["insert_location"]["genome_id"], 0)
+        self.assertEqual(target_info[0]["forward_primer"]["location"]["genome_id"], 0)
+        self.assertEqual(target_info[1]["forward_primer"]["location"]["genome_id"], 1)
+        self.assertEqual(target_info[2]["forward_primer"]["location"]["genome_id"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()
