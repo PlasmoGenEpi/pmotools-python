@@ -10,7 +10,7 @@ from ..pmo_engine.pmo_processor import PMOProcessor
 def panel_info_table_to_pmo(
     target_table: pd.DataFrame,
     panel_name: str,
-    genome_info: dict,
+    genome_info: dict | list,
     target_name_col: str = "target_name",
     forward_primers_seq_col: str = "fwd_primer",
     reverse_primers_seq_col: str = "rev_primer",
@@ -34,7 +34,7 @@ def panel_info_table_to_pmo(
 
     :param target_table: The dataframe containing the target information
     :param panel_name: the panel ID assigned to the panel
-    :param genome_info: A dictionary containing the genome information
+    :param genome_info: A dictionary or list of dictionaries containing the genome information
     :param target_name_col: the name of the column containing the target IDs
     :param forward_primers_seq_col: the name of the column containing the sequence of the forward primer
     :param reverse_primers_seq_col: the name of the column containing the sequence of the reverse primer
@@ -55,6 +55,11 @@ def panel_info_table_to_pmo(
 
     if not isinstance(target_table, pd.DataFrame):
         raise ValueError("target_table must be a pandas DataFrame.")
+
+    # Convert genome_info to list if it's a dict
+    if isinstance(genome_info, dict):
+        genome_info = [genome_info]
+
     check_genome_info(genome_info)
 
     # Check additional columns if any are added
@@ -87,7 +92,7 @@ def panel_info_table_to_pmo(
     # Put together components
     panel_info_dict = {
         "panel_info": [panel_dict],
-        "targeted_genomes": [genome_info],
+        "targeted_genomes": genome_info,
         "target_info": targets_dict,
     }
     return panel_info_dict
@@ -98,7 +103,7 @@ class PMOPanelBuilder:
         self,
         target_table: pd.DataFrame,
         panel_name: str,
-        genome_info: dict,
+        genome_info: dict | list,
         target_name_col: str = "target_name",
         forward_primers_seq_col: str = "fwd_primer",
         reverse_primers_seq_col: str = "rev_primer",
@@ -379,7 +384,21 @@ def check_genome_info(genome_info):
             raise ValueError(
                 f"genome_info missing required keys: {', '.join(missing_keys)}"
             )
+    elif isinstance(genome_info, list):
+        if not genome_info:
+            raise ValueError("genome_info list cannot be empty")
+        required_keys = {"name", "genome_version", "taxon_id", "url"}
+        for i, genome_dict in enumerate(genome_info):
+            if not isinstance(genome_dict, dict):
+                raise TypeError(
+                    f"genome_info[{i}] must be a dict, but got {type(genome_dict).__name__}"
+                )
+            missing_keys = required_keys - genome_dict.keys()
+            if missing_keys:
+                raise ValueError(
+                    f"genome_info[{i}] missing required keys: {', '.join(missing_keys)}"
+                )
     else:
         raise TypeError(
-            f"genome_info must be a dict, but got {type(genome_info).__name__}"
+            f"genome_info must be a dict or list, but got {type(genome_info).__name__}"
         )

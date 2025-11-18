@@ -5,6 +5,7 @@ from unittest.mock import patch
 from pmotools.pmo_builder.panel_information_to_pmo import (
     PMOPanelBuilder,
     check_genome_info,
+    panel_info_table_to_pmo,
 )
 
 
@@ -166,16 +167,54 @@ class TestPanelInformationToPMO(unittest.TestCase):
     def test_check_genome_info_passes(self):
         check_genome_info(self.genome_info)
 
+    def test_check_genome_info_passes_with_list(self):
+        genome_info_list = [
+            {
+                "name": "3D7",
+                "url": "somthing.com",
+                "genome_version": 1,
+                "taxon_id": 1,
+            },
+            {
+                "name": "DD2",
+                "url": "somthingelse.com",
+                "genome_version": 2,
+                "taxon_id": 2,
+            },
+        ]
+        check_genome_info(genome_info_list)
+
     def test_check_genome_info_fails_with_string(self):
         with self.assertRaises(TypeError) as context:
             check_genome_info("genome_info")
-        self.assertEqual(
-            str(context.exception), "genome_info must be a dict, but got str"
+        self.assertIn(
+            "genome_info must be a dict or list",
+            str(context.exception),
         )
 
     def test_check_genome_info_fails_with_missing_key(self):
         with self.assertRaises(ValueError):
             check_genome_info({"name": "3D7", "taxon_id": 1})
+
+    def test_check_genome_info_fails_with_empty_list(self):
+        with self.assertRaises(ValueError) as context:
+            check_genome_info([])
+        self.assertEqual(str(context.exception), "genome_info list cannot be empty")
+
+    def test_check_genome_info_fails_with_list_containing_non_dict(self):
+        with self.assertRaises(TypeError) as context:
+            check_genome_info([self.genome_info, "not_a_dict"])
+        self.assertIn("genome_info[1] must be a dict", str(context.exception))
+
+    def test_check_genome_info_fails_with_list_containing_invalid_dict(self):
+        with self.assertRaises(ValueError) as context:
+            check_genome_info(
+                [
+                    self.genome_info,
+                    {"name": "3D7", "taxon_id": 1},  # missing required keys
+                ]
+            )
+        self.assertIn("genome_info[1] missing required keys", str(context.exception))
 
     def test_build_panel_info(self):
         panel_info = self.min_builder.build_panel_info(self.min_target_json)
@@ -440,6 +479,76 @@ class TestPanelInformationToPMO(unittest.TestCase):
             },
         ]
         self.assertEqual(expected_json, target_info)
+
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
+    )
+    def test_panel_info_table_to_pmo_with_dict_genome_info(
+        self,
+        mock_summarise_targets_missing_optional_info,
+        mock_check_unique_target_info,
+        mock_check_targets_are_unique,
+    ):
+        """Test panel_info_table_to_pmo with dict genome_info (should be converted to list)"""
+        mock_summarise_targets_missing_optional_info.return_value = [], [], []
+        result = panel_info_table_to_pmo(
+            self.min_target_table, "test_panel", self.genome_info
+        )
+
+        # Check that genome_info dict was converted to list
+        self.assertIsInstance(result["targeted_genomes"], list)
+        self.assertEqual(len(result["targeted_genomes"]), 1)
+        self.assertEqual(result["targeted_genomes"][0], self.genome_info)
+        self.assertIn("panel_info", result)
+        self.assertIn("target_info", result)
+
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
+    )
+    @patch(
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
+    )
+    def test_panel_info_table_to_pmo_with_list_genome_info(
+        self,
+        mock_summarise_targets_missing_optional_info,
+        mock_check_unique_target_info,
+        mock_check_targets_are_unique,
+    ):
+        """Test panel_info_table_to_pmo with list genome_info"""
+        mock_summarise_targets_missing_optional_info.return_value = [], [], []
+        genome_info_list = [
+            {
+                "name": "3D7",
+                "url": "somthing.com",
+                "genome_version": 1,
+                "taxon_id": 1,
+            },
+            {
+                "name": "DD2",
+                "url": "somthingelse.com",
+                "genome_version": 2,
+                "taxon_id": 2,
+            },
+        ]
+        result = panel_info_table_to_pmo(
+            self.min_target_table, "test_panel", genome_info_list
+        )
+
+        # Check that genome_info list is used directly
+        self.assertIsInstance(result["targeted_genomes"], list)
+        self.assertEqual(len(result["targeted_genomes"]), 2)
+        self.assertEqual(result["targeted_genomes"], genome_info_list)
+        self.assertIn("panel_info", result)
+        self.assertIn("target_info", result)
 
 
 if __name__ == "__main__":
