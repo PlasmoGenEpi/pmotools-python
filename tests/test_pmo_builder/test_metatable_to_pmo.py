@@ -1200,8 +1200,280 @@ class TestMetatableToPMO(unittest.TestCase):
 
     def test_library_sample_info_table_to_pmo_fails_without_df(self):
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo("test")
+            library_sample_info_table_to_pmo("test")
         self.assertEqual("contents must be a pandas DataFrame.", str(context.exception))
+
+    def test_library_sample_info_table_to_pmo_fails_with_null_in_required_columns(self):
+        """Test that function raises error when required columns contain null values"""
+        # Test with null in library_sample_name
+        df1 = pd.DataFrame(
+            {
+                "library_sample_name": ["sample1_MH_run1", None],
+                "sequencing_info_name": ["run1", "run1"],
+                "specimen_name": ["sample1", "sample2"],
+                "panel_name": ["MH", "MH"],
+            }
+        )
+        with self.assertRaises(ValueError) as context:
+            library_sample_info_table_to_pmo(df1)
+        self.assertIn(
+            "The following columns contain null values",
+            str(context.exception),
+        )
+        self.assertIn("library_sample_name", str(context.exception))
+
+        # Test with null in sequencing_info_name
+        df2 = pd.DataFrame(
+            {
+                "library_sample_name": ["sample1_MH_run1", "sample2_MH_run1"],
+                "sequencing_info_name": [None, "run1"],
+                "specimen_name": ["sample1", "sample2"],
+                "panel_name": ["MH", "MH"],
+            }
+        )
+        with self.assertRaises(ValueError) as context:
+            library_sample_info_table_to_pmo(df2)
+        self.assertIn(
+            "The following columns contain null values",
+            str(context.exception),
+        )
+        self.assertIn("sequencing_info_name", str(context.exception))
+
+        # Test with null in specimen_name
+        df3 = pd.DataFrame(
+            {
+                "library_sample_name": ["sample1_MH_run1", "sample2_MH_run1"],
+                "sequencing_info_name": ["run1", "run1"],
+                "specimen_name": ["sample1", None],
+                "panel_name": ["MH", "MH"],
+            }
+        )
+        with self.assertRaises(ValueError) as context:
+            library_sample_info_table_to_pmo(df3)
+        self.assertIn(
+            "The following columns contain null values",
+            str(context.exception),
+        )
+        self.assertIn("specimen_name", str(context.exception))
+
+        # Test with null in panel_name
+        df4 = pd.DataFrame(
+            {
+                "library_sample_name": ["sample1_MH_run1", "sample2_MH_run1"],
+                "sequencing_info_name": ["run1", "run1"],
+                "specimen_name": ["sample1", "sample2"],
+                "panel_name": [None, "MH"],
+            }
+        )
+        with self.assertRaises(ValueError) as context:
+            library_sample_info_table_to_pmo(df4)
+        self.assertIn(
+            "The following columns contain null values",
+            str(context.exception),
+        )
+        self.assertIn("panel_name", str(context.exception))
+
+        # Test with nulls in multiple required columns
+        df5 = pd.DataFrame(
+            {
+                "library_sample_name": ["sample1_MH_run1", None],
+                "sequencing_info_name": [None, "run1"],
+                "specimen_name": ["sample1", "sample2"],
+                "panel_name": ["MH", "MH"],
+            }
+        )
+        with self.assertRaises(ValueError) as context:
+            library_sample_info_table_to_pmo(df5)
+        self.assertIn(
+            "The following columns contain null values",
+            str(context.exception),
+        )
+        error_msg = str(context.exception)
+        self.assertTrue(
+            "library_sample_name" in error_msg and "sequencing_info_name" in error_msg
+        )
+
+    def test_library_sample_info_table_to_pmo_with_new_optional_fields(self):
+        """Test new optional fields: alternate_identifiers, experiment_accession, fastqs_loc, run_accession"""
+        df = pd.DataFrame(
+            {
+                "library_sample_name": ["sample1_MH_run1", "sample2_MH_run1"],
+                "sequencing_info_name": ["run1", "run1"],
+                "specimen_name": ["sample1", "sample2"],
+                "panel_name": ["MH", "MH"],
+                "alternate_identifiers": ["ID1,ID2", ""],
+                "experiment_accession": ["EXP001", None],
+                "fastqs_loc": [None, "/path/to/fastqs"],
+                "run_accession": ["RUN001", ""],
+            }
+        )
+
+        result = library_sample_info_table_to_pmo(
+            df,
+            alternate_identifiers_col="alternate_identifiers",
+            experiment_accession_col="experiment_accession",
+            fastqs_loc_col="fastqs_loc",
+            run_accession_col="run_accession",
+        )
+
+        # sample1: alternate_identifiers has value, experiment_accession has value, fastqs_loc is None, run_accession has value
+        # Should remove: fastqs_loc
+        self.assertEqual(result[0]["alternate_identifiers"], "ID1,ID2")
+        self.assertEqual(result[0]["experiment_accession"], "EXP001")
+        self.assertNotIn("fastqs_loc", result[0])
+        self.assertEqual(result[0]["run_accession"], "RUN001")
+
+        # sample2: alternate_identifiers is empty string, experiment_accession is None, fastqs_loc has value, run_accession is empty string
+        # Should remove: alternate_identifiers, experiment_accession, run_accession
+        self.assertNotIn("alternate_identifiers", result[1])
+        self.assertNotIn("experiment_accession", result[1])
+        self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs")
+        self.assertNotIn("run_accession", result[1])
+
+    def test_library_sample_info_table_to_pmo_removes_empty_optional_fields(self):
+        """Test that empty optional fields are removed"""
+        df = pd.DataFrame(
+            {
+                "library_sample_name": [
+                    "sample1_MH_run1",
+                    "sample2_MH_run1",
+                    "sample3_MH_run1",
+                ],
+                "sequencing_info_name": ["run1", "run1", "run1"],
+                "specimen_name": ["sample1", "sample2", "sample3"],
+                "panel_name": ["MH", "MH", "MH"],
+                "alternate_identifiers": ["ID1", "", None],
+                "experiment_accession": ["EXP001", None, "EXP003"],
+                "fastqs_loc": [None, "/path/to/fastqs", ""],
+            }
+        )
+
+        result = library_sample_info_table_to_pmo(
+            df,
+            alternate_identifiers_col="alternate_identifiers",
+            experiment_accession_col="experiment_accession",
+            fastqs_loc_col="fastqs_loc",
+        )
+
+        # sample1: all optional fields have values
+        self.assertEqual(result[0]["alternate_identifiers"], "ID1")
+        self.assertEqual(result[0]["experiment_accession"], "EXP001")
+        self.assertNotIn("fastqs_loc", result[0])  # None should be removed
+
+        # sample2: alternate_identifiers is empty string, experiment_accession is None, fastqs_loc has value
+        self.assertNotIn("alternate_identifiers", result[1])
+        self.assertNotIn("experiment_accession", result[1])
+        self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs")
+
+        # sample3: alternate_identifiers is None, experiment_accession has value, fastqs_loc is empty string
+        self.assertNotIn("alternate_identifiers", result[2])
+        self.assertEqual(result[2]["experiment_accession"], "EXP003")
+        self.assertNotIn("fastqs_loc", result[2])
+
+    def test_library_sample_info_table_to_pmo_with_parasite_density(self):
+        """Test parasite density info in library sample info"""
+        df = pd.DataFrame(
+            {
+                "library_sample_name": ["sample1_MH_run1", "sample2_MH_run1"],
+                "sequencing_info_name": ["run1", "run1"],
+                "specimen_name": ["sample1", "sample2"],
+                "panel_name": ["MH", "MH"],
+                "parasite_density": [10, 100],
+                "parasite_density_method": ["qPCR", "microscopy"],
+            }
+        )
+
+        result = library_sample_info_table_to_pmo(
+            df,
+            parasite_density_col="parasite_density",
+            parasite_density_method_col="parasite_density_method",
+        )
+
+        self.assertEqual(result[0]["parasite_density_info"][0]["parasite_density"], 10)
+        self.assertEqual(
+            result[0]["parasite_density_info"][0]["parasite_density_method"], "qPCR"
+        )
+        self.assertEqual(result[1]["parasite_density_info"][0]["parasite_density"], 100)
+        self.assertEqual(
+            result[1]["parasite_density_info"][0]["parasite_density_method"],
+            "microscopy",
+        )
+
+    def test_library_sample_info_table_to_pmo_with_parasite_density_multiple(self):
+        """Test multiple parasite density measurements"""
+        df = pd.DataFrame(
+            {
+                "library_sample_name": ["sample1_MH_run1", "sample2_MH_run1"],
+                "sequencing_info_name": ["run1", "run1"],
+                "specimen_name": ["sample1", "sample2"],
+                "panel_name": ["MH", "MH"],
+                "density1": [15, 107],
+                "method1": ["qPCR", "qPCR"],
+                "density2": [10, 100],
+                "method2": ["microscopy", "microscopy"],
+            }
+        )
+
+        result = library_sample_info_table_to_pmo(
+            df,
+            parasite_density_col=["density1", "density2"],
+            parasite_density_method_col=["method1", "method2"],
+        )
+
+        self.assertEqual(result[0]["parasite_density_info"][0]["parasite_density"], 15)
+        self.assertEqual(result[0]["parasite_density_info"][1]["parasite_density"], 10)
+        self.assertEqual(result[1]["parasite_density_info"][0]["parasite_density"], 107)
+        self.assertEqual(result[1]["parasite_density_info"][1]["parasite_density"], 100)
+
+    def test_library_sample_info_table_to_pmo_with_all_new_fields(self):
+        """Test all new optional fields together"""
+        df = pd.DataFrame(
+            {
+                "library_sample_name": ["sample1_MH_run1", "sample2_MH_run1"],
+                "sequencing_info_name": ["run1", "run1"],
+                "specimen_name": ["sample1", "sample2"],
+                "panel_name": ["MH", "MH"],
+                "alternate_identifiers": ["ID1", "ID2"],
+                "experiment_accession": ["EXP001", "EXP002"],
+                "fastqs_loc": ["/path/to/fastqs1", "/path/to/fastqs2"],
+                "run_accession": ["RUN001", "RUN002"],
+                "parasite_density": [10, 100],
+                "parasite_density_method": ["qPCR", "microscopy"],
+                "library_prep_plate_col": [1, 2],
+                "library_prep_plate_name": ["plate1", "plate1"],
+                "library_prep_plate_row": ["A", "B"],
+            }
+        )
+
+        result = library_sample_info_table_to_pmo(
+            df,
+            alternate_identifiers_col="alternate_identifiers",
+            experiment_accession_col="experiment_accession",
+            fastqs_loc_col="fastqs_loc",
+            run_accession_col="run_accession",
+            parasite_density_col="parasite_density",
+            parasite_density_method_col="parasite_density_method",
+            library_prep_plate_col_col="library_prep_plate_col",
+            library_prep_plate_name_col="library_prep_plate_name",
+            library_prep_plate_row_col="library_prep_plate_row",
+        )
+
+        # Check all fields are present
+        self.assertEqual(result[0]["alternate_identifiers"], "ID1")
+        self.assertEqual(result[0]["experiment_accession"], "EXP001")
+        self.assertEqual(result[0]["fastqs_loc"], "/path/to/fastqs1")
+        self.assertEqual(result[0]["run_accession"], "RUN001")
+        self.assertEqual(result[0]["parasite_density_info"][0]["parasite_density"], 10)
+        self.assertIn("library_prep_plate_info", result[0])
+        self.assertEqual(result[0]["library_prep_plate_info"]["plate_col"], 1)
+
+        self.assertEqual(result[1]["alternate_identifiers"], "ID2")
+        self.assertEqual(result[1]["experiment_accession"], "EXP002")
+        self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs2")
+        self.assertEqual(result[1]["run_accession"], "RUN002")
+        self.assertEqual(result[1]["parasite_density_info"][0]["parasite_density"], 100)
+        self.assertIn("library_prep_plate_info", result[1])
+        self.assertEqual(result[1]["library_prep_plate_info"]["plate_col"], 2)
 
 
 if __name__ == "__main__":

@@ -36,11 +36,16 @@ def library_sample_info_table_to_pmo(
     sequencing_info_name_col: str = "sequencing_info_name",
     specimen_name_col: str = "specimen_name",
     panel_name_col: str = "panel_name",
-    accession_col: str = None,
+    alternate_identifiers_col: str = None,
+    experiment_accession_col: str = None,
+    fastqs_loc_col: str = None,
     library_prep_plate_name_col: str = None,
     library_prep_plate_col_col: str = None,
     library_prep_plate_row_col: str = None,
     library_prep_plate_position_col: str = None,
+    parasite_density_col: str = None,
+    parasite_density_method_col: str = None,
+    run_accession_col: str = None,
     additional_library_sample_info_cols: list | None = None,
 ):
     """
@@ -51,11 +56,16 @@ def library_sample_info_table_to_pmo(
     :param sequencing_info_name_col (str): Column name for sequencing information names. Default: sequencing_info_name
     :param specimen_name_col (str): Column name for specimen IDs. Default: specimen_name
     :param panel_name_col (str): Column name for panel IDs. Default: panel_name
-    :param accession_col (Optional[str]): Column name for accession information.
+    :param alternate_identifiers_col (Optional[str]): Column name for alternate identifiers.
+    :param experiment_accession_col (Optional[str]): Column name for experiment accession information.
+    :param fastqs_loc_col (Optional[str]): Column name for location of fastqs.
     :param library_prep_plate_name_col (Optional[str]): Column name containing plate name for sequencing.
     :param library_prep_plate_col_col (Optional[str]): Column name for col of sample on sequencing plate.
     :param library_prep_plate_row_col (Optional[str]): Column name for row of sample on sequencing plate.
     :param library_prep_plate_position_col (Optional[str]): Column name for position on sequencing plate (e.g. A01). Can't be set if library_prep_plate_col_col and library_prep_plate_row_col are specified.
+    :param parasite_density_col (Optional[str, list[str]]): The parasite density in parasites per microliters
+    :param parasite_density_method_col (Optional[str or list[str]]): The method of how the density was obtained. If set parasite_density_col must also be specified.
+    :param run_accession_col (Optional[str]): Column name for run accession information.
     :param additional_library_sample_info_cols (Optional[List[str], None]]): Additional column names to include.
 
     :return: JSON format where keys are `library_sample_id` and values are corresponding row data.
@@ -67,13 +77,18 @@ def library_sample_info_table_to_pmo(
     copy_contents = contents.copy()
     column_mapping = {
         library_sample_name_col: "library_sample_name",
-        sequencing_info_name_col: "sequencing_info_name",
         specimen_name_col: "specimen_name",
         panel_name_col: "panel_name",
+        sequencing_info_name_col: "sequencing_info_name",
     }
-
+    required_columns = list(column_mapping.keys())
     # Add optional columns
-    optional_column_mapping = {accession_col: "accession"}
+    optional_column_mapping = {
+        alternate_identifiers_col: "alternate_identifiers",
+        experiment_accession_col: "experiment_accession",
+        fastqs_loc_col: "fastqs_loc",
+        run_accession_col: "run_accession",
+    }
     column_mapping.update(
         {k: v for k, v in optional_column_mapping.items() if k is not None}
     )
@@ -90,10 +105,15 @@ def library_sample_info_table_to_pmo(
             sequencing_info_name_col,
             specimen_name_col,
             panel_name_col,
-            accession_col,
+            alternate_identifiers_col,
+            experiment_accession_col,
+            fastqs_loc_col,
         ]
     )
     check_columns_exist(copy_contents, list(column_mapping.keys()))
+
+    # Check for null values in required columns
+    check_null_values(copy_contents, required_columns)
 
     # Rename and subset columns
     selected_pmo_fields = list(column_mapping.values())
@@ -112,7 +132,17 @@ def library_sample_info_table_to_pmo(
         "specimen_name",
         "library_prep_plate_info",
     )
-
+    meta_json = add_parasite_density_info(
+        parasite_density_col,
+        parasite_density_method_col,
+        meta_json,
+        copy_contents,
+        "library_sample_name",
+        entry_name="parasite_density_info",
+    )
+    meta_json = remove_optional_null_values(
+        meta_json, list(optional_column_mapping.values())
+    )
     return meta_json
 
 
