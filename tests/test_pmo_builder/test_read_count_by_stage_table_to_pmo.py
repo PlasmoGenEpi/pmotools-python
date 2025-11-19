@@ -50,7 +50,7 @@ class TestReadCountByStageTableToPMO(unittest.TestCase):
                     "denoised",
                     "demultiplexed",
                 ],
-                "read_count": [100, 80, 50, 200, 150, 75],
+                "reads": [100, 80, 50, 200, 150, 75],
             }
         )
 
@@ -76,8 +76,8 @@ class TestReadCountByStageTableToPMO(unittest.TestCase):
                         {
                             "target_name": "target1",
                             "stages": [
-                                {"stage": "demultiplexed", "read_count": 100},
-                                {"stage": "denoised", "read_count": 80},
+                                {"stage": "demultiplexed", "reads": 100},
+                                {"stage": "denoised", "reads": 80},
                             ],
                         }
                     ],
@@ -90,6 +90,7 @@ class TestReadCountByStageTableToPMO(unittest.TestCase):
         result = read_count_by_stage_table_to_pmo(
             total_raw_count_table=self.total_raw_count_table,
             bioinformatics_run_name="test_run",
+            read_count_col="reads",
             reads_by_stage_table=self.reads_by_stage_table_long,
         )
 
@@ -367,7 +368,7 @@ class TestReadCountByStageTableToPMO(unittest.TestCase):
             "library_sample_name",
             "target_name",
             "stage",
-            "read_count",
+            "reads",
         )
 
         self.assertIn("sample1", result)
@@ -376,7 +377,7 @@ class TestReadCountByStageTableToPMO(unittest.TestCase):
         # Now stages are dictionaries with stage and read_count
         demultiplexed_data = result["sample1"]["target1"]["demultiplexed"]
         self.assertEqual(demultiplexed_data["stage"], "demultiplexed")
-        self.assertEqual(demultiplexed_data["read_count"], 100)
+        self.assertEqual(demultiplexed_data["reads"], 100)
 
     def test_process_reads_by_stage_table_wide(self):
         """Test the _process_reads_by_stage_table helper function with wide format."""
@@ -385,7 +386,7 @@ class TestReadCountByStageTableToPMO(unittest.TestCase):
             "library_sample_name",
             "target_name",
             ["demultiplexed", "denoised", "filtered"],
-            "read_count",
+            "reads",
         )
 
         self.assertIn("sample1", result)
@@ -394,7 +395,7 @@ class TestReadCountByStageTableToPMO(unittest.TestCase):
         # Now stages are dictionaries with stage and read_count
         demultiplexed_data = result["sample1"]["target1"]["demultiplexed"]
         self.assertEqual(demultiplexed_data["stage"], "demultiplexed")
-        self.assertEqual(demultiplexed_data["read_count"], 100)
+        self.assertEqual(demultiplexed_data["reads"], 100)
 
     def test_build_read_counts_by_stage_output(self):
         """Test the _build_read_counts_by_stage_output helper function."""
@@ -462,7 +463,7 @@ class TestReadCountByStageTableToPMO(unittest.TestCase):
 
         # Should be converted to int
         demultiplexed_data = result["sample1"]["target1"]["demultiplexed"]
-        self.assertEqual(demultiplexed_data["read_count"], 100)
+        self.assertEqual(demultiplexed_data["reads"], 100)
 
     def test_missing_values_handling(self):
         """Test handling of missing values in additional columns."""
@@ -613,6 +614,7 @@ class TestReadCountByStageTableToPMO(unittest.TestCase):
             total_raw_count_table=self.total_raw_count_table,
             bioinformatics_run_name="test_run",
             reads_by_stage_table=self.reads_by_stage_table_long,
+            read_count_col="reads",
         )
 
         # Should return a list with one entry

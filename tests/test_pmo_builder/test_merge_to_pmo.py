@@ -35,6 +35,7 @@ class TestMergeToPMO(unittest.TestCase):
             [],
             [],
             [],
+            [],
         )
 
     def test_report_missing_IDs_fails_correctly(self):
@@ -45,6 +46,7 @@ class TestMergeToPMO(unittest.TestCase):
                 [],
                 [],
                 ["something else", "something else2"],
+                [],
                 [],
                 [],
                 [],
