@@ -225,10 +225,12 @@ class PMOReader:
         # update project_id
         pmo_out["specimen_info"] = copy.deepcopy(pmos[0]["specimen_info"])
         specimen_names = []
+        specimen_index_key = {}
         duplicate_specimen_names = []
         for specimen in pmo_out["specimen_info"]:
             if specimen["specimen_name"] in specimen_names:
                 duplicate_specimen_names.append(specimen["specimen_name"])
+            specimen_index_key[specimen["specimen_name"]] = len(specimen_names)
             specimen_names.append(specimen["specimen_name"])
 
         # key1 pmo_index, key2 old_index, val new_index
@@ -237,16 +239,38 @@ class PMOReader:
             for specimen_info_index, specimen_info in enumerate(pmo["specimen_info"]):
                 # checkin for duplicates
                 if specimen_info["specimen_name"] in specimen_names:
-                    duplicate_specimen_names.append(specimen_info["specimen_name"])
-                specimen_names.append(specimen_info["specimen_name"])
-                new_index = len(pmo_out["specimen_info"])
-                # update project_id
-                specimen_info_copy = copy.deepcopy(specimen_info)
-                specimen_info_copy["project_id"] = project_info_old_index_key[
-                    pmo_index
-                ][specimen_info_copy["project_id"]]
-                pmo_out["specimen_info"].append(specimen_info_copy)
-                specimen_info_old_index_key[pmo_index][specimen_info_index] = new_index
+                    # if specimen is exactly the same, then no issues
+                    # @todo allow merging of info and as long as the meta present in both are the same then it should be fine
+                    if (
+                        specimen_info
+                        != pmo_out["specimen_info"][
+                            specimen_index_key[specimen_info["specimen_name"]]
+                        ]
+                    ):
+                        duplicate_specimen_names.append(specimen_info["specimen_name"])
+                        specimen_info_old_index_key[pmo_index][
+                            specimen_info_index
+                        ] = specimen_index_key[specimen_info["specimen_name"]]
+                    else:
+                        # update key for the already present id
+                        specimen_info_old_index_key[pmo_index][
+                            specimen_info_index
+                        ] = specimen_index_key[specimen_info["specimen_name"]]
+                else:
+                    specimen_index_key[specimen_info["specimen_name"]] = len(
+                        specimen_names
+                    )
+                    specimen_names.append(specimen_info["specimen_name"])
+                    new_index = len(pmo_out["specimen_info"])
+                    # update project_id
+                    specimen_info_copy = copy.deepcopy(specimen_info)
+                    specimen_info_copy["project_id"] = project_info_old_index_key[
+                        pmo_index
+                    ][specimen_info_copy["project_id"]]
+                    pmo_out["specimen_info"].append(specimen_info_copy)
+                    specimen_info_old_index_key[pmo_index][
+                        specimen_info_index
+                    ] = new_index
 
         ## library_sample_info
         pmo_out["library_sample_info"] = copy.deepcopy(pmos[0]["library_sample_info"])
