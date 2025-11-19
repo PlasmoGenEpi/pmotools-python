@@ -158,13 +158,11 @@ class PMOReader:
                     new_index = len(pmo_out["panel_info"])
                     # update target indexes to make sure reaction points to the right target indexes
                     for reaction in panel_copy["reactions"]:
-                        for target_id_reaction in range(
-                            len(reaction["target_id_reactions"])
-                        ):
-                            reaction["target_id_reactions"][
+                        for target_id_reaction in range(len(reaction["panel_targets"])):
+                            reaction["panel_targets"][
                                 target_id_reaction
                             ] = target_info_old_index_key[pmo_index][
-                                reaction["target_id_reactions"][target_id_reaction]
+                                reaction["panel_targets"][target_id_reaction]
                             ]
                     pmo_out["panel_info"].append(panel_copy)
                     panel_info_out_index_key[panel_copy["panel_name"]] = new_index
