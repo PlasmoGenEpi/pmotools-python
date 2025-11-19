@@ -3,7 +3,9 @@ import json
 import os
 from typing import NamedTuple
 import copy
-import pandas
+import re
+
+
 import pandas as pd
 from collections import defaultdict
 from pmotools.pmo_engine.pmo_checker import PMOChecker
@@ -407,7 +409,7 @@ class PMOProcessor:
         pmodata,
         select_specimen_ids: list[int] = None,
         select_specimen_names: list[str] = None,
-    ) -> pandas.DataFrame:
+    ) -> pd.DataFrame:
         """
         List all the library_sample_names per specimen_name
         :param pmodata: the PMO
@@ -1481,3 +1483,90 @@ class PMOProcessor:
                     )
             bed_loc_out[panel_id] = bed_loc_out_per_panel
         return bed_loc_out
+
+    @staticmethod
+    def update_specimen_meta_with_traveler_info(
+        pmo,
+        traveler_info: pd.DataFrame,
+        specimen_name_col: str = "specimen_name",
+        travel_country_col: str = "travel_country",
+        travel_start_col: str = "travel_start_date",
+        travel_end_col: str = "travel_end_date",
+        bed_net_usage_col: str = None,
+        geo_admin1_col: str = None,
+        geo_admin2_col: str = None,
+        geo_admin3_col: str = None,
+        lat_lon_col: str = None,
+        replace_current_traveler_info: bool = False,
+    ):
+        required_cols = [
+            specimen_name_col,
+            travel_country_col,
+            travel_start_col,
+            travel_end_col,
+        ]
+        if bed_net_usage_col is not None:
+            required_cols.append(bed_net_usage_col)
+        if geo_admin1_col is not None:
+            required_cols.append(geo_admin1_col)
+        if geo_admin2_col is not None:
+            required_cols.append(geo_admin2_col)
+        if geo_admin3_col is not None:
+            required_cols.append(geo_admin3_col)
+        if lat_lon_col is not None:
+            required_cols.append(lat_lon_col)
+
+        if not set(required_cols).issubset(traveler_info.columns):
+            raise Exception(
+                "missing traveler_info columns: " + ",".join(required_cols),
+                " columns in table: " + ",".join(traveler_info.columns),
+            )
+
+        specimen_names_in_pmo = set(PMOProcessor.get_specimen_names(pmo))
+        specimen_names_in_traveler_info = set(
+            traveler_info[specimen_name_col].astype(str).tolist()
+        )
+
+        # check to see if provided traveler info for a specimen that cannot be found in PMO
+        missing_traveler_specs = specimen_names_in_traveler_info - specimen_names_in_pmo
+
+        if missing_traveler_specs:
+            raise ValueError(
+                f"Provided traveler info for the following specimens but they are missing from the PMO: {sorted(missing_traveler_specs)}"
+            )
+        # Matches YYYY-MM or YYYY-MM-DD
+        date_regex = re.compile(r"^\d{4}-\d{2}(-\d{2})?$")
+        traveler_info_records = traveler_info[required_cols].to_dict(orient="records")
+        spec_indexs = PMOProcessor.get_index_key_of_specimen_names(pmo)
+
+        # prep traveler info lists, clear the list if we are replacing or start an empty list to append to if none exist already
+        for specimen_name in specimen_names_in_traveler_info:
+            if (
+                replace_current_traveler_info
+                or "travel_out_six_month"
+                not in pmo["specimen_info"][spec_indexs[specimen_name]]
+            ):
+                pmo["specimen_info"][spec_indexs[specimen_name]][
+                    "travel_out_six_month"
+                ] = []
+
+        for travel_rec in traveler_info_records:
+            specimen_name = str(travel_rec[specimen_name_col])
+            # Validate date formats
+            for date_col in (travel_start_col, travel_end_col):
+                val = travel_rec[date_col]
+                if pd.isna(val):
+                    raise ValueError(
+                        f"Missing required date value in column '{date_col}' for specimen '{specimen_name}'"
+                    )
+                val_str = str(val)
+                if not date_regex.match(val_str):
+                    raise ValueError(
+                        f"Invalid date format in '{date_col}' for specimen '{specimen_name}': '{val_str}'. "
+                        f"Expected YYYY-MM or YYYY-MM-DD"
+                    )
+            # add in travel_rec
+            travel_rec.pop(specimen_name_col, None)
+            pmo["specimen_info"][spec_indexs[specimen_name]][
+                "travel_out_six_month"
+            ].append(travel_rec)
