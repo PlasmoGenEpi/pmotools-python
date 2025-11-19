@@ -97,7 +97,7 @@ def test_toy_pmo_validates_against_schema():
     )
     library_sample_info = library_sample_info_table_to_pmo(
         library_df,
-        accession_col="accession",
+        run_accession_col="accession",
         library_prep_plate_name_col="prep_plate_name",
         library_prep_plate_row_col="prep_plate_row",
         library_prep_plate_col_col="prep_plate_col",
@@ -312,7 +312,7 @@ def test_toy_pmo_validates_against_schema():
     assert sequencing_entry["library_kit"] == "MiSeq Reagent Kit v3"
 
     library_entry = pmo["library_sample_info"][0]
-    assert library_entry["accession"] == "ACC123"
+    assert library_entry["run_accession"] == "ACC123"
     assert library_entry["library_note"] == "High quality"
 
     genome_entry = pmo["targeted_genomes"][0]
