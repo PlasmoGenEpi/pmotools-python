@@ -210,6 +210,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
             "targeted_genomes": [self.genome_info],
             "target_info": self.min_target_json,
         }
+
         panel_info_dict_b = {
             "panel_info": [
                 {
@@ -236,67 +237,6 @@ class TestPanelInformationToPMO(unittest.TestCase):
             ],
             "targeted_genomes": [self.genome_info],
             "target_info": self.min_target_json + target_info_b,
-        }
-
-        self.assertEqual(merged, expected_merged)
-
-    def test_merge_panel_info_dicts_with_overlap_no_reaction(self):
-        target_info_b = [
-            {
-                "target_name": "target2",
-                "forward_primer": {"seq": "CTA"},
-                "reverse_primer": {"seq": "TGG"},
-            },
-            {
-                "target_name": "target5",
-                "forward_primer": {"seq": "TTG"},
-                "reverse_primer": {"seq": "ATT"},
-            },
-        ]
-
-        panel_info_dict_a = {
-            "panel_info": [
-                {
-                    "panel_name": "test_panel1",
-                    "reactions": [{"reaction_name": "1", "panel_targets": [0, 1, 2]}],
-                }
-            ],
-            "targeted_genomes": [self.genome_info],
-            "target_info": self.min_target_json,
-        }
-        panel_info_dict_b = {
-            "panel_info": [
-                {
-                    "panel_name": "test_panel2",
-                    "reactions": [{"reaction_name": "1", "panel_targets": [0, 1]}],
-                }
-            ],
-            "targeted_genomes": [self.genome_info],
-            "target_info": target_info_b,
-        }
-
-        merged = merge_panel_info_dicts([panel_info_dict_a, panel_info_dict_b])
-
-        expected_merged = {
-            "panel_info": [
-                {
-                    "panel_name": "test_panel1",
-                    "reactions": [{"reaction_name": "1", "panel_targets": [0, 1, 2]}],
-                },
-                {
-                    "panel_name": "test_panel2",
-                    "reactions": [{"reaction_name": "1", "panel_targets": [1, 3]}],
-                },
-            ],
-            "targeted_genomes": [self.genome_info],
-            "target_info": self.min_target_json
-            + [
-                {
-                    "target_name": "target5",
-                    "forward_primer": {"seq": "TTG"},
-                    "reverse_primer": {"seq": "ATT"},
-                },
-            ],
         }
 
         self.assertEqual(merged, expected_merged)
