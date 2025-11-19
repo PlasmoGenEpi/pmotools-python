@@ -13,7 +13,7 @@ from ..pmo_engine.pmo_processor import PMOProcessor
 def panel_info_table_to_pmo(
     target_table: pd.DataFrame,
     panel_name: str,
-    genome_info: dict,
+    genome_info: dict | list,
     target_name_col: str = "target_name",
     forward_primers_seq_col: str = "fwd_primer",
     reverse_primers_seq_col: str = "rev_primer",
@@ -28,6 +28,7 @@ def panel_info_table_to_pmo(
     strand_col: str | None = None,
     ref_seq_col: str | None = None,
     gene_name_col: str | None = None,
+    genome_id_col: str | None = None,
     target_attributes_col: str | None = None,
     additional_target_info_cols: list | None = None,
 ):
@@ -37,7 +38,7 @@ def panel_info_table_to_pmo(
 
     :param target_table: The dataframe containing the target information
     :param panel_name: the panel ID assigned to the panel
-    :param genome_info: A dictionary containing the genome information
+    :param genome_info: A dictionary or list of dictionaries containing the genome information
     :param target_name_col: the name of the column containing the target IDs
     :param forward_primers_seq_col: the name of the column containing the sequence of the forward primer
     :param reverse_primers_seq_col: the name of the column containing the sequence of the reverse primer
@@ -52,12 +53,18 @@ def panel_info_table_to_pmo(
     :param gene_name_col (Optional): the name of the column containing the gene id
     :param strand_col (Optional): the name of the column containing the strand for the target
     :param target_attributes_col (Optional): a list of classification type for the primer target
+    :param genome_id_col (Optional): the name of the column containing the genome ID (default is 0)
     :param additional_target_info_cols (Optional): dictionary of optional additional columns to add to the target information dictionary. Keys are column names and values are the type.
     :return: a dict of the panel information
     """
 
     if not isinstance(target_table, pd.DataFrame):
         raise ValueError("target_table must be a pandas DataFrame.")
+
+    # Convert genome_info to list if it's a dict
+    if isinstance(genome_info, dict):
+        genome_info = [genome_info]
+
     check_genome_info(genome_info)
 
     # Check additional columns if any are added
@@ -85,12 +92,12 @@ def panel_info_table_to_pmo(
     )
 
     # Create dictionary of targets and panels
-    targets_dict = builder.create_targets_dict()
+    targets_dict = builder.create_targets_dict(genome_id_col)
     panel_dict = builder.build_panel_info(targets_dict)
     # Put together components
     panel_info_dict = {
         "panel_info": [panel_dict],
-        "targeted_genomes": [genome_info],
+        "targeted_genomes": genome_info,
         "target_info": targets_dict,
     }
     return panel_info_dict
@@ -101,7 +108,7 @@ class PMOPanelBuilder:
         self,
         target_table: pd.DataFrame,
         panel_name: str,
-        genome_info: dict,
+        genome_info: dict | list,
         target_name_col: str = "target_name",
         forward_primers_seq_col: str = "fwd_primer",
         reverse_primers_seq_col: str = "rev_primer",
@@ -262,7 +269,7 @@ class PMOPanelBuilder:
 
     def create_targets_dict(
         self,
-        genome_id: int = 0,
+        genome_id_col: str | None = None,
     ):
         # Check targets before putting into JSON
         (
@@ -314,6 +321,10 @@ class PMOPanelBuilder:
 
             # Add insert location info if location_info_cols are provided
             if insert_start_col and target_name not in missing_insert_loc:
+                if genome_id_col:
+                    genome_id = int(row[genome_id_col])
+                else:
+                    genome_id = 0
                 target_dict["insert_location"] = {
                     "genome_id": genome_id,
                     "chrom": row[chrom_col],
@@ -329,6 +340,10 @@ class PMOPanelBuilder:
             fwd_primer_dict = {"seq": row[self.forward_primers_seq_col]}
             rev_primer_dict = {"seq": row[self.reverse_primers_seq_col]}
             if forward_primers_start_col and target_name not in missing_fwd_primer_loc:
+                if genome_id_col:
+                    genome_id = int(row[genome_id_col])
+                else:
+                    genome_id = 0
                 fwd_primer_dict["location"] = {
                     "genome_id": genome_id,
                     "chrom": row[chrom_col],
@@ -338,6 +353,10 @@ class PMOPanelBuilder:
                 if strand_col and pd.notna(row[strand_col]):
                     fwd_primer_dict["location"]["strand"] = row[strand_col]
             if reverse_primers_start_col and target_name not in missing_rev_primer_loc:
+                if genome_id_col:
+                    genome_id = int(row[genome_id_col])
+                else:
+                    genome_id = 0
                 rev_primer_dict["location"] = {
                     "genome_id": genome_id,
                     "chrom": row[chrom_col],
@@ -382,9 +401,23 @@ def check_genome_info(genome_info):
             raise ValueError(
                 f"genome_info missing required keys: {', '.join(missing_keys)}"
             )
+    elif isinstance(genome_info, list):
+        if not genome_info:
+            raise ValueError("genome_info list cannot be empty")
+        required_keys = {"name", "genome_version", "taxon_id", "url"}
+        for i, genome_dict in enumerate(genome_info):
+            if not isinstance(genome_dict, dict):
+                raise TypeError(
+                    f"genome_info[{i}] must be a dict, but got {type(genome_dict).__name__}"
+                )
+            missing_keys = required_keys - genome_dict.keys()
+            if missing_keys:
+                raise ValueError(
+                    f"genome_info[{i}] missing required keys: {', '.join(missing_keys)}"
+                )
     else:
         raise TypeError(
-            f"genome_info must be a dict, but got {type(genome_info).__name__}"
+            f"genome_info must be a dict or list, but got {type(genome_info).__name__}"
         )
 
 

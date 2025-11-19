@@ -261,7 +261,7 @@ def _process_reads_by_stage_table(
             reads_data[sample_name][target_name] = {}
 
         # Create stage data with read count and additional columns
-        stage_data = {"stage": stage, "read_count": read_count}
+        stage_data = {"stage": stage, "reads": read_count}
 
         # Add additional columns if present and not null
         if additional_cols:

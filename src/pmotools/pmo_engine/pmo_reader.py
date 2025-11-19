@@ -6,6 +6,7 @@ import gzip
 import os
 import sys
 from collections import defaultdict
+from pmotools import __version__ as __pmotools_version__
 
 
 class PMOReader:
@@ -62,11 +63,11 @@ class PMOReader:
         # currently losing all info about previous header info,
         # consider coming up with something in standard that might preserve this info if needed
         pmo_out["pmo_header"] = {
-            "pmo_version": "v1.0.0",
+            "pmo_version": __pmotools_version__,
             "creation_date": datetime.datetime.now().strftime("%Y-%m-%d"),
             "generation_method": {
                 "program_name": "pmotools-python.PMOReader.combine_multiple_pmos",
-                "program_version": "v1.0.0",
+                "program_version": __pmotools_version__,
             },
         }
 

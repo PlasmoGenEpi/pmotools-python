@@ -7,7 +7,6 @@ import pandas
 import pandas as pd
 from collections import defaultdict
 from pmotools.pmo_engine.pmo_checker import PMOChecker
-from pmotools.utils.schema_loader import load_schema
 
 from pmotools import __version__ as __pmotools_version__
 
@@ -534,9 +533,6 @@ class PMOProcessor:
         :param collapse_across_runs: whether to collapse count/freqs across bioinformatics_run_id runs
         :return: DataFrame with columns: bioinformatics_run_id, target, mhap_id, count, freq, target_total
         """
-        schema = load_schema("portable_microhaplotype_object_v0.1.0.schema.json")
-        checker = PMOChecker(schema)
-        checker.check_for_required_base_fields(pmodata)
 
         allele_counts = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
         target_totals = defaultdict(lambda: defaultdict(int))
