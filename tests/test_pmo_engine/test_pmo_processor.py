@@ -873,6 +873,115 @@ class TestPMOProcessor(unittest.TestCase):
         names = PMOProcessor.get_panel_names(pmo_data_combined)
         self.assertEqual(["heomev1"], names)
 
+    def test_update_specimen_meta(self):
+        test_pmo = {
+            "specimen_info": [{"specimen_name": "spec1"}, {"specimen_name": "spec2"}],
+        }
+        adding_meta = pd.DataFrame(
+            {
+                "specimen_name": ["spec1", "spec2"],
+                "collection_country": ["Kenya", "Uganda"],
+                "collection_date": ["2023-10-13", "2024-11-14"],
+            }
+        )
+        PMOProcessor.update_specimen_meta(test_pmo, adding_meta)
+        test_out_pmo = {
+            "specimen_info": [
+                {
+                    "specimen_name": "spec1",
+                    "collection_country": "Kenya",
+                    "collection_date": "2023-10-13",
+                },
+                {
+                    "specimen_name": "spec2",
+                    "collection_country": "Uganda",
+                    "collection_date": "2024-11-14",
+                },
+            ]
+        }
+        self.assertEqual(test_pmo, test_out_pmo)
+
+    def test_update_specimen_meta_set_type(self):
+        test_pmo = {
+            "specimen_info": [{"specimen_name": "spec1"}, {"specimen_name": "spec2"}],
+        }
+        adding_meta = pd.DataFrame(
+            {
+                "specimen_name": ["spec1", "spec2"],
+                "collection_country": ["Kenya", "Uganda"],
+                "collection_date": ["2023-10-13", "2024-11-14"],
+                "host_age": [10.5, 20],
+            }
+        )
+        PMOProcessor.update_specimen_meta(
+            test_pmo, adding_meta, meta_types={"host_age": float}
+        )
+        test_out_pmo = {
+            "specimen_info": [
+                {
+                    "specimen_name": "spec1",
+                    "collection_country": "Kenya",
+                    "collection_date": "2023-10-13",
+                    "host_age": 10.5,
+                },
+                {
+                    "specimen_name": "spec2",
+                    "collection_country": "Uganda",
+                    "collection_date": "2024-11-14",
+                    "host_age": 20.0,
+                },
+            ]
+        }
+        self.assertEqual(test_pmo, test_out_pmo)
+
+    def test_update_specimen_meta_replace(self):
+        test_pmo = {
+            "specimen_info": [
+                {"specimen_name": "spec1", "collection_date": "2023"},
+                {"specimen_name": "spec2"},
+            ],
+        }
+        adding_meta = pd.DataFrame(
+            {
+                "specimen_name": ["spec1", "spec2"],
+                "collection_country": ["Kenya", "Uganda"],
+                "collection_date": ["2023-10-13", "2024-11-14"],
+            }
+        )
+        PMOProcessor.update_specimen_meta(
+            test_pmo, adding_meta, replace_current_meta=True
+        )
+        test_out_pmo = {
+            "specimen_info": [
+                {
+                    "specimen_name": "spec1",
+                    "collection_country": "Kenya",
+                    "collection_date": "2023-10-13",
+                },
+                {
+                    "specimen_name": "spec2",
+                    "collection_country": "Uganda",
+                    "collection_date": "2024-11-14",
+                },
+            ]
+        }
+        self.assertEqual(test_pmo, test_out_pmo)
+
+    def test_update_specimen_meta_raise_no_specimen(self):
+        test_pmo = {
+            "specimen_info": [{"specimen_name": "spec1"}, {"specimen_name": "spec2"}],
+        }
+        adding_meta = pd.DataFrame(
+            {
+                "specimen_name": ["spec1", "spec3"],
+                "collection_country": ["Kenya", "Uganda"],
+                "collection_date": ["2023-10-13", "2024-11-14"],
+            }
+        )
+
+        with self.assertRaises(ValueError):
+            PMOProcessor.update_specimen_meta(test_pmo, adding_meta)
+
 
 if __name__ == "__main__":
     unittest.main()
