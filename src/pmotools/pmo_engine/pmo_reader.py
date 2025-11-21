@@ -278,6 +278,13 @@ class PMOReader:
         library_sample_info_old_index_key = defaultdict(dict)
         duplicate_library_sample_names = []
         library_sample_names = []
+        # have to add the library_sample_names already added in the first PMO
+        for library_sample in pmo_out["library_sample_info"]:
+            if library_sample["library_sample_name"] in library_sample_names:
+                duplicate_library_sample_names.append(
+                    library_sample["library_sample_name"]
+                )
+            library_sample_names.append(library_sample["library_sample_name"])
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
             for library_sample_info_index, library_sample_info in enumerate(
                 pmo["library_sample_info"]
