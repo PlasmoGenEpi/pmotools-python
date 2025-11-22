@@ -403,6 +403,27 @@ class PMOProcessor:
         )
 
     @staticmethod
+    def count_targets_per_panel(pmodata) -> pd.DataFrame:
+        """
+        Count the targets per panel.
+
+        :param pmodata: the pmo to count from
+        :return: counts for each panel
+        """
+        # how many targets in each panel
+        panels = []
+        target_count = []
+        for panel in pmodata["panel_info"]:
+            panel_targets = 0
+            panels.append(panel["panel_name"])
+            for reaction in panel["reactions"]:
+                panel_targets += len(reaction["panel_targets"])
+            target_count.append(panel_targets)
+        return pd.DataFrame(
+            data={"panel_name": panels, "panel_target_count": target_count}
+        )
+
+    @staticmethod
     def list_library_sample_names_per_specimen_name(
         pmodata,
         select_specimen_ids: list[int] = None,

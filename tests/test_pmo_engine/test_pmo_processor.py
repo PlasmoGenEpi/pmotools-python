@@ -873,6 +873,124 @@ class TestPMOProcessor(unittest.TestCase):
         names = PMOProcessor.get_panel_names(pmo_data_combined)
         self.assertEqual(["heomev1"], names)
 
+    def test_count_targets_per_panel_single_panel_single_reaction(self):
+        """Test count_targets_per_panel with a single panel containing one reaction"""
+        # Create a simple PMO with one panel and one reaction
+        test_pmo = {
+            "panel_info": [
+                {
+                    "panel_name": "test_panel_1",
+                    "reactions": [
+                        {
+                            "reaction_name": "reaction_1",
+                            "panel_targets": [0, 1, 2, 3, 4],
+                        }
+                    ],
+                }
+            ]
+        }
+
+        result = PMOProcessor.count_targets_per_panel(test_pmo)
+
+        expected_data = {"panel_name": ["test_panel_1"], "panel_target_count": [5]}
+        expected_df = pd.DataFrame(expected_data)
+
+        pd.testing.assert_frame_equal(result, expected_df)
+
+    def test_count_targets_per_panel_single_panel_multiple_reactions(self):
+        """Test count_targets_per_panel with a single panel containing multiple reactions"""
+        # Create a PMO with one panel and multiple reactions
+        test_pmo = {
+            "panel_info": [
+                {
+                    "panel_name": "test_panel_1",
+                    "reactions": [
+                        {"reaction_name": "reaction_1", "panel_targets": [0, 1, 2]},
+                        {"reaction_name": "reaction_2", "panel_targets": [3, 4, 5, 6]},
+                        {"reaction_name": "reaction_3", "panel_targets": [7, 8]},
+                    ],
+                }
+            ]
+        }
+
+        result = PMOProcessor.count_targets_per_panel(test_pmo)
+
+        expected_data = {
+            "panel_name": ["test_panel_1"],
+            "panel_target_count": [9],  # 3 + 4 + 2 = 9 total targets
+        }
+        expected_df = pd.DataFrame(expected_data)
+
+        pd.testing.assert_frame_equal(result, expected_df)
+
+    def test_count_targets_per_panel_multiple_panels(self):
+        """Test count_targets_per_panel with multiple panels"""
+        # Create a PMO with multiple panels
+        test_pmo = {
+            "panel_info": [
+                {
+                    "panel_name": "panel_A",
+                    "reactions": [
+                        {"reaction_name": "reaction_1", "panel_targets": [0, 1, 2, 3]}
+                    ],
+                },
+                {
+                    "panel_name": "panel_B",
+                    "reactions": [
+                        {"reaction_name": "reaction_1", "panel_targets": [4, 5]},
+                        {
+                            "reaction_name": "reaction_2",
+                            "panel_targets": [6, 7, 8, 9, 10],
+                        },
+                    ],
+                },
+                {
+                    "panel_name": "panel_C",
+                    "reactions": [
+                        {"reaction_name": "reaction_1", "panel_targets": [11]}
+                    ],
+                },
+            ]
+        }
+
+        result = PMOProcessor.count_targets_per_panel(test_pmo)
+
+        expected_data = {
+            "panel_name": ["panel_A", "panel_B", "panel_C"],
+            "panel_target_count": [4, 7, 1],  # 4, (2+5), 1
+        }
+        expected_df = pd.DataFrame(expected_data)
+
+        pd.testing.assert_frame_equal(result, expected_df)
+
+    def test_count_targets_per_panel_with_real_data_structure(self):
+        """Test count_targets_per_panel with realistic PMO data structure"""
+        # Create a realistic PMO structure similar to the real data
+        # Based on the real data structure with one panel containing 100 targets
+        test_pmo = {
+            "panel_info": [
+                {
+                    "panel_name": "heomev1",
+                    "reactions": [
+                        {
+                            "panel_targets": list(range(100)),  # targets 0-99
+                            "reaction_name": "full",
+                        }
+                    ],
+                }
+            ]
+        }
+
+        result = PMOProcessor.count_targets_per_panel(test_pmo)
+
+        expected_data = {
+            "panel_name": ["heomev1"],
+            "panel_target_count": [100],  # targets 0-99 = 100 total
+        }
+        expected_df = pd.DataFrame(expected_data)
+
+        pd.testing.assert_frame_equal(result, expected_df)
+
 
 if __name__ == "__main__":
     unittest.main()
