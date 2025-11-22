@@ -158,13 +158,11 @@ class PMOReader:
                     new_index = len(pmo_out["panel_info"])
                     # update target indexes to make sure reaction points to the right target indexes
                     for reaction in panel_copy["reactions"]:
-                        for target_id_reaction in range(
-                            len(reaction["target_id_reactions"])
-                        ):
-                            reaction["target_id_reactions"][
+                        for target_id_reaction in range(len(reaction["panel_targets"])):
+                            reaction["panel_targets"][
                                 target_id_reaction
                             ] = target_info_old_index_key[pmo_index][
-                                reaction["target_id_reactions"][target_id_reaction]
+                                reaction["panel_targets"][target_id_reaction]
                             ]
                     pmo_out["panel_info"].append(panel_copy)
                     panel_info_out_index_key[panel_copy["panel_name"]] = new_index
@@ -227,10 +225,12 @@ class PMOReader:
         # update project_id
         pmo_out["specimen_info"] = copy.deepcopy(pmos[0]["specimen_info"])
         specimen_names = []
+        specimen_index_key = {}
         duplicate_specimen_names = []
         for specimen in pmo_out["specimen_info"]:
             if specimen["specimen_name"] in specimen_names:
                 duplicate_specimen_names.append(specimen["specimen_name"])
+            specimen_index_key[specimen["specimen_name"]] = len(specimen_names)
             specimen_names.append(specimen["specimen_name"])
 
         # key1 pmo_index, key2 old_index, val new_index
@@ -239,16 +239,38 @@ class PMOReader:
             for specimen_info_index, specimen_info in enumerate(pmo["specimen_info"]):
                 # checkin for duplicates
                 if specimen_info["specimen_name"] in specimen_names:
-                    duplicate_specimen_names.append(specimen_info["specimen_name"])
-                specimen_names.append(specimen_info["specimen_name"])
-                new_index = len(pmo_out["specimen_info"])
-                # update project_id
-                specimen_info_copy = copy.deepcopy(specimen_info)
-                specimen_info_copy["project_id"] = project_info_old_index_key[
-                    pmo_index
-                ][specimen_info_copy["project_id"]]
-                pmo_out["specimen_info"].append(specimen_info_copy)
-                specimen_info_old_index_key[pmo_index][specimen_info_index] = new_index
+                    # if specimen is exactly the same, then no issues
+                    # @todo allow merging of info and as long as the meta present in both are the same then it should be fine
+                    if (
+                        specimen_info
+                        != pmo_out["specimen_info"][
+                            specimen_index_key[specimen_info["specimen_name"]]
+                        ]
+                    ):
+                        duplicate_specimen_names.append(specimen_info["specimen_name"])
+                        specimen_info_old_index_key[pmo_index][
+                            specimen_info_index
+                        ] = specimen_index_key[specimen_info["specimen_name"]]
+                    else:
+                        # update key for the already present id
+                        specimen_info_old_index_key[pmo_index][
+                            specimen_info_index
+                        ] = specimen_index_key[specimen_info["specimen_name"]]
+                else:
+                    specimen_index_key[specimen_info["specimen_name"]] = len(
+                        specimen_names
+                    )
+                    specimen_names.append(specimen_info["specimen_name"])
+                    new_index = len(pmo_out["specimen_info"])
+                    # update project_id
+                    specimen_info_copy = copy.deepcopy(specimen_info)
+                    specimen_info_copy["project_id"] = project_info_old_index_key[
+                        pmo_index
+                    ][specimen_info_copy["project_id"]]
+                    pmo_out["specimen_info"].append(specimen_info_copy)
+                    specimen_info_old_index_key[pmo_index][
+                        specimen_info_index
+                    ] = new_index
 
         ## library_sample_info
         pmo_out["library_sample_info"] = copy.deepcopy(pmos[0]["library_sample_info"])
@@ -256,6 +278,13 @@ class PMOReader:
         library_sample_info_old_index_key = defaultdict(dict)
         duplicate_library_sample_names = []
         library_sample_names = []
+        # have to add the library_sample_names already added in the first PMO
+        for library_sample in pmo_out["library_sample_info"]:
+            if library_sample["library_sample_name"] in library_sample_names:
+                duplicate_library_sample_names.append(
+                    library_sample["library_sample_name"]
+                )
+            library_sample_names.append(library_sample["library_sample_name"])
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
             for library_sample_info_index, library_sample_info in enumerate(
                 pmo["library_sample_info"]

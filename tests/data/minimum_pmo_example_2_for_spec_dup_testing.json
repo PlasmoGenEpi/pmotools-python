@@ -1,0 +1,8495 @@
+{
+	"bioinformatics_methods_info" :
+	[
+		{
+			"methods" :
+			[
+				{
+					"additional_argument" :
+					[
+						"--bamExtractTrimToRegion",
+						"--bed /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_withPrimers.bed",
+						"--genomeDir /tank/data/genomes/plasmodium/genomes/pf/genomes/",
+						"--primaryGenome Pf3D7",
+						"--bam bams/{SAMPLE}.sorted.bam"
+					],
+					"program" : "PathWeaver BamExtractPathwaysFromRegion",
+					"program_description" : "Extract reads from a bam file for a specific genomic locatioon and then assembles local haplotypes for that region",
+					"program_version" : "1.0.0-dev"
+				},
+				{
+					"additional_argument" :
+					[
+						"--overWriteDir",
+						"--fracCutOff 0.005",
+						"--dout popClusteringTrimmedParagon",
+						"--replicateMinTotalReadCutOff 10",
+						"--clusterCutOff 5",
+						"--pat _heome1",
+						"--numThreads 10",
+						"--groupingsFile /tank/data/plasmodium/falciparum/pfdata/metadata/meta.tab.txt",
+						"--genome2bit /tank/data/genomes/plasmodium/genomes/pf/genomes/Pf3D7.2bit",
+						"--trimBedFnp /tank/data/plasmodium/falciparum/beds/targeted_panels/heome1/heome1_Pf3D7_inserts_trimmed1.bed"
+					],
+					"program" : "PathWeaver runProcessClustersOnRecon",
+					"program_description" : "Compare across samples for each target to create population level identifiers and do post artifact cleanup",
+					"program_version" : "1.0.0-dev"
+				}
+			]
+		}
+	],
+	"bioinformatics_run_info" :
+	[
+		{
+			"bioinformatics_methods_id" : 0,
+			"bioinformatics_run_name" : "PathWeaver-Heome1",
+			"run_date" : "2024-09-03"
+		}
+	],
+	"detected_microhaplotypes" :
+	[
+		{
+			"bioinformatics_run_id" : 0,
+			"library_samples" :
+			[
+				{
+					"library_sample_id" : 1,
+					"target_results" :
+					[
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 289
+								}
+							],
+							"mhaps_target_id" : 2
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 333
+								}
+							],
+							"mhaps_target_id" : 47
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 480
+								}
+							],
+							"mhaps_target_id" : 99
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 427
+								}
+							],
+							"mhaps_target_id" : 76
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 181
+								}
+							],
+							"mhaps_target_id" : 98
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 352
+								}
+							],
+							"mhaps_target_id" : 21
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 333
+								}
+							],
+							"mhaps_target_id" : 74
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 302
+								}
+							],
+							"mhaps_target_id" : 97
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 299
+								}
+							],
+							"mhaps_target_id" : 96
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 230
+								}
+							],
+							"mhaps_target_id" : 95
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 268
+								}
+							],
+							"mhaps_target_id" : 94
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 301
+								}
+							],
+							"mhaps_target_id" : 30
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 271
+								}
+							],
+							"mhaps_target_id" : 46
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 260
+								}
+							],
+							"mhaps_target_id" : 87
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 358
+								}
+							],
+							"mhaps_target_id" : 85
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 329
+								}
+							],
+							"mhaps_target_id" : 84
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 305
+								}
+							],
+							"mhaps_target_id" : 80
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 208
+								}
+							],
+							"mhaps_target_id" : 79
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 360
+								}
+							],
+							"mhaps_target_id" : 81
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 311
+								}
+							],
+							"mhaps_target_id" : 82
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 377
+								}
+							],
+							"mhaps_target_id" : 72
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 446
+								}
+							],
+							"mhaps_target_id" : 16
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 361
+								}
+							],
+							"mhaps_target_id" : 71
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 324
+								}
+							],
+							"mhaps_target_id" : 77
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 282
+								}
+							],
+							"mhaps_target_id" : 69
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 208
+								}
+							],
+							"mhaps_target_id" : 66
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 408
+								}
+							],
+							"mhaps_target_id" : 63
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 286
+								}
+							],
+							"mhaps_target_id" : 68
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 363
+								}
+							],
+							"mhaps_target_id" : 62
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 387
+								}
+							],
+							"mhaps_target_id" : 61
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 362
+								}
+							],
+							"mhaps_target_id" : 51
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 316
+								}
+							],
+							"mhaps_target_id" : 50
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 356
+								}
+							],
+							"mhaps_target_id" : 31
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 374
+								}
+							],
+							"mhaps_target_id" : 49
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 317
+								}
+							],
+							"mhaps_target_id" : 35
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 288
+								}
+							],
+							"mhaps_target_id" : 48
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 354
+								}
+							],
+							"mhaps_target_id" : 43
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 441
+								}
+							],
+							"mhaps_target_id" : 33
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 385
+								}
+							],
+							"mhaps_target_id" : 67
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 156
+								}
+							],
+							"mhaps_target_id" : 37
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 391
+								}
+							],
+							"mhaps_target_id" : 3
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 469
+								}
+							],
+							"mhaps_target_id" : 14
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 276
+								}
+							],
+							"mhaps_target_id" : 32
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 441
+								}
+							],
+							"mhaps_target_id" : 86
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 395
+								}
+							],
+							"mhaps_target_id" : 11
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 305
+								}
+							],
+							"mhaps_target_id" : 28
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 346
+								}
+							],
+							"mhaps_target_id" : 26
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 326
+								}
+							],
+							"mhaps_target_id" : 59
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 382
+								}
+							],
+							"mhaps_target_id" : 27
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 433
+								}
+							],
+							"mhaps_target_id" : 88
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 310
+								}
+							],
+							"mhaps_target_id" : 64
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 333
+								}
+							],
+							"mhaps_target_id" : 8
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 350
+								}
+							],
+							"mhaps_target_id" : 19
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 257
+								}
+							],
+							"mhaps_target_id" : 36
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 235
+								}
+							],
+							"mhaps_target_id" : 65
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 348
+								}
+							],
+							"mhaps_target_id" : 25
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 335
+								}
+							],
+							"mhaps_target_id" : 58
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 262
+								}
+							],
+							"mhaps_target_id" : 73
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 385
+								}
+							],
+							"mhaps_target_id" : 20
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 289
+								}
+							],
+							"mhaps_target_id" : 93
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 366
+								}
+							],
+							"mhaps_target_id" : 24
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 270
+								}
+							],
+							"mhaps_target_id" : 83
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 346
+								}
+							],
+							"mhaps_target_id" : 70
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 293
+								}
+							],
+							"mhaps_target_id" : 23
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 356
+								}
+							],
+							"mhaps_target_id" : 57
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 316
+								}
+							],
+							"mhaps_target_id" : 17
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 358
+								}
+							],
+							"mhaps_target_id" : 15
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 366
+								}
+							],
+							"mhaps_target_id" : 60
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 420
+								}
+							],
+							"mhaps_target_id" : 18
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 341
+								}
+							],
+							"mhaps_target_id" : 6
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 392
+								}
+							],
+							"mhaps_target_id" : 13
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 327
+								}
+							],
+							"mhaps_target_id" : 9
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 351
+								}
+							],
+							"mhaps_target_id" : 53
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 287
+								}
+							],
+							"mhaps_target_id" : 92
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 420
+								}
+							],
+							"mhaps_target_id" : 12
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 405
+								}
+							],
+							"mhaps_target_id" : 22
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 399
+								}
+							],
+							"mhaps_target_id" : 45
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 395
+								}
+							],
+							"mhaps_target_id" : 75
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 370
+								}
+							],
+							"mhaps_target_id" : 7
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 418
+								}
+							],
+							"mhaps_target_id" : 40
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 261
+								}
+							],
+							"mhaps_target_id" : 5
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 439
+								}
+							],
+							"mhaps_target_id" : 41
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 251
+								}
+							],
+							"mhaps_target_id" : 52
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 308
+								}
+							],
+							"mhaps_target_id" : 38
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 398
+								}
+							],
+							"mhaps_target_id" : 89
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 300
+								}
+							],
+							"mhaps_target_id" : 4
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 329
+								}
+							],
+							"mhaps_target_id" : 0
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 250
+								}
+							],
+							"mhaps_target_id" : 90
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 340
+								}
+							],
+							"mhaps_target_id" : 78
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 303
+								}
+							],
+							"mhaps_target_id" : 42
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 389
+								}
+							],
+							"mhaps_target_id" : 34
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 302
+								}
+							],
+							"mhaps_target_id" : 91
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 338
+								}
+							],
+							"mhaps_target_id" : 1
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 357
+								}
+							],
+							"mhaps_target_id" : 39
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 300
+								}
+							],
+							"mhaps_target_id" : 29
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 293
+								}
+							],
+							"mhaps_target_id" : 44
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 2,
+									"reads" : 358
+								}
+							],
+							"mhaps_target_id" : 56
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 290
+								}
+							],
+							"mhaps_target_id" : 10
+						}
+					]
+				},
+				{
+					"library_sample_id" : 0,
+					"target_results" :
+					[
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1191
+								}
+							],
+							"mhaps_target_id" : 2
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1129
+								}
+							],
+							"mhaps_target_id" : 54
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 920
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 291
+								}
+							],
+							"mhaps_target_id" : 21
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1039
+								}
+							],
+							"mhaps_target_id" : 74
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1151
+								}
+							],
+							"mhaps_target_id" : 97
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1177
+								}
+							],
+							"mhaps_target_id" : 96
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1221
+								}
+							],
+							"mhaps_target_id" : 95
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1076
+								}
+							],
+							"mhaps_target_id" : 94
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1090
+								}
+							],
+							"mhaps_target_id" : 30
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1137
+								}
+							],
+							"mhaps_target_id" : 46
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 884
+								}
+							],
+							"mhaps_target_id" : 87
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1417
+								}
+							],
+							"mhaps_target_id" : 85
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1282
+								}
+							],
+							"mhaps_target_id" : 84
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1295
+								}
+							],
+							"mhaps_target_id" : 80
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1488
+								}
+							],
+							"mhaps_target_id" : 79
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1455
+								}
+							],
+							"mhaps_target_id" : 81
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1375
+								}
+							],
+							"mhaps_target_id" : 82
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 928
+								}
+							],
+							"mhaps_target_id" : 98
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1439
+								}
+							],
+							"mhaps_target_id" : 76
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1315
+								}
+							],
+							"mhaps_target_id" : 72
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1434
+								}
+							],
+							"mhaps_target_id" : 16
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 997
+								}
+							],
+							"mhaps_target_id" : 71
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1208
+								}
+							],
+							"mhaps_target_id" : 77
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 788
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 321
+								}
+							],
+							"mhaps_target_id" : 69
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1354
+								}
+							],
+							"mhaps_target_id" : 66
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1234
+								}
+							],
+							"mhaps_target_id" : 63
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1117
+								}
+							],
+							"mhaps_target_id" : 68
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 833
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 336
+								}
+							],
+							"mhaps_target_id" : 62
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1451
+								}
+							],
+							"mhaps_target_id" : 61
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1283
+								}
+							],
+							"mhaps_target_id" : 51
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 915
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 267
+								}
+							],
+							"mhaps_target_id" : 50
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1209
+								}
+							],
+							"mhaps_target_id" : 31
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 2063
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 450
+								}
+							],
+							"mhaps_target_id" : 49
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1319
+								}
+							],
+							"mhaps_target_id" : 35
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1196
+								}
+							],
+							"mhaps_target_id" : 48
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1507
+								}
+							],
+							"mhaps_target_id" : 99
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 843
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 269
+								}
+							],
+							"mhaps_target_id" : 47
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1411
+								}
+							],
+							"mhaps_target_id" : 43
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1334
+								}
+							],
+							"mhaps_target_id" : 33
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 937
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 318
+								}
+							],
+							"mhaps_target_id" : 67
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1066
+								}
+							],
+							"mhaps_target_id" : 37
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1128
+								}
+							],
+							"mhaps_target_id" : 3
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1500
+								}
+							],
+							"mhaps_target_id" : 14
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1276
+								}
+							],
+							"mhaps_target_id" : 32
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1370
+								}
+							],
+							"mhaps_target_id" : 86
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 1011
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 347
+								}
+							],
+							"mhaps_target_id" : 11
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1288
+								}
+							],
+							"mhaps_target_id" : 28
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 955
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 313
+								}
+							],
+							"mhaps_target_id" : 26
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1171
+								}
+							],
+							"mhaps_target_id" : 59
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1197
+								}
+							],
+							"mhaps_target_id" : 27
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 952
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 403
+								}
+							],
+							"mhaps_target_id" : 88
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1100
+								}
+							],
+							"mhaps_target_id" : 64
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1133
+								}
+							],
+							"mhaps_target_id" : 8
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1293
+								}
+							],
+							"mhaps_target_id" : 19
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1257
+								}
+							],
+							"mhaps_target_id" : 36
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1338
+								}
+							],
+							"mhaps_target_id" : 65
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 934
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 318
+								}
+							],
+							"mhaps_target_id" : 25
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1371
+								}
+							],
+							"mhaps_target_id" : 58
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 933
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 338
+								}
+							],
+							"mhaps_target_id" : 73
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 712
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 289
+								}
+							],
+							"mhaps_target_id" : 20
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1413
+								}
+							],
+							"mhaps_target_id" : 93
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1196
+								}
+							],
+							"mhaps_target_id" : 24
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1348
+								}
+							],
+							"mhaps_target_id" : 83
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1207
+								}
+							],
+							"mhaps_target_id" : 70
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 909
+								}
+							],
+							"mhaps_target_id" : 23
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1135
+								}
+							],
+							"mhaps_target_id" : 57
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 951
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 318
+								}
+							],
+							"mhaps_target_id" : 17
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 964
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 294
+								}
+							],
+							"mhaps_target_id" : 15
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1397
+								}
+							],
+							"mhaps_target_id" : 60
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1251
+								}
+							],
+							"mhaps_target_id" : 18
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 910
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 337
+								}
+							],
+							"mhaps_target_id" : 6
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1039
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 325
+								}
+							],
+							"mhaps_target_id" : 13
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1489
+								}
+							],
+							"mhaps_target_id" : 9
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 814
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 267
+								}
+							],
+							"mhaps_target_id" : 53
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1186
+								}
+							],
+							"mhaps_target_id" : 92
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1496
+								}
+							],
+							"mhaps_target_id" : 12
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1454
+								}
+							],
+							"mhaps_target_id" : 22
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1224
+								}
+							],
+							"mhaps_target_id" : 45
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1429
+								}
+							],
+							"mhaps_target_id" : 75
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1097
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 350
+								}
+							],
+							"mhaps_target_id" : 7
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1493
+								}
+							],
+							"mhaps_target_id" : 40
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1024
+								}
+							],
+							"mhaps_target_id" : 5
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1365
+								}
+							],
+							"mhaps_target_id" : 41
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1097
+								}
+							],
+							"mhaps_target_id" : 52
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 1,
+									"reads" : 819
+								},
+								{
+									"mhap_id" : 0,
+									"reads" : 273
+								}
+							],
+							"mhaps_target_id" : 38
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1121
+								}
+							],
+							"mhaps_target_id" : 89
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1227
+								}
+							],
+							"mhaps_target_id" : 4
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1058
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 245
+								}
+							],
+							"mhaps_target_id" : 0
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 732
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 253
+								}
+							],
+							"mhaps_target_id" : 90
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 883
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 299
+								}
+							],
+							"mhaps_target_id" : 78
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1076
+								}
+							],
+							"mhaps_target_id" : 42
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 991
+								}
+							],
+							"mhaps_target_id" : 34
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1158
+								}
+							],
+							"mhaps_target_id" : 91
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1341
+								}
+							],
+							"mhaps_target_id" : 1
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 992
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 302
+								}
+							],
+							"mhaps_target_id" : 39
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1184
+								}
+							],
+							"mhaps_target_id" : 29
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1304
+								}
+							],
+							"mhaps_target_id" : 44
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 810
+								},
+								{
+									"mhap_id" : 1,
+									"reads" : 364
+								}
+							],
+							"mhaps_target_id" : 56
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1356
+								}
+							],
+							"mhaps_target_id" : 55
+						},
+						{
+							"mhaps" :
+							[
+								{
+									"mhap_id" : 0,
+									"reads" : 1109
+								}
+							],
+							"mhaps_target_id" : 10
+						}
+					]
+				}
+			]
+		}
+	],
+	"library_sample_info" :
+	[
+		{
+			"library_sample_name" : "5tbx_lib_name2",
+			"panel_id" : 0,
+			"sequencing_info_id" : 0,
+			"specimen_id" : 0
+		},
+		{
+			"library_sample_name" : "XUC009_lib_name2",
+			"panel_id" : 0,
+			"sequencing_info_id" : 0,
+			"specimen_id" : 1
+		}
+	],
+	"panel_info" :
+	[
+		{
+			"panel_name" : "heomev1",
+			"reactions" :
+			[
+				{
+					"panel_targets" :
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29,
+						30,
+						31,
+						32,
+						33,
+						34,
+						35,
+						36,
+						37,
+						38,
+						39,
+						40,
+						41,
+						42,
+						43,
+						44,
+						45,
+						46,
+						47,
+						48,
+						49,
+						50,
+						51,
+						52,
+						53,
+						54,
+						55,
+						56,
+						57,
+						58,
+						59,
+						60,
+						61,
+						62,
+						63,
+						64,
+						65,
+						66,
+						67,
+						68,
+						69,
+						70,
+						71,
+						72,
+						73,
+						74,
+						75,
+						76,
+						77,
+						78,
+						79,
+						80,
+						81,
+						82,
+						83,
+						84,
+						85,
+						86,
+						87,
+						88,
+						89,
+						90,
+						91,
+						92,
+						93,
+						94,
+						95,
+						96,
+						97,
+						98,
+						99
+					],
+					"reaction_name" : "full"
+				}
+			]
+		}
+	],
+	"pmo_header" :
+	{
+		"creation_date" : "2025-11-03",
+		"generation_method" :
+		{
+			"program_name" : "elucidator combingallintopmojson",
+			"program_version" : "1.1.1"
+		},
+		"pmo_version" : "v1.0.0"
+	},
+	"project_info" :
+	[
+		{
+			"project_description" : "PathWeaver assemblies of Heome1 from large collection of global samples",
+			"project_name" : "PathWeaverHeome1"
+		}
+	],
+	"representative_microhaplotypes" :
+	{
+		"targets" :
+		[
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 145621,
+					"genome_id" : 0,
+					"start" : 145448,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AACTTTTTTTATTTTTTTTGTCAATAGATAAATGATCAATATTTTCTATATTTAATCTATCAAGAATTTTTATATATCTATTATTTCTTTCTTCGATGGATAAATTATATGAATCAATATCCTTTCTTTCATCAACAAACTTTTTTATTGTTAACTCCATTTTTTTATTTA"
+					},
+					{
+						"seq" : "AACTTTTTTTATTTTTTTTGTCAATAGATAAATGATCAATATTTTCTATATTTAATCTATCAAGAATTTTTATATATCTATTATTTCTTTCTTCGATGGATAAATTATAAGAATCAATATCCTTTCTTTCATCAACAAACTTTTTTATTGTTAACTCCATTTTTTTATTTA"
+					},
+					{
+						"seq" : "AACTTTTTTTATTTTTTTTGTCAATAGATAAATGATCAATATTTTCTATATTTAATCTATCAAGTATTTTTATATATCTATTATTTCTTTCTTCGATGGATAAATTATAAGAATCAATATCCTTTCTTTCATCAACAAACTTTTTTATTGTTAACTCCATTTTTTTATTTA"
+					}
+				],
+				"target_id" : 79
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 109981,
+					"genome_id" : 0,
+					"start" : 109806,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ACTCATGTTCATGAGCTAATTTCCCACAAATACTCCATAACGAACTTTTCATTTTATTAAATTTATCTCTCAAAAGAGAATGACTATAATGCCATATTAAATACATATCTTTCCTTTCTAATGTTCCTGGTAATTCTATTATCATTCTTTCTAAATCTTCTTCTGTAAGTTTT"
+					},
+					{
+						"seq" : "ACTTATGTTCATGAGCTAATTTCCCACAAATACTCCATAACGAACTTTTCATTTTATTAAATTTATCTCTCAAAAGAGAATGACTATAATGCCATATTAAATACATATCTTTCCTTTCTAATTTTCCTGGTAATTCTATTATCATTCTTTCTAAATCTTCTTCTGTAAGTTTT"
+					}
+				],
+				"target_id" : 98
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 3214477,
+					"genome_id" : 0,
+					"start" : 3214350,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TCGTTTTGAATTGTCAGAATTTAAAATGACGGAGGATTGTTATACAAAAATGTGGTTTGATTTTATGAGTGATTTTGGAATAGCTACAATGAATGAAACCGAACATACTAGATCTTTTTATGGCT"
+					},
+					{
+						"seq" : "TCGTTTTGCATTGTCAGAATTTAAAATGACGGAGGATTGTTATACAAAAATGTGGTTTGATTTTATGAGTGATTTTGGAATAGCTACAATGAATGAAAGCGAACATACTAGATCTTTTTATGGCT"
+					}
+				],
+				"target_id" : 99
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 278335,
+					"genome_id" : 0,
+					"start" : 278164,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GAATTTTCTTTTTTATGACTTTCTTCTCCTTGTTCAGAAGCTTCTTTTTCATCCTTTTTTTCTGCTGCGTCAGATAAATTGGGGGAAGCACTTGAAGATTCATTTCCTCCAGGAGTATCACTAGTACTTACTCCGTCCATATTTGGTTTTTCTTCCCTTAGAATTCTCA"
+					},
+					{
+						"seq" : "GAATTTTCTTTTTTATGACTTTCTTCTCCTTGTTCAGAAGCTTCTTTTTCATCCTTTTTTTCTGCTGCGTCAGATAAATTGGGGGAAGCACTTGAAGATTCATTTCCTCCAGGAGTATTACTAGTACTTACTCCGTCCACATTTGGTTTTTCTTCCCCTAGAATTCTCA"
+					}
+				],
+				"target_id" : 42
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 470675,
+					"genome_id" : 0,
+					"start" : 470491,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TACACATAAGAAAAAAAAAATTTATTTATTCTTACAAAAAGAATATAAAAACAAAATTTTGGGATTTATAAATTTTTATAAACGTATAACACACAAAATAAAAAAGAAACAAGAAAATGTTCATGATAAAATCACTTTTTTAAAATGTCTAAAGGAACTCTTTTTTGTCACACATACAAATA"
+					},
+					{
+						"seq" : "TACACATAAGAAAAAAAAAATTTATTTATTCTTACAAAAAGAATATAAAAACAAAATTTTGGGATTTATAAATTTTTATAAACATATAACACACAAAATAAAAAAGAAACAAGAAAATGTTCATGATAAAATCACTTTTTTAAAATGTCTAAAGGAACTCTTTTTTGTCACACATACAAATG"
+					}
+				],
+				"target_id" : 78
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 805941,
+					"genome_id" : 0,
+					"start" : 805821,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAATTATGAAGACAGTCTCACGACTTCATGTTATATTGATGAAAACAAATCCGATTCATCCTATGAAACTGAAGAAAATGTAAACTATAATAATAAAATGGGTAAACGCAAAAATTTA"
+					}
+				],
+				"target_id" : 95
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 85645,
+					"genome_id" : 0,
+					"start" : 85439,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ACTTTTTAACACTATCATTATAATTATGTCTTTTATTTTCATATTTTTCTTTATAATAATTTATATCCTTTAATTTTTCTTTCATCAAATTTAACCATTTATCATTTAAATTCTCTTTTTCCACAGCTCCAGCATTTTTATTTATATCATCTACAACTACATCTTCCTTCACATAATTATTTATATAAAAATTATTATCATCTA"
+					},
+					{
+						"seq" : "ACTTTTTAACACTATCATTATAATTATGTCTTTTATTTTCATATTTTTCTTTATAATAATTTATATCCTTTAATTTTTCTTTCATCAAATTTAACCATTTATCATTTAAATTCTCTTTTTCCACAGCTCCAGCATTTTTATTTATATCATCTACAACTACATCTTCCTTCACATAATTATTTATATAAAAACTATTATCATCTA"
+					}
+				],
+				"target_id" : 73
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 142180,
+					"genome_id" : 0,
+					"start" : 141962,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GCATTTATAACAAAATATCAGAAGATGGAAAAACCAAAAATAGCCTACTTAGCGATATATCAAAATTATTTAAAATTGTAAAAGAAAGCAAATTAATATTTGTAACTGGATTTTTATTAACAACCTTGTCAGCAATTGTAGATTCATACATTCCAATTTTTCTATCCAAAACGGTATCTTTTGTAATGGAAAGAAAAAAATTTACATTTCTTAAAA"
+					},
+					{
+						"seq" : "GCATTTATAACAAAATATCAGAAGATGGAAAAACCAAAAATAGCCTACTTAGCGATATATCAAAATTATTTAAAATTGTAAAAGAAAGCAAATTAATATTTGTAACTGGATTTTTATTAACAACCTTGTCAGCAATTGTCGATTCATACATTCCAATTTTTTTATCCAAAACGGTATCTTTTGTAATGGAAAGAAAAAGTTTTACATTTCTTAAAA"
+					}
+				],
+				"target_id" : 37
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 221494,
+					"genome_id" : 0,
+					"start" : 221362,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TGAACTATTTACGACATTAAACACACTGGAACATTTTTCCATTTTACAAATTTTTTTTTCAATATCATTTTCATAATCTAATTCGTCTTTAGGTTTATTAGCAGAGCCAGGCTTTATTCTAACTTGAATA"
+					},
+					{
+						"seq" : "TGAACTATTTACGACATTAAACACACTGGAACATTTTTCCATTTTACAAATTTTTTTTTCAATATCATTTTCATAATCTAATTGGTCTTTAGGTTTATCAGCAGAGCCAGGCTTTATTCTAACTTGAATA"
+					}
+				],
+				"target_id" : 57
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 618580,
+					"genome_id" : 0,
+					"start" : 618395,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AAAAGAGATTATAGAAGTGGAAAGAAGACATATATAATACAAGCTCTACGATATGCATTAACATATTATAGCAAACTTTCAAATAGAAAGGAAGCACCTAAAGTAACCATGTTATTTACAGATGGAAATGATCCCTATGAATCAGAAAAGGGATTACAGGATATTGCATTATTATATAGAAAA"
+					},
+					{
+						"seq" : "AAAAGAGATTATAGAAGTGGAAAGAAGACATATATAATACAAGCTCTACGATATGCATTAACATATTATAGCAAACTTTCAAATAGAAAGGAAGCACCTAAAGTAACCATGTTATTTACAGATGGAAATGATTCCTATGAATCAGAAAAGGGATTACAGGATATTGCATTATTATATAGAAAA"
+					}
+				],
+				"target_id" : 94
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 654174,
+					"genome_id" : 0,
+					"start" : 654001,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TATTTTTATAATTTCCTTTCATCTTATTTTTTTCTTTATATTTTTTTTTTTCATATGTAAGATTTATATAATCACTTTCGCTTTTTCTAACGCTTTTGAACTTTTTAAATGTACTTCCTTCATTATTTCTAATTCTCGTAAACACAAGAATAAATATTTTGATATATCTTA"
+					},
+					{
+						"seq" : "TATTTTTATAATTTCCTTTCATCTTATTTTTTTCTTTATATTTTTTTTTTTCATATGTAAGATTTATATAATCACTTTCGCTTTTTCTAACGCTTTTGAACTTTTTAAATGTACTTCGTTCATTATTTCTAATTCTCGTAAACACAAGAATAAATATTTTGATATATCTTA"
+					}
+				],
+				"target_id" : 90
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 850988,
+					"genome_id" : 0,
+					"start" : 850815,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CATATTCGTTTCAGCGTTTATAGAGCGAATATTATCGATTATGTCTATATTCCCTAAAATATGTACATAATAATCTCCATTTAATAATGTTACTTTCTTAAGAATATTTTTGTATATGACATCAAAGATATTACGAGTTAACAATACATCTACATTTCGGTCTATTATATA"
+					},
+					{
+						"seq" : "CATATTCGTTTCAGCGTTTATAGAGCGAAAATTATCGATTATGTCTATATTCCCTAAAATATGTACATAATAATCTCCATTTAATAATGTTACTTTCTTAAGAATATTTTTGTATATGACATCAAAGATATTACGAGTTAACAATACATCTACATTTCGGTCTATTATATA"
+					}
+				],
+				"target_id" : 48
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 180114,
+					"genome_id" : 0,
+					"start" : 179902,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTTCGATATAGGACATATAGATCATAATATAAACGAATATGAAAAACGTTTTACAATTTTAAAAGAATCTTTTTTTCATAAGTCATTAAAATTTATGGATTATATATGGATTGTTATAATGAAACGAGAAAATAATACATTTTTAAATAGATTAAGAAATGAACAAGTGAGGGCATCGTTATTAATAACAGGTATTATAAACGAAAATAT"
+					},
+					{
+						"seq" : "TTTCGATACAGGACATATAGATCATAATATAAACGAATATGAAAAACATTTTACAATTTTAAAAAAATCTTTTTTTCATAAGTCATTAAAATTTATGGATTATATATGGATTGTTATAATGAAACGAGATAATAATACATTTTTAAATAGATTAAGAAATGAACAAGTGAGGGCATCGTTATTAATAACAGGTATTATAAACGAAAATAT"
+					}
+				],
+				"target_id" : 82
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 110086,
+					"genome_id" : 0,
+					"start" : 109911,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATATTTGTATATATTCTAGTAAACACTTTAGGTACACCTGCAAGTACCTCAACATCTGAATTATATAAATCTTTAGAAAAACAACTAATATCCTTACTCCATATATTTATTTTTATACCAAGAATAACAGCCATATAAACCAAAACTCTCTCAAATGCATGTGATACAGGTAA"
+					},
+					{
+						"seq" : "ATATTTGTATATATTCTAGTAAACACTTTAGGTACACCTGCAAGTACCTCAACATCTGAATTATATAAATCTTTAGAAAAACAACTAATATCCTTACTCCATATATTTATTTTTATACCAAGAATAACAGCCATATAAACCAAAACTCTCTCAAATACATGTGATACAGGTAA"
+					}
+				],
+				"target_id" : 74
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 133700,
+					"genome_id" : 0,
+					"start" : 133490,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAGATTTTTTCCCTCCAACAGATGCACTCACTTTAGGTGTTTTAAACTTAGTTGTATGTTGACCCCCCTCATTATTTAGTTTACCTTTATTTAATCTTTTACCAGCAGTAGAAACTACATTCTCTCGATTATCATTACCTACTTCAGTCTTTACAATTGTAGGAGGTGTTTTAACATGATCATCCCCTCCATGAGGAGTAACCCTTAA"
+					},
+					{
+						"seq" : "TAGATTTTTTCCCTTCAGCAGGTGCCCTCACTTTAGGTGTTTTAAACTTAGTTGTATGTGGAACCCCATCTTTATTTGCTTTACCTCTATTTAATCTTTTACCAGCAGTAGAAACTACATTCTCTCGATTATCATTACCTACTTCAGTCTTTACAATTGTAGGAGGTGTTTTAACATGATTATCCCCTCCATGAGGAGTAACCCTTAA"
+					}
+				],
+				"target_id" : 43
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 141944,
+					"genome_id" : 0,
+					"start" : 141777,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTTCAAATTATATAAAGACAGAACTAAGAAATATAAACCTGCAAGAAATAAAAAACAATATAATAAAAATATTTAAAGAATTCAAATCTGCACACAAAGAAATTAAAAAAGAATCAAAACAAATTAATAAAGAATTTACCAAAATGGATGTCGTCATAAATCAAT"
+					},
+					{
+						"seq" : "TTTCAAATTATATAAAGACAGAACTAAGAAATATAAACCTGCAAGAAATAAAAAACAATATAATAAAAATATTTAAAGAATTCGAATCTGCACACAAAGAAATTAAAAAAGAATCAAAACAAATTAATAAAGAATTTACCAAAATGGATGTCGTCATAAATCAAT"
+					},
+					{
+						"seq" : "TTTCAAATTATATAAAGACAGAACTAAGAAATATAAACCTGCAAGAAATAAAAAACAATATAATAAAAATATTTAAAGAATTCGAATCTGCACACAAAGAAATTAAAAAAGAATCAGAACAAATTAATAAAGAATTTACCAAAATGGATGTCGTCATAAATCAAT"
+					}
+				],
+				"target_id" : 70
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 415825,
+					"genome_id" : 0,
+					"start" : 415652,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TGCTAGTTTTGCTGCTCATGAAAATAAAAGCTACTCATATGAAGGTCGTACATATAAAATGTATCCACCTGAATTTAATACATTAATGTTAAAAGCAGATTATTTTATAAGAGATATAAATACACGAGGATTTAGAGAAGTAAATATGGATTCATGTAAATCATATACAAA"
+					}
+				],
+				"target_id" : 15
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 544860,
+					"genome_id" : 0,
+					"start" : 544717,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TATATTTTACATAATAACAATCTTTCATGTAATGATTATAATTTAAATAATCTTTCATTTAATATAAATAAATATATAAATGAAGAAAAAGGCAAAAATAAAAAAACAAATCAACATATATCAGAACAATTTTTATTTCCT"
+					},
+					{
+						"seq" : "TATATTTTACATAATAACAATCCTTCATGTAATGATTATAATTTAAATAATCTTTCATTTAATATAAATAAATATATAAATGAAGAAAAAGGCAAAAATAAAAAAACAAATCAACATATATCAGAACAATTTTTATTTCCT"
+					}
+				],
+				"target_id" : 96
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 748435,
+					"genome_id" : 0,
+					"start" : 748229,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AAATGTAATTCCCTAGATATGAAATATTTTCGTGCAGTTACAACATATGTGAATGAATCAAAATATGAAAAATTGAAATATAAGAGATGTAAATATTTAAACAAAGAAACTGTGGATAATGTAAATGATATGCCTAATTCTAAAAAATTACAAAATGTTGTAGTTATGGGAAGAACAAACTGGGAAAGCATTCCAAAAAAATTT"
+					}
+				],
+				"target_id" : 72
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 748695,
+					"genome_id" : 0,
+					"start" : 748532,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATAGTTTTACTTGGGAAATTAAATTACTATAAATGTTTTATTATAGGAGGTTCCGTTGTTTATCAAGAATTTTTAGAAAAGAAATTAATAAAAAAAATATATTTTACTAGAATAAATAGTACATATGAATGTGATGTATTTTTTCCAGAAATAAATGAAAA"
+					}
+				],
+				"target_id" : 58
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 802712,
+					"genome_id" : 0,
+					"start" : 802524,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AAATTATTATAGAAAGATAGAAGTTATTTTATATGAATGGTTATATTTTCATTATAATAATGTATATAACACCAAAGTAAAAAAACAAAAATTTATATTTACCCAACAAAAAAAAGACATATCAAAACATAACAAGTTATATCTTCAGTATGATCAAAATAAAAGAAATTCTGAAATAGAACATAC"
+					},
+					{
+						"seq" : "AAATTATTATAGAAAGATAGAAGTTATTTTATATGAATGGTTATATTTTCATTATAATAATGTATATAACACCAAAGTAAAAAAACAAAAATTTATATTTACCCAACAAAAAAAAGACATATCAAAACATAACAAGTTATATCTTCAGTATGATCAAAATAAAAGAAATTCTGAAATAGAACGTAC"
+					}
+				],
+				"target_id" : 92
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1037843,
+					"genome_id" : 0,
+					"start" : 1037633,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TCTTATAAAGTTAATGAAATTGCTCAACTTAATTTAACCATAGAAAGAGATTTAACAGATGATGCTGTGATTTTTGCACACTCACTTTATTTACCATTTGAAAAAGAAGAAATGTGGTGGATCGTTATCGGAATTAAAAAAATGAACTTACTTTTATCTATCAAAAAATTATCTTTATTGAAAAGTATCAATAATATAAAAATTAATT"
+					},
+					{
+						"seq" : "TCTTATAAAGTTAATGAAATAGCTCAACTTAATTTAACCATAGAAAGAGATTTAACAGATGATGCTGTGATTTTTGCACACTCACTTTATTTACCATTTGAAAAAGAAGAAATGTGGTGGATCGTTATCGGAATTAAAAAAATGAACTTACTTTTATCTATCAAAAAATTATCTTTATTGAAAAGTGTCAATAATATAAAAATTAATT"
+					}
+				],
+				"target_id" : 52
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1100830,
+					"genome_id" : 0,
+					"start" : 1100655,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATGTTCTAAGATCTGATGGAAAAATATCTGATCAAGGTTCTCAGAAAAGTCCTCCTAAGGAACTTTCTAATAAACAAATGACTCCTGCTCAACGTAAGAATGTGCCACATTTTGTTGAAAGAAGAGGCTATGGAAATAGTCATGTTAGGGGTAACGCACTTAAAAAAATTAGT"
+					},
+					{
+						"seq" : "ATGTTCTAAGATCTGGTGGAAAAATATCTGATCAAGGTTCTCAGAAAAGTCCTCCTAAGGAACTTTCTAATAAACAAATGACTCCTGCTCAACGTAAGAATGTGCCACATTTTGTTGAAAGAAGAGGCTATGGAAATAGTCATGTTAGGGGTAACTCACTTAAAAAAATTAGT"
+					}
+				],
+				"target_id" : 81
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 181672,
+					"genome_id" : 0,
+					"start" : 181556,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TCATTCTTTTTTTAACTAAAACTATTCATCTCAAAAATATAAGATATTTTATATGACGAATGCCATTGTATTTTTTGTTACGTAAAACCTGACTTCTTCAAGGAAAACACATGC"
+					},
+					{
+						"seq" : "TCATTCTTTTTTTAACGAAAACTATTCATCTCAAAAATATAAGATATTTTATATGACGAATGCCATTGTATTTTTTGTTACGTAAAACCTGACTTCTTCAAGGAAAACACATGC"
+					}
+				],
+				"target_id" : 64
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1102577,
+					"genome_id" : 0,
+					"start" : 1102388,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AAGAAATAAATAAAATAATTTATACAAACGAATTTAATAATTATGAAGATAAAATATATGAAGATGTCAAATATATTAAAGAACAGGAAAATGAAATATACTTGAGAGATGGAATTGAAGAGTTACATATGGATGAACCAAGTCGGGATGTATATGTTGATGATGAAAATGATTATATATTTTTAGA"
+					},
+					{
+						"seq" : "AAGAAATAAATAAAATAATTTATACAAACGAATTTAATAATTATGAAGATAAAATATATGAAGATGTCAAATATATTAAAGAACAGGAAAATGAAATGTACTTGAGAGATGGAATTGAAGAGTTACATATGGATGAACCAAGTGGGGATGTATATTTTGATGATCAAGATGATTATATATTTTTAGA"
+					}
+				],
+				"target_id" : 67
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1113603,
+					"genome_id" : 0,
+					"start" : 1113449,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AATCATCTAAGAATAAACTTTTTTGTTTAAACCATTTATTGAACATTTCACTTAAATGTGATTCAATTTTTTTTTCTGAGCTTTCCATAATTTGATTACATCTATTCAATTTGTTTGTATAAGTATTAGGTCTTATTATTCTTTTACGTTTT"
+					},
+					{
+						"seq" : "AATCATCTAAGAATAAACTTTTTTGTTTAAACCATTTATTGAACATTTCACTTAAATGTGATTCAATTTTTTTTTCTGAGATTTCCATAATTTGATTACATCTATTCAATTTGTTTGTATAATTATTAGGTCTTATTATTCTTTTACGTTTT"
+					},
+					{
+						"seq" : "AATCATCTAAGAATAAACTTTTTTGTTTAAACCATTTATTGAACATTTCACTTAAATGTGATTCAATTTTTTTTTCTGAGCTTTCCATAATTTGATTACATCTATTCAATTTGTTTGTATAATTATTAGGTCTTATTATTCTTTTACGTTTT"
+					}
+				],
+				"target_id" : 61
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1128672,
+					"genome_id" : 0,
+					"start" : 1128488,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTGAAAGAGTTAAAGGGAAAAATACAAAATTATTTAGATAATGATATTCAATTGAGTAATGGAAAACTCCTATATAAGGATACATGGGATAGAATTGATTTGAAGTTTTGTAGAACGGTAGCAATAGAAGAGGCAGAATACACTAGAAAATTTTATAGCTTAATTAATGATAAACATACAAT"
+					},
+					{
+						"seq" : "TTGAAAGAATTAAAGGGAAAAATACAAAATTATTTAGATAATGATATTCAATTGAGTAATGGAAAACTCCTATATAAGGATACATGGGATAGAATTGATTTGAAGTTTTGTAGAACGATAGCAATAGAAGAGGCAGAATACACTAGAAAATTTTATAGCTTAATTAATGATAAACATACAAT"
+					}
+				],
+				"target_id" : 54
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 329549,
+					"genome_id" : 0,
+					"start" : 329377,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTGTGATGTATATAAATTCCCTTCTTCTTTATGTACCACATTATAAGAACCACGAACATATTCTTTTAAAAATGTTAACTTACTTCCAACAAATATATAATCAAAACAAAATTTTTTATTGTCGAAATGTTCTCGTTCAACCCCATTCATATTTCGGATATCATTATTTA"
+					}
+				],
+				"target_id" : 33
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 958220,
+					"genome_id" : 0,
+					"start" : 958058,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTTATATCATTTGTATGTGCTGTATTATCAGGAGGAACATTACCTTTTTTTATATCTGTGTTTGGTGTAATATTAAAGAACATGAATTTAGGTGATGATATTAATCCTATAATATTATCATTAGTATCTATAGGTTTAGTACAATTTATATTATCAATGA"
+					},
+					{
+						"seq" : "TTTATATCATTTGTATGTGCTGTATTATCAGGAGGAACATTACCTTTTTTTATATCTGTGTTTGGTGTAATATTAAAGAACATGTATTTAGGTGATGATATTAATCCTATAATATTATCATTAGTATCTATAGGTTTAGTACAATTTATATTATCAATGA"
+					}
+				],
+				"target_id" : 49
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 958505,
+					"genome_id" : 0,
+					"start" : 958388,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ACGAAATTTATAACAATTTTTACATATGCCAGTTCCTTTTTAGGGTTATTTATTTGGTCATTAATAAAAAATGCACGTTTGACTTTATGTATTACTTGCGTTTTTCCGTTAATTT"
+					},
+					{
+						"seq" : "ACGAAATTTATAACAATTTTTACATATGCCAGTTCCTTTTTAGGTTTATATATTTGGTCATTAATAAAAAATGCACGTTTGACTTTATGTATTACTTGCGTTTTTCCGTTAATTT"
+					}
+				],
+				"target_id" : 46
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 1042280,
+					"genome_id" : 0,
+					"start" : 1042161,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TATTATTACGGTACCATTATATGATTCTTTAGGTCCTCAATCAAGTAGATTTATATTAGATCAAACACAGATGGAAACTATTGTATGTAACAAGACATGTGCTCGTAATTTATTTAA"
+					}
+				],
+				"target_id" : 4
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 1309743,
+					"genome_id" : 0,
+					"start" : 1309608,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AATGAAGAAAATATGTCTGACAGACCAAACAGTTTATCTCATGATAAGGATCAACACCACGATGAAACACATAATGAACAATATGGATTATACGTAAAAGAAATGGAATCTAAAGTTGAAAAATTAGCTGAAA"
+					}
+				],
+				"target_id" : 27
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_06_v3",
+					"end" : 145500,
+					"genome_id" : 0,
+					"start" : 145342,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATTTGAATAAAATTTATCATTCACAATATTATATTTTTGTTTCTTCTTTTTTCCCATAATATTATTATTTTGTTCACAATATATGTTCATGTGTCCCCTCTTTTTCTGTAAAATATTAAAATGTTTCTTACTATGCTTTTCTTCATTTTTAATAAC"
+					}
+				],
+				"target_id" : 44
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_06_v3",
+					"end" : 532377,
+					"genome_id" : 0,
+					"start" : 532194,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GAACAATTGTTAAACACCAAATTGGGTGAAACAAAAAACCACCTGAACAGAACCCCATTTATACCTGAATCGGTCATACGAGAAAGGAAATTACGCCAAGAAAAAGCGCAATCCACAAACAACATGTTCGATTCAACAAACGCAGATAGTATTACTTCCCCATGTGATCCAACGAATGCCA"
+					},
+					{
+						"seq" : "GAACAATTGCTAAACACCAAATTGGGTGAAACAAAAAACCACCTGAACAGAACCCCATTTATACCTGAATCGGTCATACGAGAAAGGAAATTACGCCAAGAAAAAGCGCAATCCACAAACAACATGTTCGATTCAACAAACGCAGATAGTATTACTTCCCCATGTGATCCAACGAATGCCA"
+					}
+				],
+				"target_id" : 39
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 496142,
+					"genome_id" : 0,
+					"start" : 495970,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GAAAGTAGCGAATACCCTGTAGAAATTGTTAGTAAACCTCTGGAATGGTTATTGTTTCATGATTTTACTACGCCTGGTGTTACTGCACTACCTGAAGAATTACCATTAACGAGCTATAAAGTAACACCTACTTCTATTAATGTATTGCATAAAGAGGGCCCCACTTTAAA"
+					},
+					{
+						"seq" : "GAAAGTAGCGAATACCCTGTAGAAATTGTTAGTAAACCTCTGGAATGGTTATTGTTTCATGATTTTACTACGCCTGATGTTACTGCACTACCTGAAGAATTACCATTAACGAGCTATAAAGTAACACCTACTTCTATTAATGTATTGCATAAAGAGGGCCCCACTTTAAA"
+					}
+				],
+				"target_id" : 62
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 165421,
+					"genome_id" : 0,
+					"start" : 165234,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAATTATCATTATTATTATAATTATCATTGTTATTATTATTGTTGTTGTTGTTATTATTATTTCCTTTATTATTTAATATGCATTTTTTAATATCCATTTTATTATTTATCATATCAGTACTTTTATTTTTCTCCTTTTCGTTTATAGCTTTTTCCCTATGCACCCTGAATTTCCCATTTTTTTT"
+					},
+					{
+						"seq" : "TCATTATTATTATTATTATAATTATCATTTTTATTATTATTGTTGTTATTATTATTTCCTTTATTATTTAATATGCATTTTTTAATATCCATTTTATTATTTATCATATCAGTACTTTTATTTTTCTCCTTTTCGTTTATAGCTTTTTCCCTATGCACCCTGAATTTCCCATTTTTTTT"
+					}
+				],
+				"target_id" : 29
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 166166,
+					"genome_id" : 0,
+					"start" : 166034,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTTTATTTGAACTTTTTTATTTTCTTCATTATCAATATAAAAACAACAATCTTTAAATTTATGAAATAACACCCAACTTAATGTATAAAATATAATTTCTATAAAATCAAAATTAATGTAATAACCTAAT"
+					}
+				],
+				"target_id" : 59
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 299004,
+					"genome_id" : 0,
+					"start" : 298885,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CATTCAATATGGTTCTGAGCTTAAAGATGTTATCCTTATACATGTTTCTATTCTCATTCGTTATAACATCAATGACATATAAAACATATCTCTCAAATATTTTGTGAACAATATTAT"
+					}
+				],
+				"target_id" : 41
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 730087,
+					"genome_id" : 0,
+					"start" : 729974,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTTATGTGAAATTTTAAATAAAGAGAAATTGTTTGTGCACACATCTATTTTGGGATATATATCTAATCGTTTATGTTACGATATAAAAAAATATAGATGTTCATTATTGAA"
+					},
+					{
+						"seq" : "TTTATGTGAAATTTTAAATAAAGAGAAATTGTTTGTGCACACATCTATTTTGGGATATATATCTAATCGTTTATGTTACGATATAGAAAAATATAGATGTTCATTATTGAA"
+					}
+				],
+				"target_id" : 75
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 1149584,
+					"genome_id" : 0,
+					"start" : 1149414,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AATATTTAATATTTTTGTTTAGGAAGTTTTCAAAATTGATGACATTGATAACCGTTTTTATTAAATCGCTTGGGTTGTTTGTGTGTTCCATTGTAGAAGACATAATTTTAAGAATGTGTTTTTGTGTTATTAAACAAAACTTTGTTACTATATGGAATCGTATGTTAT"
+					},
+					{
+						"seq" : "AATATTTAATATTTTTGTTTAGGAAGTTTTCAAAATTGATGACATTGATAACCGTTTTTATTAAATCGCTTGGGTTGTTTGTGTGTTCTATAGTAGAAGACATAATTTTAAGAATGTGTTTTTGTGTTATTAAACAAAACTTTGTTACTATATGGAATCGTATGTTAT"
+					},
+					{
+						"seq" : "AATATTTAATATTTTTGTTTAGGAAGTTTTCAAAATTGATGACATTGATAACCGTTTTTATTAAATCGCTTGGGTTGTTTGTGTGTTCTATTGTAGAAGACATAATTTTAAGAATGTGTTTTTGTGTTATTAAACAAAACTTTGTTACTATATGGAATCGTATGTTAT"
+					}
+				],
+				"target_id" : 45
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 1358910,
+					"genome_id" : 0,
+					"start" : 1358693,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AGAATCTCAACTTTTGCTTAAAAAAAATGATAACAAATATAATTCTAAATTTTGTAATGATTTGAAGAATAGTTTTTTAGATTATGGACATCTTGCTATGGGAAATGATATGGATTTTGGAGGTTATTCAACTAAGGCAGAAAACAAAATTCAAGAAGTTTTTAAAGGGGCTCATGGGAAAATAAGTGAACATGAAATTAAAAATTTTAGAAAAG"
+					}
+				],
+				"target_id" : 35
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 102499,
+					"genome_id" : 0,
+					"start" : 102325,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAATTTTCTCAAGTAACATATTTTTGTCTTGACTACTTTCATCTGTAAATGGAACGAATACTCTTTGCTTACCTGCAAAAAGGACAACTGACATATGAGCCTTATCCTTACTTACATTCGAATTAAGGACCATAGATTCTAAAAATGGTATAGTTCCTTTTAACCAATAATC"
+					}
+				],
+				"target_id" : 86
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 336646,
+					"genome_id" : 0,
+					"start" : 336467,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AAATTTACAGAAAAATTTAGATTTAATCATATGGCTAAAAAAGAATATAAAAGAAGGAGAAGCTTTAATTTCTGATATACCCACATCAAGTTTTTTAAGGTGTACTACAAATTATAAATTTGTATTGCATCCACAATATGAAGATAGTAACTTGAGAAAGAGGGTTCAAGATTATTA"
+					},
+					{
+						"seq" : "AAATTTACAGAAAAATTTAGATTTAATCATATGGCTAAAAAAGAATATAAAAGAAGGAGAAGCTTTAATTTCTGATATACCTACATCAAGTTTTTTAAGGTGTACTACAAATTATAAATTTGTATTGCATCCCCAATATGAAGATAGTAACTTGAGAAAGAGGGTTCAAGATTATTA"
+					}
+				],
+				"target_id" : 85
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 339356,
+					"genome_id" : 0,
+					"start" : 339167,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TCATTACTATTCTTTATCCATATATATGTTGTTATATCAGTTGCACCTGAGGGTGGATTCAAACCTCTTGCTTGTATAATATATGCACGTACTACTAAATTACGTGTTAATCTATATTCTCTTACTAAATCATCACATTTCTTTATCATTTCTTTTTTTAAATACATTGTCTTTTCATCATACACAT"
+					},
+					{
+						"seq" : "TCATTACTATTCTTTATCCATATATATGTTGTTATATCAGTTGCACCGGATGGTGGATTCAAACCTCTTGCTTGTATAATATATGCACGTACTACTAAATTACGTGTTAATCTATATTCTCTTACTAAATCACCACATTTCTTTATCATTTCTTTTTTTAAATACATTGTCTTTTCATCATACACAT"
+					}
+				],
+				"target_id" : 80
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 550217,
+					"genome_id" : 0,
+					"start" : 549992,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ACTAACAAATTATGATAATCTAGTTTATGATATAAAAAATTATTTAGAACAAAGATTAAATTTTCTTGTATTAAATGGAATACCTCGTTATAGGATACTATTTGATATTGGATTAGGATTTGCGAAGAAACATGATCAATCTATTAAACTCTTACAAAATATACATGTATATGATGAGTATCCACTTTTTATTGGATATTCAAGAAAAAGATTTATTGCCCAT"
+					}
+				],
+				"target_id" : 93
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 512387,
+					"genome_id" : 0,
+					"start" : 512198,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAAAGAAATTAAGTGAAGATGATTATGAAAAAAATTGTAGACATTTAAATTATTTAATAGATAATATAAGAGAATTATTTTTTAGTTCTAAAAATATTAGAATTCCTGATTTAGCTCGTAAATATTTGTGGGATAATCAAATTGAAGGAAATCTCAAAAAATTAATATCTTCAGCAACAAAATATAA"
+					},
+					{
+						"seq" : "TAAAGAAATTAAGTGAAGATGATTATGAAAAAAATTGTAGACATTTAAATTATTTAATAGATAATATAAGAGAATTATTTTTTAGTTCTAAAAATATTAGAATTCTTGATGTAGCTCGTAAATATTTGTGGGATAATCAAATTGAAGGAAATCTCAAAAAATTAATATCTTCAGAAACAAAAAATAA"
+					}
+				],
+				"target_id" : 38
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 933142,
+					"genome_id" : 0,
+					"start" : 933022,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TGGTTTTAATGAGGATGATTTAGATAAAGAGTTTTTTTTTGATTTGCCGTCGATTAGTGGTTTTTCAAGTAATGGTATGAAAAAATGTAATTTAAGAAATTTATTAAAAAGATTAGAA"
+					}
+				],
+				"target_id" : 3
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 1269455,
+					"genome_id" : 0,
+					"start" : 1269319,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CCTTAGCATTAATAACACTTATAGGAGGTATTTATATGACTAAAGGAAGAAAAAGTTCCATATGGCATAATTCAGAAATAAATGATACACTTTATGATGTTGTTCTTGAAACAGTGAATCAAGGAAATACAGAT"
+					},
+					{
+						"seq" : "CCTTAGCATTAATAACACTTATAGGAGGTATTTATATGACTAAAGGAAGAAAAAGTTCCATATGGCATAATTCAGAAATAAATGATACACTTTATGATATTGTTCTTGAAACAGTGAATCAAGGAAATACAGAT"
+					}
+				],
+				"target_id" : 32
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 1344818,
+					"genome_id" : 0,
+					"start" : 1344685,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AATATATCTTTTACTTTATCTGTAAGTTTCATGGAATCTATTATTTCATCTGCATATTTTATTTTTGCCTCGTTTATATATTTACCTGCTTTTAATTTACATAAACATTTTTCTATTAAGTTTTGATCATT"
+					}
+				],
+				"target_id" : 30
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 1363086,
+					"genome_id" : 0,
+					"start" : 1362890,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GTAAAAAAAAAGGGTTTTCCTAAAAAACCATCGGTTCATGGTTTTACACAGATGGTGTTTTTGCAGCTTACTAATATAGTCATGTATGCCCTTTGTTTTATGAGCCTTTCACAAATATATGCTTATTTCGAAAACGTGAATTTTTATATTATAAGCAATTTTCGTTTCCTTGAGAGATATTTTAATATATTCAA"
+					},
+					{
+						"seq" : "GTAAAAAAAAAGGGTTTTCCTAAAAAACCATCGGTTCATGGTTTTACACAGATGGTGTTTTTGAAGATTACTAATATAGTCATGTATGCCCTTTGTTTTATGAGCCTTTCACAAATATATGCTTATTTCGAAAACGTGAATTTTTATATTATAAGCAATTTTCGTTTCCTTGAGAGATATTTTAATATATTCAA"
+					},
+					{
+						"seq" : "GTAAACAAAAAGGGTTTTCCTAAAAAACCATTGGTTCATGGTTTTACACAGATGGTGTTTTTGCAGCTTACTAATATAGTCATGTATGCCCTTTGTTTTATGGACCTTTCACAAATATATGCTTATTTCGAAAACGTGAATTTTTATATTATAAGCAATTTTCGTTTCCTTGAGAGATATTTTAATATATTCAA"
+					}
+				],
+				"target_id" : 28
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 517091,
+					"genome_id" : 0,
+					"start" : 516927,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TGTTTGTGTAATAAAGGATATTTCTATAATGTCAAGAAACAACAATGTGAAGAATGTCCCATAGGTTTTTATTGTCCAGAAATAAGCTCAAAAAATAATATAAAAAAACCTATCAAATGTCCTAAAAATTCCTCAAGTATAAAAAAAGGTATGTATATATCA"
+					},
+					{
+						"seq" : "TGTTTGTGTAATAAAGGATATTTCTATAATGTCAAGAAACAACAATGTAAAGAATGTCCCATAGGTTTTTATTGTCCAGAAATAAGCTCAAAAAATAATATAAAAAAACCTATCAAATGTCCTAAAAATTCCTCAAGTATAAAAAAAGGTATGTATATATCA"
+					},
+					{
+						"seq" : "TGTTTGTGTAATAAAGGATATTTCTATAATGTCAAGAAACAACAATGTAAAGAATGTCCCATAGGTTTTTATTGTCCAAAAATAAGCTCAAAAAATAATATAAAAAAACCTATCAAATGTCCTAAAAATTCCTCAAGTATAAAAAAAGGTATGTATATATCA"
+					}
+				],
+				"target_id" : 26
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 596333,
+					"genome_id" : 0,
+					"start" : 596132,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTATTTTCGTTTTTTTTTATATTATCATTATAATTATATGTATTTACAAAGAATTTATTATTATTTGTTTCTTTATAATTATATTCATTTTCTTTATTACTTAAGGAATTTATATTTGATAAAACTTGTTGTACTCTTTCTTCTTTGTTGATGTGAATATTTGAGAAAATAATAATAAATGTAATGACTAGGGCTATGT"
+					}
+				],
+				"target_id" : 25
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 685791,
+					"genome_id" : 0,
+					"start" : 685600,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CAAAGGAACAAGATAATTTTTTCAATTTTTATAAAAGTAATATATATGATATGGAAAATAGAACATGTAATAATAATATATTACAATATTGTGTTATGAATAATAAATCATATTTATTTCATAATATATCATCCAAAAAAAATATATATATAAAAAAAAAGAATCATCAGTTTTCTTTATTCATATATT"
+					}
+				],
+				"target_id" : 77
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 1179077,
+					"genome_id" : 0,
+					"start" : 1178893,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CAAATTACCCTTAGCCCCAGATATGGTAAAGACATATCACTGTTATAAATTAGGAAAGCAAGCAGCTAAATTATTAGAATCTATCATTTTAAAGAAAAAGTTCGTAAGATTTAGAGTTACTGATGCTATTGATGTATATGATTTCTTTTATATAAAGAAAGTTTTATCCAGTCGTATTAAGA"
+					},
+					{
+						"seq" : "CAAATTATCCTTAGCCCCAGATATGGTAAAGACATATCACTGTTATAAATTAGGAAAGCAAGCAGCTGAATTATTAGAATCTATCATTTTAAAGAAAAAGTTCGTAAGATTTAGAGTTACTGATGCTATTGATGTATATGATTTCTTTTATATAAAGAAAGTTTTATCCAGTCGTATTAAGA"
+					}
+				],
+				"target_id" : 89
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 1406540,
+					"genome_id" : 0,
+					"start" : 1406404,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AATTAATTTTAATGATGATGTTACTTTAGAAACACAATCCATGATAGCACACGGAGGGTCTTTGTCAGAAATAGAAGAAACTGGAGATTTATCTTCAGATGTTGATAGATTACTTTCATCAATCGAAACTACTC"
+					}
+				],
+				"target_id" : 51
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 1437302,
+					"genome_id" : 0,
+					"start" : 1437113,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAAAACCTGACAGCTTTGTACAGTTATATTTACCCAATTAGAATGTTCAAACATATTTAAGTGTTGCCATTCTTCAAATAATTTTTTTTCATATTCAGTTTTTGGTTGGTTTTTAAATTCTTTTGATAATGTACCTTCTGCGGATGGTATAGGGAAGTTAAAAATTTTATTACTTACTTTGTTTGAT"
+					}
+				],
+				"target_id" : 87
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 531899,
+					"genome_id" : 0,
+					"start" : 531681,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AAAGAAAGATGTTAAGAAAAAAAAGATCGATATGATAAATATATTACACATTCCTACAAATAATTATAGCATGCCAAATGAAAAAGATATAAACAGTTATGAATTTTTTGGATCTGAACCTATTGAATTATATGATGGAAAATCTAATAAGAATTGTGTTATAACTAGCCAATCTTATATTTGTATTGAAAACCCGCATGCTGCCATATTATCCGA"
+					},
+					{
+						"seq" : "AAAGAAAGATGTTAAGAAAAAAAAGATCGATATGATAAATATATTACACATACCTACAAATAATTATAACATGCCAAATGAAAAAGATATAAACAGTTATGAATTTTTTGGATCTGAACCTATTGAATTATATGATGTAAAATCTAATAAGAATTGTGTTATAACTAGCCAATCTTATATTTGTATTGAAAACCCGCATGCTGCCATATTATCCGA"
+					},
+					{
+						"seq" : "AAAGAAAGATGTTAAGAAAAAAAAGATCGATATGATAAATATATTACACATACCTACAAATAATTATAACATGCCAAATAAAAAAGATATAAACAGTTATGAATTTTTTGGATCTGAACCTATTGAATTATATGATGTAAAATCTAATAAGAATTGTGTTATAACTAGCCAATCTTATATTTGTATTGAAAACCCGCATGCTGCCATATTATCCGA"
+					}
+				],
+				"target_id" : 24
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 377208,
+					"genome_id" : 0,
+					"start" : 377094,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ACCAAAAAATGATACCTGTACGTTTTTCTCCAGGAGAAACAAAAAAATTAGAAAGGATTCTCAAAAAAGTAGACGACTTTTTCTGTGCCAATATTAAAGCGCAATATACCTG"
+					}
+				],
+				"target_id" : 63
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 992543,
+					"genome_id" : 0,
+					"start" : 992370,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTTTAAAAAAAAAAATTATGATATAAAATCTTCAATTAATAAAAGATCTATCCAGTTCTTTACAGACACTAATATAGATCATTATATAGCATATGAATATTATAAGGAGGACCGTACAGAATTTATATTAACTATTATGAATGAAAAAAATATTACTCATCAAGAAACTCA"
+					}
+				],
+				"target_id" : 65
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 1386868,
+					"genome_id" : 0,
+					"start" : 1386699,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GAGAACAGGTTAAATATATTGAAGACGTGGTTTGATAATCAGGTATTTCTTTAATTAAATATTCATGATATTGTTCGTTAGATACATAAATTAATTCGTCCTCCACATTTTGCTGTTCTGTTATAATTTGTGAAGAAGCTTGGTTTGTCTTATTTGGTAATTGCTCT"
+					},
+					{
+						"seq" : "GGGAACAGGTTAAATATATTGAAGACGTGGTTTGATAATCAGGTATTTCTTTAATTAAATATTCATGATATTGTTCGTTAGATACATAAATTAATTCGTCCTCCACATTTTGCTGTTCTGTTATAATTTGTGAAGAAGCTTGGTTTGTCTTATTTGGTAATTGCTCT"
+					}
+				],
+				"target_id" : 34
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 1399710,
+					"genome_id" : 0,
+					"start" : 1399543,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ACATCAGAACATAGTAAAGATTTAAATAATAATGATTCAAAAAATGAATCTAGTGATATTATTTCAGAAAATAATAAATCAAATAAAGTAGAAAATCATTTTGAATCATTATCAGATTTAGAATTACTTGAAAATTCCTCACAAGATAATTTAGACAAAGATACA"
+					},
+					{
+						"seq" : "ACATCAGAACATAGTAAAGATTTAAATAATAATGATTCAAAAAATGAATCTAGTGATATTATTTCAGAAAATAATAAATCAAATAAAGTACAAAATCATTTTGAATCATTATCAGATTTAGAATTACTTGAAAATTCCTCACAAGATAATTTAGACAAAGATACA"
+					}
+				],
+				"target_id" : 71
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 1436681,
+					"genome_id" : 0,
+					"start" : 1436478,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GAGGAGAAACACGTTTTATCTCATAATTCATATGAGAAAACTAAAAATAATGAAAATAATAAATTTTTCGATAAGGATAAAGAGTTATCGATGTCTAATGTAAAAAATGTGTCACAAACAAATTTCAAAAGTCTTTTAAGAAATCTTGGTGTTTCAGAGAATATATTCCTTAAAGAAAATAAATTAAATAAGGAAGGGAAA"
+					},
+					{
+						"seq" : "GAGAAGAAACACGTTTTATCTCATAATTCATATGAGAAAACTAAAAATAATGAAAATAATAAATTTTTCGATAAGGATAAAGAGTTAACGATGTCTAATGTAAAAAATGTGTCACAAACAAATTTCAAAAGTCTTTTAAGAAATCTTGGTGTTTCAGAGAATATATTCCTTAAAGAAAATAAATTAAATAAGGAAGGGAAA"
+					}
+				],
+				"target_id" : 23
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 119692,
+					"genome_id" : 0,
+					"start" : 119485,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTCATCCAAAAGTAATTATGTTTTTCTTGTTGATATTTTGCTTTATACAAACGAGCAAGATACTTATTATACGATTCATGCTCTTTAATTTTCTTTTCAAAAGTTTTGGTTATAATGTGTTCAAGTGATTGTAAAGTATTTTTCTTTAATTTTCTCCATATTAATCTACATGCGATTATAAGAATTCTATATTCTTTGATATTCC"
+					},
+					{
+						"seq" : "TTCATCCAAGAGTAATTATGTTTTTCTTGTTGATATTTTGCTTTATACAAACGAGCAAGATACTTATTATACGATTCATGCTCTTTAATTTTCTTTTCAAAAGTTTTGGTTATAATGTGTTGAAGTGATTGTAAAGTATTTTTCTTTAATTTTCTCCATATTAATCTACATGCGATTATAAGAATTCTATATTCTTTGATATTCC"
+					},
+					{
+						"seq" : "TTCATCCAAAAGTAATTATGTTTTTCTTGTTGATATTTTGCTTTATACAAACGAGCAAGATACTTATTATACGATTCATGCTCTTTAATTTTCTTTTCAAAAGTTTTGGTTATAATGTGTTGAAGTGATTGTAAAGTATTTTTCTTTAATTTTCTCCATATTAATCTACATGCGATTATAAGAATTCTATATTCTTTGATATTCC"
+					}
+				],
+				"target_id" : 22
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1010037,
+					"genome_id" : 0,
+					"start" : 1009855,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AGTTCTATCTATTTGTTTAATTGGTGTCCATGAATTTTTAGAGAAACACCACATATCAGCTAATAAGGAATTATTAACATCTAATCCTCCATGAATATATAAAAAATCATTAAAACTGAAAGAAGCATGCTTATATCTTGCACGTGGACAAATTTTATTTCCAATAAGTTCCCATTTCTT"
+					},
+					{
+						"seq" : "AATTCTATCTATTTGTTTAATTGGTGTCCATGAATTTTTAGAGAAACACCACATATCAGCTAATAAGGAATTATTAACATCTAATCCTCCATGAATATATAAAAAATCATTAAAACTGAAAGAAGCATGCTTATATCTTGCACGTGGACAAATTTTATTTCCAATAAGTTCCCATTTCTT"
+					}
+				],
+				"target_id" : 20
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1019084,
+					"genome_id" : 0,
+					"start" : 1018952,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAGTGACTGTACATTTTTCATCTAATGTTCTATAGGATAAAGAATCTGAAGGACAATGCATATCATTACAAAAATAGCATGCACCTTTAAAATATAAATAAGAATGTCTTAACACAACAAAGGAATCAAA"
+					}
+				],
+				"target_id" : 56
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1376371,
+					"genome_id" : 0,
+					"start" : 1376184,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TCTCATTCCTTTGAAAATATGAACTATTCAACTCATCAAGGTTTTCATATGTTATTTCATAACTGCCATCATCTGAATCCTCTTCATCACTACTACTTAAAGAATGCTCTTCTACAGTTATATCTTCATAATGATTATTTTTAGGAAAATATTCTTCAGATCTTTCTATAAATTCTGTTCCATTA"
+					}
+				],
+				"target_id" : 60
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1552639,
+					"genome_id" : 0,
+					"start" : 1552429,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATATCGACAATTATAAAGAAAAAATAGAAAATTTTAATGAAAGATATTATGAAGATGATTTAAGTTTCTTAAACTTTCCAGGAACCATAACAAGTTATGATAAAAACCATCAAAGAGATAAAAGAAAAAACTGTTTTGAAGAATATCTAGACAATAATAATTATTTTATTGATAGTAATCTAAAGGAAGTTATAGAAAATAATATATA"
+					}
+				],
+				"target_id" : 19
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 532843,
+					"genome_id" : 0,
+					"start" : 532689,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CTTTCTTAATTCTATGAATGAAGAATATACGCATATTAATTTAAATAACTTTATACATAATGATAACAATGATAAAGACGAAAATTATACATTAGATCAGGTGGAAGAATATCCTATGACTAGTTATCAAAATAATATATACAAGGATTTTT"
+					},
+					{
+						"seq" : "CTTTCTTAATTCTATGAATGAAGAATATACGCATATTAATTTAAATAACTTTATACATAATAATAACCATGATAATGACGAAAATTATACATTAGATCAGGTGGAAGGATATCCTATGACTAGTTATCAAAATAATATATACAAGGATTTTT"
+					}
+				],
+				"target_id" : 40
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1751054,
+					"genome_id" : 0,
+					"start" : 1750864,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TATTAAAAACAACAAATAAATTACCAAGGTCATGGAAAAAACTCTTGTTAAATCTATCCATTAGATTTCAAACAATACCTATAGGTGGTTCTATCGAAATCATATCAAAGGATGAGAAAAATATTTCTGTGACACGATCCAGTGAATATAATGCAACAACATATGAGCATTACACATTTCCCAAATGG"
+					},
+					{
+						"seq" : "TATTAAAAACAACAGATAAATTACCAAGGTCATGGAAAAAACTCTTGTTAAATCTATCCATTAGATTTCAAACAATACCTATAGGTGGTTCTATCGAAATCATATCAAAGGATGAGAAAAATATTTCTATGACACGATCCAGTGAATATAATGCAACAACATATGAGCATTACACATTTCCCAAATGG"
+					}
+				],
+				"target_id" : 21
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1816424,
+					"genome_id" : 0,
+					"start" : 1816210,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTGACTTCTCCGGGTTTGTTACATTATCATTACAACCAATATTATTAAGGTTAATATTATTTTTATCATTATTATTGTTGTTTTCATTTGTGTGGTTATATAATAACAATGATGTGTCGTCTATTGGATCATTTTGCACAAGGTCAATATCATTAGAATTATGTTTCATATTATTTGTATACATTTTTTTGTAATTATCATTTTTTCTTACT"
+					},
+					{
+						"seq" : "TTGACTTCTCCGGGTTTGTTACATTATCATTACAACCAATATTATTAAGGTTAATATTATTTTTATCATTATTATTGTTGTTTTCATTTGTGTGGTTATATAATAACAATGATGTGTCGTCTATTGGATCATTTTGCACAAGGTCAATATCATTAGAATTATGTTTCCTATTATTTGTATACATTTTTTTGTAATTATCATTTTTTCTTACT"
+					}
+				],
+				"target_id" : 18
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 63279,
+					"genome_id" : 0,
+					"start" : 63165,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATAATTTCACCTTTTGAATTACATATGTCTGTATTCAAAAATTTTATATCTCTACTCCATATATTTATCTTTACACCCAAAAACAAAGCAATGAAAAAAACAACCCTTTCAT"
+					},
+					{
+						"seq" : "ATAATTTCACCTTTTGAATTACATATGTCTGTATTCAAAAATTTTATATCTCTACTCCATATATTTATCTTTACACCCAAAAACAAAGTAATGAAAAAAATAACCCTTTCAT"
+					}
+				],
+				"target_id" : 69
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 660009,
+					"genome_id" : 0,
+					"start" : 659890,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GGTCGACTTTTGGTGGTTTAACATTTTCAGCTATGAGTTTTTCGACTGATGGCAATCCTACTTTGATTAATTCCTTTAACATAAGTTTTGCGTGTTTTTTTACTTCTGATTTGATAT"
+					},
+					{
+						"seq" : "GGTCGACTTTTGGTGGTTTAACATTTTCAGCTACGAGTTTTTCGACTGATGGCAATCCTACTTTGATTAATTCCTTTAACATAAGTTTTGCGTGTCTTTTTACTTCTGATTTGATAT"
+					}
+				],
+				"target_id" : 16
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 684260,
+					"genome_id" : 0,
+					"start" : 684087,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATATCAAGATGGTAGTATTGTTTTAGATGTTAGTAGTACGAGAGATAAACTTTATGGAGAAGTTGAGTGGGAAGGATATAAATTTGAACTTGTGGATACAGGAGGTTTAGTTTTTGAACAAGAAAAGTTTTCAAAAGAAATAAAGGATCAAATTCTTATGGCTCTAAAAGA"
+					},
+					{
+						"seq" : "ATATCAAGATGGTAGTATTGTTTTAGATGTTAGTAGTACGAGAGATAAACTTTATGGAGAAGTTGAGTGGGAAGGATATAAATTTGAACTTGTGGATACAGGAGGTTTAGTTTTTGAACAAGAAAAGTTTTCAAAAGAAATAAAGGATCAAATTTTTATGGCTCTAAAAGA"
+					}
+				],
+				"target_id" : 14
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 943427,
+					"genome_id" : 0,
+					"start" : 943257,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATCAACTATAATTAAAAATAGTGGAATTATTGAAAACTTTGGAGATATTGATTATATCTTTACGGATAAAACAGGAACACTAACAGAAAATGTTATGGTGCTTAAAGTTATACATATAGGTTTTGATGTTATACATGCAGAAAATGAAAAAAATTCCATACAAGGTAA"
+					},
+					{
+						"seq" : "ATCAACTATAATTAAAAATAGTGGAATTATTGAAAACTTTGGAGATATTGATTATATCTTTACGGATAAAACAGGAACATTAACAGAAAATGTTATGGTGCTTAAAGTTATACATATAGGTTTTGATGTTATACATGCAGAAAATGAAAAAAATTCCATACAAGGTAA"
+					}
+				],
+				"target_id" : 91
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 1237602,
+					"genome_id" : 0,
+					"start" : 1237430,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GTATGAACACAAAACCGAAAGAGAGTTTAAAAAAAGATCCGATTTTAATGAAGGAAGAAATAACATAATAAATGTGTCAAATGTAAAGAAAACATGTAATATAGTTAAAAATGATTTAAAGGAATCTAACGAGATAAAAACTAATATAAACACAAGTTCTTATAATTTAT"
+					}
+				],
+				"target_id" : 53
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 2050313,
+					"genome_id" : 0,
+					"start" : 2050129,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTTAAACTTTGAATCTGTTCAATTAATAACACTTCATCATTGTCTTCGCCTTTTATAATATCTCCATGATTATGTGCTCCTCTAATTAAGGTATCACTAACCTGTTGTTCATCTGTCGCATGAGAACTAGTAGATATATCTGGTTTATTTTTTTTCTTTCTTTTTGTTATTTCTAATTTTTT"
+					},
+					{
+						"seq" : "TTTAAACTTTGAATCTGTTCAATTAATAACACTTCATCATTGTCTTCTCCTTTTATAATATCCCCATGATTATGTGCTCCTCTAATTAAGGTATCACTAACCTGTTGTTCATCTGTCGCATGAGAACTAGTAGATATATCTGGTTTATTTTTTTTCTTTCTTTTTGTTATTTCTAATTTTTT"
+					}
+				],
+				"target_id" : 36
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 103878,
+					"genome_id" : 0,
+					"start" : 103658,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ACTGATGTTAATGAAGGCCAAAATGGAAAAAGTTTAACACAAGAAAAAACCCTAAAACAAATTCCTTCGACATCACCAAATAATTTAGAACAAAAATTACAACAAACACATATTTCTTCTTCCCAACAAAAACATTTAATAAAAACTACTCCTACTTCAGATTCAACTACAACTTCATCAAGCTCTTCTGTTCCTCTTACAAAACAATCCCTTCATTC"
+					},
+					{
+						"seq" : "ACTGATGTTAATGAAGGCCAAAATGGAAAACGTTTAACACAAGAAAAAACCCTAAAACAAATTCCTTCGACATCACCAAATAATTTAGAACAAAAATTACAACAAACACATATTTCTTCTTCCCAACAAAAACATTTAATAAAAACTACTCCTACTTCAGATTCAACTACAACTTCATCAAGCTCTTCTGTTCCTCTTACAAAACAATCCCTTCATTC"
+					}
+				],
+				"target_id" : 13
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 156721,
+					"genome_id" : 0,
+					"start" : 156565,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATAGAGTTATTATGTTCGAATTAATGACCAGATTGTTTCGATTTTATACAAAACCAATAGACCTTATTATTACTATGAATACACACAGATATGACACACCTATATTGTTAAAACATTCAAACAGCTTACAACTTATCTTATCAAATCAACAAAA"
+					}
+				],
+				"target_id" : 17
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 534367,
+					"genome_id" : 0,
+					"start" : 534214,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GATAAAAAAAGAAAATGTAACAATCTACCTTGTGATTGTATCTTATGTAAAAAAAAGCACAATGTTTGTTATTGTAATATGTGTAAAAAGAAAGAAAAAAATATGAGAGAAGATTTATCGGTTGTAAAATATAATGAATATCCGATTAGTG"
+					},
+					{
+						"seq" : "GATAAAAAAAGAAAATGTAATAATCTACTTTGTGATTGTATCTTATGTAAAAAAAAGCACAATGTTTGTTATTGTAATATGTGTAAAAAGAAAGAGAAAAATATGAGAGAAGATTTATCGGTTGTAAAATATAATGAATATCCGATTAGTG"
+					},
+					{
+						"seq" : "GATAAAAAAAGAAAATGTAATAATCTACCTTGTGATTGTATCTTATGTAAAAAAAAGCACAATGTTTGTTATTGTAATATGTGTAAAAAGAAAGAAAAAAATATGAGAGAAGATTTATCGGTTGTAAAATATAATGAATATCCGATTAGTG"
+					}
+				],
+				"target_id" : 84
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1150492,
+					"genome_id" : 0,
+					"start" : 1150302,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAAAAAAAGCAAACAAAAAGAAAAGAGAATGGAAGATTTAAGTATTGAGGAAAATTTGAAAGAGAAATTAATAAACCTAAATATTCAGAAACAGTATAGTGGTTTCCATATGAAAGAAATGGAGGAACAAAATATTCCTGAATTAAATATTCCACAACTTTCAGCTATTCATAATAGAGAAGATATGA"
+					},
+					{
+						"seq" : "TAAAAAAAGCAAACAAAAAGAAAAGAGAATGGAAGATTTAAGTATTGAGGAAAATTTGAAAGAGAAATTAATAAACCTAAATATTCAGAAACAGTATAGTGGTTTCCATATGAAAGAAATGGAGGAACAAAATATTCCTGAATTAAATATTCCACAACTTTCAGCTACTCATAATAGAGAAGATATGA"
+					}
+				],
+				"target_id" : 9
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1419669,
+					"genome_id" : 0,
+					"start" : 1419542,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TGGTTTTTGTACTTTTTGTCCTTGTGTTGATATCTCTTGTTCATTTTTAGATTGAGTATCTGTTTCACTTTGTGCCTTTACCTTTGATAATACGTTTTTACCGAATAATCCTAAATTTTGGAATA"
+					},
+					{
+						"seq" : "TGGTTTTTGTACTTCTTTTCCTTGTGTTGATATCTCTTGTTCATTTTTAGATTGAGTATCTGTTTCACTTTGTGCCTTTACCTTTGATAATACGTTTTTACCGAATAATCCTAAATTTTGGAATA"
+					}
+				],
+				"target_id" : 8
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1725569,
+					"genome_id" : 0,
+					"start" : 1725364,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CCAATACAATAAATTCTACCATTTGACGTAACACCACAATTATTTCTTCTAGGTATATTTAAATTACTTGAAACATACCATACATCTCTTAAACGATCATACACCTCAGTTTCAAATAAAGCCTTATAATCATAGTTATTACCACCAAAAACGTATAAGAAATTATTCAATACAGCACTTCCAAAATAAGCTTTTTTGGTAGA"
+					}
+				],
+				"target_id" : 10
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1876533,
+					"genome_id" : 0,
+					"start" : 1876351,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TATATTTTGGTTCAGACAAATGTACGTTACATGAAATATGTGCATTATCATCAACTAAAGAAATATCTAAACTATCTGTAAAAGTATGTTTAGAACTATCATTTGAAGAGAAGTTACATCCGTGTATGACTTTTTTTTCATATTTTGGTTTTAAAACTATTTTATAATTATTATTTTTAA"
+					}
+				],
+				"target_id" : 11
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2115141,
+					"genome_id" : 0,
+					"start" : 2114974,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TCATTAAGTAAAAAATTTACGGTATCGACATTAACAGTGTAATAATTTCTTCCTAAATTTAAATGTTCTAAATAATTCAAATTTAATACGGTATTTAACCTTTCTTCAAGTATTATCATTGCATTAATTTGAAACATAAGTAAAAAATTATTAGCACTTCTAAAA"
+					},
+					{
+						"seq" : "TCATTAAGTAAAAAATTTACGGTATCGACATTAACAGTGTAATAATGTCTTCCTAAATTTAAATGTTCTAAATAATTCAAATTTAATACGGTATTTAACCTTTCTTCAAGTATTATCATTGCATTAATTTGAAACATAAGTAAAAAATTATTAGCACTTCTAAAA"
+					}
+				],
+				"target_id" : 68
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2124846,
+					"genome_id" : 0,
+					"start" : 2124633,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AACATTTTTTTAACATCTTTACCTTTTTGACTTGGTTCTTCATCATAATTCTGTTGTTCTGCAGAATCAGCATTTACTTCAGTTTCTTCTTTATTTTGAAAAGTGTTTGATTCTACATGAGAATTGGAAGATGAACGTCTATGTTTTACTTCTGTATAACTAGTACGTTCTCCAGTATGATGAGCCTTAAGGTTTACATCTTCAGTTTCTT"
+					}
+				],
+				"target_id" : 7
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2479245,
+					"genome_id" : 0,
+					"start" : 2479085,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CCATGCTTTATCAAAACAAAGTAATGAAAATGTAATACATTATTCTTGTCGATCTATATGTGCTTTTACAAAAAACCCTAAGGGTTTAGAAGCGGTAAAGGATATCAAGGACTTTGCGAATATTATAAGTAAATCTGTTGGTGATTTGAGTAAAGAGA"
+					}
+				],
+				"target_id" : 6
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2481287,
+					"genome_id" : 0,
+					"start" : 2481105,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "GAACTTACTTTAGAAGCCATGAATTCGGCCGATGATCCATTGGAAGCATTTAAAAATACTTTATTAATATTTGATTTTAATTTATCTGAATTTGATAAGGATCCATATGTAAATGGTGTGCATGATTTAGCATCTAATATAAAGGATTGTTTAAGAAAAGGAGGTCACAGTAAAATATAT"
+					}
+				],
+				"target_id" : 47
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2669306,
+					"genome_id" : 0,
+					"start" : 2669134,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AAAAAAATACATTTAAATCTATAATATTTGTAATAAATGATAAGAATATTAGTAATAATAGGGTACTACTATTTGTAAATACTTTTCTACATAATTTATCAATAGTAGGAAATATGATATTCTTTTTGTTTGGCTTTATTTTATCTGGGATTTTCCAATCATAAAGTTCG"
+					}
+				],
+				"target_id" : 5
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 40136,
+					"genome_id" : 0,
+					"start" : 39952,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CATAGAAATATGTGCGAAAATTGGGAAAAAAATAAATAACAGGAATTGTTATATAAATTGAATCAAGAATGGCACAAAGAAAATAATACTGGTGACTTTCACACTAGTGATATCACACACAATAGTGGTATTACATACACTAGTGGTAACATACCTAGTGAAAGTAATAGTAGTTATATCCA"
+					},
+					{
+						"seq" : "CATAGAAATATGTGCGAAAATTGGGAAAAAAATAAATAACAGGAATTGTTATATAAATTGAATCAAGAATGGCACAAAGAAAATAATACTGGTGACTTTCACACTAGTGATATCACACACAATAGTGGTATTACATACAGTAGTGGTAACATACCTAGTGAAAGTAATAGTAGTTATATCCA"
+					}
+				],
+				"target_id" : 55
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 535109,
+					"genome_id" : 0,
+					"start" : 534940,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATACTCCGTCAGATATTCAAAATGAATGTATTTGTTCAAAAATAAATGAAGATAGAAATAATGATATGATAAACATATCTGAAATATATTATCGTTTCATTAAATTTATAACAATGATTGAAATATATTTGTGTGTAATAGAGGAAATTAAAAGGGAAGAATGGGAA"
+					}
+				],
+				"target_id" : 76
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 120350,
+					"genome_id" : 0,
+					"start" : 120214,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TTACAATGTTCTTCGCATTCGAAATTTTTTTCAGGATTACTTGAAAAGCCTTCTGGACAATTACAATATTCATATCCATGAGCATTGTTACAAACACCTTTTCCACAATTTAAAAAACATTTTTCTTCATTTAA"
+					},
+					{
+						"seq" : "TTACAATGTTCTTCGCATTCGAAATTTTTTTCAGGATTACTTGAAAAGCCTTGTGGACAATTACAATATTCATATCCATGAGCATTCTTACAAACACCTTTTCCACAATTTAAAAAACATTTTTCTTCATTTAA"
+					},
+					{
+						"seq" : "TTACAATGTTCTTCGCATTCGAAATTTTTTTCAGGATTACTTGAAAAGCCTTCTGGACAATTACAATATTCATATCCATGAGCATTCTTACAAACACCTTTTCCACAATTTAAAAAACATTTTTCTTCATTTAA"
+					}
+				],
+				"target_id" : 83
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 150293,
+					"genome_id" : 0,
+					"start" : 150104,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAATAATAGTAATATAAAGAATTATTCAGCTGTAGATATATTCTCACCCAAAAAAACTGGAAAGGAATGTATTAAATGTCTCCCAGATAATTTTTGTGAATGCGAATGTAGTTGTAAAAATAAAACAGGTTTTTCAATGAAATATAGACATGCCAGTAAGGGATCTAAAAGATATCGTAAAAAAATG"
+					},
+					{
+						"seq" : "TAATAATAGTAATATAAAGAATTATTCAGCTGTAGATATATTCTCACCCAAAAAAACTGGAAAGGAATGTATTAAATGTCTCCCAGATAATTTTTGTGAATGCGAATGTAGTTGTAAAAATAAAACAGGTTTTTCAATGAAATATAGACATGCCAGTAAGGGATCTAAAAGATATAGTAAAAAAATG"
+					}
+				],
+				"target_id" : 97
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 279785,
+					"genome_id" : 0,
+					"start" : 279662,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AGTTATAGTGATTCATATAAGGTAAATTGTATTAATTTCTCTGAAGGATTTTGTTGCTGTCATCCAATAAATAATTTAGCACTATTATATGGAGAGTATCAACAAAATCAAGAATCAAAAA"
+					}
+				],
+				"target_id" : 88
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 407570,
+					"genome_id" : 0,
+					"start" : 407378,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "CTCCTTCCTTTTCATTCTTTACTTTATTTCTATTAATACACAACTCTCCTTGAGTTAAGAGATTTACGATATTATCAATATTGTTTTCTTTCATATACTTCAACTTTTTACTATTCATTTTTAAAAGATAATTAACCAAGTTACTCATGTTTGTATTAGATGGTATGTTCCCAATTTTTTCGTCTTTTCT"
+					}
+				],
+				"target_id" : 66
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 564376,
+					"genome_id" : 0,
+					"start" : 564207,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TATTAAAACTTTTTTTTCTTTCTGTAAAGTTTGTACATTATGTTTTGATGAGTTTTGATTATCTTCATAAAACTTTATATATTTATAAAAATTATTTTGTATAAAATCATTTAATAAAGGTAACATAATTTTTTTAGCTTGATTCAATTCACTACATGAATGTATAT"
+					}
+				],
+				"target_id" : 2
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 1038485,
+					"genome_id" : 0,
+					"start" : 1038368,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATACAACTAATAAAGCTCTACGATAAATTTCTTTTTTATTTGATTTAGAAAAAGGAGAAAACCATTGAAACTTTTTGGCTAGATATTTATGGTCTTTATCAAAAATATATTCTGA"
+					},
+					{
+						"seq" : "ATACAACTAATAAAGCTCTACGATAAATTTCTTTTTTATTTGATTTAGAAAAAGGAGAAAACCATTGAAACTTTTTGGCTAGATATTTATGGTCTTTATCAAAAATATAATCTGA"
+					}
+				],
+				"target_id" : 1
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 1956285,
+					"genome_id" : 0,
+					"start" : 1956128,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TATATATAAAGTTAAACCTATAAATAATACACTACCTAATAAACTATTCTTATATTTAAAAATAAATATAATACATGTTATTAATCCTTCTATTGTTGCCGGAATAATATACATTAAAACAGAACTCATCAAATTATTAGCACTCTCGGTACCTC"
+					}
+				],
+				"target_id" : 0
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 1992425,
+					"genome_id" : 0,
+					"start" : 1992288,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "TAAACACCAGTACCATTTTTTTCTGATAAATTAATATTTTTTTGTATAACATCATATTTATCCCTTTTCGTGGTAAGTGCAGTATCCTGTTTTATTATTATATTATCGAATTCATCATGGTGTATATTTCTTTCT"
+					}
+				],
+				"target_id" : 50
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 2525088,
+					"genome_id" : 0,
+					"start" : 2524961,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "AATGAGGTATAATCATTCATTTCGTTGGGTCGATTTGATCTATTTTTAAGGTCCATATATTGAGATGAATCATTATGCATTTTATAATCATGAGGGATATTAGGTGCATGGTATTTAGGGTCTTT"
+					},
+					{
+						"seq" : "AAAGAGGTATAATCATCCATTTTGTTGGGTCGATTTGATCTATTTTTAAGGTCCATATATTGAGATGAATCATTATGCATTTTATAATCATGAGGGATATTAGGTGCATGGTATTTAGGGTCTTT"
+					}
+				],
+				"target_id" : 12
+			},
+			{
+				"mhap_location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 3124841,
+					"genome_id" : 0,
+					"start" : 3124641,
+					"strand" : "+"
+				},
+				"microhaplotypes" :
+				[
+					{
+						"seq" : "ATGGAAAAATGGAATATGAAGTATTAAGTGATGATAAAATAGTGTATGAAAATATACAACATGATTTATTAAAAACAATAGAAGATGGTGAAGAAATGTTAAAAGGAACTGAAAGGAAGGATAATATAGATATACTGAGGACTCCTGGAAGGGGAGAATATGATATGTGGTCTACTTCTGGACTAGGGTTCTATGAAT"
+					},
+					{
+						"seq" : "ATGGAAAAATGGAATATGAAGTATTAAGTGATGATAAAATAGTGTATGAAAATATACAACATGATTTATTAAAAACAATAGAAGATGATGAAGAAATGTTAAAAGGAACTGAAAGGAAGGATAATATAGATATACTGAGGACTCCTGGAAGGGGAGAATATGATATGTGGTCTACTTCTGGACTAGGGTTCTATGAAT"
+					}
+				],
+				"target_id" : 31
+			}
+		]
+	},
+	"sequencing_info" :
+	[
+		{
+			"library_layout" : "paired-end",
+			"library_selection" : "RANDOM",
+			"library_source" : "GENOMIC",
+			"library_strategy" : "WGS",
+			"seq_date" : "2020-01-01",
+			"seq_instrument_model" : "Multiple",
+			"seq_platform" : "ILLUMINA",
+			"sequencing_info_name" : "Pf7Plus"
+		}
+	],
+	"specimen_info" :
+	[
+		{
+			"collection_country" : "India",
+			"collection_date" : "2012-08-25",
+			"geo_admin3" : "NA",
+			"host_taxon_id" : 9606,
+			"project_id" : 0,
+			"specimen_collect_device" : "Dried Blood spot",
+			"specimen_name" : "5tbx",
+			"specimen_store_loc" : "Multiple",
+			"specimen_taxon_id" :
+			[
+				5833
+			]
+		},
+		{
+			"collection_country" : "Papua New Guinea",
+			"collection_date" : "2015",
+			"geo_admin3" : "NA",
+			"host_taxon_id" : 9606,
+			"project_id" : 0,
+			"specimen_collect_device" : "Dried Blood spot",
+			"specimen_name" : "XUC009",
+			"specimen_store_loc" : "Multiple",
+			"specimen_taxon_id" :
+			[
+				5833
+			]
+		}
+	],
+	"target_info" :
+	[
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 1956129,
+					"genome_id" : 0,
+					"start" : 1956096,
+					"strand" : "+"
+				},
+				"seq" : "TTTTTCTCCACTTTGTAATTTTTATTGTTGAAT"
+			},
+			"gene_name" : "PF3D7_1447900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 1956286,
+				"genome_id" : 0,
+				"ref_seq" : "ATATATATAAAGTTAAACCTATAAATAATACACTACCTAATAAACTATTCTTATATTTAAAAATAAATATAATACATGTTATTAATCCTTCTATTGTTGCCGGAATAATATACATTAAAACAGAACTCATCAAATTATTAGCACTCTCGGTACCTCT",
+				"start" : 1956129,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 1956129,
+					"genome_id" : 0,
+					"start" : 1956096,
+					"strand" : "+"
+				},
+				"seq" : "CGGGTGGTATCATGAGAATAGTTGAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"DrugResistance"
+			],
+			"target_name" : "t96"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 1038369,
+					"genome_id" : 0,
+					"start" : 1038340,
+					"strand" : "+"
+				},
+				"seq" : "ACACTTCAACTACACTTTTTAATTTAGCC"
+			},
+			"gene_name" : "PF3D7_1426700",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 1038486,
+				"genome_id" : 0,
+				"ref_seq" : "CATACAATTAATAAAGCTCTACGATAAATTTCTTTTTTATTTGATTTAGAAAAAGGAGAAAACCATTGAAACTTTTTGGCTAGATATTTATGGTCTTTATCAAAAATATATTCTGAA",
+				"start" : 1038369,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 1038369,
+					"genome_id" : 0,
+					"start" : 1038340,
+					"strand" : "+"
+				},
+				"seq" : "AGATCTTATGTTAAACTTCTAGAAGATGAAGT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t95"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 564208,
+					"genome_id" : 0,
+					"start" : 564177,
+					"strand" : "+"
+				},
+				"seq" : "AAAATCTTTTGGTATTGTATTTTGACTGCAC"
+			},
+			"gene_name" : "PF3D7_1414200",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 564377,
+				"genome_id" : 0,
+				"ref_seq" : "TTATTAAAACTTTTTTTTCTTTCTGTAAAGTTTGTACATTATGTTTTGATGAGTTTTGATTATCTTCATAAAACTTTATATATTTATAAAAATTATTTTGTATAAAATCATTTAATAAAGGTAACATAATCTTTTTAGCTTGATTCAATTCACTACATGAATGTATATT",
+				"start" : 564208,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 564208,
+					"genome_id" : 0,
+					"start" : 564177,
+					"strand" : "+"
+				},
+				"seq" : "AAACGGAATCACTTATGGATACCATTTTATTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t94"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 933023,
+					"genome_id" : 0,
+					"start" : 932995,
+					"strand" : "+"
+				},
+				"seq" : "TGTAAAAGGAAAATGTCTTACGTGGATT"
+			},
+			"gene_name" : "PF3D7_0820700",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_08_v3",
+				"end" : 933143,
+				"genome_id" : 0,
+				"ref_seq" : "TTGGTTTTAATGAGGATGATTTAGATAAAGAGTTTTTTTTTGATTTGCCGTCGATTAGTGGTTTTTCAAGTAATGGTATGAAAAAATGTAATTTAAGAAATTTATTAAAAAGATTAGAAG",
+				"start" : 933023,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 933023,
+					"genome_id" : 0,
+					"start" : 932995,
+					"strand" : "+"
+				},
+				"seq" : "ATTCAAAACCAATAGTACCACAATATGTTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t50"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 1042162,
+					"genome_id" : 0,
+					"start" : 1042129,
+					"strand" : "+"
+				},
+				"seq" : "GGAATATTTGTGATTTAGGATGTAATGCATACA"
+			},
+			"gene_name" : "PF3D7_0525100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_05_v3",
+				"end" : 1042281,
+				"genome_id" : 0,
+				"ref_seq" : "ATATTATTACGGTACCATTATATGATTCTTTAGGTCCTCAATCAAGTAGATTTATATTAGATCAAACACAGATGGAAACTATTGTATGTGACAAGACATGTGCTCGTAATTTATTTAAG",
+				"start" : 1042162,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 1042162,
+					"genome_id" : 0,
+					"start" : 1042129,
+					"strand" : "+"
+				},
+				"seq" : "CAAATATATCTCTTCGCATGTTTCTAAGGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t36"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2669135,
+					"genome_id" : 0,
+					"start" : 2669104,
+					"strand" : "+"
+				},
+				"seq" : "ATTTACATGATGTAACTGAATCTCAGCTTTT"
+			},
+			"gene_name" : "PF3D7_1366800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 2669307,
+				"genome_id" : 0,
+				"ref_seq" : "AAAAAAAATACATTTAAATCTATAATATTTGTAATAAATGATAAGAATATTAGTATTAATAGGGTACTACTATTTGTAAATACTTTTCTACATAATTTATCAATAGTAGGAAATATGATATTCTTTTTGTTTGGCTTTATTTTATCTGGGATTTTCCAATCATAAAGTTCGA",
+				"start" : 2669135,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2669135,
+					"genome_id" : 0,
+					"start" : 2669104,
+					"strand" : "+"
+				},
+				"seq" : "AGCCAGTATTCTTTTTATGAAGTATTTTAACA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t88"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2479086,
+					"genome_id" : 0,
+					"start" : 2479055,
+					"strand" : "+"
+				},
+				"seq" : "CTTATAAAGAGAAATTTTCATGTTAGCGCTT"
+			},
+			"gene_name" : "PF3D7_1361800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 2479246,
+				"genome_id" : 0,
+				"ref_seq" : "TCTATGCTTTATCAAAACAAAGTAATCAAAATGTAATACATTATTCTTGTCGATCTATATGTGCTTTTACAAAAAACCCTAAGGGTTTAGAAGCGGTAAAGGATATCAAGGACTTTGCGAATATTATAAGTAAATCTGTTGGTGATTTGAGTAAAGAGAA",
+				"start" : 2479086,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2479086,
+					"genome_id" : 0,
+					"start" : 2479055,
+					"strand" : "+"
+				},
+				"seq" : "AGTCTTCCTTGATTTCTTTATCCAAGGTA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t86"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2124634,
+					"genome_id" : 0,
+					"start" : 2124602,
+					"strand" : "+"
+				},
+				"seq" : "AATTTGGTTTCAATAAAATTATCAGCTTTCTT"
+			},
+			"gene_name" : "PF3D7_1353100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 2124847,
+				"genome_id" : 0,
+				"ref_seq" : "TAACATTTTTTTAACATCTTTACCTTTTTGACTTGGTTCTTTATCATAATTCTGTTGTTCTGCAGAATCAGCATTTACTTCAGTTTCTTCTTTATTTTGAAAAGTGTTTGATTCTACATGAGAATTGGAAGATGAACGTCTATGTTTTACTTCTGTATAACTAGTACGTTCTCCAGTATGATGAGCCTTATGGTTTACATCTTCAGTTTCTTC",
+				"start" : 2124634,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2124634,
+					"genome_id" : 0,
+					"start" : 2124602,
+					"strand" : "+"
+				},
+				"seq" : "GAAGAATTTTAACACAAGGAGATCATCAC"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t85"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1419543,
+					"genome_id" : 0,
+					"start" : 1419519,
+					"strand" : "+"
+				},
+				"seq" : "GAAATGTCGATTCTCCTCCTTGTG"
+			},
+			"gene_name" : "PF3D7_1335100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 1419670,
+				"genome_id" : 0,
+				"ref_seq" : "CTGGTTTTTGTACTTCTTGTCCTTGTGTTGATATCTCTTGTTCATTTTTAGATTGAGTATCTGTTTCACTTTGTGCCTTTACCTTTGATAATACGTTTTTACCGAATAATCCTAAATTTTGGAATAA",
+				"start" : 1419543,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1419543,
+					"genome_id" : 0,
+					"start" : 1419519,
+					"strand" : "+"
+				},
+				"seq" : "GAAAACAAGGAAAAATCAGAATCATTTCCA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t81"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1150303,
+					"genome_id" : 0,
+					"start" : 1150279,
+					"strand" : "+"
+				},
+				"seq" : "TAACAACCCCTCCATCAACATCTT"
+			},
+			"gene_name" : "PF3D7_1327300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 1150493,
+				"genome_id" : 0,
+				"ref_seq" : "CTAAAAAAAGCAAACAAAAAGAAAAGAGAATGGAAGATTTAAGTATTGAGGAAAATTTGAAAGAGAAATTAATAAACCTAAATATTCAGAAACAGTATAGTGGTTTCCATATGAAAGAAATGGAGGAACAAAATATTCCTGAATTAAATATTCCACAACTTTCAGCTATTCATAATAGAGAAGATATGAA",
+				"start" : 1150303,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1150303,
+					"genome_id" : 0,
+					"start" : 1150279,
+					"strand" : "+"
+				},
+				"seq" : "ACACTTCTATATCTTCTTTCTTCATCATTCTTA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t80"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1725365,
+					"genome_id" : 0,
+					"start" : 1725337,
+					"strand" : "+"
+				},
+				"seq" : "TCGGTATAATAGAAGAGCCATCATATCC"
+			},
+			"gene_name" : "PF3D7_1343700",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 1725570,
+				"genome_id" : 0,
+				"ref_seq" : "CCCAATACAATAAATTCTACCATTTGACGTAACACCACAATTATTTCTTCTAGGTATATTTAAATTACTTGAAACATACCATACATCTCTTAAACGATCATACACCTCAGTTTCAAATAAAGCCTTATAATCATAGTTATTACCACCAAAAACGTATAAGAAATTATTCAATACAGCACTTCCAAAATAAGCTTTTTTGGTAGAC",
+				"start" : 1725365,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1725365,
+					"genome_id" : 0,
+					"start" : 1725337,
+					"strand" : "+"
+				},
+				"seq" : "GCTGGCGTATGTGTACACCTAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"DrugResistance"
+			],
+			"target_name" : "t82"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1876352,
+					"genome_id" : 0,
+					"start" : 1876325,
+					"strand" : "+"
+				},
+				"seq" : "CCAGGACAATTTAAACCTACCAAATGA"
+			},
+			"gene_name" : "PF3D7_1346700",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 1876534,
+				"genome_id" : 0,
+				"ref_seq" : "TTATATTTTGGTTCAGACAAATGTACGTTACATGAAATATGTGCACTATCATCAACTAAAGAAATATCTAAACTATCTGTAAAAGTATGTTTAGAACTAACATTTGAAGAGAAGTTACATCCGTGTATGACTTTTTTTTCATATTTTGGTTTTAAAACTATTTTATAATTATTATTTTTAAA",
+				"start" : 1876352,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 1876352,
+					"genome_id" : 0,
+					"start" : 1876325,
+					"strand" : "+"
+				},
+				"seq" : "CAAAAGATGTTAATACAGAATGTACATGCAAA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t83"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 2524962,
+					"genome_id" : 0,
+					"start" : 2524931,
+					"strand" : "+"
+				},
+				"seq" : "ATGATCTTCTCTGAAATTTACTTGAATTGTT"
+			},
+			"gene_name" : "PF3D7_1462300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 2525089,
+				"genome_id" : 0,
+				"ref_seq" : "AAATGAGGTATAATCATCCATTTCGTTGGGTCGATTTGATCTATTTTTAAGGTCCATATATTGAGATGAATCATTATGCATTTTATAATCATGAGGGATATTAGGTGCATGGTATTTAGGGTCTTTA",
+				"start" : 2524962,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 2524962,
+					"genome_id" : 0,
+					"start" : 2524931,
+					"strand" : "+"
+				},
+				"seq" : "ACCAAACTTTTGGAGATTTCAAGATTATGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t98"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 103659,
+					"genome_id" : 0,
+					"start" : 103631,
+					"strand" : "+"
+				},
+				"seq" : "GAAAAGAAGATCCAACTGACAGAGAAAA"
+			},
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 103879,
+				"genome_id" : 0,
+				"ref_seq" : "AACTGATGTTAATGAAGGCCAAAATGGAAAACGTTTAACACAAGAAAAAACCCTAAAACAAATTCCTTCGACATCACCAAATAATTTAGAACAAAAATTACAACAAACACATATTTCTTCTTCCCAACAAAAACATTTAATAAAAACTACTCCTACTTCAGATTCAACTACAACTTCATCAAGCTCTTCTGTTCCTCTTACAAAACAATCCCCTCATTCT",
+				"start" : 103659,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 103659,
+					"genome_id" : 0,
+					"start" : 103631,
+					"strand" : "+"
+				},
+				"seq" : "TGTGTACTAGATAATGCAGGAACTGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t78"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 684088,
+					"genome_id" : 0,
+					"start" : 684059,
+					"strand" : "+"
+				},
+				"seq" : "GTCTACCATTTTTAATCGACTAACTCGAA"
+			},
+			"gene_name" : "PF3D7_1217300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_12_v3",
+				"end" : 684261,
+				"genome_id" : 0,
+				"ref_seq" : "AATATCAAGATGGTAGTATTGTTTTAGATGTTAGTAGTACGAGAGATAAACTTTATGGAGAAGTTGAGTGGGAAGGATATAAATTTGAACTTGTGGATACAGGAGGTTTAGTTTTTGAACAAGAAAAGTTTTCAAAAGAAATAAAGGATCAAATTCTTATGGCTCTAAAAGAA",
+				"start" : 684088,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 684088,
+					"genome_id" : 0,
+					"start" : 684059,
+					"strand" : "+"
+				},
+				"seq" : "CATCAACGACAAAAATAACAACTGATGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t74"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 415653,
+					"genome_id" : 0,
+					"start" : 415623,
+					"strand" : "+"
+				},
+				"seq" : "ATGAATTAATAAAAGAACATGGTGGACCTT"
+			},
+			"gene_name" : "PF3D7_0408600",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 415826,
+				"genome_id" : 0,
+				"ref_seq" : "ATGCTAGTTTTGCTGCTCATGAAAATAAAAGCTACTCATATGAAAGTCGTACATATAAAATGTATCCACCTGAATTTAATACATTAATGTTAAAAGCAGATTATTTTATAAGAGATATAAATACACGAGGATTTAGAGAAGTAAATATGGATTCATGTAAATCATATACAAAT",
+				"start" : 415653,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 415653,
+					"genome_id" : 0,
+					"start" : 415623,
+					"strand" : "+"
+				},
+				"seq" : "GACTTGAAAACATTTTAAATTTCTTGTATCCAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t23"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 659891,
+					"genome_id" : 0,
+					"start" : 659858,
+					"strand" : "+"
+				},
+				"seq" : "GTTAATACTGGTACTATTATACCATATGTTGCT"
+			},
+			"gene_name" : "PF3D7_1216600",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_12_v3",
+				"end" : 660010,
+				"genome_id" : 0,
+				"ref_seq" : "GGGTCGACTTTTGGTGGTTTAACATTTTCAGCTACGAGATTTTCGAATGATGGCAATCCTACTTTGATTAATTCCTTTAACATAGATTTTGCGTGTTTTTTTACTTCTGATTTGATATC",
+				"start" : 659891,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 659891,
+					"genome_id" : 0,
+					"start" : 659858,
+					"strand" : "+"
+				},
+				"seq" : "TCACCAACCTTTTTAGAATCAAGCTTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t73"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 156566,
+					"genome_id" : 0,
+					"start" : 156535,
+					"strand" : "+"
+				},
+				"seq" : "AACTGAAAGTATATACAATAGTACACCTCCA"
+			},
+			"gene_name" : "PF3D7_1302900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 156722,
+				"genome_id" : 0,
+				"ref_seq" : "TATAGAGTTATTATGTTCGAATTAATGACCAGATTATTTCGATTTTATACAAAACCAATAGACCTTATTATTACTATGAATACACACAGATATGACACACCTATATTGTTAAAACATTCAAACAGCTTACAACTTATCTTATCAAATCAACAAAAT",
+				"start" : 156566,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 156566,
+					"genome_id" : 0,
+					"start" : 156535,
+					"strand" : "+"
+				},
+				"seq" : "AAAAGGATAAGTTAGAATTGCTCATTAATCT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t79"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1816211,
+					"genome_id" : 0,
+					"start" : 1816181,
+					"strand" : "+"
+				},
+				"seq" : "GGGTAGATATCGTTATAAGGGCTATAATGT"
+			},
+			"gene_name" : "PF3D7_1145800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_11_v3",
+				"end" : 1816425,
+				"genome_id" : 0,
+				"ref_seq" : "ATTGACTTCTCCGGGTTGGTTACATTATCATTACAACCAATATTATTAAGGTTAATACTATTTTTATCATTATTATTGTTGTTTTCATTTGTGTGGTTATATAATAACAATGATGTGTCGTCTATTGGATCATTTTGCACAAGGTCAATATCATTAGAATTATGTTTCATATTATTTGTATACATTTTTTTGTAATTATCATTTTTTCTTACTT",
+				"start" : 1816211,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1816211,
+					"genome_id" : 0,
+					"start" : 1816181,
+					"strand" : "+"
+				},
+				"seq" : "GCCAAAAATACGATGTGATGAAGAATG"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t71"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1552430,
+					"genome_id" : 0,
+					"start" : 1552397,
+					"strand" : "+"
+				},
+				"seq" : "AAGGGAAAAATAATGGATAATATAGTTGTGAAT"
+			},
+			"gene_name" : "PF3D7_1139100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_11_v3",
+				"end" : 1552640,
+				"genome_id" : 0,
+				"ref_seq" : "AATATCGACAATTATAAAGAAAAAATAGAAAATTTTAATGAAAGATATTATGAAGATGATTTAAGTTTCTTAAACTTTCCAGGAACCATAACAAGTTATGATAAAAACCATCAAAGAGATAAAAGAAAAAACTGTTTTGAAGAATATCTAGACAATAATAATTATTTTATTGATAGTAATCTAAAGGAAGTTATAGAAAATAATATATAT",
+				"start" : 1552430,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1552430,
+					"genome_id" : 0,
+					"start" : 1552397,
+					"strand" : "+"
+				},
+				"seq" : "GTCAATTTGCTCCTTATCCATATTCGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t69"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1009856,
+					"genome_id" : 0,
+					"start" : 1009831,
+					"strand" : "+"
+				},
+				"seq" : "AAACTGTGAGCATATCTTGGTTCAG"
+			},
+			"gene_name" : "PF3D7_1125800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_11_v3",
+				"end" : 1010038,
+				"genome_id" : 0,
+				"ref_seq" : "GAATTCTATCTATTTGTTTAATTGGTGTCCATGAATTTTTAGAGAAACACCACATATCAGCTAATAAGGAATTATTAACATCTAATCCTCCATGAATATATAAAAAATCATTAAAACTGAAAGAAGCATGCTTATATCTTGCACGTGGACAAATTTTATTTCCAATAAGTTCCCATTTCTTT",
+				"start" : 1009856,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1009856,
+					"genome_id" : 0,
+					"start" : 1009831,
+					"strand" : "+"
+				},
+				"seq" : "TGTTGATGAAACATATAAATTTGATTTCCAAGC"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t66"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1750865,
+					"genome_id" : 0,
+					"start" : 1750833,
+					"strand" : "+"
+				},
+				"seq" : "CATCAACATATAGTCGTTATAAAAGAGCACTT"
+			},
+			"gene_name" : "PF3D7_1143800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_11_v3",
+				"end" : 1751055,
+				"genome_id" : 0,
+				"ref_seq" : "TTATTAAAAACAACAAATAAATTACCAAGGTCATGGAAAAAACTCTTGTTAAATCTATCCATTAGATTTCAAACAATACCTATAGGTGGTTCTATCGAAATCATATCAAAGGATGAGAAAAATATTTCTATGACACGATCCAGTGAATATAATGCAACAACATATGAGCATTACACATTTCCCAAATGGT",
+				"start" : 1750865,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1750865,
+					"genome_id" : 0,
+					"start" : 1750833,
+					"strand" : "+"
+				},
+				"seq" : "GGCGTTTCCTCATTTTCTTTACTATTGT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t70"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 119486,
+					"genome_id" : 0,
+					"start" : 119456,
+					"strand" : "+"
+				},
+				"seq" : "GCTTCCATCTCCTTTATATTCATCAAGAAA"
+			},
+			"gene_name" : "PF3D7_1102500",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_11_v3",
+				"end" : 119693,
+				"genome_id" : 0,
+				"ref_seq" : "TTTCATCCAAGAGTAATTATGTTTTTCTTGTTGATATTTTGCTTTATACAAACGAGCAAGATACTTTTTATACGATTCATGCTCTTTAATTTTCTTTTCAAAAGTTTTGGTTATAATGTGTTCAAGTGATTGTAAAGTATTTTTCTTTAATTTTCTCCATATTAATCTACATGCGATTATAAGAATTCTATATTCTTTGATATTCCC",
+				"start" : 119486,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 119486,
+					"genome_id" : 0,
+					"start" : 119456,
+					"strand" : "+"
+				},
+				"seq" : "GGAATTTTTAATGAATGGATTAAAACTAGTGAA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t65"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 1436479,
+					"genome_id" : 0,
+					"start" : 1436451,
+					"strand" : "+"
+				},
+				"seq" : "CTAGGAATCGAATAAATGAGGAAAAGCA"
+			},
+			"gene_name" : "PF3D7_1036400",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_10_v3",
+				"end" : 1436682,
+				"genome_id" : 0,
+				"ref_seq" : "CGAGAAGAAACACGTTTTATCTCATAATTCATATGAGAAAACTAAAAATAATGAAAATAATAAATTTTTCGATAAGGATAAAGAGTTAACGATGTCTAATGTAAAAAATGTGTCACAAACAAATTTCAAAAGTCTTTTAAGAAATCTTGGTGTTTCAGAGAATATATTCCTTAAAGAAAATAAATTAAATAAGGAAGGGAAAT",
+				"start" : 1436479,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 1436479,
+					"genome_id" : 0,
+					"start" : 1436451,
+					"strand" : "+"
+				},
+				"seq" : "ATCGTCATCATCATTTATTATGTGTTCAATTA"
+			},
+			"target_attributes" :
+			[
+				"Excluded",
+				"Microhaplotype"
+			],
+			"target_name" : "t64"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 531682,
+					"genome_id" : 0,
+					"start" : 531656,
+					"strand" : "+"
+				},
+				"seq" : "CTTTTTGGGCTTATTGTTTGGAAGAA"
+			},
+			"gene_name" : "PF3D7_0113800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_01_v3",
+				"end" : 531900,
+				"genome_id" : 0,
+				"ref_seq" : "AAAAGAAAGATGTTAAGAAAAAAAAGATCGATATGATAAATATATTACACATTCCTACAAATAATTATAGCATGCCAAATGAAAAAGATATAAACAGTTATGAATTTTTTGGATCTGAACCTATTGAATTATATGATGTAAAATCTAATAAGAATTGTGTTATAACTAGCCAATCTTATATTTGTATTGAAAACCCGCATGCTGCCATAGTATCCGAA",
+				"start" : 531682,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 531682,
+					"genome_id" : 0,
+					"start" : 531656,
+					"strand" : "+"
+				},
+				"seq" : "ACTGGATTCTTCTAATATTCTTTGCTCTCT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t6"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 596133,
+					"genome_id" : 0,
+					"start" : 596101,
+					"strand" : "+"
+				},
+				"seq" : "ATTTGTTTTTGTTCTACATCAATAATTGGTTT"
+			},
+			"gene_name" : "PF3D7_0913900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_09_v3",
+				"end" : 596334,
+				"genome_id" : 0,
+				"ref_seq" : "ATTATTTTCGTTTTTTTTTATATTATCATTATAATTATATGTATTTACAAAGAATTTATTATTATTTGTTTCTTTATAATTATATTCATTTTCTTTATTACTTAAGGAATTTATATTTGATAAAACTTGTTGTCCTCTTTCTTCTTTGTTGATGTGAATATTTGAGAAAATAATAATAAATGTAATGACTAGGGCTATGTT",
+				"start" : 596133,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 596133,
+					"genome_id" : 0,
+					"start" : 596101,
+					"strand" : "+"
+				},
+				"seq" : "AAATAGAAGTCATATAGGTGACTGGAATCTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t55"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 516928,
+					"genome_id" : 0,
+					"start" : 516904,
+					"strand" : "+"
+				},
+				"seq" : "TGTGGGCGCAAAAACTATAAATGA"
+			},
+			"gene_name" : "PF3D7_0911300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_09_v3",
+				"end" : 517092,
+				"genome_id" : 0,
+				"ref_seq" : "ATGTTTGTGTAATAAAGGATATTTCTATAATGTCAAGAAACAACAATGTGAAGAATGTCCCATAGGTTTTTATTGTCCAAAAATAAGCTCAAAAAATAATATAAAAAAACCTATCAAATGTCCTAAAAATTCCTCAAGTATAAAAAAAGGTATGTATATATCAA",
+				"start" : 516928,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 516928,
+					"genome_id" : 0,
+					"start" : 516904,
+					"strand" : "+"
+				},
+				"seq" : "ATTTTGTATATCCAAAATTACATTGACAATTGT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t54"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 1309609,
+					"genome_id" : 0,
+					"start" : 1309581,
+					"strand" : "+"
+				},
+				"seq" : "ACGACGAAGAAAACGAAAGTATTGATAA"
+			},
+			"gene_name" : "PF3D7_0532300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_05_v3",
+				"end" : 1309744,
+				"genome_id" : 0,
+				"ref_seq" : "TAATGAAGAAAATATGTCTGACAGACCAAACAGTTTATCTCATGATAAGGATCAACACCTCGATGAAACACATAATGAACAATATGGATTATACGTAAAAGAAATGGAATCTAAAGTTGAAAAATTAGCTGAAAA",
+				"start" : 1309609,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 1309609,
+					"genome_id" : 0,
+					"start" : 1309581,
+					"strand" : "+"
+				},
+				"seq" : "ACCTCTTGAAATTCCTTTTCAACTTGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t37"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 1362891,
+					"genome_id" : 0,
+					"start" : 1362863,
+					"strand" : "+"
+				},
+				"seq" : "CGACTTCTTTAAGAGAACAAACAGAACA"
+			},
+			"gene_name" : "PF3D7_0831600",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_08_v3",
+				"end" : 1363087,
+				"genome_id" : 0,
+				"ref_seq" : "CGTAAAAAAAAAGGGTTTTCCTAAAAAACCATCGGTTCATGGTTTTACACAGATGGTGTTTTTGCAGCTTACTAATATAGTCATGTATGCCCTTTGTTTTATGAGCCTTTCACAAATATATGCTTATTTCGAAAACGTGAATTTTTATATTATAAGCAATTTTCGTTTCCTTGAGAGATATTTTAATATATTCAAT",
+				"start" : 1362891,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 1362891,
+					"genome_id" : 0,
+					"start" : 1362863,
+					"strand" : "+"
+				},
+				"seq" : "AAGTTTTCTTCTGAATAGTTCTACAAAGTATTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t53"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 165235,
+					"genome_id" : 0,
+					"start" : 165202,
+					"strand" : "+"
+				},
+				"seq" : "GGATCCTCTTACAATCTCGAAATAATTATAATT"
+			},
+			"gene_name" : "PF3D7_0703900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_07_v3",
+				"end" : 165422,
+				"genome_id" : 0,
+				"ref_seq" : "ATCATTATTATTATTATTATAATTATCATTGTTATTATTATTGTTGTTGTTGTTATTATTATTTCCTTTATTATTTAATATGCATTTTTTAATATCCATTTTATTATTTATCATATCAGTACTTTTATTTTTCTCCTTTTCGTTTATAGCTTTTTCCCTATGCACCCTGAATTTCCCATTTTTTTTT",
+				"start" : 165235,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 165235,
+					"genome_id" : 0,
+					"start" : 165202,
+					"strand" : "+"
+				},
+				"seq" : "ATGGTTTGGTAAGCGAGTTTATGTTATT"
+			},
+			"target_attributes" :
+			[
+				"Excluded",
+				"Microhaplotype"
+			],
+			"target_name" : "t40"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 1344686,
+					"genome_id" : 0,
+					"start" : 1344653,
+					"strand" : "+"
+				},
+				"seq" : "TCTTTTCCATATATAATAACGCATGAATTCTTT"
+			},
+			"gene_name" : "PF3D7_0831400",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_08_v3",
+				"end" : 1344819,
+				"genome_id" : 0,
+				"ref_seq" : "AAATATATCTTTTACTTTATCTGTAAGTTTCATGGAATCTATTATTTCATGTGCATATTTTATTTTTGCCTCGTTTATATATTTACCTGCTTTTAATTTACATAAACATTTTTCTATTAAGTTTTGATCATTT",
+				"start" : 1344686,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 1344686,
+					"genome_id" : 0,
+					"start" : 1344653,
+					"strand" : "+"
+				},
+				"seq" : "TGAGAACAGATGAAGTAACTACTCGATT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t52"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 3124642,
+					"genome_id" : 0,
+					"start" : 3124614,
+					"strand" : "+"
+				},
+				"seq" : "CAGATTATTTGGTAATGAACAACCAGGA"
+			},
+			"gene_name" : "PF3D7_1475900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 3124842,
+				"genome_id" : 0,
+				"ref_seq" : "TATGGAAAAATGGAATATGAAGTATTAAGTGATGATAACATAGTGTATGAAAATATACAACATGATTTATTAAAAACAATAGAAGATGATGAAGAAATGTTAAAAGGAACTGAAAGGAAGGATAATATAGATATACTGAGGACTCCTGGAAGGGGAGAATATAATATGTGGTCTACTTCTGGACTAGGGTTCTATGAATT",
+				"start" : 3124642,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 3124642,
+					"genome_id" : 0,
+					"start" : 3124614,
+					"strand" : "+"
+				},
+				"seq" : "AGGTCTTCCTAATCTTGAACCATCATAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t99"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 1269320,
+					"genome_id" : 0,
+					"start" : 1269294,
+					"strand" : "+"
+				},
+				"seq" : "CTCTTATATCAGGAGCAGCTATAGGA"
+			},
+			"gene_name" : "PF3D7_0829600",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_08_v3",
+				"end" : 1269456,
+				"genome_id" : 0,
+				"ref_seq" : "GCCTTAGCATTAATAACACTTATAGGAGGTATTTATATGACTAAAGGAAGAAAAAGTTCCATATGGCATAATTCAGAAATAAATGATACACTTTATGATGTTGTTCTTGAAACAGTGAATCAAGGAAATACAGATG",
+				"start" : 1269320,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 1269320,
+					"genome_id" : 0,
+					"start" : 1269294,
+					"strand" : "+"
+				},
+				"seq" : "TTTTACTCCTCTTTGAAAAGCCAACTTTA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t51"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 329378,
+					"genome_id" : 0,
+					"start" : 329351,
+					"strand" : "+"
+				},
+				"seq" : "GTGTTAAAACAACAGGAGGAACACTAA"
+			},
+			"gene_name" : "PF3D7_0508000",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_05_v3",
+				"end" : 329550,
+				"genome_id" : 0,
+				"ref_seq" : "ATTGTGATGTATATAAATTCCCTTCTTCTTTATGTACCACATTATAAGAACCACGAACATATTCTTTTAAAAATGTTAACTTACTTCCAACAAATATATAATCAAAACAAAATTTTTTATTGTCGAAATGTTCTCGTTCAACCCCATTCATATTTCGGATATCATTATTTAA",
+				"start" : 329378,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 329378,
+					"genome_id" : 0,
+					"start" : 329351,
+					"strand" : "+"
+				},
+				"seq" : "TGTTGTAGAATATTCGTGTCCGTATAGT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t33"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 1386700,
+					"genome_id" : 0,
+					"start" : 1386672,
+					"strand" : "+"
+				},
+				"seq" : "TGCTACAGTTATATAGGACGATTTTGGT"
+			},
+			"gene_name" : "PF3D7_1035000",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_10_v3",
+				"end" : 1386869,
+				"genome_id" : 0,
+				"ref_seq" : "AGGGAACAGGTTAAATATATTGAAGACGTGGTTTGATAATCAGGTATTTCTTTAATTAAATATTCATGATATTGTTCGTTAGATACATAAATTAATTCGTCCTCCACATTTTGCTGTTCTGTTATAATTTGTGAAGAAGCTTGGTTTGTCTTATTTGGTAATTGCTCTT",
+				"start" : 1386700,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 1386700,
+					"genome_id" : 0,
+					"start" : 1386672,
+					"strand" : "+"
+				},
+				"seq" : "AAAATGAGGACAAGGAAAATAATACATTCATAA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t62"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 1358694,
+					"genome_id" : 0,
+					"start" : 1358666,
+					"strand" : "+"
+				},
+				"seq" : "AAGGATCATTTCATTGAAGCCTCTAAAA"
+			},
+			"gene_name" : "PF3D7_0731500",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_07_v3",
+				"end" : 1358911,
+				"genome_id" : 0,
+				"ref_seq" : "AAGAATCTCAACTTTTGCTTAAAAAAAATGATAACAAATATAATTCTAAATTTTGTAATGATTTGAAGAATAGTTTTTTAGATTATGGACATCTTGCTATGGGAAATGATATGGATTTTGGAGGTTATTCAACTAAGGCAGAAAACAAAATTCAAGAAGTTTTTAAAGGGGCTCATGGGGAAATAAGTGAACATAAAATTAAAAATTTTAGAAAAAA",
+				"start" : 1358694,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 1358694,
+					"genome_id" : 0,
+					"start" : 1358666,
+					"strand" : "+"
+				},
+				"seq" : "CAAAGTTTCTCTCTAAATTCATTCCACCAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t45"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 2050130,
+					"genome_id" : 0,
+					"start" : 2050103,
+					"strand" : "+"
+				},
+				"seq" : "TTGGTTTTGATTATCTCCCATTTTCGT"
+			},
+			"gene_name" : "PF3D7_1250100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_12_v3",
+				"end" : 2050314,
+				"genome_id" : 0,
+				"ref_seq" : "TTTTAAACTTTGAATCTGTTCAATTAATAACACTTCATCATTGTCTTCGCCTTTTATAATATCTCCATGATTATGTGCTCCTCTAATTAAGGTATCACTAACCTGTTGTTCATCTGTCGCATGAGAACTAGTAGATATATCTGGTTTATTTTTTTTCTTTCTTTTTGTTATTTCTAATTTTTTT",
+				"start" : 2050130,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 2050130,
+					"genome_id" : 0,
+					"start" : 2050103,
+					"strand" : "+"
+				},
+				"seq" : "AAAAACATACCTAGACATTTGAATGTCTTAGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t77"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 141963,
+					"genome_id" : 0,
+					"start" : 141936,
+					"strand" : "+"
+				},
+				"seq" : "AAAGCGAATAATGCCAATATGTTGTTC"
+			},
+			"gene_name" : "PF3D7_0302600",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_03_v3",
+				"end" : 142181,
+				"genome_id" : 0,
+				"ref_seq" : "AGCATTTATAACAAAATATCAGAAGATGGAAAAACCAAAAATAGCCTACTTAGCGATATATCTAAATTATTTAAAATTGTAAAAGAAAGCAAATTAATATTTGTAACTGGATTTTTATTAACAACCTTGTCAGCAATTGTCGATTCATACATTCCAATTTTTCTATCCAAAACGGTATCTTTTGTAATGGAAAGAAAAAAATTTACATTTCTTAAAAT",
+				"start" : 141963,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 141963,
+					"genome_id" : 0,
+					"start" : 141936,
+					"strand" : "+"
+				},
+				"seq" : "TTTTTACAACTGACAAATTTGTTTTGTGT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t15"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 512199,
+					"genome_id" : 0,
+					"start" : 512168,
+					"strand" : "+"
+				},
+				"seq" : "CGAATCAAAGGTAGAAAATGATCTTGAAGAA"
+			},
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_01_v3",
+				"end" : 512388,
+				"genome_id" : 0,
+				"ref_seq" : "TTAAATAAATTAAGTGAAGATGATTATGAAAAAAATTGTAGACATTTAAATTATTTAATAGATAATATAAGAGAATTATTTTTTAGTTCTAAAAATATTAGAATTCCTGATGTAGCTCGTAAATATTTGTGGGATAATCAAATTGAAGGAAATCTCAAAAAATTAATATCTTCAGAAACAAAATATAAA",
+				"start" : 512199,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 512199,
+					"genome_id" : 0,
+					"start" : 512168,
+					"strand" : "+"
+				},
+				"seq" : "CTGTGGATTATTTATACGATTCCTTTGACA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t5"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_06_v3",
+					"end" : 532195,
+					"genome_id" : 0,
+					"start" : 532167,
+					"strand" : "+"
+				},
+				"seq" : "ATCAAGCTGAATCTATCCTATTGGATCA"
+			},
+			"gene_name" : "PF3D7_0612900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_06_v3",
+				"end" : 532378,
+				"genome_id" : 0,
+				"ref_seq" : "AGAACAATTGCTAAACACCAAATTGGGTGAAACAAAAAACCACCTGAACAGAACCCCATTTATACCTGAATCGGTCATACGAGAAAGGAAATTACGCCAAGAAAAAGCTCAATCCACAAACAACATGTTCGATTCAACAAACGCAGATAGTATTACGTCCCCATGTGATCCAACGAATGCCAC",
+				"start" : 532195,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_06_v3",
+					"end" : 532195,
+					"genome_id" : 0,
+					"start" : 532167,
+					"strand" : "+"
+				},
+				"seq" : "GTATATTGTTTATTGGGATCCCCTTCC"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t39"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 532690,
+					"genome_id" : 0,
+					"start" : 532660,
+					"strand" : "+"
+				},
+				"seq" : "GGGAAGAATGGTTTAATCGTAAAAATGAAG"
+			},
+			"gene_name" : "PF3D7_0113800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_01_v3",
+				"end" : 532844,
+				"genome_id" : 0,
+				"ref_seq" : "ACTTTCTTAATTCTATGAATGAAGAATATACGCATATTAATTTAAATAACTTTATACATAATAATAACCATGATAATGACGAAAATTATACATTAGATCAGGTGGAAGGATATCCTATGACTAGTTATCAAAATAATATATACAAGGATTTTTT",
+				"start" : 532690,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 532690,
+					"genome_id" : 0,
+					"start" : 532660,
+					"strand" : "+"
+				},
+				"seq" : "GTCTTCGAAATAATGAACTCCCTTTTCT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t7"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 298886,
+					"genome_id" : 0,
+					"start" : 298857,
+					"strand" : "+"
+				},
+				"seq" : "TAGATATATCATTCACAGTCGTCTCATGG"
+			},
+			"gene_name" : "PF3D7_0706100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_07_v3",
+				"end" : 299005,
+				"genome_id" : 0,
+				"ref_seq" : "ACATTCAATATGGTTCTGAGCTTAAAGATGTTATCCTTATACATGTTTCTATTCTCATTCGTTATAACATCAATGACATATAAAACATATCGCTCAAATATTTTGTGAACAATATTATA",
+				"start" : 298886,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 298886,
+					"genome_id" : 0,
+					"start" : 298857,
+					"strand" : "+"
+				},
+				"seq" : "TGTTAAGTTTTCTCTTGTGGAATCGAAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t42"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 278165,
+					"genome_id" : 0,
+					"start" : 278144,
+					"strand" : "+"
+				},
+				"seq" : "CTTACCATTCGCGCTTTCTTG"
+			},
+			"gene_name" : "PF3D7_0207000",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_02_v3",
+				"end" : 278336,
+				"genome_id" : 0,
+				"ref_seq" : "GGAATTTTCTTTTTTATGACTTTCTTCTCCTTGTTCAGAAGCTTCTTTTTCATCCTTTTTTTCTGCTGCGTCAGATAAATTGGGGGAAGCACTTGAAGATTCATTTCCTCCAGGAGTATTACTAGTACTTACTCCGTCCACATTTGGTTTTTCTTCCCCTAGAATTCTCAT",
+				"start" : 278165,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 278165,
+					"genome_id" : 0,
+					"start" : 278144,
+					"strand" : "+"
+				},
+				"seq" : "AATATAGTACCAGAAAATGGAAGAATGTTAAAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t11"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 133491,
+					"genome_id" : 0,
+					"start" : 133463,
+					"strand" : "+"
+				},
+				"seq" : "TTTTGGTTCAGTACTATCTCTTGCATTT"
+			},
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 133701,
+				"genome_id" : 0,
+				"ref_seq" : "TTAGATTTTTTCCCTCCAGCAGGTGCACTAACTTTAGGTGTTTTAAATCTAGATGTATGTGGAACCCCATCTTTATTTGGTTTACCTCTATTTAATCTTTTACCAGCAGTAGAAACTACATTCTCTCGATTATCATTACCTACTTCAGTCTTTACAATTGTAGGAGGTGTTTTAACATGATTATCCCCTCCATGAGGAGTAACCCTTAAA",
+				"start" : 133491,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 133491,
+					"genome_id" : 0,
+					"start" : 133463,
+					"strand" : "+"
+				},
+				"seq" : "CGACACCAAATATTCAAGAAGAACC"
+			},
+			"target_attributes" :
+			[
+				"Excluded",
+				"Microhaplotype"
+			],
+			"target_name" : "t21"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_06_v3",
+					"end" : 145343,
+					"genome_id" : 0,
+					"start" : 145315,
+					"strand" : "+"
+				},
+				"seq" : "CAATCAACAAAAGCTGATGAATCATCAT"
+			},
+			"gene_name" : "PF3D7_0603600",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_06_v3",
+				"end" : 145501,
+				"genome_id" : 0,
+				"ref_seq" : "AATTTGAATAAAATTTATCATTCACAATATTATATTTTTGTTTCTTCTTTTTTCCCATAATATTATTATTTTGTTCACAATATATGTTCATGTGTCCCCTCTTTTTCTGTAAAATATTAAAATGTTTCTTACTATGCTTCTCTTCATTTTTAATAACA",
+				"start" : 145343,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_06_v3",
+					"end" : 145343,
+					"genome_id" : 0,
+					"start" : 145315,
+					"strand" : "+"
+				},
+				"seq" : "AAGGAAGGTAGAATATCAAATACAAGGGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t38"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 1149415,
+					"genome_id" : 0,
+					"start" : 1149387,
+					"strand" : "+"
+				},
+				"seq" : "TGGACATGTAGATATTTGACTAGTCGAA"
+			},
+			"gene_name" : "PF3D7_0727000",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_07_v3",
+				"end" : 1149585,
+				"genome_id" : 0,
+				"ref_seq" : "TAATATTTAATATTTTTGTTTAGGAAGTTTTCAAAATTGATGACATTGATAACCGTTTTTATTAAATCGCTTGGGTTGTTTGTGTGTTCCATTGTAGAAGACATAATTTTAAGAATGTGTTTTTGTGTTATTAAACAAAACTTTGTTACTATATGGAATCGTATGTTATA",
+				"start" : 1149415,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 1149415,
+					"genome_id" : 0,
+					"start" : 1149387,
+					"strand" : "+"
+				},
+				"seq" : "TGTATACTCTCACATATTCCCTTCAGTG"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t44"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 958389,
+					"genome_id" : 0,
+					"start" : 958362,
+					"strand" : "+"
+				},
+				"seq" : "TTTAGAACAAGTGAGTTCAGGAATTGG"
+			},
+			"gene_name" : "PF3D7_0523000",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_05_v3",
+				"end" : 958506,
+				"genome_id" : 0,
+				"ref_seq" : "TACGAAATTTATAACAATTTTTACATATGCCAGTTCCTTTTTAGGTTTATATATTTGGTCATTAATAAAAAATGCACGTTTGACTTTATGTATTACTTGCGTTTTTCCGTTAATTTA",
+				"start" : 958389,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 958389,
+					"genome_id" : 0,
+					"start" : 958362,
+					"strand" : "+"
+				},
+				"seq" : "TTTACTTTCTTATTACATATGACACCACAAACA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"DrugResistance"
+			],
+			"target_name" : "t35"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2481106,
+					"genome_id" : 0,
+					"start" : 2481079,
+					"strand" : "+"
+				},
+				"seq" : "AGAAGATAAGCAATTATGGCAAAAGGT"
+			},
+			"gene_name" : "PF3D7_1361800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 2481288,
+				"genome_id" : 0,
+				"ref_seq" : "GCAACTTACTTTAGAAGCCATGAATTCGGCCGATGATCCATTGGAAGCATTTAAAAATACTTTATTAATATTTGATTTTAATTTATCTGAATTTGATAAGGATCCATATATAAATGGTGTGCATGATTTAGCATCTAATATAAAGGATTGTTTAAGAAAAGGAGGTCACAGTAAAATATATT",
+				"start" : 2481106,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2481106,
+					"genome_id" : 0,
+					"start" : 2481079,
+					"strand" : "+"
+				},
+				"seq" : "TCCATTTAAATAATAACCTTTGATCACTTTGAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t87"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 850816,
+					"genome_id" : 0,
+					"start" : 850788,
+					"strand" : "+"
+				},
+				"seq" : "CCATTTTTATCTACACGTACTACATGCA"
+			},
+			"gene_name" : "PF3D7_0320400",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_03_v3",
+				"end" : 850989,
+				"genome_id" : 0,
+				"ref_seq" : "TCATATTCGTTTCAGCGTTTATAGAGCGAATATTATCGATTATGTCTATATTCCCTAAAATATGTACATAATAATCTCCATTTAATAATGTTACTTTCTTAAGAATATTTTTGTATATGACATCAAAGATATTACGAGTTAACAATACATCTACATTTCCGTCTATTATATAT",
+				"start" : 850816,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 850816,
+					"genome_id" : 0,
+					"start" : 850788,
+					"strand" : "+"
+				},
+				"seq" : "AAATGTCTCTAAGAGTTACAGGAACAGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t19"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 958059,
+					"genome_id" : 0,
+					"start" : 958027,
+					"strand" : "+"
+				},
+				"seq" : "AAATGTTTACCTGCACAACATAGAAAATTATT"
+			},
+			"gene_name" : "PF3D7_0523000",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_05_v3",
+				"end" : 958221,
+				"genome_id" : 0,
+				"ref_seq" : "ATTTATATCATTTGTATGTGCTGTATTATCAGGAGGAACATTACCTTTTTTTATATCTGTGTTTGGTGTAATATTAAAGAACATGAATTTAGGTGATGATATTAATCCTATAATATTATCATTAGTATCTATAGGTTTAGTACAATTTATATTATCAATGAT",
+				"start" : 958059,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_05_v3",
+					"end" : 958059,
+					"genome_id" : 0,
+					"start" : 958027,
+					"strand" : "+"
+				},
+				"seq" : "TTTGATGTAATTACATCCATACAATAACTTGAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"DrugResistance"
+			],
+			"target_name" : "t34"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 1992289,
+					"genome_id" : 0,
+					"start" : 1992261,
+					"strand" : "+"
+				},
+				"seq" : "TTTTACTTTTGCTACCATCAGGCATAAT"
+			},
+			"gene_name" : "PF3D7_1448500",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 1992426,
+				"genome_id" : 0,
+				"ref_seq" : "ATAAACACCAGTACCATTTTTTTCTGATAAATTAATATTTTTTTGTATAACATCATATTTATCCCTTTTCGTGGTAAGTGCAGTATCCTGTTTTATTATTATATTATCGAATTCATCATGGTGTATATTTCTTTCAT",
+				"start" : 1992289,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 1992289,
+					"genome_id" : 0,
+					"start" : 1992261,
+					"strand" : "+"
+				},
+				"seq" : "ATCTTATTATGAAAGCTGTACATCCGATTTTA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t97"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 1406405,
+					"genome_id" : 0,
+					"start" : 1406375,
+					"strand" : "+"
+				},
+				"seq" : "CAGATTATCATAGTGTTGTGGATGAAGATT"
+			},
+			"gene_name" : "PF3D7_0935600",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_09_v3",
+				"end" : 1406541,
+				"genome_id" : 0,
+				"ref_seq" : "TAATTAATTTTAATGATGATGTTACTTTAGAAACACAATCCATGATAGCACACGGAGGGTCTTTGTCAGAAATAGAAGAAACTGGAGATTTATCTTCAGATGTTGATAGATTACATTCATCAATCGAAACTACTCC",
+				"start" : 1406405,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 1406405,
+					"genome_id" : 0,
+					"start" : 1406375,
+					"strand" : "+"
+				},
+				"seq" : "ATCACCTCGTATATATACAACATCATCTCTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t58"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1037634,
+					"genome_id" : 0,
+					"start" : 1037602,
+					"strand" : "+"
+				},
+				"seq" : "ATTGAAGTACAATATGAAATCGATCTTGATAA"
+			},
+			"gene_name" : "PF3D7_0422500",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 1037844,
+				"genome_id" : 0,
+				"ref_seq" : "ATCTTATAAAGTTAATGAAATAGCTCAACTTAATTTAACCATAGAAAGAGATTTAACAGATGATGCTGTGATTTTTGCACACTCACTTTATTTACCATTTGAAAAAGAAGAAATGTGGTGGATCGTTATCGGAATTAAAAAAATGAACTTACTTTTATCTATCAAAAAATTATCTTTATTGAAAAGTGTCAATAATATAAAAATTAATTT",
+				"start" : 1037634,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1037634,
+					"genome_id" : 0,
+					"start" : 1037602,
+					"strand" : "+"
+				},
+				"seq" : "GTATTTGGTTTGTCAGGCAATTCG"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t28"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 1237431,
+					"genome_id" : 0,
+					"start" : 1237407,
+					"strand" : "+"
+				},
+				"seq" : "CGAATGCTTGTGTGATCAATGAAA"
+			},
+			"gene_name" : "PF3D7_1230000",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_12_v3",
+				"end" : 1237603,
+				"genome_id" : 0,
+				"ref_seq" : "AGTATGAACACAAAACCGAAAGAGAGTTTAAAAAAAGATTCGATTTTAATGAAGGAAGAAATAACATAATAAATGTGTCAAATGTAAAGAAAACATGTAATATAGTTAAAAATGATTTAAAGGAATCTAACGAGATAAAAACTAATATAAACACAAGTTCTTATAATTTATA",
+				"start" : 1237431,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 1237431,
+					"genome_id" : 0,
+					"start" : 1237407,
+					"strand" : "+"
+				},
+				"seq" : "ACCTCTTTCAAAACATTCTCTTTTATTAATACA"
+			},
+			"target_attributes" :
+			[
+				"Excluded",
+				"Microhaplotype"
+			],
+			"target_name" : "t76"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1128489,
+					"genome_id" : 0,
+					"start" : 1128461,
+					"strand" : "+"
+				},
+				"seq" : "CTGTCGCAAAAGAAGGTTTTGATAATAT"
+			},
+			"gene_name" : "PF3D7_0424900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 1128673,
+				"genome_id" : 0,
+				"ref_seq" : "ATTGAAAGAGTTAAAGGGAAAAATACAAAATTATTTAGATAATGATATTCAATTGAAAAATGGAAAACTCCTATATAAGGATACATGGGATAGAATTGTTTTGAAATTTTGTAGAACTGTAGCAATAGAAGAGGCAGAATACACTAGAAAATTTTATAGCTTAATTAATGATAAACATACAATT",
+				"start" : 1128489,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1128489,
+					"genome_id" : 0,
+					"start" : 1128461,
+					"strand" : "+"
+				},
+				"seq" : "ATGAATGAATAAATCAATTTTACCACGTCATT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t32"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 39953,
+					"genome_id" : 0,
+					"start" : 39920,
+					"strand" : "+"
+				},
+				"seq" : "CCAACTATATCTGTTCCATAAATGGTTATATTT"
+			},
+			"gene_name" : "PF3D7_1401100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 40137,
+				"genome_id" : 0,
+				"ref_seq" : "ACATAGAAATATGTGCGAAAATTGGGAAAAAAATAAATAACAGGAATTGTTATATAAATTGAATCAAGAATGGCACAAAGAAAATAATACTGGTGACTTTCACACTAGTGATATCACACACAATAGTGGTATTACATACAGTAGTGGTAACATACCTAGTGAAAGTAATAGTAGTTATATCCAA",
+				"start" : 39953,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 39953,
+					"genome_id" : 0,
+					"start" : 39920,
+					"strand" : "+"
+				},
+				"seq" : "ATTTATTTGGATTGAGATCTTAATGTTCAAAGT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t89"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1018953,
+					"genome_id" : 0,
+					"start" : 1018920,
+					"strand" : "+"
+				},
+				"seq" : "GCTATACTACTACTTATGTTACTTATACCACAT"
+			},
+			"gene_name" : "PF3D7_1126100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_11_v3",
+				"end" : 1019085,
+				"genome_id" : 0,
+				"ref_seq" : "CTAGTGACTGTACATTTTTCATCTAATGTTCTATAGGATAAAGAATCTGAAGGACAATGCATATCATTACAAAAATAGCATGCACCTTTAAAATATAAATAAGAATGTCTTAACACAACAAAGGAATCAAAA",
+				"start" : 1018953,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1018953,
+					"genome_id" : 0,
+					"start" : 1018920,
+					"strand" : "+"
+				},
+				"seq" : "CTCCTTTAGGTATTACGGTAGCAATAAG"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t67"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 221363,
+					"genome_id" : 0,
+					"start" : 221330,
+					"strand" : "+"
+				},
+				"seq" : "GGAACAAGAAGGATAATACCATTATTAATCCTA"
+			},
+			"gene_name" : "PF3D7_0304600",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_03_v3",
+				"end" : 221495,
+				"genome_id" : 0,
+				"ref_seq" : "TTGAACTATTTACGACATTAAACACACTGGAACATTTTTCCATTTTACAAATTTTTTTTTCAATATCATTTGCATAATCTAATTCGTCTTTAGGTTTATTAGCAGAGCCAGGCTTTATTCTAACTTGAATAC",
+				"start" : 221363,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 221363,
+					"genome_id" : 0,
+					"start" : 221330,
+					"strand" : "+"
+				},
+				"seq" : "CCCATGTAGTGTAACTTGTGGAAATG"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t16"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 748533,
+					"genome_id" : 0,
+					"start" : 748500,
+					"strand" : "+"
+				},
+				"seq" : "AGATGTTTATATCATTAACAAAGTTGAAGATCT"
+			},
+			"gene_name" : "PF3D7_0417200",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 748696,
+				"genome_id" : 0,
+				"ref_seq" : "AATAGTTTTACTTGGGAAATTAAATTACTATAAATGTTTTATTATAGGAGGTTCCGTTGTTTATCAAGAATTTTTAGAAAAGAAATTAATAAAAAAAATATATTTTACTAGAATAAATAGTACATATGAATGTGATGTATTTTTTCCAGAAATAAATGAAAAT",
+				"start" : 748533,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 748533,
+					"genome_id" : 0,
+					"start" : 748500,
+					"strand" : "+"
+				},
+				"seq" : "ACATCGCTAACAGAAATAATTTGATACTC"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"DrugResistance"
+			],
+			"target_name" : "t26"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 166035,
+					"genome_id" : 0,
+					"start" : 166002,
+					"strand" : "+"
+				},
+				"seq" : "AGGATATGTTCTTTTTAAAGTTCTCTTCATTTT"
+			},
+			"gene_name" : "PF3D7_0703900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_07_v3",
+				"end" : 166167,
+				"genome_id" : 0,
+				"ref_seq" : "CTTTTATTTGAACTTTTTTATTTTCTTCATTATCAATATAAAAACAACAATCTTTAAATTTATGAAATAACACCCAACTTAATGTATAAAATATAATTTCTATAAAATCAAAATTAATGTAATAACCTAATT",
+				"start" : 166035,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 166035,
+					"genome_id" : 0,
+					"start" : 166002,
+					"strand" : "+"
+				},
+				"seq" : "CGTTAAATGTAGAAAAGACGAAATCATCCA"
+			},
+			"target_attributes" :
+			[
+				"Excluded",
+				"Microhaplotype"
+			],
+			"target_name" : "t41"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1376185,
+					"genome_id" : 0,
+					"start" : 1376159,
+					"strand" : "+"
+				},
+				"seq" : "CTGCAAATTGAGCCATAGAAAAATGA"
+			},
+			"gene_name" : "PF3D7_1135100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_11_v3",
+				"end" : 1376372,
+				"genome_id" : 0,
+				"ref_seq" : "TTCTCATTCCTTTGAAAATATGAACTATTCAACTCATCAAGTTTTTCATATGTTATTTCATAACTGCCATCATCTGAATCCTCTTCATCACTACTACTTAAAGAATGCTCTTCTACAGTTATATCTTCATAATGATTATTTTTAGGAAAATATTCTTCAGATCTTTCTATAAATTCTGTTCCACTAC",
+				"start" : 1376185,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_11_v3",
+					"end" : 1376185,
+					"genome_id" : 0,
+					"start" : 1376159,
+					"strand" : "+"
+				},
+				"seq" : "CGATAACACTAGATGTAAGATATGCATCAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t68"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1113450,
+					"genome_id" : 0,
+					"start" : 1113422,
+					"strand" : "+"
+				},
+				"seq" : "GATTCTGCATGCAGTAATGAATCTATTG"
+			},
+			"gene_name" : "PF3D7_0424600",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 1113604,
+				"genome_id" : 0,
+				"ref_seq" : "AAATCATCTAAGAATAAACTTTTTTGTTTAAACCATTTATTGAACATTTCACTTAAATGTGATTCAATTTTTTTTTCTGAGCTTTCCATAATTTGATTACAACTATTCAATTTGTTTGTATAAGTTTTAGGTCTTATTATTCTTTTACGTTTTA",
+				"start" : 1113450,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1113450,
+					"genome_id" : 0,
+					"start" : 1113422,
+					"strand" : "+"
+				},
+				"seq" : "CGTAGCATGCTCAGATATTATGATGATT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t31"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 495971,
+					"genome_id" : 0,
+					"start" : 495941,
+					"strand" : "+"
+				},
+				"seq" : "GCCACCAAAATATTATATACCACAAGACAA"
+			},
+			"gene_name" : "PF3D7_0113100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_01_v3",
+				"end" : 496143,
+				"genome_id" : 0,
+				"ref_seq" : "TGAAAGTAGCGAATACCCTGTAGAAATTGTTAGTAAACCTCTGGAATGGTTATTGTTTCATGATTTGACTAAGCCTGATGTTACTGCACTACCTGAAGAATTACCATTAACGAGCTATAAAGTAACACCTACTTCTATTAATGTATTGCATAAAGAGGGCCCCACTTTAAAA",
+				"start" : 495971,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 495971,
+					"genome_id" : 0,
+					"start" : 495941,
+					"strand" : "+"
+				},
+				"seq" : "AAGGAAAATCTTTGGTGGGAAAAATAGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t4"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 377095,
+					"genome_id" : 0,
+					"start" : 377062,
+					"strand" : "+"
+				},
+				"seq" : "AAACAAATAGCATTCGATAAATTTGAAAATTTC"
+			},
+			"gene_name" : "PF3D7_1009200",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_10_v3",
+				"end" : 377209,
+				"genome_id" : 0,
+				"ref_seq" : "AACCAAAAAATGATACCTGTACGTTTTTCTCCAGGAGAAACAAAAAAATTAGAAAGGATTCTCAAAAAAGTAGACGACTTTTTCTGTGCCAATATTAAAGCTCAATATACTTGC",
+				"start" : 377095,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 377095,
+					"genome_id" : 0,
+					"start" : 377062,
+					"strand" : "+"
+				},
+				"seq" : "CTTCATCTATATAGTCCCCGATGAATGA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t60"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 181557,
+					"genome_id" : 0,
+					"start" : 181524,
+					"strand" : "+"
+				},
+				"seq" : "TCTATTAGCTTTTTCAAACCTTTCATTATTGTT"
+			},
+			"gene_name" : "PF3D7_0104100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_01_v3",
+				"end" : 181673,
+				"genome_id" : 0,
+				"ref_seq" : "TTCATTCTTTTTTTAACGAAAACTATTCATCTCAAAAATATAAGATATTTTATATGACGAATGCCATTGTATTTTTTGTTACGTAAAACCTGACTTCTTCAAGGAAAACACATGCG",
+				"start" : 181557,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 181557,
+					"genome_id" : 0,
+					"start" : 181524,
+					"strand" : "+"
+				},
+				"seq" : "AGCTTAGGCAAAAATTGGTGAAAATG"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t3"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 992371,
+					"genome_id" : 0,
+					"start" : 992338,
+					"strand" : "+"
+				},
+				"seq" : "TGCCTATCATTAATGGAAAATATCCTCATTATA"
+			},
+			"gene_name" : "PF3D7_1023700",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_10_v3",
+				"end" : 992544,
+				"genome_id" : 0,
+				"ref_seq" : "TTTTTAAAAAAAAAAATTATGATATAAAATCTTCAATTAATAAAAGATCTATCCAGTTCTTTAAAGACACTAATATAGATCATTATATAGCATATGAATATTATAAGGAGGACCGTACGGAATTTATATTAACTATTATGAATGAAAAAAATATTACTCATCAAGAAACTCAA",
+				"start" : 992371,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 992371,
+					"genome_id" : 0,
+					"start" : 992338,
+					"strand" : "+"
+				},
+				"seq" : "TCCCTTTCAACTTTTTCATTTCAAGACT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t61"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 407379,
+					"genome_id" : 0,
+					"start" : 407346,
+					"strand" : "+"
+				},
+				"seq" : "TCGTCTTTCTGTTCATTATCCATATAATCTTTT"
+			},
+			"gene_name" : "PF3D7_1410300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 407571,
+				"genome_id" : 0,
+				"ref_seq" : "TCTCCTTCCTTTTCATTCTTTACTTTATTTCTATTAATACACAACTCTCCTTGAGTTAAGAGATTTACGATATTATCAATATTGTTTTCTTTCATATACTTCAACTTTTTACTATTCATTTTTAAAAGATAATTAACCAAGTTACTCATGTTTGTATTAGATGGTATGTTCCCAATTTTTTCGTCTTTTCTT",
+				"start" : 407379,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 407379,
+					"genome_id" : 0,
+					"start" : 407346,
+					"strand" : "+"
+				},
+				"seq" : "TGAACTCTTTAAATTATCCTTTTTGAATATCCA"
+			},
+			"target_attributes" :
+			[
+				"Excluded",
+				"Microhaplotype"
+			],
+			"target_name" : "t93"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1102389,
+					"genome_id" : 0,
+					"start" : 1102362,
+					"strand" : "+"
+				},
+				"seq" : "CGTAGAGGTGTTGATGTTAATATGGAG"
+			},
+			"gene_name" : "PF3D7_0424400",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 1102578,
+				"genome_id" : 0,
+				"ref_seq" : "GAAGAAATAAATAAAATAATTTATACAAACGAATTTAATAATTATGAAGATAAAATATATGAAGATGTCAAATATATTAAAGAACAGGAAAATGAAATGTACTTGAGAGATGGAATTGAAGAGTTACATATGGATGAACCAAGTGGGGATGTATATTTTGATGATCAAGATGATTATATATTTTTAGAT",
+				"start" : 1102389,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1102389,
+					"genome_id" : 0,
+					"start" : 1102362,
+					"strand" : "+"
+				},
+				"seq" : "CATCCAAACATACATCCTCTTTTTGTTC"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t30"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2114975,
+					"genome_id" : 0,
+					"start" : 2114942,
+					"strand" : "+"
+				},
+				"seq" : "TGTATCTATAGTCGATTTTGTTATTCTAAGCAT"
+			},
+			"gene_name" : "PF3D7_1352900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_13_v3",
+				"end" : 2115142,
+				"genome_id" : 0,
+				"ref_seq" : "ATCATTAAGTAAAAAATTTACGGTATCGACATTAACAGTGTAATAATTTCTTCCTAAATTTAAATGTTCTATATAATTCAAATTTAATACGGTATTTAACCTTTCTTCAAGTATTATCATTGCATTAATTTGAAACATAAGTAAAAAATTATTAGCACTTCTAAAAT",
+				"start" : 2114975,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_13_v3",
+					"end" : 2114975,
+					"genome_id" : 0,
+					"start" : 2114942,
+					"strand" : "+"
+				},
+				"seq" : "ACATTTTATTGTTGTTAGAATACCTCTAGTTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t84"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 63166,
+					"genome_id" : 0,
+					"start" : 63135,
+					"strand" : "+"
+				},
+				"seq" : "ACATTCTATTAAAAACTTTGGGTACTCCTAA"
+			},
+			"gene_name" : "PF3D7_1200700",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_12_v3",
+				"end" : 63280,
+				"genome_id" : 0,
+				"ref_seq" : "TATAATTTCACCTTTTGAATTACATATGTCTGTATTCAAAAATTTTATATCTCTACTCCATATATTTATCTTTACACCCAAAAACAAAGCAATGAAAAAAACAACCCTTTCATA",
+				"start" : 63166,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 63166,
+					"genome_id" : 0,
+					"start" : 63135,
+					"strand" : "+"
+				},
+				"seq" : "ACACATTTATCTTATTTACCCGTATCTCATATA"
+			},
+			"target_attributes" :
+			[
+				"Excluded",
+				"Microhaplotype"
+			],
+			"target_name" : "t72"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 141778,
+					"genome_id" : 0,
+					"start" : 141751,
+					"strand" : "+"
+				},
+				"seq" : "GATACACGTGATGAATACCATATAGCC"
+			},
+			"gene_name" : "PF3D7_0402300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 141945,
+				"genome_id" : 0,
+				"ref_seq" : "CTTTCAAATTATATAAAGACAGAACTAAGAAATATAAACCTGCAAGAAATAAAAAACAATATAATAAAAATATTTAAAGAATTCAAATCTGCACACAAAGAAATTAAAAAAGAATCAGAACAAATTAATAAAGAATTTACCAAAATGGATGTCGTCATAAATCAATT",
+				"start" : 141778,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 141778,
+					"genome_id" : 0,
+					"start" : 141751,
+					"strand" : "+"
+				},
+				"seq" : "AGATCAAGCATTTGTCTGTCTATATCTCTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t22"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 1399544,
+					"genome_id" : 0,
+					"start" : 1399515,
+					"strand" : "+"
+				},
+				"seq" : "GGTCAAACTCATTCTGAATTAAATCCTGA"
+			},
+			"gene_name" : "PF3D7_1035300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_10_v3",
+				"end" : 1399711,
+				"genome_id" : 0,
+				"ref_seq" : "AACATCAGAACATAGTAAAGATTTAAATAATAATGATTCAAAAAATGAATCTAGTGATATTATTTCAGTAAATAATAAATCAAATAAAGTACAAAATCATTTTGAATCATTATCAGATTTAGAATTACTTGAAAATTCCTCACAAGATAATTTAGACAAAGATACAA",
+				"start" : 1399544,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_10_v3",
+					"end" : 1399544,
+					"genome_id" : 0,
+					"start" : 1399515,
+					"strand" : "+"
+				},
+				"seq" : "GTTTTTGATTAGGAAAAGGTTCTGTTGAAA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t63"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 748230,
+					"genome_id" : 0,
+					"start" : 748200,
+					"strand" : "+"
+				},
+				"seq" : "AGGTCTAGGAAATAAAGGAGTATTACCATG"
+			},
+			"gene_name" : "PF3D7_0417200",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 748436,
+				"genome_id" : 0,
+				"ref_seq" : "GAAATGTAATTCCCTAGATATGAAATATTTTTGTGCAGTTACAACATATGTGAATGAATCAAAATATGAAAAATTGAAATATAAGAGATGTAAATATTTAAACAAAGAAACTGTGGATAATGTAAATGATATGCCTAATTCTAAAAAATTACAAAATGTTGTAGTTATGGGAAGAACAAGCTGGGAAAGCATTCCAAAAAAATTTA",
+				"start" : 748230,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 748230,
+					"genome_id" : 0,
+					"start" : 748200,
+					"strand" : "+"
+				},
+				"seq" : "ACAATATAACATTTATCCTATTGCTTAAAGGTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"DrugResistance"
+			],
+			"target_name" : "t25"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 85440,
+					"genome_id" : 0,
+					"start" : 85407,
+					"strand" : "+"
+				},
+				"seq" : "ACCCATAGAAATGTTAAATGATATTTTTCTTCT"
+			},
+			"gene_name" : "PF3D7_0301400",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_03_v3",
+				"end" : 85646,
+				"genome_id" : 0,
+				"ref_seq" : "AACTTTTTAACACTATCATTATAATTATGTCTTTTATTTTCATATTTTTCTTTATAATAATTTATATCCTTTAATTTTTCTTTCATCAAATTTAACCATTTATCATTTAAATTCTCTTTTTCCACAGCTCCAGCATTTTTATTTATATCATCTACAACTACATCTTCCTTCACATAATTATTTATATAAAAATTATTATCATCTAA",
+				"start" : 85440,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 85440,
+					"genome_id" : 0,
+					"start" : 85407,
+					"strand" : "+"
+				},
+				"seq" : "GAAGAAGTATTAAATGAAGAATTTTCAGATGCT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t14"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 109912,
+					"genome_id" : 0,
+					"start" : 109879,
+					"strand" : "+"
+				},
+				"seq" : "TTTTAAAACTGGCAAATTATTTATTTCTGTCAT"
+			},
+			"gene_name" : "PF3D7_0401900",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 110087,
+				"genome_id" : 0,
+				"ref_seq" : "AATATTTGTATATATTCTAGTAAACACTTTAGGTACACCTGCAAGTACCTCAACATCTGAATTATATAAATCTTTAGAAAAACAACTAATATCCTTACTCGATATATTTATTTTTATACCAAGAATAACAGCCATATAAACCAAAACTCTCTCAAATACATGTGATACAGGTAAA",
+				"start" : 109912,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 109912,
+					"genome_id" : 0,
+					"start" : 109879,
+					"strand" : "+"
+				},
+				"seq" : "CATGAAACCGAAAACCCATTTTTCTTA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t20"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 729975,
+					"genome_id" : 0,
+					"start" : 729943,
+					"strand" : "+"
+				},
+				"seq" : "AATAAGAAATATGTCTTACAAGGAGATGTTTT"
+			},
+			"gene_name" : "PF3D7_0716700",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_07_v3",
+				"end" : 730088,
+				"genome_id" : 0,
+				"ref_seq" : "TTTTATGTGAAATTTTAAATAAAGAGAAATTGTTTGTGCACACATCTATTTTGGGATATATATCTAATCGTTTATGTTACGATATAAAAAAATATAGATGTTCATTATTGAAG",
+				"start" : 729975,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_07_v3",
+					"end" : 729975,
+					"genome_id" : 0,
+					"start" : 729943,
+					"strand" : "+"
+				},
+				"seq" : "AAACATTATGTAGTCAACATATGAAGGAAA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t43"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 534941,
+					"genome_id" : 0,
+					"start" : 534908,
+					"strand" : "+"
+				},
+				"seq" : "TGTATGTGTGTTGATTGTAATTATAAGAATTGT"
+			},
+			"gene_name" : "PF3D7_0113800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_01_v3",
+				"end" : 535110,
+				"genome_id" : 0,
+				"ref_seq" : "AATACTCCGTCAGATATTCAAAATGAATGTATTTGTTCAAAAATAAATGAAGATAGAAATAATGATATGATAAACATATCTGAAATATATTATCGTTTCATTAAATTTATAACAATGATTGAAATATATTTGTGTGTAATAGAGGAAATTAAAAGGGAAGAATGGGAAA",
+				"start" : 534941,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 534941,
+					"genome_id" : 0,
+					"start" : 534908,
+					"strand" : "+"
+				},
+				"seq" : "CTACAAAAATTATGAAAAAGTTTGGTTCCTTTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t9"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 685601,
+					"genome_id" : 0,
+					"start" : 685583,
+					"strand" : "+"
+				},
+				"seq" : "CACGCGAACCAAACAACG"
+			},
+			"gene_name" : "PF3D7_0916400",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_09_v3",
+				"end" : 685792,
+				"genome_id" : 0,
+				"ref_seq" : "ACAAAGGAACAAGATAATTTTTTCCATTTTTATAAAAGTAATATATATGATATGGAAAATAGAACCTGTAATAATAATATATTACAATATTGTGTTATGAATAATAAATCATATTTATTTCATAATATATCATCCAAAAAAAATATATATATAAAAAAAAAGAATCATCAGTTTTCTTTATTCATATATTC",
+				"start" : 685601,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 685601,
+					"genome_id" : 0,
+					"start" : 685583,
+					"strand" : "+"
+				},
+				"seq" : "GGGCGAAATTCTATGAATGTATTATTAATAGAA"
+			},
+			"target_attributes" :
+			[
+				"Excluded",
+				"Microhaplotype"
+			],
+			"target_name" : "t56"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 470492,
+					"genome_id" : 0,
+					"start" : 470459,
+					"strand" : "+"
+				},
+				"seq" : "TGAACATGAAGAATATTGACATGAAACATTATA"
+			},
+			"gene_name" : "PF3D7_0211700",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_02_v3",
+				"end" : 470676,
+				"genome_id" : 0,
+				"ref_seq" : "ATACACATAAGAAAAAAAAAATTTATTTATTCTTACAAAAAGAATATAAAAACAAAATTTTGGGATTTATAAATTTTTATAAACATATAACACACAAAATAAAAAAGAAACAAGAAAATGTTCATGATAAAATCACTTTTTTAAAATGTCTAAAGGAACTCTTTTTTGTCACACATACAAATAA",
+				"start" : 470492,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 470492,
+					"genome_id" : 0,
+					"start" : 470459,
+					"strand" : "+"
+				},
+				"seq" : "GTATGTATTATACCCTCCATTTGATTATTCTCT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t12"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 145449,
+					"genome_id" : 0,
+					"start" : 145416,
+					"strand" : "+"
+				},
+				"seq" : "TGTTCGATATGTTTAAATATATGATTCTCGAAA"
+			},
+			"gene_name" : "PF3D7_0103300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_01_v3",
+				"end" : 145622,
+				"genome_id" : 0,
+				"ref_seq" : "AAACTTTTTTTATTTTTTTTGTCAATAGATAAATGATCAATATTTTCTATATTTAATCTATCAAGTATTTTTATATATCTATTATTTCTTTCTTCGATGGATAAATTATAAGAATCAATATCCTTTCTTTCATCAACAAACTTTTTTATTGTTAACTCCATTTTTTTATTTAA",
+				"start" : 145449,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 145449,
+					"genome_id" : 0,
+					"start" : 145416,
+					"strand" : "+"
+				},
+				"seq" : "CCAATATGTCAAGGTATATTAAAGTATGGTATC"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t1"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 339168,
+					"genome_id" : 0,
+					"start" : 339139,
+					"strand" : "+"
+				},
+				"seq" : "TGAGATAATCCTCCTGGAATATTTGTCAT"
+			},
+			"gene_name" : "PF3D7_0806300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_08_v3",
+				"end" : 339357,
+				"genome_id" : 0,
+				"ref_seq" : "ATCATTACTATTCTTTATCCATATATATGTTGTTATATCAGTTGCACCTGAGGGTGGATTCAAACCTCTTGCTTGTATAATATATGCACGTACTACTAAATTACGTGTTAATCTATATTCTCTTACTAAATCATCACATTTCTTTATCATTTCTTTTTTTAAATACATTGTCTTTTCATCATACACATT",
+				"start" : 339168,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 339168,
+					"genome_id" : 0,
+					"start" : 339139,
+					"strand" : "+"
+				},
+				"seq" : "CTGAAGCGGTTGGATATTTGAAATATATATGT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t48"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1100656,
+					"genome_id" : 0,
+					"start" : 1100629,
+					"strand" : "+"
+				},
+				"seq" : "CCCAAAACGGTTAATACTGAAGTTAGA"
+			},
+			"gene_name" : "PF3D7_0424400",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 1100831,
+				"genome_id" : 0,
+				"ref_seq" : "AATGTTCTAAGATCTGATGGAAAAATATCTGATCAAGGTTCTCAGAAAAGTCCTCCTAAGGAACTTTCTAATAAACAAATGACTCCTGCTCAACGTAAGAATGTGCCACATTTTGTTGAAAGAAGAGGCTATGGAAATAGTCATGTTAGGGGTAACGCACTTAAAAAAATTAGTA",
+				"start" : 1100656,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 1100656,
+					"genome_id" : 0,
+					"start" : 1100629,
+					"strand" : "+"
+				},
+				"seq" : "AGAAGAAGGACTTTTATAATTATCATCACCAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t29"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 179903,
+					"genome_id" : 0,
+					"start" : 179874,
+					"strand" : "+"
+				},
+				"seq" : "AACAACAAGCTTTGTCGCTAAAATTAATT"
+			},
+			"gene_name" : "PF3D7_0104100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_01_v3",
+				"end" : 180115,
+				"genome_id" : 0,
+				"ref_seq" : "CTTTCGATACAGGACATATAGATCATAATATAAACGAATATGAAAAACATTTTACAATTTTAAAAGAATCTTTTTTTCATAAGTCATTAAAATTTATGGATTATATATGGATTGTTATAATGAAACGAGAAAATAATACATTTTTAAATAGAATAAGAACTGAACAAGTCAAAAAATCGTTATTAATAACAGGTATTATAAACGAAAATATT",
+				"start" : 179903,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 179903,
+					"genome_id" : 0,
+					"start" : 179874,
+					"strand" : "+"
+				},
+				"seq" : "TCTGATACCTATAGCTTCCATATTTTCATATTT"
+			},
+			"target_attributes" :
+			[
+				"Excluded",
+				"Microhaplotype"
+			],
+			"target_name" : "t2"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 120215,
+					"genome_id" : 0,
+					"start" : 120188,
+					"strand" : "+"
+				},
+				"seq" : "GTCCTTATCACATCCTCCATTGTTTAC"
+			},
+			"gene_name" : "PF3D7_1403200",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 120351,
+				"genome_id" : 0,
+				"ref_seq" : "CTTACAATGTTCTTCGCATTCGAAATTTTTTTCAGGATTACTTGAAAAGCCTTCTGGACAATTACAATATTCATATCCATGAGTATTCTTACAAACACCTTTTCCACAATTTAAAAAACATTTTTCTTCATTTAAA",
+				"start" : 120215,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 120215,
+					"genome_id" : 0,
+					"start" : 120188,
+					"strand" : "+"
+				},
+				"seq" : "ACAGAAAGAATGGTTTAGAAATGTACGAAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t90"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 534215,
+					"genome_id" : 0,
+					"start" : 534182,
+					"strand" : "+"
+				},
+				"seq" : "TTCAGATGTGATAAATATATGTGACATTTGTAA"
+			},
+			"gene_name" : "PF3D7_0113800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_01_v3",
+				"end" : 534368,
+				"genome_id" : 0,
+				"ref_seq" : "TGATAAAAAAAGAAAATGTAACAATCTACCTTGTGATTGTATCTTATGTAAAAAAAAGCACAATGTTTGTTATTGTAATATGTGTAAAAAGAAAGAAAAAAATATGAGAGAAGATTTATCGGTTGTAAAATATAATGAATATCCGATTAGTGT",
+				"start" : 534215,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_01_v3",
+					"end" : 534215,
+					"genome_id" : 0,
+					"start" : 534182,
+					"strand" : "+"
+				},
+				"seq" : "AAAAATATAAGAGATTCAAAGGGTCAGAC"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t8"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 336468,
+					"genome_id" : 0,
+					"start" : 336438,
+					"strand" : "+"
+				},
+				"seq" : "AATACATGAATATGATTAACAACGAACCCA"
+			},
+			"gene_name" : "PF3D7_0806200",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_08_v3",
+				"end" : 336647,
+				"genome_id" : 0,
+				"ref_seq" : "TAAATTTACAGAAAAATTTAGATTTAATCATATGGCTAAAAAAGAATATAAAAGAAGGAGAAGCTTTAATTTCTGATATACCCACATCAAGTTTTTTAAGGTGTACTACAAATTATAAATTTGTATTGCATCCACAATATGAAGATAGTAACTTGAGAAAGAGGGTTCAAGATTATTAT",
+				"start" : 336468,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 336468,
+					"genome_id" : 0,
+					"start" : 336438,
+					"strand" : "+"
+				},
+				"seq" : "ACTAAAAGGAAGACAAGCTGAAAACAT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t47"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 102326,
+					"genome_id" : 0,
+					"start" : 102298,
+					"strand" : "+"
+				},
+				"seq" : "ACTTGTCGCTATACCTTCATCTATTGAA"
+			},
+			"gene_name" : "PF3D7_0801300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_08_v3",
+				"end" : 102500,
+				"genome_id" : 0,
+				"ref_seq" : "TTAATTTTCTCAAGTAACATATTTTTGTCTTGACTACTTTCATCTGTAAATGGAACGACTACTCTTTGCTTACCTGCAAAAAGGACAACTGACATATGAGCCTTATCCTTACTTACATTCGAATTAAAGACCATAGATTCTAAAAATGGTATAGTTCCTTTTAACCAATAATCC",
+				"start" : 102326,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 102326,
+					"genome_id" : 0,
+					"start" : 102298,
+					"strand" : "+"
+				},
+				"seq" : "TGTTGAAGAGTCAAGTTTTGTTCAGAA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t46"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 1437114,
+					"genome_id" : 0,
+					"start" : 1437081,
+					"strand" : "+"
+				},
+				"seq" : "CATCATAATCATCTAATGATGTTAATCCTTGTA"
+			},
+			"gene_name" : "PF3D7_0936300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_09_v3",
+				"end" : 1437303,
+				"genome_id" : 0,
+				"ref_seq" : "CTAAAACCTGACAGCTTTGTACAGTTATATTTACCCAATTAGAATGTTCAAACATATTTAAGTGTTGCCATTCTTCAAATAATTTTTTTTCATATTCAGTTTTTGGTTGGTTTTTAAATTCTTTTGATACTGTACCTTCTGCGGATGGTATAGGGAAGTTAAAAATTTTATTACGTACTTTGTTTGATT",
+				"start" : 1437114,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 1437114,
+					"genome_id" : 0,
+					"start" : 1437081,
+					"strand" : "+"
+				},
+				"seq" : "GCACCATCATTAAATTTAGAAGAAACCC"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t59"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 279663,
+					"genome_id" : 0,
+					"start" : 279635,
+					"strand" : "+"
+				},
+				"seq" : "CGGATAAATGTTTAGTTATTAGCCAGGT"
+			},
+			"gene_name" : "PF3D7_1407700",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 279786,
+				"genome_id" : 0,
+				"ref_seq" : "GAGTAATAGTGATTCATATAAGGTAAATTGTATTAATTTCTCTGAAGGATTTTGTTGCTGTCATCCAATAAATAATTTAGCACTATTATATGGAGAGTATCAACAAAATCAAGAATCAAAAAT",
+				"start" : 279663,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 279663,
+					"genome_id" : 0,
+					"start" : 279635,
+					"strand" : "+"
+				},
+				"seq" : "CATTACTTATGGGAAGTTTCGGTAATTTCATA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t92"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 1178894,
+					"genome_id" : 0,
+					"start" : 1178862,
+					"strand" : "+"
+				},
+				"seq" : "GAACGTTGAGAAATTACCTTTAGAAGATTACT"
+			},
+			"gene_name" : "PF3D7_0929400",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_09_v3",
+				"end" : 1179078,
+				"genome_id" : 0,
+				"ref_seq" : "ACAAATTATCCTTAGCCCCAGATATGGTAAAGACATATCACTGTTATAAATTAGGAAAGCAAGCAGCTGAATTATTAGAATCTATCATTTTAAAGAAAAAGTTCGTAAGATTTAGAGTTACTGATGCTATTGATGTATATGATTTCTTTTATATAAAGAAAGTTTTATCCAGTCGTATTAAGAA",
+				"start" : 1178894,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_09_v3",
+					"end" : 1178894,
+					"genome_id" : 0,
+					"start" : 1178862,
+					"strand" : "+"
+				},
+				"seq" : "GCTCTTTTGTCTTGTAAAAATTCATTATATTCT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t57"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 654002,
+					"genome_id" : 0,
+					"start" : 653972,
+					"strand" : "+"
+				},
+				"seq" : "TCACCTAACGGTATATTTTTATCTCGTACA"
+			},
+			"gene_name" : "PF3D7_0316200",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_03_v3",
+				"end" : 654175,
+				"genome_id" : 0,
+				"ref_seq" : "ATATTTTTATAATTTCCTTTCATCTTATTTTTTTCTTTATATTTTTTTTTTTCATATGTAAGATTTATATAATCACTTTCGCTTTTTCTAACCCTTTTGAACTTTTTAAATGTACTTCGTTCATTATTTCTAATTCTCGTAAACACAAGAATAAATATTTTGATATATCTTAT",
+				"start" : 654002,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 654002,
+					"genome_id" : 0,
+					"start" : 653972,
+					"strand" : "+"
+				},
+				"seq" : "TTATGTATTTTTCAAAAATCGGCACGTTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t18"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 943258,
+					"genome_id" : 0,
+					"start" : 943227,
+					"strand" : "+"
+				},
+				"seq" : "ACCCTACTTATACAAAGAGATAAAGAAGTAG"
+			},
+			"gene_name" : "PF3D7_1223400",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_12_v3",
+				"end" : 943428,
+				"genome_id" : 0,
+				"ref_seq" : "AATCAACTATAATTAAAAATAGTGGAATTATTGAAAACTTTGGAGATATTGATTATATCTTTACGGATAAAACAGGAACACTAACAGAAAATGTCATGGTGCTTAAAGTTATACATATAGGTTTTGATGTTATACATGCAGAAAATGAAAAAAATTCCATACAAGGTAAT",
+				"start" : 943258,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_12_v3",
+					"end" : 943258,
+					"genome_id" : 0,
+					"start" : 943227,
+					"strand" : "+"
+				},
+				"seq" : "AATTCCCTTTTTGTTTGGTTTCCATATT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t75"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 802525,
+					"genome_id" : 0,
+					"start" : 802494,
+					"strand" : "+"
+				},
+				"seq" : "AAGCATCTGAACATTAAAGTTCAAACAAATA"
+			},
+			"gene_name" : "PF3D7_0418000",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 802713,
+				"genome_id" : 0,
+				"ref_seq" : "TAAATTATTATAGAAAGATAGAAGTTATTTTATATGAATGGTTATATTTTCATTATAATAATGTATATAACACCAAAGTAAAAAAACAAAAATTTATATTTACCCAACAAAAAAAAGACATATCAAAACATAACAAGTTATATCTTCAGTATGATCAAAATAAAAGAAACTCTGAAATAGAACATACA",
+				"start" : 802525,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 802525,
+					"genome_id" : 0,
+					"start" : 802494,
+					"strand" : "+"
+				},
+				"seq" : "GCACATCGAATAATCTTCTTTGTGATT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t27"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 549993,
+					"genome_id" : 0,
+					"start" : 549962,
+					"strand" : "+"
+				},
+				"seq" : "CATAAAAGAGGAAATCCACATACAATGGATA"
+			},
+			"gene_name" : "PF3D7_0810800",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_08_v3",
+				"end" : 550218,
+				"genome_id" : 0,
+				"ref_seq" : "AACTAACAAATTATGATAATCTAGTTTATGATATAAAAAATTATTTAGAACAAAGATTAAATTTTCTTGTATTAAATGGAATACCTCGTTATAGGATACTATTTGATATTGGATTAGGATTTGCGAAGAAACATGATCAATCTATTAAACTCTTACAAAATATACATGTATATGATGAGTATCCACTTTTTATTGGATATTCAAGAAAAAGATTTATTGCCCATT",
+				"start" : 549993,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_08_v3",
+					"end" : 549993,
+					"genome_id" : 0,
+					"start" : 549962,
+					"strand" : "+"
+				},
+				"seq" : "GTGTATTTATTACAACATTTTGATCATTCATGC"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"DrugResistance"
+			],
+			"target_name" : "t49"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 618396,
+					"genome_id" : 0,
+					"start" : 618367,
+					"strand" : "+"
+				},
+				"seq" : "GGGACACTACAGACAAAAATAAATGATCT"
+			},
+			"gene_name" : "PF3D7_0315200",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_03_v3",
+				"end" : 618581,
+				"genome_id" : 0,
+				"ref_seq" : "AAAAAGAGATTATAGAAGTGGAAAGAAGACATATATAATACAAGCTCTACAATATGCATTAACATATTATAGCAAACTTTCAAATAGAAAGGAAGCACCTAAAGTAACCATGTTATTTACAGATGGAAATGATTCCTATGAATCAGAAAAGGGATTACAGGATATTGCATTATTATATAGAAAAG",
+				"start" : 618396,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_03_v3",
+					"end" : 618396,
+					"genome_id" : 0,
+					"start" : 618367,
+					"strand" : "+"
+				},
+				"seq" : "AGAAACTCCTACTACCAATAATTTGACATTTT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t17"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 805822,
+					"genome_id" : 0,
+					"start" : 805795,
+					"strand" : "+"
+				},
+				"seq" : "TTGGAAAATTTGAGAATCCTATGTGCT"
+			},
+			"gene_name" : "PF3D7_0220100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_02_v3",
+				"end" : 805942,
+				"genome_id" : 0,
+				"ref_seq" : "TTAATTATGAAGACAGTCTCACGACTTCATGTTATATTGATGAAAACAAATCCGATTCATCCTATGAAACTGAAGAAAATGTAAACTATAATAATAAAATGGGTAAACGCAAAAATTTAG",
+				"start" : 805822,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 805822,
+					"genome_id" : 0,
+					"start" : 805795,
+					"strand" : "+"
+				},
+				"seq" : "TTCGATTTGCCTACAATTTGTGATTCTA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t13"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 544718,
+					"genome_id" : 0,
+					"start" : 544686,
+					"strand" : "+"
+				},
+				"seq" : "AACCCAGATAATCATTTATTAAATACAGACAC"
+			},
+			"gene_name" : "PF3D7_0412300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_04_v3",
+				"end" : 544861,
+				"genome_id" : 0,
+				"ref_seq" : "ATATATTTTACATAATAACAATCCTTCATGTAATGATTATAATTTAAATAATCTTTCATTTAATATAAATAAATATATTAATGAAGAAAAAGGCAAAAATAAAAAAACAAATCAACATATATCAGAACAATTTTTATTTCCTA",
+				"start" : 544718,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_04_v3",
+					"end" : 544718,
+					"genome_id" : 0,
+					"start" : 544686,
+					"strand" : "+"
+				},
+				"seq" : "CTGCAGCACACATTATAACTAAATGTG"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t24"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 150105,
+					"genome_id" : 0,
+					"start" : 150075,
+					"strand" : "+"
+				},
+				"seq" : "CCGAAAATAGAACTCCATATGTTCATTACC"
+			},
+			"gene_name" : "PF3D7_1404300",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 150294,
+				"genome_id" : 0,
+				"ref_seq" : "ATAATAATAGTAATATAAAGAATTATTCAGCTGTAGATATATTCTCACCCAAAAAAACTGGAAAGGAATGTATTAAATGTCTCCCAGATAATTTTTGTGAATGCGAATGTAGTTGTAAAAATAAAACAGGTTTTTCAATGAAATATAGACATGCCAGTAAGGGATCTAAAGGATATAGTAAAAAAATGA",
+				"start" : 150105,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 150105,
+					"genome_id" : 0,
+					"start" : 150075,
+					"strand" : "+"
+				},
+				"seq" : "GTCTGGAACGAGAAGATGTCTTTG"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t91"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 109807,
+					"genome_id" : 0,
+					"start" : 109776,
+					"strand" : "+"
+				},
+				"seq" : "CCACCATTTCTTCATTTTAATTTTGAATGGT"
+			},
+			"gene_name" : "PF3D7_0202100",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_02_v3",
+				"end" : 109982,
+				"genome_id" : 0,
+				"ref_seq" : "AACTTATGTTCATGAGCTAATTTCCCACAAATACTCCATAACGAACTTTTCATTTTATTAAATTTATCTCTCAAAAGAGAATGACTATAATGCCATATTAAATACATATCTTTCCTTTCTAATTTTCCTGGTAATTCTATTATCATTCTTTCTAAATCTTCTTCTGTAACTTTTC",
+				"start" : 109807,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_02_v3",
+					"end" : 109807,
+					"genome_id" : 0,
+					"start" : 109776,
+					"strand" : "+"
+				},
+				"seq" : "ACCATTTGGATTAAAACCTTCAGATTTAAATA"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t10"
+		},
+		{
+			"forward_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 3214351,
+					"genome_id" : 0,
+					"start" : 3214318,
+					"strand" : "+"
+				},
+				"seq" : "TGTTAAAATATTTTCCAAAGAATTCAATTAGCG"
+			},
+			"gene_name" : "PF3D7_1478000",
+			"insert_location" :
+			{
+				"chrom" : "Pf3D7_14_v3",
+				"end" : 3214478,
+				"genome_id" : 0,
+				"ref_seq" : "ATCGTTTTGAATTGTTAGAATTTAAAATGACGGAGGATTGTTATACAAAAATGTGGTTTGATTTTATGAGTGATTTTGGAATAGCTACAATGAATGAAACCGAACATACTAGATCTTTTTATGGATT",
+				"start" : 3214351,
+				"strand" : "+"
+			},
+			"reverse_primer" :
+			{
+				"location" :
+				{
+					"chrom" : "Pf3D7_14_v3",
+					"end" : 3214351,
+					"genome_id" : 0,
+					"start" : 3214318,
+					"strand" : "+"
+				},
+				"seq" : "TCAATTGATGGTTGCCTTTCGATT"
+			},
+			"target_attributes" :
+			[
+				"Included",
+				"Microhaplotype"
+			],
+			"target_name" : "t100"
+		}
+	],
+	"targeted_genomes" :
+	[
+		{
+			"chromosomes" :
+			[
+				"Pf3D7_01_v3",
+				"Pf3D7_02_v3",
+				"Pf3D7_03_v3",
+				"Pf3D7_04_v3",
+				"Pf3D7_05_v3",
+				"Pf3D7_06_v3",
+				"Pf3D7_07_v3",
+				"Pf3D7_08_v3",
+				"Pf3D7_09_v3",
+				"Pf3D7_10_v3",
+				"Pf3D7_11_v3",
+				"Pf3D7_12_v3",
+				"Pf3D7_13_v3",
+				"Pf3D7_14_v3",
+				"Pf3D7_API_v3",
+				"Pf3D7_MIT_v3"
+			],
+			"genome_version" : "2020-09-01",
+			"gff_url" : "https://plasmodb.org/common/downloads/release-65/Pfalciparum3D7/gff/data/PlasmoDB-65_Pfalciparum3D7.gff",
+			"name" : "3D7",
+			"taxon_id" :
+			[
+				5833
+			],
+			"url" : "https://plasmodb.org/common/downloads/release-65/Pfalciparum3D7/fasta/data/PlasmoDB-65_Pfalciparum3D7_Genome.fasta"
+		}
+	]
+}
