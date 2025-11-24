@@ -414,11 +414,11 @@ class PMOProcessor:
         panels = []
         target_count = []
         for panel in pmodata["panel_info"]:
-            panel_targets = 0
+            panel_targets = []
             panels.append(panel["panel_name"])
             for reaction in panel["reactions"]:
-                panel_targets += len(reaction["panel_targets"])
-            target_count.append(panel_targets)
+                panel_targets.extend(reaction["panel_targets"])
+            target_count.append(len(set(panel_targets)))
         return pd.DataFrame(
             data={"panel_name": panels, "panel_target_count": target_count}
         )
