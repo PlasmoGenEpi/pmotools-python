@@ -1481,3 +1481,117 @@ class PMOProcessor:
                     )
             bed_loc_out[panel_id] = bed_loc_out_per_panel
         return bed_loc_out
+
+    @staticmethod
+    def update_specimen_meta(
+        pmo,
+        adding_meta: pd.DataFrame,
+        specimen_name_col: str = "specimen_name",
+        replace_current_meta: bool = False,
+        meta_types: dict[str, type] | None = None,
+    ):
+        """
+        Update specimen_info with more information about specimens
+
+        :param pmo: the pmo to update, this will be modified by this function so if an original copy of the PMO is desired deepcopy it before passing the pmo to change to this function
+        :param adding_meta: a pandas dataframe with additional meta information, needs to have a column with the specimen name
+        :param specimen_name_col: the column name for the specimen name
+        :param replace_current_meta: whether to replace the current meta information if it already exists
+        :param meta_types: an optional dictionary of desired output types for the new meta to properly set it in the pmo
+        :return: the updated pmo
+        """
+        # check if the adding dataframe is empty
+        if adding_meta is None or adding_meta.empty:
+            raise ValueError(
+                "adding_meta is empty — cannot update specimen metadata from an empty table."
+            )
+
+        # check to see if the number of column is less than 2
+        if len(adding_meta.columns) <= 1:
+            raise ValueError(
+                f"adding_meta contains only {len(adding_meta.columns)} column(s). "
+                f"A valid metadata table must have at least '{specimen_name_col}' plus ≥1 metadata column."
+            )
+        # check to see if the column for the specimen_name is there
+        if specimen_name_col not in adding_meta.columns:
+            raise ValueError(
+                f"Required specimen name column '{specimen_name_col}' is missing from metadata. "
+                f"Columns present: {list(adding_meta.columns)}"
+            )
+        specimen_names_in_pmo = set(PMOProcessor.get_specimen_names(pmo))
+        specimen_names_in_adding_meta = set(
+            adding_meta[specimen_name_col].astype(str).tolist()
+        )
+        # check to see if provided new metadata info for a specimen that cannot be found in PMO
+        missing_meta_specs = specimen_names_in_adding_meta - specimen_names_in_pmo
+
+        if missing_meta_specs:
+            raise ValueError(
+                f"Provided traveler info for the following specimens but they are missing from the PMO: {sorted(missing_meta_specs)}"
+            )
+        spec_indexs = PMOProcessor.get_index_key_of_specimen_names(pmo)
+        adding_meta_records = adding_meta.to_dict(orient="records")
+
+        # optional type mapping for columns
+        if meta_types is None:
+            meta_types = {}
+
+        allowed_types = {str, int, float, bool}
+        for col, t in meta_types.items():
+            if t not in allowed_types:
+                raise ValueError(
+                    f"Invalid type {t!r} for column '{col}'. "
+                    f"Allowed types are: {allowed_types}"
+                )
+            if col not in adding_meta.columns:
+                raise ValueError(
+                    f"type is beting set for column '{col}' but is missing from metadata. "
+                )
+        for rec in adding_meta_records:
+            specimen_name = rec[specimen_name_col]
+            rec.pop(specimen_name_col, None)
+            for field, raw_value in rec.items():
+                # determine desired type for this field (default is str)
+                desired_type = meta_types.get(field, str)
+
+                # handle NA / missing
+                if pd.isna(raw_value):
+                    cast_value = None
+                else:
+                    # cast according to desired_type
+                    try:
+                        if desired_type is bool:
+                            # when casting to bools, handle bool types coming as various different strings
+                            if isinstance(raw_value, str):
+                                v = raw_value.strip().lower()
+                                if v in ("true", "1", "yes"):
+                                    cast_value = True
+                                elif v in ("false", "0", "no"):
+                                    cast_value = False
+                                else:
+                                    raise ValueError(
+                                        f"Cannot interpret '{raw_value}' as bool "
+                                        f"for field '{field}' in specimen '{specimen_name}'"
+                                    )
+                            else:
+                                cast_value = bool(raw_value)
+                        else:
+                            cast_value = desired_type(raw_value)
+                    except Exception as e:
+                        raise ValueError(
+                            f"Failed to cast value '{raw_value}' for field '{field}' "
+                            f"in specimen '{specimen_name}' to type {desired_type.__name__}"
+                        ) from e
+
+                # check for existing field and replace policy
+                # NOTE: using 'specimen_info' here to match your earlier PMO structure
+                if (
+                    field in pmo["specimen_info"][spec_indexs[specimen_name]]
+                    and not replace_current_meta
+                ):
+                    raise ValueError(
+                        f"Already have field '{field}' for specimen '{specimen_name}'. "
+                        f"Set replace_current_meta=True to replace."
+                    )
+                pmo["specimen_info"][spec_indexs[specimen_name]][field] = cast_value
+        return pmo
