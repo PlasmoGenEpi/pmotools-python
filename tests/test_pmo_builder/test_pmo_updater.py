@@ -3,7 +3,7 @@
 import os
 import unittest
 import pandas as pd
-from pmotools.pmo_builder.functions_to_update_meta import PMOUpdater
+from pmotools.pmo_builder.pmo_updater import PMOUpdater
 
 
 class TestPMOUpdater(unittest.TestCase):
