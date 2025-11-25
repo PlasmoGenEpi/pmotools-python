@@ -85,7 +85,7 @@ class TestPMOReader(unittest.TestCase):
         combined_pmo = PMOReader.combine_multiple_pmos(pmo_data_list)
         # validate with schema
         pmo_jsonschema_data = load_schema(
-            "portable_microhaplotype_object_v0.1.0.schema.json"
+            "portable_microhaplotype_object_v1.0.0.schema.json"
         )
         checker = PMOChecker(pmo_jsonschema_data)
         checker.validate_pmo_json(combined_pmo)
@@ -101,6 +101,48 @@ class TestPMOReader(unittest.TestCase):
         combined_pmo.pop("pmo_header")
 
         self.assertEqual(expected_pmo, combined_pmo)
+
+    def test_combine_multiple_pmos_fail_dup_specimen_names(self):
+        # the two files below have same specimen_names but have different meta so will fail when trying to combine
+        pmo_data_list = PMOReader.read_in_pmos(
+            [
+                os.path.join(
+                    os.path.dirname(self.working_dir),
+                    "data/minimum_pmo_example_2_for_spec_dup_testing.json",
+                ),
+                os.path.join(
+                    os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json"
+                ),
+            ]
+        )
+        self.assertRaises(Exception, PMOReader.combine_multiple_pmos, pmo_data_list)
+
+    def test_combine_multiple_pmos_fail_dup_library_sample_names(self):
+        # the two files below have same library sample names so will fail for duplicated library_sample_names
+        pmo_data_list_2 = PMOReader.read_in_pmos(
+            [
+                os.path.join(
+                    os.path.dirname(self.working_dir),
+                    "data/minimum_pmo_example_2_for_library_sample_dup_testing.json",
+                ),
+                os.path.join(
+                    os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json"
+                ),
+            ]
+        )
+        self.assertRaises(Exception, PMOReader.combine_multiple_pmos, pmo_data_list_2)
+
+    def test_combine_multiple_pmos_fail_for_combine_only_one_file(self):
+        # will fail for only having 1 PMO
+        pmo_data_list_2 = PMOReader.read_in_pmos(
+            [
+                os.path.join(
+                    os.path.dirname(self.working_dir),
+                    "data/minimum_pmo_example_2_for_library_sample_dup_testing.json",
+                )
+            ]
+        )
+        self.assertRaises(Exception, PMOReader.combine_multiple_pmos, pmo_data_list_2)
 
 
 if __name__ == "__main__":

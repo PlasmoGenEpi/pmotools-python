@@ -2150,13 +2150,13 @@
 	"library_sample_info" :
 	[
 		{
-			"library_sample_name" : "5tbx_lib_name",
+			"library_sample_name" : "5tbx_lib_name2",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
 			"specimen_id" : 0
 		},
 		{
-			"library_sample_name" : "XUC009_lib_name",
+			"library_sample_name" : "XUC009_lib_name2",
 			"panel_id" : 0,
 			"sequencing_info_id" : 0,
 			"specimen_id" : 1
@@ -4233,7 +4233,7 @@
 	[
 		{
 			"collection_country" : "India",
-			"collection_date" : "2012-08-01",
+			"collection_date" : "2012-08-25",
 			"geo_admin3" : "NA",
 			"host_taxon_id" : 9606,
 			"project_id" : 0,
@@ -4247,7 +4247,7 @@
 		},
 		{
 			"collection_country" : "Papua New Guinea",
-			"collection_date" : "NA",
+			"collection_date" : "2015",
 			"geo_admin3" : "NA",
 			"host_taxon_id" : 9606,
 			"project_id" : 0,

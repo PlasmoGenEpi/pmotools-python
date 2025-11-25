@@ -8,7 +8,7 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_list_library_sample_names_per_specimen_name():
+def parse_args_export_panel_info_meta_table():
     parser = argparse.ArgumentParser()
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
@@ -28,8 +28,8 @@ def parse_args_list_library_sample_names_per_specimen_name():
     return parser.parse_args()
 
 
-def list_library_sample_names_per_specimen_name():
-    args = parse_args_list_library_sample_names_per_specimen_name()
+def export_panel_info_meta_table():
+    args = parse_args_export_panel_info_meta_table()
 
     # check files
     output_delim, output_extension = Utils.process_delimiter_and_output_extension(
@@ -46,7 +46,7 @@ def list_library_sample_names_per_specimen_name():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # count fields
-    info_df = PMOExporter.list_library_sample_names_per_specimen_name(pmo)
+    info_df = PMOExporter.export_panel_info_meta_table(pmo)
 
     # output
     info_df.to_csv(
@@ -57,4 +57,4 @@ def list_library_sample_names_per_specimen_name():
 
 
 if __name__ == "__main__":
-    list_library_sample_names_per_specimen_name()
+    export_panel_info_meta_table()

@@ -8,6 +8,8 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.pmo_engine.pmo_processor import PMOProcessor
+from pmotools.pmo_engine.pmo_exporter import PMOExporter
+
 from pmotools import __version__ as __pmotools_version__
 
 
@@ -132,7 +134,7 @@ def extract_for_allele_table():
             args.representative_haps_fields, ","
         )
 
-    allele_table = PMOProcessor.extract_alleles_per_sample_table(
+    allele_table = PMOExporter.extract_alleles_per_sample_table(
         pmodata,
         additional_specimen_info_fields=args.specimen_info_meta_fields,
         additional_library_sample_info_fields=args.library_sample_info_meta_fields,

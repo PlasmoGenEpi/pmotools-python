@@ -23,7 +23,7 @@ class TestPMOProcessor(unittest.TestCase):
         self.working_dir = os.path.dirname(os.path.abspath(__file__))
         self.test_dir = tempfile.TemporaryDirectory()
         self.pmo_jsonschema_data = load_schema(
-            "portable_microhaplotype_object_v0.1.0.schema.json"
+            "portable_microhaplotype_object_v1.0.0.schema.json"
         )
         with open(
             os.path.join(
@@ -41,42 +41,13 @@ class TestPMOProcessor(unittest.TestCase):
     def tearDown(self):
         self.test_dir.cleanup()
 
-    def test_list_library_sample_names_per_specimen_name(self):
-        id_counts = PMOProcessor.list_library_sample_names_per_specimen_name(
-            self.minimum_pmo_data
-        )
-        id_counts_check_data = {
-            "specimen_name": ["8025874217", "8025874266"],
-            "library_sample_name": ["8025874217", "8025874266"],
-            "library_sample_count": [1, 1],
-        }
-        id_counts_check_df = pd.DataFrame(id_counts_check_data)
-        pd.testing.assert_frame_equal(id_counts, id_counts_check_df)
-
-        with open(
-            os.path.join(
-                os.path.dirname(self.working_dir), "data/minimum_pmo_example_2.json"
-            )
-        ) as f:
-            pmo_data_2 = json.load(f)
-        id_counts_2 = PMOProcessor.list_library_sample_names_per_specimen_name(
-            pmo_data_2
-        )
-        id_counts_check_data_2 = {
-            "specimen_name": ["5tbx", "XUC009"],
-            "library_sample_name": ["5tbx", "XUC009"],
-            "library_sample_count": [1, 1],
-        }
-        id_counts_check_df_2 = pd.DataFrame(id_counts_check_data_2)
-        pd.testing.assert_frame_equal(id_counts_check_df_2, id_counts_2)
-
     def test_count_targets_per_library_sample(self):
         targets_per_sample_counts = PMOProcessor.count_targets_per_library_sample(
             self.minimum_pmo_data
         )
         targets_per_sample_check_data = {
             "bioinformatics_run_id": [0, 0],
-            "library_sample_name": ["8025874266", "8025874217"],
+            "library_sample_name": ["8025874266_lib_name", "8025874217_lib_name"],
             "target_number": [85, 99],
         }
         targets_per_sample_check_df = pd.DataFrame(targets_per_sample_check_data)
@@ -89,7 +60,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         targets_per_sample_read_count_off1000_check_data = {
             "bioinformatics_run_id": [0, 0],
-            "library_sample_name": ["8025874266", "8025874217"],
+            "library_sample_name": ["8025874266_lib_name", "8025874217_lib_name"],
             "target_number": [61, 99],
         }
         targets_per_sample_read_count_off1000_check_df = pd.DataFrame(
@@ -111,7 +82,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         targets_per_sample_check_data_2 = {
             "bioinformatics_run_id": [0, 0],
-            "library_sample_name": ["XUC009", "5tbx"],
+            "library_sample_name": ["XUC009_lib_name", "5tbx_lib_name"],
             "target_number": [98, 100],
         }
         targets_per_sample_check_df_2 = pd.DataFrame(targets_per_sample_check_data_2)
@@ -124,7 +95,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         targets_per_sample_check_data_2_read_count_off200 = {
             "bioinformatics_run_id": [0, 0],
-            "library_sample_name": ["XUC009", "5tbx"],
+            "library_sample_name": ["XUC009_lib_name", "5tbx_lib_name"],
             "target_number": [96, 100],
         }
         targets_per_sample_check_df_2_read_count_off200 = pd.DataFrame(
@@ -148,22 +119,22 @@ class TestPMOProcessor(unittest.TestCase):
             [
                 {
                     "bioinformatics_run_id": 0,
-                    "library_sample_name": "8025874266",
+                    "library_sample_name": "8025874266_lib_name",
                     "target_number": 85,
                 },
                 {
                     "bioinformatics_run_id": 0,
-                    "library_sample_name": "8025874217",
+                    "library_sample_name": "8025874217_lib_name",
                     "target_number": 99,
                 },
                 {
                     "bioinformatics_run_id": 1,
-                    "library_sample_name": "XUC009",
+                    "library_sample_name": "XUC009_lib_name",
                     "target_number": 98,
                 },
                 {
                     "bioinformatics_run_id": 1,
-                    "library_sample_name": "5tbx",
+                    "library_sample_name": "5tbx_lib_name",
                     "target_number": 100,
                 },
             ]
@@ -338,101 +309,6 @@ class TestPMOProcessor(unittest.TestCase):
             "cb34c7e1357e2e35024a89464b63f06c",
         )
 
-    def test_extract_targets_insert_bed_loc(self):
-        all_target_inserts = PMOProcessor.extract_targets_insert_bed_loc(
-            self.combined_pmo_data, sort_output=True
-        )
-        output1_fnp = os.path.join(self.test_dir.name, "all_target_inserts_test1.bed")
-        PMOProcessor.write_bed_locs(all_target_inserts, output1_fnp)
-        self.assertEqual("b7e477fe327ad7ae85f78ddaa66c313c", md5sum_of_fnp(output1_fnp))
-
-        all_target_inserts_8_6_10 = PMOProcessor.extract_targets_insert_bed_loc(
-            self.combined_pmo_data, [8, 6, 10, 20], sort_output=False
-        )
-        output2_fnp = os.path.join(
-            self.test_dir.name, "all_target_inserts_test2_8_6_10.bed"
-        )
-        PMOProcessor.write_bed_locs(all_target_inserts_8_6_10, output2_fnp)
-        self.assertEqual("9be1da64a4794489e08eca11c240d879", md5sum_of_fnp(output2_fnp))
-
-        all_target_inserts_8_6_10_sorted = PMOProcessor.extract_targets_insert_bed_loc(
-            self.combined_pmo_data, [8, 6, 10, 20], sort_output=True
-        )
-        output3_fnp = os.path.join(
-            self.test_dir.name, "all_target_inserts_test2_8_6_10_sorted.bed"
-        )
-        PMOProcessor.write_bed_locs(all_target_inserts_8_6_10_sorted, output3_fnp)
-        self.assertEqual("1831cc6a6f9f2bc4036d1dfad90771a1", md5sum_of_fnp(output3_fnp))
-
-    def test_extract_panels_insert_bed_loc(self):
-        all_target_inserts = PMOProcessor.extract_panels_insert_bed_loc(
-            self.combined_pmo_data, sort_output=True
-        )
-        output_fnp = os.path.join(self.test_dir.name, "all_panel_inserts_test1.bed")
-        PMOProcessor.write_bed_locs(all_target_inserts, output_fnp)
-        self.assertEqual("52b1f79a3a89f8265573fa54b5a7ce57", md5sum_of_fnp(output_fnp))
-
-    def test_extract_alleles_per_sample_table(self):
-        allele_data = PMOProcessor.extract_alleles_per_sample_table(
-            self.combined_pmo_data
-        ).sort_values(
-            by=[
-                "bioinformatics_run_name",
-                "library_sample_name",
-                "target_name",
-                "mhap_id",
-            ]
-        )
-        output_fnp = os.path.join(
-            self.test_dir.name, "extracted_alleles_per_sample_table_no_extra_args.csv"
-        )
-        allele_data.to_csv(output_fnp, index=False)
-        self.assertEqual("d1775ec03eb38743cd4dd92d0a832bff", md5sum_of_fnp(output_fnp))
-
-        allele_data_with_seq_reads = PMOProcessor.extract_alleles_per_sample_table(
-            self.combined_pmo_data,
-            additional_microhap_fields=["reads"],
-            additional_representative_info_fields=["seq"],
-        ).sort_values(
-            by=[
-                "bioinformatics_run_name",
-                "library_sample_name",
-                "target_name",
-                "mhap_id",
-            ]
-        )
-        output_fnp = os.path.join(
-            self.test_dir.name,
-            "extracted_alleles_per_sample_table_no_extra_args_with_seq_reads.csv",
-        )
-        allele_data_with_seq_reads.to_csv(output_fnp, index=False)
-        self.assertEqual("0e5da30c561c748fb2553f852db76607", md5sum_of_fnp(output_fnp))
-
-        allele_data_with_seq_reads_panel_id_collection_country = (
-            PMOProcessor.extract_alleles_per_sample_table(
-                self.combined_pmo_data,
-                additional_microhap_fields=["reads"],
-                additional_representative_info_fields=["seq"],
-                additional_library_sample_info_fields=["panel_id"],
-                additional_specimen_info_fields=["collection_country"],
-            ).sort_values(
-                by=[
-                    "bioinformatics_run_name",
-                    "library_sample_name",
-                    "target_name",
-                    "mhap_id",
-                ]
-            )
-        )
-        output_fnp = os.path.join(
-            self.test_dir.name,
-            "extracted_alleles_per_sample_table_no_extra_args_with_seq_reads_panel_id_collection_country.csv",
-        )
-        allele_data_with_seq_reads_panel_id_collection_country.to_csv(
-            output_fnp, index=False
-        )
-        self.assertEqual("13aed17cbdff88f0a80c685c42d89cb8", md5sum_of_fnp(output_fnp))
-
     def test_extract_from_pmo_with_read_filter(self):
         pmo_data_filtered = PMOProcessor.extract_from_pmo_with_read_filter(
             self.combined_pmo_data, 1000
@@ -442,7 +318,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_filtered, f)
-        self.assertEqual("cde277533e44e64c3ef980106024275f", md5sum_of_fnp(output_fnp))
+        self.assertEqual("879b1a0c62a77a8fcc910a21d8ec9de6", md5sum_of_fnp(output_fnp))
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_filtered)
 
@@ -455,7 +331,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("7bb125130685a955d658fe5c03634024", md5sum_of_fnp(output_fnp))
+        self.assertEqual("d9525c0a067d8a291af8bf89b80bfb42", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -469,7 +345,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("4d546b332b264cf58ed0d44a687728b9", md5sum_of_fnp(output_fnp))
+        self.assertEqual("853d0806237d4078abc601f0c7dcdc3c", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -483,7 +359,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("96e9ddc3a3d582617d856b01dd3f5083", md5sum_of_fnp(output_fnp))
+        self.assertEqual("b942daeac359bbe063563f8692986d1c", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -491,7 +367,7 @@ class TestPMOProcessor(unittest.TestCase):
     def test_filter_pmo_by_library_sample_names(self):
         pmo_data_select_library_sample_names = (
             PMOProcessor.filter_pmo_by_library_sample_names(
-                self.combined_pmo_data, {"8025874217", "XUC009"}
+                self.combined_pmo_data, {"8025874217_lib_name", "XUC009_lib_name"}
             )
         )
         output_fnp = os.path.join(
@@ -499,7 +375,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_library_sample_names, f)
-        self.assertEqual("f7637b5f2b100ca316102c13283493b0", md5sum_of_fnp(output_fnp))
+        self.assertEqual("99873ba369fa94722969ab9ce6581287", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_library_sample_names)
@@ -513,7 +389,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("ce94ed180bd6672d69371e3e0fcf0c4e", md5sum_of_fnp(output_fnp))
+        self.assertEqual("b5d1d39d508a7c7c1d8ccce65c52bc5d", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -527,7 +403,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_targets, f)
-        self.assertEqual("ce94ed180bd6672d69371e3e0fcf0c4e", md5sum_of_fnp(output_fnp))
+        self.assertEqual("b5d1d39d508a7c7c1d8ccce65c52bc5d", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
@@ -544,7 +420,7 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_select_meta, f)
-        self.assertEqual("b7c0c2c1c5fbfd9a023af3dfd6bf44c0", md5sum_of_fnp(output_fnp))
+        self.assertEqual("338e838297d79a8038d8d5392a6ca57e", md5sum_of_fnp(output_fnp))
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_meta)
@@ -577,7 +453,15 @@ class TestPMOProcessor(unittest.TestCase):
         ) as f:
             pmo_data_combined = json.load(f)
         names = PMOProcessor.get_sorted_library_sample_names(pmo_data_combined)
-        self.assertEqual(["5tbx", "8025874217", "8025874266", "XUC009"], names)
+        self.assertEqual(
+            [
+                "5tbx_lib_name",
+                "8025874217_lib_name",
+                "8025874266_lib_name",
+                "XUC009_lib_name",
+            ],
+            names,
+        )
 
     def test_sorted_get_target_names(self):
         with open(
@@ -731,7 +615,15 @@ class TestPMOProcessor(unittest.TestCase):
         ) as f:
             pmo_data_combined = json.load(f)
         names = PMOProcessor.get_library_sample_names(pmo_data_combined)
-        self.assertEqual(["8025874217", "8025874266", "5tbx", "XUC009"], names)
+        self.assertEqual(
+            [
+                "8025874217_lib_name",
+                "8025874266_lib_name",
+                "5tbx_lib_name",
+                "XUC009_lib_name",
+            ],
+            names,
+        )
 
     def test_get_target_names(self):
         with open(
@@ -856,6 +748,124 @@ class TestPMOProcessor(unittest.TestCase):
             pmo_data_combined = json.load(f)
         names = PMOProcessor.get_panel_names(pmo_data_combined)
         self.assertEqual(["heomev1"], names)
+
+    def test_count_targets_per_panel_single_panel_single_reaction(self):
+        """Test count_targets_per_panel with a single panel containing one reaction"""
+        # Create a simple PMO with one panel and one reaction
+        test_pmo = {
+            "panel_info": [
+                {
+                    "panel_name": "test_panel_1",
+                    "reactions": [
+                        {
+                            "reaction_name": "reaction_1",
+                            "panel_targets": [0, 1, 2, 3, 4],
+                        }
+                    ],
+                }
+            ]
+        }
+
+        result = PMOProcessor.count_targets_per_panel(test_pmo)
+
+        expected_data = {"panel_name": ["test_panel_1"], "panel_target_count": [5]}
+        expected_df = pd.DataFrame(expected_data)
+
+        pd.testing.assert_frame_equal(result, expected_df)
+
+    def test_count_targets_per_panel_single_panel_multiple_reactions(self):
+        """Test count_targets_per_panel with a single panel containing multiple reactions"""
+        # Create a PMO with one panel and multiple reactions
+        test_pmo = {
+            "panel_info": [
+                {
+                    "panel_name": "test_panel_1",
+                    "reactions": [
+                        {"reaction_name": "reaction_1", "panel_targets": [0, 1, 2]},
+                        {"reaction_name": "reaction_2", "panel_targets": [3, 4, 5, 6]},
+                        {"reaction_name": "reaction_3", "panel_targets": [7, 8]},
+                    ],
+                }
+            ]
+        }
+
+        result = PMOProcessor.count_targets_per_panel(test_pmo)
+
+        expected_data = {
+            "panel_name": ["test_panel_1"],
+            "panel_target_count": [9],  # 3 + 4 + 2 = 9 total targets
+        }
+        expected_df = pd.DataFrame(expected_data)
+
+        pd.testing.assert_frame_equal(result, expected_df)
+
+    def test_count_targets_per_panel_multiple_panels(self):
+        """Test count_targets_per_panel with multiple panels"""
+        # Create a PMO with multiple panels
+        test_pmo = {
+            "panel_info": [
+                {
+                    "panel_name": "panel_A",
+                    "reactions": [
+                        {"reaction_name": "reaction_1", "panel_targets": [0, 1, 2, 3]}
+                    ],
+                },
+                {
+                    "panel_name": "panel_B",
+                    "reactions": [
+                        {"reaction_name": "reaction_1", "panel_targets": [4, 5]},
+                        {
+                            "reaction_name": "reaction_2",
+                            "panel_targets": [6, 7, 8, 9, 10],
+                        },
+                    ],
+                },
+                {
+                    "panel_name": "panel_C",
+                    "reactions": [
+                        {"reaction_name": "reaction_1", "panel_targets": [11]}
+                    ],
+                },
+            ]
+        }
+
+        result = PMOProcessor.count_targets_per_panel(test_pmo)
+
+        expected_data = {
+            "panel_name": ["panel_A", "panel_B", "panel_C"],
+            "panel_target_count": [4, 7, 1],  # 4, (2+5), 1
+        }
+        expected_df = pd.DataFrame(expected_data)
+
+        pd.testing.assert_frame_equal(result, expected_df)
+
+    def test_count_targets_per_panel_with_real_data_structure(self):
+        """Test count_targets_per_panel with realistic PMO data structure"""
+        # Create a realistic PMO structure similar to the real data
+        # Based on the real data structure with one panel containing 100 targets
+        test_pmo = {
+            "panel_info": [
+                {
+                    "panel_name": "heomev1",
+                    "reactions": [
+                        {
+                            "panel_targets": list(range(100)),  # targets 0-99
+                            "reaction_name": "full",
+                        }
+                    ],
+                }
+            ]
+        }
+
+        result = PMOProcessor.count_targets_per_panel(test_pmo)
+
+        expected_data = {
+            "panel_name": ["heomev1"],
+            "panel_target_count": [100],  # targets 0-99 = 100 total
+        }
+        expected_df = pd.DataFrame(expected_data)
+
+        pd.testing.assert_frame_equal(result, expected_df)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 
-
-from pmotools.pmo_engine.pmo_processor import PMOProcessor
+from pmotools.pmo_engine.pmo_exporter import PMOExporter
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
@@ -30,7 +29,7 @@ def extract_refseq_of_inserts_of_panels():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # get panel insert locations
-    panel_bed_locs = PMOProcessor.extract_panels_insert_bed_loc(pmo)
+    panel_bed_locs = PMOExporter.extract_panels_insert_bed_loc(pmo)
 
     # write
     with Utils.smart_open_write(args.output) as f:

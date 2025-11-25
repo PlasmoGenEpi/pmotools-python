@@ -14,10 +14,10 @@ class PMOChecker:
         Constructor for PMOChecker with the json read from the json schema file
 
         for example:
-        with open("portable_microhaplotype_object_v0.1.0.schema.json") as f: pmo_jsonschema_data = json.load(f)
+        with open("portable_microhaplotype_object_v1.0.0.schema.json") as f: pmo_jsonschema_data = json.load(f)
         PMOChecker checker(pmo_jsonschema_data)
         or use loader
-        PMOChecker checker(load_schema("portable_microhaplotype_object_v0.1.0.schema.json")
+        PMOChecker checker(load_schema("portable_microhaplotype_object_v1.0.0.schema.json")
         """
         self.pmo_jsonschema = pmo_jsonschema
         self.pmo_validator = Draft7Validator(pmo_jsonschema)

@@ -1,29 +1,9 @@
 #!/usr/bin/env python3
-import json
 import os
-from typing import NamedTuple
 import copy
-import pandas
 import pandas as pd
+
 from collections import defaultdict
-from pmotools.pmo_engine.pmo_checker import PMOChecker
-from pmotools.utils.schema_loader import load_schema
-
-from pmotools import __version__ as __pmotools_version__
-
-bed_loc_tuple = NamedTuple(
-    "bed_loc",
-    [
-        ("chrom", str),
-        ("start", int),
-        ("end", int),
-        ("name", str),
-        ("score", float),
-        ("strand", str),
-        ("ref_seq", str),
-        ("extra_info", str),
-    ],
-)
 
 
 class PMOProcessor:
@@ -404,59 +384,25 @@ class PMOProcessor:
         )
 
     @staticmethod
-    def list_library_sample_names_per_specimen_name(
-        pmodata,
-        select_specimen_ids: list[int] = None,
-        select_specimen_names: list[str] = None,
-    ) -> pandas.DataFrame:
+    def count_targets_per_panel(pmodata) -> pd.DataFrame:
         """
-        List all the library_sample_names per specimen_name
-        :param pmodata: the PMO
-        :param select_specimen_ids: a list of specimen_ids to select, if None, all specimen_ids are used
-        :param select_specimen_names: a list of specimen_names to select, if None, all specimen_names are used
-        :return: a pandas dataframe with 3 columns, specimen_id, library_sample_id, and library_sample_id_count(the number of library_sample_ids per specimen_id)
+        Count the targets per panel.
+
+        :param pmodata: the pmo to count from
+        :return: counts for each panel
         """
-        if select_specimen_ids is not None and select_specimen_names is not None:
-            raise ValueError(
-                "Cannot specify both select_specimen_ids and select_specimen_names"
-            )
-        lib_samples_per_spec = defaultdict(list[str])
-        if select_specimen_names is not None:
-            select_specimen_ids = PMOProcessor.get_index_of_specimen_names(
-                pmodata, select_specimen_names
-            )
-        for lib_sample in pmodata["library_sample_info"]:
-            if (
-                select_specimen_ids is None
-                or lib_sample["specimen_id"] in select_specimen_ids
-            ):
-                lib_samples_per_spec[
-                    pmodata["specimen_info"][lib_sample["specimen_id"]]["specimen_name"]
-                ].append(lib_sample["library_sample_name"])
-
-        specimens_not_list = []
-        for specimen in pmodata["specimen_info"]:
-            if specimen["specimen_name"] not in lib_samples_per_spec:
-                specimens_not_list.append(specimen["specimen_name"])
-
-        # Prepare the data for DataFrame creation
-        data = []
-        for specimen_name, library_sample_names in lib_samples_per_spec.items():
-            for library_sample_name in library_sample_names:
-                data.append(
-                    {
-                        "specimen_name": specimen_name,
-                        "library_sample_name": library_sample_name,
-                        "library_sample_count": len(library_sample_names),
-                    }
-                )
-
-        # Create the DataFrame
-        df = pd.DataFrame(
-            data,
-            columns=["specimen_name", "library_sample_name", "library_sample_count"],
+        # how many targets in each panel
+        panels = []
+        target_count = []
+        for panel in pmodata["panel_info"]:
+            panel_targets = []
+            panels.append(panel["panel_name"])
+            for reaction in panel["reactions"]:
+                panel_targets.extend(reaction["panel_targets"])
+            target_count.append(len(set(panel_targets)))
+        return pd.DataFrame(
+            data={"panel_name": panels, "panel_target_count": target_count}
         )
-        return df
 
     @staticmethod
     def count_specimen_per_meta_fields(pmodata) -> pd.DataFrame:
@@ -534,9 +480,6 @@ class PMOProcessor:
         :param collapse_across_runs: whether to collapse count/freqs across bioinformatics_run_id runs
         :return: DataFrame with columns: bioinformatics_run_id, target, mhap_id, count, freq, target_total
         """
-        schema = load_schema("portable_microhaplotype_object_v0.1.0.schema.json")
-        checker = PMOChecker(schema)
-        checker.check_for_required_base_fields(pmodata)
 
         allele_counts = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
         target_totals = defaultdict(lambda: defaultdict(int))
@@ -610,190 +553,6 @@ class PMOProcessor:
         return ret.sort_values(
             ["bioinformatics_run_id", "target_name", "mhap_id"]
         ).reset_index(drop=True)
-
-    @staticmethod
-    def extract_alleles_per_sample_table(
-        pmodata,
-        additional_specimen_info_fields: list[str] = None,
-        additional_library_sample_info_fields: list[str] = None,
-        additional_microhap_fields: list[str] = None,
-        additional_representative_info_fields: list[str] = None,
-        default_base_col_names: list[str] = [
-            "library_sample_name",
-            "target_name",
-            "mhap_id",
-        ],
-        jsonschema_fnp=os.path.join(
-            os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            ),
-            "schemas/",
-            f"portable_microhaplotype_object_v{__pmotools_version__}.schema.json",
-        ),
-        validate_pmo: bool = False,
-    ) -> pd.DataFrame:
-        """
-        Create a pd.Dataframe of sample, target and allele. Can optionally add on any other additional fields
-
-        :param pmodata: the data to write from
-        :param additional_specimen_info_fields: any additional fields to write from the specimen_info object
-        :param additional_library_sample_info_fields: any additional fields to write from the library_samples object
-        :param additional_microhap_fields: any additional fields to write from the microhap object
-        :param additional_representative_info_fields: any additional fields to write from the representative_microhaplotype_sequences object
-        :param default_base_col_names: The default column name for the sample, locus and allele
-        :param jsonschema_fnp: path to the jsonschema schema file to validate the PMO against
-        :param validate_pmo: whether to validate the PMO with a jsonschema
-        :return: pandas dataframe
-        """
-
-        # check input
-        if validate_pmo:
-            with open(jsonschema_fnp) as f:
-                checker = PMOChecker(json.load(f))
-                checker.validate_pmo_json(pmodata)
-
-        # Check to see if at least 1 sample has supplied meta field
-        # samples without this meta field will have NA
-        if additional_specimen_info_fields is not None:
-            # Find meta fields that have at least some data
-            meta_fields_with_data = {
-                metafield
-                for metafield in additional_specimen_info_fields
-                for specimen_data in pmodata["specimen_info"]
-                if metafield in specimen_data
-            }
-
-            # Determine meta fields with no samples having data
-            meta_fields_with_no_samples = (
-                set(additional_specimen_info_fields) - meta_fields_with_data
-            )
-
-            if meta_fields_with_no_samples:
-                raise Exception(
-                    f"No specimen_info have data for fields: {', '.join(meta_fields_with_no_samples)}"
-                )
-        # Check to see if at least 1 sample has supplied meta field
-        # samples without this meta field will have NA
-        if additional_library_sample_info_fields is not None:
-            # Find meta fields that have at least some data
-            meta_fields_with_data = {
-                metafield
-                for metafield in additional_library_sample_info_fields
-                for library_data in pmodata["library_sample_info"]
-                if metafield in library_data
-            }
-            # Determine meta fields with no samples having data
-            meta_fields_with_no_samples = (
-                set(additional_library_sample_info_fields) - meta_fields_with_data
-            )
-
-            if meta_fields_with_no_samples:
-                raise Exception(
-                    f"No library_sample_info have data for fields: {', '.join(meta_fields_with_no_samples)}"
-                )
-
-        # Check to see if at least 1 haplotype has this field
-        # samples without this meta field will have NA
-        if additional_microhap_fields is not None:
-            # Find meta fields that have at least some data
-            additional_microhap_fields_with_data = {
-                additional_microhap_field
-                for additional_microhap_field in additional_microhap_fields
-                for detected_microhaplotypes in pmodata["detected_microhaplotypes"]
-                for library_samples_data in detected_microhaplotypes["library_samples"]
-                for target_data in library_samples_data["target_results"]
-                for microhap_data in target_data["mhaps"]
-                if additional_microhap_field in microhap_data
-            }
-            # Determine meta fields with no samples having data
-            additional_microhap_fields_with_no_samples = (
-                set(additional_microhap_fields) - additional_microhap_fields_with_data
-            )
-
-            if additional_microhap_fields_with_no_samples:
-                raise Exception(
-                    f"No detected_microhaplotypes have data for fields: {', '.join(additional_microhap_fields_with_no_samples)}"
-                )
-        # Check to see if at least 1 haplotype has this field
-        # samples without this meta field will have NA
-        if additional_representative_info_fields is not None:
-            # Find meta fields that have at least some data
-            additional_microhap_fields_with_data = {
-                additional_microhap_field
-                for additional_microhap_field in additional_representative_info_fields
-                for target_data in pmodata["representative_microhaplotypes"]["targets"]
-                for microhap_data in target_data["microhaplotypes"]
-                if additional_microhap_field in microhap_data
-            }
-            # Determine meta fields with no samples having data
-            additional_microhap_fields_with_no_samples = (
-                set(additional_representative_info_fields)
-                - additional_microhap_fields_with_data
-            )
-
-            if additional_microhap_fields_with_no_samples:
-                raise Exception(
-                    f"No representative_microhaplotype_sequences have data for fields: {', '.join(additional_microhap_fields_with_no_samples)}"
-                )
-
-        if len(default_base_col_names) != 3:
-            raise Exception(
-                "Must have 3 default columns for allele counts, not {}".format(
-                    len(default_base_col_names)
-                )
-            )
-
-        rows = []
-        specimen_info = pmodata["specimen_info"]
-        target_info = pmodata["target_info"]
-        library_sample_info = pmodata["library_sample_info"]
-        detected_microhaps = pmodata["detected_microhaplotypes"]
-        rep_haps = pmodata["representative_microhaplotypes"]["targets"]
-        bioinformatics_run_names = PMOProcessor.get_bioinformatics_run_names(pmodata)
-        for bio_run_for_detected_microhaps in detected_microhaps:
-            bioinformatics_run_id = bio_run_for_detected_microhaps[
-                "bioinformatics_run_id"
-            ]
-            for sample_data in bio_run_for_detected_microhaps["library_samples"]:
-                library_sample_id = sample_data["library_sample_id"]
-                specimen_id = library_sample_info[library_sample_id]["specimen_id"]
-                library_meta = library_sample_info[library_sample_id]
-                specimen_meta = specimen_info[specimen_id]
-                for target_data in sample_data["target_results"]:
-                    target_name = target_info[
-                        rep_haps[target_data["mhaps_target_id"]]["target_id"]
-                    ]["target_name"]
-                    for microhap_data in target_data["mhaps"]:
-                        allele_id = microhap_data["mhap_id"]
-                        # print(rep_haps[target_data["mhaps_target_id"]])
-                        rep_hap_meta = rep_haps[target_data["mhaps_target_id"]][
-                            "microhaplotypes"
-                        ][allele_id]
-                        row = {
-                            "bioinformatics_run_name": bioinformatics_run_names[
-                                bioinformatics_run_id
-                            ],
-                            default_base_col_names[0]: library_meta[
-                                "library_sample_name"
-                            ],
-                            default_base_col_names[1]: target_name,
-                            default_base_col_names[2]: allele_id,
-                        }
-                        if additional_library_sample_info_fields is not None:
-                            for field in additional_library_sample_info_fields:
-                                row[field] = library_meta.get(field, "NA")
-                        if additional_specimen_info_fields is not None:
-                            for field in additional_specimen_info_fields:
-                                row[field] = specimen_meta.get(field, "NA")
-                        if additional_microhap_fields is not None:
-                            for field in additional_microhap_fields:
-                                row[field] = microhap_data.get(field, "NA")
-                        if additional_representative_info_fields is not None:
-                            for field in additional_representative_info_fields:
-                                row[field] = rep_hap_meta.get(field, "NA")
-                        rows.append(row)
-        # Build and return DataFrame
-        return pd.DataFrame(rows)
 
     @staticmethod
     def filter_pmo_by_library_sample_ids(pmodata, library_sample_ids: set[int]):
@@ -1303,185 +1062,3 @@ class PMOProcessor:
                     )
             pmo_out["detected_microhaplotypes"].append(extracted_microhaps_for_id)
         return pmo_out
-
-    @staticmethod
-    def write_bed_locs(bed_locs: list[bed_loc_tuple], fnp, add_header: bool = False):
-        """
-        Write out a list of bed_loc_tuple to a file, will auto overwrite it
-        :param bed_locs: a list of bed_loc_tuple
-        :param fnp: output file path, will be overwritten if it exists
-        :param add_header: add header of #chrom,start end,name,score,strand,ref_seq,extra_info, starts with comment so tools will treat it as a comment line
-        """
-        with open(fnp, "w") as f:
-            if add_header:
-                f.write(
-                    "\t".join(
-                        [
-                            "#chrom",
-                            "start",
-                            "end",
-                            "name",
-                            "score",
-                            "strand",
-                            "ref_seq",
-                            "extra_info",
-                        ]
-                    )
-                )
-            for bed_loc in bed_locs:
-                f.write(
-                    "\t".join(
-                        [
-                            bed_loc.chrom,
-                            str(bed_loc.start),
-                            str(bed_loc.end),
-                            bed_loc.name,
-                            str(bed_loc.score),
-                            bed_loc.strand,
-                            str(bed_loc.ref_seq),
-                            bed_loc.extra_info,
-                        ]
-                    )
-                )
-                f.write("\n")
-
-    @staticmethod
-    def extract_targets_insert_bed_loc(
-        pmodata, select_target_ids: list[int] = None, sort_output: bool = True
-    ):
-        """
-        Extract out of a PMO the insert location for targets, will add ref seq if loaded into PMO
-        :param pmodata: the PMO to extract from
-        :param select_target_ids: a list of target ids to select, if None will select all targets
-        :param sort_output: whether to sort output by genomic location
-        :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, extra_info, ref_seq
-        """
-        # bed_loc = NamedTuple("bed_loc", [("chrom", str), ("start", int), ("end", int), ("name", str), ("score", float), ("strand", str), ("extra_info", str), ("ref_seq", str)])
-        bed_loc_out = []
-        if select_target_ids is None:
-            select_target_ids = list(range(len(pmodata["target_info"])))
-        for target_id in select_target_ids:
-            tar = pmodata["target_info"][target_id]
-            if "insert_location" not in tar:
-                raise Exception(
-                    "no insert_location in pmodata for target id "
-                    + str(target_id)
-                    + " target_name "
-                    + str(tar["target_name"])
-                    + ", cannot extract insert_location"
-                )
-            genome_info = pmodata["targeted_genomes"][
-                tar["insert_location"]["genome_id"]
-            ]
-            genome_name_version = (
-                genome_info["name"] + "_" + genome_info["genome_version"]
-            )
-            extra_info = (
-                str("[") + str("genome_name_version=") + genome_name_version + ";]"
-            )
-            strand = (
-                "+"
-                if "strand" not in tar["insert_location"]
-                else tar["insert_location"]["strand"]
-            )
-            ref_seq = (
-                ""
-                if "ref_seq" not in tar["insert_location"]
-                else tar["insert_location"]["ref_seq"]
-            )
-            bed_loc_out.append(
-                bed_loc_tuple(
-                    tar["insert_location"]["chrom"],
-                    tar["insert_location"]["start"],
-                    tar["insert_location"]["end"],
-                    tar["target_name"],
-                    tar["insert_location"]["end"] - tar["insert_location"]["start"],
-                    strand,
-                    ref_seq,
-                    extra_info,
-                )
-            )
-        if sort_output:
-            return sorted(bed_loc_out, key=lambda bed: (bed.chrom, bed.start, bed.end))
-        return bed_loc_out
-
-    @staticmethod
-    def extract_panels_insert_bed_loc(
-        pmodata, select_panel_ids: list[int] = None, sort_output: bool = True
-    ):
-        """
-        Extract out of a PMO the insert location for panels, will add ref seq if loaded into PMO
-        :param pmodata: the PMO to extract from
-        :param select_panel_ids: a list of panels ids to select, if None will select all panels
-        :param sort_output: whether to sort output by genomic location
-        :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, extra_info, ref_seq
-        """
-        bed_loc_out = {}
-        if select_panel_ids is None:
-            select_panel_ids = list(range(len(pmodata["panel_info"])))
-        for panel_id in select_panel_ids:
-            bed_loc_out_per_panel = []
-            for reaction_id in range(len(pmodata["panel_info"][panel_id]["reactions"])):
-                for target_id in pmodata["panel_info"][panel_id]["reactions"][
-                    reaction_id
-                ]["panel_targets"]:
-                    tar = pmodata["target_info"][target_id]
-                    if "insert_location" not in tar:
-                        raise Exception(
-                            "no insert_location in pmodata for target id "
-                            + str(target_id)
-                            + " target_name "
-                            + str(tar["target_name"])
-                            + ", cannot extract insert_location"
-                        )
-                    genome_info = pmodata["targeted_genomes"][
-                        tar["insert_location"]["genome_id"]
-                    ]
-                    genome_name_version = (
-                        genome_info["name"] + "_" + genome_info["genome_version"]
-                    )
-                    extra_info = (
-                        str("[")
-                        + "genome_name_version="
-                        + genome_name_version
-                        + ";"
-                        + "panel="
-                        + pmodata["panel_info"][panel_id]["panel_name"]
-                        + ";"
-                        + "reaction="
-                        + pmodata["panel_info"][panel_id]["reactions"][reaction_id][
-                            "reaction_name"
-                        ]
-                        + ";"
-                        + "]"
-                    )
-                    strand = (
-                        "+"
-                        if "strand" not in tar["insert_location"]
-                        else tar["insert_location"]["strand"]
-                    )
-                    ref_seq = (
-                        ""
-                        if "ref_seq" not in tar["insert_location"]
-                        else tar["insert_location"]["ref_seq"]
-                    )
-                    bed_loc_out_per_panel.append(
-                        bed_loc_tuple(
-                            tar["insert_location"]["chrom"],
-                            tar["insert_location"]["start"],
-                            tar["insert_location"]["end"],
-                            tar["target_name"],
-                            tar["insert_location"]["end"]
-                            - tar["insert_location"]["start"],
-                            strand,
-                            ref_seq,
-                            extra_info,
-                        )
-                    )
-                if sort_output:
-                    return sorted(
-                        bed_loc_out_per_panel,
-                        key=lambda bed: (bed.chrom, bed.start, bed.end),
-                    )
-            bed_loc_out[panel_id] = bed_loc_out_per_panel
-        return bed_loc_out
