@@ -284,7 +284,7 @@ class Utils:
             raise Exception(
                 "Output file "
                 + output_file
-                + " already exists, use --overwrite to overwrite it"
+                + " already exists, use overwrite=T (or --overwrite if running from command line interface) to overwrite it"
             )
 
     @staticmethod
