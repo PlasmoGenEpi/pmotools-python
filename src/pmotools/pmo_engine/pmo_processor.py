@@ -3,8 +3,8 @@ import json
 import os
 from typing import NamedTuple
 import copy
-import pandas
 import pandas as pd
+
 from collections import defaultdict
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 
@@ -428,7 +428,7 @@ class PMOProcessor:
         pmodata,
         select_specimen_ids: list[int] = None,
         select_specimen_names: list[str] = None,
-    ) -> pandas.DataFrame:
+    ) -> pd.DataFrame:
         """
         List all the library_sample_names per specimen_name
         :param pmodata: the PMO
