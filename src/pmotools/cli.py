@@ -37,7 +37,7 @@ from pmotools.scripts.extractors_from_pmo.extract_pmo_with_select_targets import
 from pmotools.scripts.extractors_from_pmo.extract_pmo_with_read_filter import (
     extract_pmo_with_read_filter,
 )
-from pmotools.scripts.extractors_from_pmo.extract_allele_table import (
+from pmotools.scripts.pmo_to_tables.extract_allele_table import (
     extract_for_allele_table,
 )
 
@@ -66,11 +66,35 @@ from pmotools.scripts.extract_info_from_pmo.count_library_samples_per_target imp
 )
 
 # panel info subset
-from pmotools.scripts.extract_info_from_pmo.extract_insert_of_panels import (
+from pmotools.scripts.pmo_to_tables.extract_insert_of_panels import (
     extract_insert_of_panels,
 )
-from pmotools.scripts.extract_info_from_pmo.extract_refseq_of_inserts_of_panels import (
+from pmotools.scripts.pmo_to_tables.extract_refseq_of_inserts_of_panels import (
     extract_refseq_of_inserts_of_panels,
+)
+
+# pmo to tables
+
+from pmotools.scripts.pmo_to_tables.export_specimen_meta_table import (
+    export_specimen_meta_table,
+)
+from pmotools.scripts.pmo_to_tables.export_library_sample_meta_table import (
+    export_library_sample_meta_table,
+)
+from pmotools.scripts.pmo_to_tables.export_project_info_meta_table import (
+    export_project_info_meta_table,
+)
+from pmotools.scripts.pmo_to_tables.export_sequencing_info_meta_table import (
+    export_sequencing_info_meta_table,
+)
+from pmotools.scripts.pmo_to_tables.export_specimen_travel_meta_table import (
+    export_specimen_travel_meta_table,
+)
+from pmotools.scripts.pmo_to_tables.export_target_info_meta_table import (
+    export_target_info_meta_table,
+)
+from pmotools.scripts.pmo_to_tables.export_panel_info_meta_table import (
+    export_panel_info_meta_table,
 )
 
 
@@ -115,17 +139,6 @@ REGISTRY: Dict[str, Dict[str, PmoCommand]] = {
         "extract_pmo_with_read_filter": PmoCommand(
             extract_pmo_with_read_filter, "Extract with a read filter"
         ),
-        "extract_allele_table": PmoCommand(
-            extract_for_allele_table,
-            "Extract allele tables for tools like dcifer or moire",
-        ),
-        "extract_insert_of_panels": PmoCommand(
-            extract_insert_of_panels, "Extract inserts of panels from a PMO"
-        ),
-        "extract_refseq_of_inserts_of_panels": PmoCommand(
-            extract_refseq_of_inserts_of_panels,
-            "Extract ref_seq of panel inserts from a PMO",
-        ),
     },
     "working_with_multiple_pmos": {
         "combine_pmos": PmoCommand(
@@ -159,6 +172,46 @@ REGISTRY: Dict[str, Dict[str, PmoCommand]] = {
         "validate_pmo": PmoCommand(
             validate_pmo, "Validate a PMO file against a JSON Schema"
         )
+    },
+    "pmo_to_table": {
+        "export_specimen_meta_table": PmoCommand(
+            export_specimen_meta_table, "export the specimen meta table from a PMO file"
+        ),
+        "export_library_sample_meta_table": PmoCommand(
+            export_library_sample_meta_table,
+            "export the library_sample meta table from a PMO file",
+        ),
+        "export_project_info_meta_table": PmoCommand(
+            export_project_info_meta_table,
+            "export the project_info meta table from a PMO file",
+        ),
+        "export_sequencing_info_meta_table": PmoCommand(
+            export_sequencing_info_meta_table,
+            "export the sequencing_info meta table from a PMO file",
+        ),
+        "export_specimen_travel_meta_table": PmoCommand(
+            export_specimen_travel_meta_table,
+            "export the specimen travel_info meta table from a PMO file",
+        ),
+        "export_target_info_meta_table": PmoCommand(
+            export_target_info_meta_table,
+            "export the target info meta table from a PMO file",
+        ),
+        "export_panel_info_meta_table": PmoCommand(
+            export_panel_info_meta_table,
+            "export the panel info meta table from a PMO file",
+        ),
+        "extract_allele_table": PmoCommand(
+            extract_for_allele_table,
+            "Extract allele tables for tools like dcifer or moire",
+        ),
+        "extract_insert_of_panels": PmoCommand(
+            extract_insert_of_panels, "Extract inserts of panels from a PMO"
+        ),
+        "extract_refseq_of_inserts_of_panels": PmoCommand(
+            extract_refseq_of_inserts_of_panels,
+            "Extract ref_seq of panel inserts from a PMO",
+        ),
     },
 }
 
