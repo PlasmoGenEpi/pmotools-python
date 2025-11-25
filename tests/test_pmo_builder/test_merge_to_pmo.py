@@ -16,11 +16,11 @@ class TestMergeToPMO(unittest.TestCase):
     def setUp(self):
         self.ref_list = [{"name": "name1"}, {"name": "name2"}, {"name": "name3"}]
         self.pmo_header = {
-            "pmo_version": "0.1.0",
+            "pmo_version": "1.0.0",
             "creation_date": "2025-07-22",
             "generation_method": {
                 "program_name": "pmotools-python",
-                "program_version": "0.1.0",
+                "program_version": "1.0.0",
             },
         }
 
