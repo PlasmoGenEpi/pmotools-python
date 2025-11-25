@@ -1,6 +1,6 @@
 [project]
 name = "pmotools"
-version = "0.1.0"
+version = "v1.0.0"
 description = "Tools for building and analyzing PMO files"
 readme = "README.md"
 authors = [
