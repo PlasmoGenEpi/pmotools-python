@@ -48,6 +48,11 @@ def export_specimen_travel_meta_table():
     # count fields
     info_df = PMOExporter.export_specimen_travel_meta_table(pmo)
 
+    # check if dataframe is empty
+    if info_df.empty:
+        sys.stderr.write("No travel history loaded for any specimens to export\n")
+        sys.exit(1)
+
     # output
     info_df.to_csv(
         sys.stdout if "STDOUT" == args.output else args.output,

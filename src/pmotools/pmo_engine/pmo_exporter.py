@@ -134,6 +134,9 @@ class PMOExporter(object):
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the sequencing_info metadata
         """
+        # check to see sequencing_info is loaded
+        if "sequencing_info" not in pmodata.keys():
+            raise ValueError("no sequencing_info found in input PMO")
         rows = []
         for sequencing_info in pmodata["sequencing_info"]:
             export_row = {}
@@ -153,6 +156,9 @@ class PMOExporter(object):
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the project_info metadata
         """
+        # check to see sequencing_info is loaded
+        if "project_info" not in pmodata.keys():
+            raise ValueError("no project_info found in input PMO")
         rows = []
         for project_info in pmodata["project_info"]:
             export_row = {}
@@ -540,11 +546,17 @@ class PMOExporter(object):
         library_sample_info = pmodata["library_sample_info"]
         detected_microhaps = pmodata["detected_microhaplotypes"]
         rep_haps = pmodata["representative_microhaplotypes"]["targets"]
-        bioinformatics_run_names = PMOProcessor.get_bioinformatics_run_names(pmodata)
+        bioinformatics_run_names = None
+        if "bioinformatics_run_info" in pmodata:
+            bioinformatics_run_names = PMOProcessor.get_bioinformatics_run_names(
+                pmodata
+            )
         for bio_run_for_detected_microhaps in detected_microhaps:
-            bioinformatics_run_id = bio_run_for_detected_microhaps[
-                "bioinformatics_run_id"
-            ]
+            bioinformatics_run_id = None
+            if "bioinformatics_run_id" in bio_run_for_detected_microhaps:
+                bioinformatics_run_id = bio_run_for_detected_microhaps[
+                    "bioinformatics_run_id"
+                ]
             for sample_data in bio_run_for_detected_microhaps["library_samples"]:
                 library_sample_id = sample_data["library_sample_id"]
                 specimen_id = library_sample_info[library_sample_id]["specimen_id"]
@@ -561,15 +573,19 @@ class PMOExporter(object):
                             "microhaplotypes"
                         ][allele_id]
                         row = {
-                            "bioinformatics_run_name": bioinformatics_run_names[
-                                bioinformatics_run_id
-                            ],
                             default_base_col_names[0]: library_meta[
                                 "library_sample_name"
                             ],
                             default_base_col_names[1]: target_name,
                             default_base_col_names[2]: allele_id,
                         }
+                        if (
+                            bioinformatics_run_names is not None
+                            and bioinformatics_run_id is not None
+                        ):
+                            row["bioinformatics_run_name"] = bioinformatics_run_names[
+                                bioinformatics_run_id
+                            ]
                         if additional_library_sample_info_fields is not None:
                             for field in additional_library_sample_info_fields:
                                 row[field] = library_meta.get(field, "NA")

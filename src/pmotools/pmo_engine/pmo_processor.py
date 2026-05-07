@@ -127,6 +127,10 @@ class PMOProcessor:
         :param pmodata: the PMO to get bioinformatics_run_names from
         :return: a list of all bioinformatics_run_names
         """
+        if "bioinformatics_run_info" not in pmodata:
+            raise Exception(
+                "input PMO data does not contain bioinformatics_run_info, cannot get bioinformatics_run_names"
+            )
         ret = []
         for bioinformatics_run in pmodata["bioinformatics_run_info"]:
             ret.append(bioinformatics_run["bioinformatics_run_name"])
@@ -314,8 +318,14 @@ class PMOProcessor:
         records = []
         library_sample_info = pmodata["library_sample_info"]
 
+        detected_microhaplotypes_count = 0
         for result in pmodata["detected_microhaplotypes"]:
-            run_id = result["bioinformatics_run_id"]
+            run_id = (
+                f"detected_microhaplotypes_count_idx_{detected_microhaplotypes_count}"
+            )
+            if "bioinformatics_run_id" in result:
+                run_id = result["bioinformatics_run_id"]
+            detected_microhaplotypes_count += 1
             for sample in result["library_samples"]:
                 sample_id = sample["library_sample_id"]
                 sample_name = library_sample_info[sample_id]["library_sample_name"]
@@ -351,9 +361,14 @@ class PMOProcessor:
         records = []
         microhap_targets = pmodata["representative_microhaplotypes"]["targets"]
         target_info = pmodata["target_info"]
-
+        detected_microhaplotypes_count = 0
         for result in pmodata["detected_microhaplotypes"]:
-            run_id = result["bioinformatics_run_id"]
+            run_id = (
+                f"detected_microhaplotypes_count_idx_{detected_microhaplotypes_count}"
+            )
+            if "bioinformatics_run_id" in result:
+                run_id = result["bioinformatics_run_id"]
+            detected_microhaplotypes_count += 1
             target_sample_counts = defaultdict(int)
 
             for sample in result["library_samples"]:
@@ -582,23 +597,29 @@ class PMOProcessor:
         pmo_out = {
             "pmo_header": copy.deepcopy(pmodata["pmo_header"]),
             "panel_info": copy.deepcopy(pmodata["panel_info"]),
-            "sequencing_info": copy.deepcopy(pmodata["sequencing_info"]),
             "target_info": copy.deepcopy(pmodata["target_info"]),
-            "targeted_genomes": copy.deepcopy(pmodata["targeted_genomes"]),
             "representative_microhaplotypes": copy.deepcopy(
                 pmodata["representative_microhaplotypes"]
             ),
-            "bioinformatics_methods_info": copy.deepcopy(
-                pmodata["bioinformatics_methods_info"]
-            ),
-            "bioinformatics_run_info": copy.deepcopy(
-                pmodata["bioinformatics_run_info"]
-            ),
             "specimen_info": [],
             "library_sample_info": [],
-            "project_info": copy.deepcopy(pmodata["project_info"]),
             "detected_microhaplotypes": [],
         }
+        if "sequencing_info" in pmodata:
+            pmo_out["sequencing_info"] = copy.deepcopy(pmodata["sequencing_info"])
+        if "project_info" in pmodata:
+            pmo_out["project_info"] = copy.deepcopy(pmodata["project_info"])
+        if "bioinformatics_methods_info" in pmodata:
+            pmo_out["bioinformatics_methods_info"] = copy.deepcopy(
+                pmodata["bioinformatics_methods_info"]
+            )
+        if "bioinformatics_run_info" in pmodata:
+            pmo_out["bioinformatics_run_info"] = copy.deepcopy(
+                pmodata["bioinformatics_run_info"]
+            )
+        if "targeted_genomes" in pmodata:
+            pmo_out["targeted_genomes"] = copy.deepcopy(pmodata["targeted_genomes"])
+
         if "read_counts_by_stage" in pmodata:
             pmo_out["read_counts_by_stage"] = []
         # need to update read_counts_by_stage, library_sample_info, specimen_info, detected_microhaplotypes
@@ -636,11 +657,12 @@ class PMOProcessor:
         # detected_microhaplotypes
         for detected_microhaplotypes in pmodata["detected_microhaplotypes"]:
             new_detected_microhaplotypes = {
-                "bioinformatics_run_id": detected_microhaplotypes[
-                    "bioinformatics_run_id"
-                ],
                 "library_samples": [],
             }
+            if "bioinformatics_run_id" in detected_microhaplotypes:
+                new_detected_microhaplotypes[
+                    "bioinformatics_run_id"
+                ] = detected_microhaplotypes["bioinformatics_run_id"]
             for sample in detected_microhaplotypes["library_samples"]:
                 if sample["library_sample_id"] in library_sample_ids:
                     new_detected_microhaplotypes["library_samples"].append(
@@ -657,9 +679,12 @@ class PMOProcessor:
         if "read_counts_by_stage" in pmodata:
             for read_count in pmodata["read_counts_by_stage"]:
                 new_read_count = {
-                    "bioinformatics_run_id": read_count["bioinformatics_run_id"],
                     "read_counts_by_library_sample_by_stage": [],
                 }
+                if "bioinformatics_run_id" in read_count:
+                    new_read_count["bioinformatics_run_id"] = read_count[
+                        "bioinformatics_run_id"
+                    ]
                 for sample in read_count["read_counts_by_library_sample_by_stage"]:
                     if sample["library_sample_id"] in library_sample_ids:
                         new_read_count["read_counts_by_library_sample_by_stage"].append(
@@ -767,26 +792,31 @@ class PMOProcessor:
 
         pmo_out = {
             "pmo_header": copy.deepcopy(pmodata["pmo_header"]),
-            "sequencing_info": copy.deepcopy(pmodata["sequencing_info"]),
             "specimen_info": copy.deepcopy(pmodata["specimen_info"]),
-            "project_info": copy.deepcopy(pmodata["project_info"]),
             "library_sample_info": copy.deepcopy(pmodata["library_sample_info"]),
-            "bioinformatics_methods_info": copy.deepcopy(
-                pmodata["bioinformatics_methods_info"]
-            ),
-            "bioinformatics_run_info": copy.deepcopy(
-                pmodata["bioinformatics_run_info"]
-            ),
-            "targeted_genomes": copy.deepcopy(pmodata["targeted_genomes"]),
             "target_info": [],
         }
+        if "sequencing_info" in pmodata:
+            pmo_out["sequencing_info"] = copy.deepcopy(pmodata["sequencing_info"])
+        if "project_info" in pmodata:
+            pmo_out["project_info"] = copy.deepcopy(pmodata["project_info"])
+        if "bioinformatics_methods_info" in pmodata:
+            pmo_out["bioinformatics_methods_info"] = copy.deepcopy(
+                pmodata["bioinformatics_methods_info"]
+            )
+        if "bioinformatics_run_info" in pmodata:
+            pmo_out["bioinformatics_run_info"] = copy.deepcopy(
+                pmodata["bioinformatics_run_info"]
+            )
+        if "targeted_genomes" in pmodata:
+            pmo_out["targeted_genomes"] = copy.deepcopy(pmodata["targeted_genomes"])
+
         # function will update target_info, panel_info, representative_microhaplotypes, detected_microhaplotypes, read_counts_by_stage based
         # on target_ids selecting for first update representative_microhaplotypes, detected_microhaplotypes, read_counts_by_stage
         # then update target_info, panel_info
         # then update the target_ids
 
         # target_info
-        pmo_out["target_info"] = []
         target_info_index_key = {}
         for target_info_id, target_info in enumerate(pmodata["target_info"]):
             if target_info_id in target_ids:
@@ -810,6 +840,8 @@ class PMOProcessor:
                         )
                 if len(new_reaction["panel_targets"]) > 0:
                     new_panel_info["reactions"].append(new_reaction)
+            pmo_out["panel_info"].append(new_panel_info)
+
         # representative_microhaplotypes
         pmo_out["representative_microhaplotypes"] = {"targets": []}
         # key=old_mhaps_target_id, value = new_mhaps_target_id
@@ -832,11 +864,12 @@ class PMOProcessor:
         pmo_out["detected_microhaplotypes"] = []
         for detected_microhaplotypes in pmodata["detected_microhaplotypes"]:
             new_detected_microhaplotypes = {
-                "bioinformatics_run_id": detected_microhaplotypes[
-                    "bioinformatics_run_id"
-                ],
                 "library_samples": [],
             }
+            if "bioinformatics_run_id" in detected_microhaplotypes:
+                new_detected_microhaplotypes[
+                    "bioinformatics_run_id"
+                ] = detected_microhaplotypes["bioinformatics_run_id"]
             for sample in detected_microhaplotypes["library_samples"]:
                 new_sample = {
                     "library_sample_id": sample["library_sample_id"],
@@ -857,11 +890,12 @@ class PMOProcessor:
             pmo_out["read_counts_by_stage"] = []
             for read_counts_by_bioid in pmodata["read_counts_by_stage"]:
                 new_read_counts_by_bioid = {
-                    "bioinformatics_run_id": read_counts_by_bioid[
-                        "bioinformatics_run_id"
-                    ],
                     "read_counts_by_library_sample_by_stage": [],
                 }
+                if "bioinformatics_run_id" in read_counts_by_bioid:
+                    new_read_counts_by_bioid[
+                        "bioinformatics_run_id"
+                    ] = read_counts_by_bioid["bioinformatics_run_id"]
                 for sample in read_counts_by_bioid[
                     "read_counts_by_library_sample_by_stage"
                 ]:
