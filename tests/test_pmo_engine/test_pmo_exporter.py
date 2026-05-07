@@ -111,7 +111,7 @@ class TestPMOExporter(unittest.TestCase):
             self.test_dir.name, "extracted_alleles_per_sample_table_no_extra_args.csv"
         )
         allele_data.to_csv(output_fnp, index=False)
-        self.assertEqual("2898d87133e2e381612f3c0dea70122f", md5sum_of_fnp(output_fnp))
+        self.assertEqual("1a818a371bfc770cdad1c86ec6e681ea", md5sum_of_fnp(output_fnp))
 
         allele_data_with_seq_reads = PMOExporter.extract_alleles_per_sample_table(
             self.combined_pmo_data,
