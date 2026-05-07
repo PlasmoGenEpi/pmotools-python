@@ -102,6 +102,40 @@ class TestPMOReader(unittest.TestCase):
 
         self.assertEqual(expected_pmo, combined_pmo)
 
+    def test_combine_multiple_pmos_v1_1_0(self):
+        pmo_data_list = PMOReader.read_in_pmos(
+            [
+                os.path.join(
+                    os.path.dirname(self.working_dir),
+                    "data/minimum_fields_pmo_example1.json.gz",
+                ),
+                os.path.join(
+                    os.path.dirname(self.working_dir),
+                    "data/minimum_fields_pmo_example2.json.gz",
+                ),
+            ]
+        )
+        combined_pmo = PMOReader.combine_multiple_pmos(pmo_data_list)
+        # validate with schema
+        pmo_jsonschema_data = load_schema(
+            "portable_microhaplotype_object_v1.1.0.schema.json"
+        )
+        checker = PMOChecker(pmo_jsonschema_data)
+        checker.validate_pmo_json(combined_pmo)
+        # check against expected
+        with open(
+            os.path.join(
+                os.path.dirname(self.working_dir),
+                "data/combined_pmo_minimum_fields_example.json",
+            )
+        ) as f:
+            expected_pmo = json.load(f)
+        # remove the pmo_header as the generation date will be new each time it's created
+        expected_pmo.pop("pmo_header")
+        combined_pmo.pop("pmo_header")
+
+        self.assertEqual(expected_pmo, combined_pmo)
+
     def test_combine_multiple_pmos_fail_dup_specimen_names(self):
         # the two files below have same specimen_names but have different meta so will fail when trying to combine
         pmo_data_list = PMOReader.read_in_pmos(

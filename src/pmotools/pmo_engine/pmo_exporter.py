@@ -551,6 +551,7 @@ class PMOExporter(object):
             bioinformatics_run_names = PMOProcessor.get_bioinformatics_run_names(
                 pmodata
             )
+        detected_microhaplotypes_count = 0
         for bio_run_for_detected_microhaps in detected_microhaps:
             bioinformatics_run_id = None
             if "bioinformatics_run_id" in bio_run_for_detected_microhaps:
@@ -586,6 +587,10 @@ class PMOExporter(object):
                             row["bioinformatics_run_name"] = bioinformatics_run_names[
                                 bioinformatics_run_id
                             ]
+                        else:
+                            row[
+                                "bioinformatics_run_name"
+                            ] = f"detected_microhaplotypes_count_idx_{detected_microhaplotypes_count}"
                         if additional_library_sample_info_fields is not None:
                             for field in additional_library_sample_info_fields:
                                 row[field] = library_meta.get(field, "NA")
@@ -599,6 +604,7 @@ class PMOExporter(object):
                             for field in additional_representative_info_fields:
                                 row[field] = rep_hap_meta.get(field, "NA")
                         rows.append(row)
+            detected_microhaplotypes_count += 1
         # Build and return DataFrame
         return pd.DataFrame(rows)
 

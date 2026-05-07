@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import gzip
 import hashlib
 import os
 import tempfile
@@ -28,14 +29,22 @@ class TestPMOExporter(unittest.TestCase):
                 os.path.dirname(self.working_dir), "data/minimum_pmo_example.json"
             )
         ) as f:
-            self.minimum_pmo_data = json.load(f)
+            self.small_example_pmo_data = json.load(f)
+        with gzip.open(
+            os.path.join(
+                os.path.dirname(self.working_dir),
+                "data/minimum_fields_pmo_example1.json.gz",
+            ),
+            "rt",
+        ) as f:
+            self.minimum_fields_v1_1_0_pmo_data = json.load(f)
 
     def tearDown(self):
         self.test_dir.cleanup()
 
     def test_list_library_sample_names_per_specimen_name(self):
         id_counts = PMOExporter.list_library_sample_names_per_specimen_name(
-            self.minimum_pmo_data
+            self.small_example_pmo_data
         )
         id_counts_check_data = {
             "specimen_name": ["8025874217", "8025874266"],
@@ -157,8 +166,45 @@ class TestPMOExporter(unittest.TestCase):
         )
         self.assertEqual("7eba9420a002606d3c0501b8641c8e17", md5sum_of_fnp(output_fnp))
 
+    def test_extract_alleles_per_sample_table_minimum_fields_pmo_input(self):
+        allele_data = PMOExporter.extract_alleles_per_sample_table(
+            self.minimum_fields_v1_1_0_pmo_data
+        ).sort_values(
+            by=[
+                "bioinformatics_run_name",
+                "library_sample_name",
+                "target_name",
+                "mhap_id",
+            ]
+        )
+        output_fnp = os.path.join(
+            self.test_dir.name,
+            "extracted_alleles_per_sample_table_no_extra_args_on_minimum_fields_pmo.csv",
+        )
+        allele_data.to_csv(output_fnp, index=False)
+        self.assertEqual("0f4a023f049a8c0e3544e68daaf9c2c0", md5sum_of_fnp(output_fnp))
+
+        allele_data_with_seq_reads = PMOExporter.extract_alleles_per_sample_table(
+            self.minimum_fields_v1_1_0_pmo_data,
+            additional_microhap_fields=["reads"],
+            additional_representative_info_fields=["seq"],
+        ).sort_values(
+            by=[
+                "bioinformatics_run_name",
+                "library_sample_name",
+                "target_name",
+                "mhap_id",
+            ]
+        )
+        output_fnp = os.path.join(
+            self.test_dir.name,
+            "extracted_alleles_per_sample_table_no_extra_args_with_seq_reads_on_minimum_fields_pmo.csv",
+        )
+        allele_data_with_seq_reads.to_csv(output_fnp, index=False)
+        self.assertEqual("faab1121588a1a794c4e695da6799532", md5sum_of_fnp(output_fnp))
+
     def test_export_specimen_meta_table(self):
-        spec_table = PMOExporter.export_specimen_meta_table(self.minimum_pmo_data)
+        spec_table = PMOExporter.export_specimen_meta_table(self.small_example_pmo_data)
         spec_table.to_csv(os.path.join(self.test_dir.name, "specimen_meta_table.csv"))
         self.assertEqual(
             "8f94b8b774696e26c4ff6c8086e616a4",
@@ -167,7 +213,7 @@ class TestPMOExporter(unittest.TestCase):
 
     def test_export_target_info_meta_table(self):
         target_info_table = PMOExporter.export_target_info_meta_table(
-            self.minimum_pmo_data
+            self.small_example_pmo_data
         )
         target_info_table.to_csv(
             os.path.join(self.test_dir.name, "target_info_table.csv")
@@ -179,7 +225,7 @@ class TestPMOExporter(unittest.TestCase):
 
     def test_export_panel_info_meta_table(self):
         panel_info_table = PMOExporter.export_panel_info_meta_table(
-            self.minimum_pmo_data
+            self.small_example_pmo_data
         )
         panel_info_table.to_csv(
             os.path.join(self.test_dir.name, "panel_info_table.csv")
@@ -191,7 +237,7 @@ class TestPMOExporter(unittest.TestCase):
 
     def test_export_library_sample_meta_table(self):
         library_sample_table = PMOExporter.export_library_sample_meta_table(
-            self.minimum_pmo_data
+            self.small_example_pmo_data
         )
         library_sample_table.to_csv(
             os.path.join(self.test_dir.name, "library_sample_table.csv")
@@ -203,7 +249,7 @@ class TestPMOExporter(unittest.TestCase):
 
     def test_export_sequencing_info_meta_table(self):
         sequencing_info_table = PMOExporter.export_sequencing_info_meta_table(
-            self.minimum_pmo_data
+            self.small_example_pmo_data
         )
         sequencing_info_table.to_csv(
             os.path.join(self.test_dir.name, "sequencing_info_table.csv")
@@ -217,7 +263,7 @@ class TestPMOExporter(unittest.TestCase):
 
     def test_export_project_info_meta_table(self):
         project_info_table = PMOExporter.export_project_info_meta_table(
-            self.minimum_pmo_data
+            self.small_example_pmo_data
         )
         project_info_table.to_csv(
             os.path.join(self.test_dir.name, "project_info_table.csv")
