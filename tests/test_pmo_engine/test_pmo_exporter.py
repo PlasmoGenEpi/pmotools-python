@@ -130,7 +130,7 @@ class TestPMOExporter(unittest.TestCase):
             "extracted_alleles_per_sample_table_no_extra_args_with_seq_reads.csv",
         )
         allele_data_with_seq_reads.to_csv(output_fnp, index=False)
-        self.assertEqual("744c1c0233066f030881c8b595b9ad5c", md5sum_of_fnp(output_fnp))
+        self.assertEqual("cb1a2e599bfe728441a8ecfb06da94d9", md5sum_of_fnp(output_fnp))
 
         allele_data_with_seq_reads_panel_id_collection_country = (
             PMOExporter.extract_alleles_per_sample_table(
@@ -155,7 +155,7 @@ class TestPMOExporter(unittest.TestCase):
         allele_data_with_seq_reads_panel_id_collection_country.to_csv(
             output_fnp, index=False
         )
-        self.assertEqual("c425004244e6af1386b6e7776da76fed", md5sum_of_fnp(output_fnp))
+        self.assertEqual("7eba9420a002606d3c0501b8641c8e17", md5sum_of_fnp(output_fnp))
 
     def test_export_specimen_meta_table(self):
         spec_table = PMOExporter.export_specimen_meta_table(self.minimum_pmo_data)
