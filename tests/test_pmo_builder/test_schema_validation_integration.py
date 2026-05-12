@@ -47,6 +47,12 @@ def test_toy_pmo_validates_against_schema():
     )
     specimen_info = specimen_info_table_to_pmo(
         specimen_df,
+        specimen_name_col="specimen_name",
+        specimen_taxon_id_col="specimen_taxon_id",
+        host_taxon_id_col="host_taxon_id",
+        collection_date_col="collection_date",
+        collection_country_col="collection_country",
+        project_name_col="project_name",
         alternate_identifiers_col="alternate_ids",
         drug_usage_col="drug_usage",
         env_broad_scale_col="env_broad_scale",
@@ -97,6 +103,10 @@ def test_toy_pmo_validates_against_schema():
     )
     library_sample_info = library_sample_info_table_to_pmo(
         library_df,
+        library_sample_name_col="library_sample_name",
+        sequencing_info_name_col="sequencing_info_name",
+        specimen_name_col="specimen_name",
+        panel_name_col="panel_name",
         run_accession_col="accession",
         library_prep_plate_name_col="prep_plate_name",
         library_prep_plate_row_col="prep_plate_row",
@@ -121,7 +131,7 @@ def test_toy_pmo_validates_against_schema():
             "strand": ["+"],
             "ref_seq": ["ATGCGCTA"],
             "gene_name": ["geneA"],
-            "target_attributes": [["marker"]],
+            "target_attributes": ["marker1,marker2"],
             "amplicon_length": [250],
         }
     )
@@ -274,6 +284,7 @@ def test_toy_pmo_validates_against_schema():
         project_info=project_info,
         read_counts_by_stage_info=read_counts_by_stage_info,
     )
+    print(pmo)
 
     # Load the schema and validate using PMOChecker
     schemas_dir = Path(__file__).resolve().parents[2] / "src" / "pmotools" / "schemas"

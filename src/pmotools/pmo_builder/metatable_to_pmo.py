@@ -32,10 +32,10 @@ def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = Fal
 
 def library_sample_info_table_to_pmo(
     contents: pd.DataFrame,
-    library_sample_name_col: str = "library_sample_name",
-    sequencing_info_name_col: str = "sequencing_info_name",
-    specimen_name_col: str = "specimen_name",
-    panel_name_col: str = "panel_name",
+    library_sample_name_col: str = None,
+    specimen_name_col: str = None,
+    panel_name_col: str = None,
+    sequencing_info_name_col: str = None,
     alternate_identifiers_col: str = None,
     experiment_accession_col: str = None,
     fastqs_loc_col: str = None,
@@ -53,9 +53,9 @@ def library_sample_info_table_to_pmo(
 
     :param contents (pd.DataFrame): Input DataFrame containing library data.
     :param library_sample_name_col (str): Column name for library sample names. Default: library_sample_name
-    :param sequencing_info_name_col (str): Column name for sequencing information names. Default: sequencing_info_name
     :param specimen_name_col (str): Column name for specimen IDs. Default: specimen_name
     :param panel_name_col (str): Column name for panel IDs. Default: panel_name
+    :param sequencing_info_name_col (Optional[str]): Column name for sequencing information names. Default: sequencing_info_name
     :param alternate_identifiers_col (Optional[str]): Column name for alternate identifiers.
     :param experiment_accession_col (Optional[str]): Column name for experiment accession information.
     :param fastqs_loc_col (Optional[str]): Column name for location of fastqs.
@@ -75,15 +75,15 @@ def library_sample_info_table_to_pmo(
         raise ValueError("contents must be a pandas DataFrame.")
 
     copy_contents = contents.copy()
-    column_mapping = {
-        library_sample_name_col: "library_sample_name",
+    column_mapping = {library_sample_name_col: "library_sample_name"}
+    required_columns = list(column_mapping.keys())
+    recommended_columns = [specimen_name_col, panel_name_col, sequencing_info_name_col]
+
+    # Add optional columns
+    optional_column_mapping = {
         specimen_name_col: "specimen_name",
         panel_name_col: "panel_name",
         sequencing_info_name_col: "sequencing_info_name",
-    }
-    required_columns = list(column_mapping.keys())
-    # Add optional columns
-    optional_column_mapping = {
         alternate_identifiers_col: "alternate_identifiers",
         experiment_accession_col: "experiment_accession",
         fastqs_loc_col: "fastqs_loc",
@@ -112,8 +112,14 @@ def library_sample_info_table_to_pmo(
     )
     check_columns_exist(copy_contents, list(column_mapping.keys()))
 
-    # Check for null values in required columns
-    check_null_values(copy_contents, required_columns)
+    # Check for null values in required columns and recommended columns
+    columns_to_check = required_columns
+    recommended_columns_present = list(
+        set(recommended_columns) & set(column_mapping.keys())
+    )
+    if len(recommended_columns_present) > 0:
+        columns_to_check.extend(recommended_columns_present)
+    check_null_values(copy_contents, columns_to_check)
 
     # Rename and subset columns
     selected_pmo_fields = list(column_mapping.values())
@@ -149,11 +155,11 @@ def library_sample_info_table_to_pmo(
 def specimen_info_table_to_pmo(
     contents: pd.DataFrame,
     specimen_name_col: str = "specimen_name",
-    specimen_taxon_id_col: int = "specimen_taxon_id",
-    host_taxon_id_col: str = "host_taxon_id",
-    collection_date_col: str = "collection_date",
-    collection_country_col: str = "collection_country",
-    project_name_col: str = "project_name",
+    specimen_taxon_id_col: str = None,
+    host_taxon_id_col: str = None,
+    collection_date_col: str = None,
+    collection_country_col: str = None,
+    project_name_col: str = None,
     alternate_identifiers_col: str = None,
     blood_meal_col: str = None,
     drug_usage_col: str = None,
@@ -196,11 +202,11 @@ def specimen_info_table_to_pmo(
 
     :param contents (pd.DataFrame): The input DataFrame containing library data.
     :param specimen_name_col (string): The column name for specimen sample IDs. Default: specimen_id
-    :param specimen_taxon_id_col (string): NCBI taxonomy number of the organism. Default: samp_taxon_id
-    :param host_taxon_id_col (string): NCBI taxonomy number of the host. Default: host_taxon_id
-    :param collection_date_col (string): Date of the sample collection. Default: collection_date
-    :param collection_country_col (string): Name of country collected in (admin level 0). Default : collection_country
-    :param project_name_col (string): Name of the project. Default : project_name
+    :param specimen_taxon_id_col (Optional[str]): NCBI taxonomy number of the organism. Default: samp_taxon_id
+    :param host_taxon_id_col (Optional[str]): NCBI taxonomy number of the host. Default: host_taxon_id
+    :param collection_date_col (Optional[str]): Date of the sample collection. Default: collection_date
+    :param collection_country_col (Optional[str]): Name of country collected in (admin level 0). Default : collection_country
+    :param project_name_col (Optional[str]): Name of the project. Default : project_name
     :param alternate_identifiers_col (Optional[str]): List of optional alternative names for the samples
     :param blood_meal_col (Optional[str]): Whether host specimen has had a recent blood meal
     :param drug_usage_col (Optional[str]): Any drug used by subject and the frequency of usage; can include multiple drugs used
@@ -241,16 +247,21 @@ def specimen_info_table_to_pmo(
 
     copy_contents = contents.copy()
 
-    column_mapping = {
-        specimen_name_col: "specimen_name",
+    column_mapping = {specimen_name_col: "specimen_name"}
+    required_columns = list(column_mapping.keys())
+    recommended_columns = [
+        specimen_taxon_id_col,
+        host_taxon_id_col,
+        collection_date_col,
+        collection_country_col,
+        project_name_col,
+    ]
+    optional_column_mapping = {
         specimen_taxon_id_col: "specimen_taxon_id",
         host_taxon_id_col: "host_taxon_id",
         collection_date_col: "collection_date",
         collection_country_col: "collection_country",
         project_name_col: "project_name",
-    }
-    required_columns = list(column_mapping.keys())
-    optional_column_mapping = {
         alternate_identifiers_col: "alternate_identifiers",
         drug_usage_col: "drug_usage",
         blood_meal_col: "blood_meal",
@@ -324,8 +335,14 @@ def specimen_info_table_to_pmo(
     )
     check_columns_exist(copy_contents, list(column_mapping.keys()))
 
-    # Check for null values in required columns
-    check_null_values(copy_contents, required_columns)
+    # Check for null values in required columns and recommended columns
+    columns_to_check = required_columns
+    recommended_columns_present = list(
+        set(recommended_columns) & set(column_mapping.keys())
+    )
+    if len(recommended_columns_present) > 0:
+        columns_to_check.extend(recommended_columns_present)
+    check_null_values(copy_contents, columns_to_check)
 
     # Rename and subset columns
     selected_pmo_fields = list(column_mapping.values())
