@@ -15,12 +15,20 @@ from pmotools.pmo_builder.merge_to_pmo import (
 class TestMergeToPMO(unittest.TestCase):
     def setUp(self):
         self.ref_list = [{"name": "name1"}, {"name": "name2"}, {"name": "name3"}]
-        self.pmo_header = {
+        self.pmo_header_v1_0_0 = {
             "pmo_version": "1.0.0",
             "creation_date": "2025-07-22",
             "generation_method": {
                 "program_name": "pmotools-python",
                 "program_version": "1.0.0",
+            },
+        }
+        self.pmo_header_v1_1_0 = {
+            "pmo_version": "1.1.0",
+            "creation_date": "2025-07-22",
+            "generation_method": {
+                "program_name": "pmotools-python",
+                "program_version": "1.1.0",
             },
         }
 
@@ -135,10 +143,10 @@ class TestMergeToPMO(unittest.TestCase):
     def test_generate_pmo_header(self, mock_date):
         mock_date.today.return_value = date(2025, 7, 22)
         mock_date.side_effect = lambda *args, **kwargs: date(*args, **kwargs)
-        actual = _generate_pmo_header()
+        actual = _generate_pmo_header("1.0.0")
         # expected = {'pmo_version': '1.0.0', 'creation_date': '2025-07-22', 'generation_method': {
         #     'program_name': 'pmotools-python', 'program_version': '1.0.0'}}
-        self.assertEqual(actual, self.pmo_header)
+        self.assertEqual(actual, self.pmo_header_v1_0_0)
 
     def test_replace_key_with_id(self):
         test_target_list = [
@@ -193,7 +201,7 @@ class TestMergeToPMO(unittest.TestCase):
     @patch("pmotools.pmo_builder.merge_to_pmo._replace_names_with_IDs")
     @patch("pmotools.pmo_builder.merge_to_pmo._generate_pmo_header")
     def test_merge_to_pmo(self, mock_generate_pmo_header, _):
-        mock_generate_pmo_header.return_value = self.pmo_header
+        mock_generate_pmo_header.return_value = self.pmo_header_v1_0_0
         actual = merge_to_pmo(
             [{"specimens": "specinfo"}],
             [{"library_samples": "library_samples"}],
@@ -209,7 +217,7 @@ class TestMergeToPMO(unittest.TestCase):
         )
 
         expected = {
-            "pmo_header": self.pmo_header,
+            "pmo_header": self.pmo_header_v1_0_0,
             "library_sample_info": [{"library_samples": "library_samples"}],
             "specimen_info": [{"specimens": "specinfo"}],
             "sequencing_info": [{"sequencing": "sequencing"}],

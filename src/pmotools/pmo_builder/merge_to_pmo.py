@@ -118,15 +118,15 @@ def _replace_key_with_id(target_list, reference_list, name_key, id_key, lookup=N
     return missing_items
 
 
-def _generate_pmo_header():
+def _generate_pmo_header(version=__pmotools_version__):
     today = date.today().isoformat()
     # TODO: update to grab pmo version - will put this in a seperate PR
     pmo_header = {
-        "pmo_version": __pmotools_version__,
+        "pmo_version": version,
         "creation_date": today,
         "generation_method": {
             "program_name": "pmotools-python",
-            "program_version": __pmotools_version__,
+            "program_version": version,
         },
     }
     return pmo_header
