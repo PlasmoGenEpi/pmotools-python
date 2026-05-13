@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pandas as pd
 
-from pmotools import __version__
 from pmotools.pmo_builder.metatable_to_pmo import (
     library_sample_info_table_to_pmo,
     specimen_info_table_to_pmo,
@@ -18,7 +17,7 @@ from pmotools.pmo_builder.merge_to_pmo import merge_to_pmo
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 
 
-def test_toy_pmo_validates_against_schema():
+def test_full_1_0_0_toy_pmo_validates_against_schema():
     """Build a toy PMO with builder functions and validate against the schema."""
     # Specimen information with optional fields
     specimen_df = pd.DataFrame(
@@ -277,35 +276,40 @@ def test_toy_pmo_validates_against_schema():
         specimen_info=specimen_info,
         library_sample_info=library_sample_info,
         sequencing_info=sequencing_info,
-        panel_info=panel_info,
+        panel_and_target_info=panel_info,
         mhap_info=mhap_info,
         bioinfo_method_info=bioinfo_methods_info,
         bioinfo_run_info=bioinfo_run_info,
         project_info=project_info,
         read_counts_by_stage_info=read_counts_by_stage_info,
     )
-    print(pmo)
-
     # Load the schema and validate using PMOChecker
-    schemas_dir = Path(__file__).resolve().parents[2] / "src" / "pmotools" / "schemas"
-    schema_filename = f"portable_microhaplotype_object_v{__version__}.schema.json"
-    schema_path = schemas_dir / schema_filename
-    if not schema_path.exists():
-        available_schemas = sorted(
-            schemas_dir.glob("portable_microhaplotype_object_*.schema.json")
+    # checking against both versions of PMO, the above builds a "full" PMO and want to check if new schema still validates
+    # this old fromat
+    for schema_version in ["1.0.0", "1.1.0"]:
+        schemas_dir = (
+            Path(__file__).resolve().parents[2] / "src" / "pmotools" / "schemas"
         )
-        if not available_schemas:
-            raise FileNotFoundError(
-                f"No schema files found in {schemas_dir} matching "
-                "'portable_microhaplotype_object_*.schema.json'"
+        schema_filename = (
+            f"portable_microhaplotype_object_v{schema_version}.schema.json"
+        )
+        schema_path = schemas_dir / schema_filename
+        if not schema_path.exists():
+            available_schemas = sorted(
+                schemas_dir.glob("portable_microhaplotype_object_*.schema.json")
             )
-        schema_path = available_schemas[-1]
-    with schema_path.open(encoding="utf-8") as schema_file:
-        schema = json.load(schema_file)
+            if not available_schemas:
+                raise FileNotFoundError(
+                    f"No schema files found in {schemas_dir} matching "
+                    "'portable_microhaplotype_object_*.schema.json'"
+                )
+            schema_path = available_schemas[-1]
+        with schema_path.open(encoding="utf-8") as schema_file:
+            schema = json.load(schema_file)
 
-    checker = PMOChecker(schema)
-    checker.check_for_required_base_fields(pmo)
-    checker.validate_pmo_json(pmo)
+        checker = PMOChecker(schema)
+        checker.check_for_required_base_fields(pmo)
+        checker.validate_pmo_json(pmo)
 
     # Validate optional fields propagated through builders
     specimen_entry = pmo["specimen_info"][0]
@@ -359,3 +363,189 @@ def test_toy_pmo_validates_against_schema():
     assert stage_entry["coverage_depth"] == 150
 
     assert pmo["project_info"][0]["project_type"] == "Surveillance"
+
+
+def test_slimer_1_1_0_toy_pmo_validates_against_schema():
+    """Build a toy PMO with builder functions and validate against the schema."""
+    # Specimen information with optional fields
+    specimen_df = pd.DataFrame(
+        {
+            "specimen_name": ["specimen1"],
+            "specimen_taxon_id": [[5900]],
+            "host_taxon_id": [9606],
+            "collection_date": ["2024-01-01"],
+            "collection_country": ["Wonderland"],
+            "host_age": [35],
+            "host_sex": ["female"],
+            "lat_lon": ["37.77,-122.42"],
+            "specimen_collect_device": ["venipuncture"],
+            "specimen_comments": [["no issues"]],
+            "specimen_store_loc": ["Freezer 1"],
+            "drug_usage": [["DrugX"]],
+            "env_broad_scale": ["Urban"],
+            "env_local_scale": ["Clinic"],
+            "env_medium": ["Blood"],
+            "alternate_ids": [["ALT1", "ALT2"]],
+            "custom_note": ["Important specimen"],
+            "parasite_density": [1200],
+            "parasite_density_method": ["microscopy"],
+        }
+    )
+    specimen_info = specimen_info_table_to_pmo(
+        specimen_df,
+        specimen_name_col="specimen_name",
+        specimen_taxon_id_col="specimen_taxon_id",
+        host_taxon_id_col="host_taxon_id",
+        collection_date_col="collection_date",
+        collection_country_col="collection_country",
+        alternate_identifiers_col="alternate_ids",
+        drug_usage_col="drug_usage",
+        env_broad_scale_col="env_broad_scale",
+        env_local_scale_col="env_local_scale",
+        env_medium_col="env_medium",
+        host_age_col="host_age",
+        host_sex_col="host_sex",
+        specimen_collect_device_col="specimen_collect_device",
+        specimen_comments_col="specimen_comments",
+        specimen_store_loc_col="specimen_store_loc",
+        lat_lon_col="lat_lon",
+        parasite_density_col="parasite_density",
+        parasite_density_method_col="parasite_density_method",
+        additional_specimen_cols=["custom_note"],
+    )
+
+    # Library sample information with optional fields
+    library_df = pd.DataFrame(
+        {
+            "library_sample_name": ["lib1"],
+            "specimen_name": ["specimen1"],
+            "panel_name": ["panel1"],
+            "accession": ["ACC123"],
+            "prep_plate_name": ["PlateA"],
+            "prep_plate_row": ["B"],
+            "prep_plate_col": [3],
+            "library_note": ["High quality"],
+        }
+    )
+    library_sample_info = library_sample_info_table_to_pmo(
+        library_df,
+        library_sample_name_col="library_sample_name",
+        specimen_name_col="specimen_name",
+        panel_name_col="panel_name",
+        run_accession_col="accession",
+        library_prep_plate_name_col="prep_plate_name",
+        library_prep_plate_row_col="prep_plate_row",
+        library_prep_plate_col_col="prep_plate_col",
+        additional_library_sample_info_cols=["library_note"],
+    )
+
+    # Panel and target information with optional fields
+    target_df = pd.DataFrame(
+        {
+            "target_name": ["target1"],
+            "fwd_primer": ["ATGCATGC"],
+            "rev_primer": ["GCATGCAT"],
+            "reaction": ["rxn1"],
+            "target_attributes": ["marker1,marker2"],
+        }
+    )
+
+    panel_info = panel_info_table_to_pmo(
+        target_table=target_df,
+        panel_name="panel1",
+        reaction_name_col="reaction",
+        target_attributes_col="target_attributes",
+    )
+
+    # Microhaplotype information with optional details
+    mhap_df = pd.DataFrame(
+        {
+            "library_sample_name": ["lib1"],
+            "target_name": ["target1"],
+            "seq": ["ATGCATGC"],
+            "reads": [42],
+            "umis": [10],
+            "microhap_name": ["mh1"],
+            "pseudocigar": ["8M"],
+            "quality": ["ABCD"],
+            "mask_start": ["1"],
+            "mask_segment": ["2"],
+            "mask_replacement": ["2"],
+            "custom_annotation": ["custom"],
+            "custom_detected": ["det-note"],
+        }
+    )
+    mhap_info = mhap_table_to_pmo(
+        microhaplotype_table=mhap_df,
+        umis_col="umis",
+        microhaplotype_name_col="microhap_name",
+        pseudocigar_col="pseudocigar",
+        quality_col="quality",
+        masking_seq_start_col="mask_start",
+        masking_seq_segment_size_col="mask_segment",
+        masking_replacement_size_col="mask_replacement",
+        additional_representative_mhap_cols=["custom_annotation"],
+        additional_mhap_detected_cols=["custom_detected"],
+    )
+
+    # Merge into PMO structure
+    pmo = merge_to_pmo(
+        specimen_info=specimen_info,
+        library_sample_info=library_sample_info,
+        panel_and_target_info=panel_info,
+        mhap_info=mhap_info,
+    )
+    # Load the schema and validate using PMOChecker
+    # checking against slimmer 1.0.0 PMO
+    for schema_version in ["1.1.0"]:
+        schemas_dir = (
+            Path(__file__).resolve().parents[2] / "src" / "pmotools" / "schemas"
+        )
+        schema_filename = (
+            f"portable_microhaplotype_object_v{schema_version}.schema.json"
+        )
+        schema_path = schemas_dir / schema_filename
+        if not schema_path.exists():
+            available_schemas = sorted(
+                schemas_dir.glob("portable_microhaplotype_object_*.schema.json")
+            )
+            if not available_schemas:
+                raise FileNotFoundError(
+                    f"No schema files found in {schemas_dir} matching "
+                    "'portable_microhaplotype_object_*.schema.json'"
+                )
+            schema_path = available_schemas[-1]
+        with schema_path.open(encoding="utf-8") as schema_file:
+            schema = json.load(schema_file)
+
+        checker = PMOChecker(schema)
+        checker.check_for_required_base_fields(pmo)
+        checker.validate_pmo_json(pmo)
+
+    # Validate optional fields propagated through builders
+    specimen_entry = pmo["specimen_info"][0]
+    assert specimen_entry["host_age"] == 35
+    assert specimen_entry["specimen_store_loc"] == "Freezer 1"
+    assert specimen_entry["custom_note"] == "Important specimen"
+    assert specimen_entry["parasite_density_info"][0]["parasite_density"] == 1200
+    assert (
+        specimen_entry["parasite_density_info"][0]["parasite_density_method"]
+        == "microscopy"
+    )
+
+    library_entry = pmo["library_sample_info"][0]
+    assert library_entry["run_accession"] == "ACC123"
+    assert library_entry["library_note"] == "High quality"
+
+    representative_mhap = pmo["representative_microhaplotypes"]["targets"][0][
+        "microhaplotypes"
+    ][0]
+    assert representative_mhap["microhaplotype_name"] == "mh1"
+    assert representative_mhap["masking"][0]["seq_segment_size"] == 2
+    assert representative_mhap["custom_annotation"] == "custom"
+
+    detected_mhap = pmo["detected_microhaplotypes"][0]["library_samples"][0][
+        "target_results"
+    ][0]["mhaps"][0]
+    assert detected_mhap["umis"] == 10
+    assert detected_mhap["custom_detected"] == "det-note"

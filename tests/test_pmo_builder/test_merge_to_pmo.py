@@ -117,7 +117,7 @@ class TestMergeToPMO(unittest.TestCase):
             specimen_info=specimen_info,
             library_sample_info=library_sample_info,
             sequencing_info=sequencing_info,
-            panel_info=panel_info,
+            panel_and_target_info=panel_info,
             mhap_info=mhap_info,
             bioinfo_method_info=bioinfo_method_info,
             bioinfo_run_info=bioinfo_run_info,
@@ -203,17 +203,20 @@ class TestMergeToPMO(unittest.TestCase):
     def test_merge_to_pmo(self, mock_generate_pmo_header, _):
         mock_generate_pmo_header.return_value = self.pmo_header_v1_0_0
         actual = merge_to_pmo(
-            [{"specimens": "specinfo"}],
-            [{"library_samples": "library_samples"}],
-            [{"sequencing": "sequencing"}],
-            {"panel_info": ["panels"], "target_info": ["targets"]},
-            {
+            specimen_info=[{"specimens": "specinfo"}],
+            library_sample_info=[{"library_samples": "library_samples"}],
+            sequencing_info=[{"sequencing": "sequencing"}],
+            panel_and_target_info={
+                "panel_info": ["panels"],
+                "target_info": ["targets"],
+            },
+            mhap_info={
                 "representative_microhaplotypes": ["mhap_seqs"],
                 "detected_microhaplotypes": ["mhaps for sample"],
             },
-            [{"bioinfo_methods": "bioinfo_methods"}],
-            [{"bioinfo_runs": "bioinfo_runs"}],
-            [{"projects": "projects"}],
+            bioinfo_method_info=[{"bioinfo_methods": "bioinfo_methods"}],
+            bioinfo_run_info=[{"bioinfo_runs": "bioinfo_runs"}],
+            project_info=[{"projects": "projects"}],
         )
 
         expected = {

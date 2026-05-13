@@ -412,3 +412,92 @@ def get_mhap_index_in_representative_mhaps(df, representative_dict):
             f"Some seq values not found in representative microhaplotype table:\n{missing_seqs}"
         )
     return df
+
+
+def create_minimum_library_specimen_dict_from_mhap_table(
+    detected_microhaps: list[dict],
+    panel_name: str,
+    library_sample_key: str = "library_sample_name",
+    library_sample_specimen_key: dict[str, str] | None = None,
+    missing_library_sample_becomes_specimen_name: bool = False,
+):
+    """
+    Create a minimum library_sample_info and specimen_info dicts from the detected microhaps
+
+    :param detected_microhaps: the detected microhaps object created by create_detected_microhaplotype_dict
+    :param panel_name: the panel_name for the library_sample
+    :param library_sample_key: the key to use to extract the library_sample_name from each sample dict
+    :param library_sample_specimen_key: a dict mapping library_sample_name -> specimen_name;
+                                        if None, specimen_name == library_sample_name
+    :param missing_library_sample_becomes_specimen_name: if True and a library_sample_name is missing
+                                                         from library_sample_specimen_key, fall back to
+                                                         using the library_sample_name as the specimen_name;
+                                                         if False, raise an error
+    :return: dict with keys 'library_sample_info' and 'specimen_info'
+    """
+    # Collect all sample dicts across every entry in detected_microhaps
+    all_samples: list[dict] = []
+    for entry in detected_microhaps:
+        all_samples.extend(entry.get("library_samples", []))
+
+    # check that every sample has the expected key
+    missing_key_indices = [
+        i for i, s in enumerate(all_samples) if library_sample_key not in s
+    ]
+    if missing_key_indices:
+        raise KeyError(
+            f"The following sample indices are missing the key '{library_sample_key}': "
+            f"{missing_key_indices}"
+        )
+
+    # check that all library_sample_name values are unique
+    raw_names: list[str] = [s[library_sample_key] for s in all_samples]
+    seen: set[str] = set()
+    duplicates: set[str] = set()
+    for name in raw_names:
+        if name in seen:
+            duplicates.add(name)
+        seen.add(name)
+    if duplicates:
+        raise ValueError(f"Duplicate library sample names found: {sorted(duplicates)}")
+
+    # now construct library_sample_info
+    library_sample_info: list[dict] = []
+    for sample in all_samples:
+        lib_name: str = sample[library_sample_key]
+        # use look up table to get specimen_name if provided, otherwise use library_sample_name as specimen_name
+        if library_sample_specimen_key is not None:
+            if lib_name in library_sample_specimen_key:
+                specimen_name = library_sample_specimen_key[lib_name]
+            elif missing_library_sample_becomes_specimen_name:
+                # if not in key but allowing missing to become specimen_name, use library_sample_name as specimen_name
+                specimen_name = lib_name
+            else:
+                raise KeyError(
+                    f"library_sample_name '{lib_name}' not found in library_sample_specimen_key "
+                    f"and missing_library_sample_becomes_specimen_name is False."
+                )
+        else:
+            specimen_name = lib_name
+
+        library_sample_info.append(
+            {
+                "library_sample_name": lib_name,
+                "panel_name": panel_name,
+                "specimen_name": specimen_name,
+            }
+        )
+
+    # build specimen_info from unique specimen_names (preserving first-seen order)
+    seen_specimens: set[str] = set()
+    specimen_info: list[dict] = []
+    for entry in library_sample_info:
+        sp = entry["specimen_name"]
+        if sp not in seen_specimens:
+            seen_specimens.add(sp)
+            specimen_info.append({"specimen_name": sp})
+
+    return {
+        "library_sample_info": library_sample_info,
+        "specimen_info": specimen_info,
+    }

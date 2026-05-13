@@ -3,6 +3,11 @@
 import pandas as pd
 from pmotools.pmo_engine.pmo_processor import PMOProcessor
 from datetime import datetime
+import copy
+import logging
+from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 class PMOUpdater(object):
@@ -123,3 +128,106 @@ class PMOUpdater(object):
                 "travel_out_six_month"
             ].append(travel_rec)
         return pmo
+
+    @staticmethod
+    def merge_dicts_by_key(
+        main_list: list[dict],
+        update_list: list[dict],
+        key_field: str,
+        replace: bool = False,
+        ignore_fields: list[str] | None = None,
+    ) -> list[dict]:
+        """
+        Merge two lists of dicts by a shared key field.
+
+        The first list is treated as the main/base data source. The second list
+        provides updates that are applied on top. Both input lists are left
+        untouched (deep copies are used internally).
+
+        Args:
+            main_list:     The primary list of dicts (source of truth).
+            update_list:   The list of dicts whose values will be merged in.
+            key_field:     The dict key used to match records across lists.
+            replace:       If True, existing values in main are overwritten by
+                           update values. If False, a conflict raises a ValueError.
+            ignore_fields: Optional list of field names to skip entirely during
+                           the merge (they are never read from update_list).
+
+        Returns:
+            A new list of dicts with updates applied.
+
+        Raises:
+            ValueError: If either list contains duplicate values for key_field.
+            KeyError:   If any dict in either list is missing key_field.
+            KeyError:   If update_list contains a key_field value that does not
+                        exist in main_list.
+            ValueError: If replace=False and an update would overwrite an
+                        existing field.
+        """
+        ignore_fields = set(ignore_fields or [])
+
+        # check to see if any of the input (the main or the update lists) have missing key_field
+        def _check_missing_key(lst: list[dict], label: str) -> None:
+            bad = [i for i, d in enumerate(lst) if key_field not in d]
+            if bad:
+                raise KeyError(f"{label} is missing '{key_field}' at index(es): {bad}")
+
+        _check_missing_key(main_list, "main_list")
+        _check_missing_key(update_list, "update_list")
+
+        # check if there are duplicate key_field values
+        def _check_duplicates(lst: list[dict], label: str) -> None:
+            seen: set = set()
+            dupes: set = set()
+            for d in lst:
+                val = d[key_field]
+                (dupes if val in seen else seen).add(val)
+            if dupes:
+                raise ValueError(
+                    f"{label} contains duplicate '{key_field}' values: {sorted(dupes)}"
+                )
+
+        _check_duplicates(main_list, "main_list")
+        _check_duplicates(update_list, "update_list")
+
+        # Build lookup from deep copies
+        main_map: dict[Any, dict] = {d[key_field]: copy.deepcopy(d) for d in main_list}
+        update_map: dict[Any, dict] = {
+            d[key_field]: copy.deepcopy(d) for d in update_list
+        }
+
+        # update keys must exist in main
+        extra_keys = set(update_map) - set(main_map)
+        if extra_keys:
+            raise KeyError(
+                f"update_list contains '{key_field}' values not found in "
+                f"main_list: {sorted(extra_keys)}"
+            )
+
+        # Warn if any of the main keys absent from update, this way can update some of the values but
+        # not necessary to update all of them
+        missing_from_update = set(main_map) - set(update_map)
+        if missing_from_update:
+            logger.warning(
+                "The following '%s' values are in main_list but not in "
+                "update_list (skipping): %s",
+                key_field,
+                sorted(missing_from_update),
+            )
+
+        # now merge
+        for key, update_dict in update_map.items():
+            main_dict = main_map[key]
+            for field, value in update_dict.items():
+                if field == key_field or field in ignore_fields:
+                    continue
+                if field in main_dict:
+                    if not replace:
+                        raise ValueError(
+                            f"Field '{field}' already exists in record "
+                            f"'{key_field}={key}' and replace=False."
+                        )
+                    main_dict[field] = value
+                else:
+                    main_dict[field] = value
+        return list(main_map.values())
