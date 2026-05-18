@@ -125,6 +125,70 @@ class PMOExporter(object):
         return pd.DataFrame(rows)
 
     @staticmethod
+    def export_bioinformatics_run_info_meta_table(
+        pmodata, separator: str = ","
+    ) -> pd.DataFrame:
+        """
+        Export the bioinformatics_run_info meta information of a PMO to a dataframe
+
+        :param pmodata: the pmo export the information from
+        :param separator: the separator to use for list values
+        :return: a pandas dataframe of the library_sample metadata
+        """
+        # @todo write pytest export_bioinformatics_run_info_meta_table
+        rows = []
+        if "bioinformatics_run_info" not in pmodata.keys():
+            raise ValueError("no bioinformatics_run_info found in input PMO")
+        run_id = 0
+        for bioinformatics_run_info in pmodata["bioinformatics_run_info"]:
+            export_row = {}
+            export_row["run_id"] = run_id
+            run_id += 1
+            for key, value in bioinformatics_run_info.items():
+                if PMOExporter.is_primitive(value):
+                    export_row[key] = value
+                elif PMOExporter.is_primitive_list(value):
+                    export_row[key] = separator.join(str(v) for v in value)
+            rows.append(export_row)
+        return pd.DataFrame(rows)
+
+    @staticmethod
+    def export_bioinformatics_methods_info_meta_table(
+        pmodata, separator: str = ","
+    ) -> pd.DataFrame:
+        """
+        Export the bioinformatics_methods_info meta information of a PMO to a dataframe
+
+        :param pmodata: the pmo export the information from
+        :param separator: the separator to use for list values
+        :return: a pandas dataframe of the library_sample metadata
+        """
+        # @todo write pytest export_bioinformatics_methods_info_meta_table
+        rows = []
+        if "bioinformatics_methods_info" not in pmodata.keys():
+            raise ValueError("no bioinformatics_methods_info found in input PMO")
+        bioinformatics_methods_id = 0
+        for bioinformatics_methods_info in pmodata["bioinformatics_methods_info"]:
+            bioinformatics_methods_id += 1
+            export_row = {}
+            for key, value in bioinformatics_methods_info.items():
+                export_row["bioinformatics_methods_id"] = bioinformatics_methods_id
+                if PMOExporter.is_primitive(value):
+                    export_row[key] = value
+                elif PMOExporter.is_primitive_list(value):
+                    export_row[key] = separator.join(str(v) for v in value)
+
+            method_count = 0
+            for method in bioinformatics_methods_info["methods"]:
+                method_count += 1
+                method_export_row = copy.deepcopy(export_row)
+                method_export_row["method_id"] = method_count
+                for method_key in method.keys():
+                    method_export_row[method_key] = method[method_key]
+                rows.append(method_export_row)
+        return pd.DataFrame(rows)
+
+    @staticmethod
     def export_sequencing_info_meta_table(
         pmodata, separator: str = ","
     ) -> pd.DataFrame:
@@ -208,23 +272,84 @@ class PMOExporter(object):
         :return: a pandas dataframe of the panel metadata
         """
         rows = []
-        for panel_info in pmodata["target_info"]:
+        for target_info in pmodata["target_info"]:
             export_row = {}
-            for key, value in panel_info.items():
+            for key, value in target_info.items():
                 if "forward_primer" == key:
-                    export_row["forward_primer_seq"] = panel_info["forward_primer"][
+                    export_row["forward_primer_seq"] = target_info["forward_primer"][
                         "seq"
                     ]
+                    if "location" in target_info["forward_primer"]:
+                        for primer_loc_key in target_info["forward_primer"][
+                            "location"
+                        ].keys():
+                            export_row[
+                                "forward_primer_" + primer_loc_key
+                            ] = target_info["forward_primer"]["location"][
+                                primer_loc_key
+                            ]
                 elif "reverse_primer" == key:
-                    export_row["reverse_primer_seq"] = panel_info["reverse_primer"][
+                    export_row["reverse_primer_seq"] = target_info["reverse_primer"][
                         "seq"
                     ]
+                    if "location" in target_info["reverse_primer"]:
+                        for primer_loc_key in target_info["reverse_primer"][
+                            "location"
+                        ].keys():
+                            export_row[
+                                "reverse_primer_" + primer_loc_key
+                            ] = target_info["reverse_primer"]["location"][
+                                primer_loc_key
+                            ]
+                elif "insert_location" == key:
+                    for insert_key in value.keys():
+                        export_row["insert_" + insert_key] = value[insert_key]
                 elif PMOExporter.is_primitive(value):
                     export_row[key] = value
                 elif PMOExporter.is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
             rows.append(export_row)
-        return pd.DataFrame(rows)
+
+        df = pd.DataFrame(rows)
+
+        priority_cols = ["target_name", "forward_primer_seq", "reverse_primer_seq"]
+        leading = [c for c in priority_cols if c in df.columns]
+        rest = sorted(c for c in df.columns if c not in priority_cols)
+
+        return df[leading + rest]
+
+    @staticmethod
+    def export_targeted_genomes_meta_table(
+        pmodata, separator: str = ","
+    ) -> pd.DataFrame:
+        """
+        Export the targeted genomes meta information of a PMO to a dataframe
+        :param pmodata: the pmo export the information from
+        :param separator: the separator to use for list values
+        :return: a pandas dataframe of the genomes metadata
+        """
+        # @todo write pytest export_targeted_genomes_meta_table
+        rows = []
+        genome_id = 0
+        if "targeted_genomes" not in pmodata.keys():
+            raise ValueError("no targeted_genomes found in input PMO")
+        for genome_info in pmodata["targeted_genomes"]:
+            export_row = {}
+            export_row["genome_id"] = genome_id
+            genome_id += 1
+            for key, value in genome_info.items():
+                if PMOExporter.is_primitive(value):
+                    export_row[key] = value
+                elif PMOExporter.is_primitive_list(value):
+                    export_row[key] = separator.join(str(v) for v in value)
+            rows.append(export_row)
+
+        df = pd.DataFrame(rows)
+        priority_cols = ["name", "genome_version", "taxon_id", "genome_id", "url"]
+        leading = [c for c in priority_cols if c in df.columns]
+        rest = sorted(c for c in df.columns if c not in priority_cols)
+
+        return df[leading + rest]
 
     @staticmethod
     def write_bed_locs(bed_locs: list[bed_loc_tuple], fnp, add_header: bool = False):

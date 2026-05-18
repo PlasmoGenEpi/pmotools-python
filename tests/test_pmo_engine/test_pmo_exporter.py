@@ -219,7 +219,7 @@ class TestPMOExporter(unittest.TestCase):
             os.path.join(self.test_dir.name, "target_info_table.csv")
         )
         self.assertEqual(
-            "cb0319482c9da5f9d8b22fba955ce1c8",
+            "92062a9c7c9311fd28c99debd4b3c02f",
             md5sum_of_fnp(os.path.join(self.test_dir.name, "target_info_table.csv")),
         )
 

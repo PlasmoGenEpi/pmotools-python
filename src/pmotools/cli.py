@@ -90,6 +90,15 @@ from pmotools.scripts.pmo_to_tables.export_sequencing_info_meta_table import (
 from pmotools.scripts.pmo_to_tables.export_specimen_travel_meta_table import (
     export_specimen_travel_meta_table,
 )
+from pmotools.scripts.pmo_to_tables.export_bioinformatics_run_info_meta_table import (
+    export_bioinformatics_run_info_meta_table,
+)
+from pmotools.scripts.pmo_to_tables.export_bioinformatics_methods_info_meta_table import (
+    export_bioinformatics_methods_info_meta_table,
+)
+from pmotools.scripts.pmo_to_tables.export_targeted_genomes_meta_table import (
+    export_targeted_genomes_meta_table,
+)
 from pmotools.scripts.pmo_to_tables.export_target_info_meta_table import (
     export_target_info_meta_table,
 )
@@ -193,6 +202,10 @@ REGISTRY: Dict[str, Dict[str, PmoCommand]] = {
             export_specimen_travel_meta_table,
             "export the specimen travel_info meta table from a PMO file",
         ),
+        "export_targeted_genomes_meta_table": PmoCommand(
+            export_targeted_genomes_meta_table,
+            "export the targeted genomes info meta table from a PMO file",
+        ),
         "export_target_info_meta_table": PmoCommand(
             export_target_info_meta_table,
             "export the target info meta table from a PMO file",
@@ -200,6 +213,14 @@ REGISTRY: Dict[str, Dict[str, PmoCommand]] = {
         "export_panel_info_meta_table": PmoCommand(
             export_panel_info_meta_table,
             "export the panel info meta table from a PMO file",
+        ),
+        "export_bioinformatics_run_info_meta_table": PmoCommand(
+            export_bioinformatics_run_info_meta_table,
+            "export the bioinformatics_run_info meta table from a PMO file",
+        ),
+        "export_bioinformatics_methods_info_meta_table": PmoCommand(
+            export_bioinformatics_methods_info_meta_table,
+            "export the bioinformatics_methods_info meta table from a PMO file",
         ),
         "extract_allele_table": PmoCommand(
             extract_for_allele_table,

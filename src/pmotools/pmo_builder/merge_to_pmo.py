@@ -2,6 +2,9 @@
 from datetime import date
 import numpy as np
 from pmotools import __version__ as __pmotools_version__
+from pmotools.pmo_builder.mhap_table_to_pmo import (
+    create_minimum_library_specimen_dict_from_mhap_table,
+)
 
 
 def _convert_numpy_scalars(obj):
@@ -16,10 +19,10 @@ def _convert_numpy_scalars(obj):
 
 
 def merge_to_pmo(
-    specimen_info: list,
-    library_sample_info: list,
-    panel_and_target_info: dict,
     mhap_info: dict,
+    panel_and_target_info: dict,
+    specimen_info: list | None = None,
+    library_sample_info: list | None = None,
     sequencing_info: list | None = None,
     bioinfo_method_info: list | None = None,
     bioinfo_run_info: list | None = None,
@@ -29,11 +32,11 @@ def merge_to_pmo(
     """
     Merge components into PMO, replacing names with indeces.
 
+    :param mhap_info (dict) : a dictionary containing the microhaplotypes within this project, both detected and representative, must contain fields detected_microhaplotypes and representative_microhaplotypes
+    :param panel_and_target_info (dict) : a dictionary containing the panel and target information for this project, must contain fields target_info and panel_info
     :param specimen_info (list): a list of all the specimens within this project
     :param library_sample_info (list) : a list of library samples within this project
     :param sequencing_info (list) : a list of sequencing info for this project
-    :param panel_and_target_info (dict) : a dictionary containing the panel and target information for this project, must contain fields target_info and panel_info
-    :param mhap_info (dict) : a dictionary containing the microhaplotypes within this project, both detected and representative, must contain fields detected_microhaplotypes and representative_microhaplotypes
     :param bioinfo_method_info (list) : the bioinformatics pipeline/methods used to generated the amplicon analysis for this project
     :param bioinfo_run_info (list) : the runtime info for the bioinformatics pipeline used to generated the amplicon analysis for this project
     :param project_info (list) : the information about the projects stored in this PMO
@@ -59,9 +62,36 @@ def merge_to_pmo(
         raise ValueError(
             "bioinfo_method_info must be provided if bioinfo_run_info is provided"
         )
-    # Make copies to avoid editing input
-    specimen_info = [dict(d) for d in specimen_info]
-    library_sample_info = [dict(d) for d in library_sample_info]
+    if specimen_info is not None and library_sample_info is None:
+        raise ValueError(
+            "library_sample_info must be provided if specimen_info is provided"
+        )
+    if specimen_info is None and library_sample_info is None:
+        if len(panel_and_target_info["panel_info"]) > 1:
+            raise Exception(
+                "If providing only microhaplotypes, but not specimen_info or library_sample_info have to have only 1 panel to default to, found "
+                + str(len(panel_and_target_info["panel_info"]))
+            )
+        spec_and_lib_info = create_minimum_library_specimen_dict_from_mhap_table(
+            mhap_info["detected_microhaplotypes"],
+            panel_and_target_info["panel_info"][0]["panel_name"],
+        )
+        specimen_info = spec_and_lib_info["specimen_info"]
+        library_sample_info = spec_and_lib_info["library_sample_info"]
+    else:
+        # Make copies to avoid editing input
+        library_sample_info = [dict(d) for d in library_sample_info]
+        if specimen_info is not None:
+            specimen_info = [dict(d) for d in specimen_info]
+        else:
+            # if giving only library sample info can default to the specimen being just the library_sample_names
+            for library_sample in library_sample_info:
+                library_sample["specimen_name"] = library_sample["library_sample_name"]
+            specimen_info = [
+                {"specimen_name": library_sample["library_sample_name"]}
+                for library_sample in library_sample_info
+            ]
+
     panel_and_target_info = _convert_numpy_scalars(panel_and_target_info)
     mhap_info = _convert_numpy_scalars(mhap_info)
     # optional

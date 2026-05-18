@@ -417,8 +417,10 @@ def get_mhap_index_in_representative_mhaps(df, representative_dict):
 def create_minimum_library_specimen_dict_from_mhap_table(
     detected_microhaps: list[dict],
     panel_name: str,
-    library_sample_key: str = "library_sample_name",
-    library_sample_specimen_key: dict[str, str] | None = None,
+    library_sample_field_name: str = "library_sample_name",
+    library_sample_specimen_key: dict[str, str] | pd.DataFrame | None = None,
+    library_sample_name_col: str = "library_sample_name",
+    specimen_name_col: str = "specimen_name",
     missing_library_sample_becomes_specimen_name: bool = False,
 ):
     """
@@ -426,9 +428,12 @@ def create_minimum_library_specimen_dict_from_mhap_table(
 
     :param detected_microhaps: the detected microhaps object created by create_detected_microhaplotype_dict
     :param panel_name: the panel_name for the library_sample
-    :param library_sample_key: the key to use to extract the library_sample_name from each sample dict
-    :param library_sample_specimen_key: a dict mapping library_sample_name -> specimen_name;
+    :param library_sample_field_name: the field name to use to extract the library_sample_name from the detected_michrohaplotypes
+    :param library_sample_specimen_key: a dict mapping library_sample_name -> specimen_name,
+                                        or a pandas DataFrame with two columns for renaming controlled by library_sample_name_col and specimen_name_col
                                         if None, specimen_name == library_sample_name
+    :param library_sample_name_col: the column name in library_sample_specimen_key that contains the library_sample_name
+    :param specimen_name_col: the column name in library_sample_specimen_key that contains the specimen_name
     :param missing_library_sample_becomes_specimen_name: if True and a library_sample_name is missing
                                                          from library_sample_specimen_key, fall back to
                                                          using the library_sample_name as the specimen_name;
@@ -442,16 +447,16 @@ def create_minimum_library_specimen_dict_from_mhap_table(
 
     # check that every sample has the expected key
     missing_key_indices = [
-        i for i, s in enumerate(all_samples) if library_sample_key not in s
+        i for i, s in enumerate(all_samples) if library_sample_field_name not in s
     ]
     if missing_key_indices:
         raise KeyError(
-            f"The following sample indices are missing the key '{library_sample_key}': "
+            f"The following sample indices are missing the field name '{library_sample_field_name}': "
             f"{missing_key_indices}"
         )
 
     # check that all library_sample_name values are unique
-    raw_names: list[str] = [s[library_sample_key] for s in all_samples]
+    raw_names: list[str] = [s[library_sample_field_name] for s in all_samples]
     seen: set[str] = set()
     duplicates: set[str] = set()
     for name in raw_names:
@@ -460,15 +465,25 @@ def create_minimum_library_specimen_dict_from_mhap_table(
         seen.add(name)
     if duplicates:
         raise ValueError(f"Duplicate library sample names found: {sorted(duplicates)}")
-
+    actual_library_sample_specimen_key = None
+    if library_sample_specimen_key is not None and isinstance(
+        library_sample_specimen_key, dict
+    ):
+        actual_library_sample_specimen_key = library_sample_specimen_key
+    elif library_sample_specimen_key is not None and isinstance(
+        library_sample_specimen_key, pd.DataFrame
+    ):
+        actual_library_sample_specimen_key = library_sample_specimen_key.set_index(
+            library_sample_name_col
+        )[specimen_name_col].to_dict()
     # now construct library_sample_info
     library_sample_info: list[dict] = []
     for sample in all_samples:
-        lib_name: str = sample[library_sample_key]
+        lib_name: str = sample[library_sample_field_name]
         # use look up table to get specimen_name if provided, otherwise use library_sample_name as specimen_name
-        if library_sample_specimen_key is not None:
-            if lib_name in library_sample_specimen_key:
-                specimen_name = library_sample_specimen_key[lib_name]
+        if actual_library_sample_specimen_key is not None:
+            if lib_name in actual_library_sample_specimen_key:
+                specimen_name = actual_library_sample_specimen_key[lib_name]
             elif missing_library_sample_becomes_specimen_name:
                 # if not in key but allowing missing to become specimen_name, use library_sample_name as specimen_name
                 specimen_name = lib_name

@@ -139,6 +139,163 @@ class TestMergeToPMO(unittest.TestCase):
         self.assertIn("library_sample_id", library_sample)
         self.assertNotIn("library_sample_name", library_sample)
 
+    # need to test raise on not giving spec or libr and giving more than 1 panel
+
+    def test_merge_to_pmo_minimum_info(self):
+        """Test merge_to_pmo with only target and panel info and mhaps detected."""
+
+        panel_info = {
+            "panel_info": [{"panel_name": "panel1"}],
+            "target_info": [{"target_name": "target1"}],
+        }
+        mhap_info = {
+            "representative_microhaplotypes": {
+                "targets": [{"target_name": "target1", "microhaplotypes": []}]
+            },
+            "detected_microhaplotypes": [
+                {
+                    "library_samples": [
+                        {"library_sample_name": "samp_A", "target_results": []},
+                        {"library_sample_name": "samp_B", "target_results": []},
+                    ]
+                }
+            ],
+        }
+
+        result = merge_to_pmo(
+            panel_and_target_info=panel_info,
+            mhap_info=mhap_info,
+        )
+
+        # test that library_sample_info and specimen_info are created and contain the library_sample names from detected_microhaplotypes
+        self.assertIn("library_sample_info", result)
+        self.assertIn("specimen_info", result)
+        self.assertEqual(
+            sorted(
+                [
+                    result["library_sample_info"][0]["library_sample_name"],
+                    result["library_sample_info"][1]["library_sample_name"],
+                ]
+            ),
+            sorted(["samp_A", "samp_B"]),
+        )
+        self.assertEqual(
+            sorted(
+                [
+                    result["specimen_info"][0]["specimen_name"],
+                    result["specimen_info"][1]["specimen_name"],
+                ]
+            ),
+            sorted(["samp_A", "samp_B"]),
+        )
+
+    def test_merge_to_pmo_minimum_info_plus_library_sample(self):
+        """Test merge_to_pmo with only target and panel info and mhaps detected."""
+
+        panel_info = {
+            "panel_info": [{"panel_name": "panel1"}, {"panel_name": "panel2"}],
+            "target_info": [{"target_name": "target1"}],
+        }
+        library_sample_info = [
+            {"library_sample_name": "samp_A", "panel_name": "panel1"},
+            {"library_sample_name": "samp_B", "panel_name": "panel2"},
+        ]
+        mhap_info = {
+            "representative_microhaplotypes": {
+                "targets": [{"target_name": "target1", "microhaplotypes": []}]
+            },
+            "detected_microhaplotypes": [
+                {
+                    "library_samples": [
+                        {"library_sample_name": "samp_A", "target_results": []},
+                        {"library_sample_name": "samp_B", "target_results": []},
+                    ]
+                }
+            ],
+        }
+
+        result = merge_to_pmo(
+            panel_and_target_info=panel_info,
+            mhap_info=mhap_info,
+            library_sample_info=library_sample_info,
+        )
+
+        # test that specimen_info was created and contain the library_sample names from library_sample_info
+        self.assertIn("specimen_info", result)
+        self.assertEqual(
+            sorted(
+                [
+                    result["library_sample_info"][0]["library_sample_name"],
+                    result["library_sample_info"][1]["library_sample_name"],
+                ]
+            ),
+            sorted(["samp_A", "samp_B"]),
+        )
+        self.assertEqual(
+            sorted(
+                [
+                    result["specimen_info"][0]["specimen_name"],
+                    result["specimen_info"][1]["specimen_name"],
+                ]
+            ),
+            sorted(["samp_A", "samp_B"]),
+        )
+
+    def test_merge_to_pmo_minimum_info_raise_spec_but_no_lib(self):
+        panel_info = {
+            "panel_info": [{"panel_name": "panel1"}, {"panel_name": "panel2"}],
+            "target_info": [{"target_name": "target1"}],
+        }
+        specimen_info = [{"specimen_name": "samp_A"}, {"specimen_name": "samp_B"}]
+        mhap_info = {
+            "representative_microhaplotypes": {
+                "targets": [{"target_name": "target1", "microhaplotypes": []}]
+            },
+            "detected_microhaplotypes": [
+                {
+                    "library_samples": [
+                        {"library_sample_name": "samp_A", "target_results": []},
+                        {"library_sample_name": "samp_B", "target_results": []},
+                    ]
+                }
+            ],
+        }
+        with self.assertRaises(ValueError) as context:
+            merge_to_pmo(
+                panel_and_target_info=panel_info,
+                mhap_info=mhap_info,
+                specimen_info=specimen_info,
+            )
+        self.assertIn(
+            "library_sample_info must be provided if specimen_info is provided",
+            str(context.exception),
+        )
+
+    def test_merge_to_pmo_minimum_info_raise_multi_panel_no_lib(self):
+        panel_info = {
+            "panel_info": [{"panel_name": "panel1"}, {"panel_name": "panel2"}],
+            "target_info": [{"target_name": "target1"}],
+        }
+        mhap_info = {
+            "representative_microhaplotypes": {
+                "targets": [{"target_name": "target1", "microhaplotypes": []}]
+            },
+            "detected_microhaplotypes": [
+                {
+                    "library_samples": [
+                        {"library_sample_name": "samp_A", "target_results": []},
+                        {"library_sample_name": "samp_B", "target_results": []},
+                    ]
+                }
+            ],
+        }
+        with self.assertRaises(Exception) as context:
+            merge_to_pmo(panel_and_target_info=panel_info, mhap_info=mhap_info)
+        self.assertIn(
+            "If providing only microhaplotypes, but not specimen_info or library_sample_info have to have only 1 panel to default to, found",
+            str(context.exception),
+        )
+
     @patch("pmotools.pmo_builder.merge_to_pmo.date")
     def test_generate_pmo_header(self, mock_date):
         mock_date.today.return_value = date(2025, 7, 22)
