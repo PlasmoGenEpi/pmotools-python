@@ -268,7 +268,6 @@ class TestPMOExporter(unittest.TestCase):
         project_info_table.to_csv(
             os.path.join(self.test_dir.name, "project_info_table.csv")
         )
-        print(project_info_table)
         self.assertEqual(
             "e533098411cbd96de2733668e8475ab8",
             md5sum_of_fnp(os.path.join(self.test_dir.name, "project_info_table.csv")),
@@ -310,13 +309,150 @@ class TestPMOExporter(unittest.TestCase):
         specimen_trable_info_table.to_csv(
             os.path.join(self.test_dir.name, "specimen_trable_info_table.csv")
         )
-        print(specimen_trable_info_table)
         self.assertEqual(
             "0305350d655184aa385d3d1ddc9b3600",
             md5sum_of_fnp(
                 os.path.join(self.test_dir.name, "specimen_trable_info_table.csv")
             ),
         )
+
+    def test_basic_structure_from_minimum_example(self):
+        """DataFrame has expected columns and one row for the single genome."""
+        df = PMOExporter.export_targeted_genomes_meta_table(self.small_example_pmo_data)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 1
+        assert "genome_id" in df.columns
+        assert "name" in df.columns
+
+    def test_genome_id_assigned(self):
+        """genome_id starts at 0 and increments per genome."""
+        df = PMOExporter.export_targeted_genomes_meta_table(self.small_example_pmo_data)
+        assert df["genome_id"].iloc[0] == 0
+
+    def test_raises_on_missing_targeted_genomes(self):
+        """Raises ValueError when targeted_genomes key is absent."""
+        with self.assertRaises(ValueError) as context:
+            PMOExporter.export_targeted_genomes_meta_table({"pmo_header": {}})
+        self.assertIn(
+            "no targeted_genomes found",
+            str(context.exception),
+        )
+
+    def test_multiple_genomes_from_combined_example(self):
+        """One row is produced per genome entry."""
+        df = PMOExporter.export_targeted_genomes_meta_table(self.combined_pmo_data)
+        assert len(df) == len(self.combined_pmo_data["targeted_genomes"])
+        assert list(df["genome_id"]) == list(range(len(df)))
+
+    def test_empty_targeted_genomes_list(self):
+        """Empty targeted_genomes list produces an empty DataFrame."""
+        pmodata = {"targeted_genomes": []}
+        df = PMOExporter.export_targeted_genomes_meta_table(pmodata)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 0
+
+    def test_basic_structure_from_minimum_example_bioinformatics_run_info(self):
+        """DataFrame has expected columns and correct row count."""
+        df = PMOExporter.export_bioinformatics_run_info_meta_table(
+            self.small_example_pmo_data
+        )
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 1
+
+    def test_raises_on_missing_bioinformatics_run_info(self):
+        """Raises ValueError when bioinformatics_run_info key is absent."""
+        with self.assertRaises(ValueError) as context:
+            PMOExporter.export_bioinformatics_run_info_meta_table({"pmo_header": {}})
+        self.assertIn(
+            "no bioinformatics_run_info found",
+            str(context.exception),
+        )
+
+    def test_empty_bioinformatics_run_info_list(self):
+        """Empty bioinformatics_run_info list produces an empty DataFrame."""
+        pmodata = {"bioinformatics_run_info": []}
+        df = PMOExporter.export_bioinformatics_run_info_meta_table(pmodata)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 0
+
+    def test_multiple_runs_from_combined_example_bioinformatics_run_info(self):
+        """One row is produced per bioinformatics_run_info entry."""
+        df = PMOExporter.export_bioinformatics_run_info_meta_table(
+            self.combined_pmo_data
+        )
+        assert len(df) == len(self.combined_pmo_data["bioinformatics_run_info"])
+        assert list(df["run_id"]) == list(range(len(df)))
+
+    def test_custom_separator_bioinformatics_run_info(self):
+        """Custom separator is used for any list fields."""
+        pmodata = {
+            "bioinformatics_run_info": [
+                {
+                    "bioinformatics_run_name": "test-run",
+                    "run_date": "2024-01-01",
+                    "some_list_field": ["a", "b", "c"],
+                }
+            ]
+        }
+        df_pipe = PMOExporter.export_bioinformatics_run_info_meta_table(
+            pmodata, separator="|"
+        )
+        assert df_pipe["some_list_field"].iloc[0] == "a|b|c"
+        df_comma = PMOExporter.export_bioinformatics_run_info_meta_table(
+            pmodata, separator=","
+        )
+        assert df_comma["some_list_field"].iloc[0] == "a,b,c"
+
+    def test_basic_structure_from_minimum_example_bioinformatics_methods_info(self):
+        """DataFrame is a pandas DataFrame with expected columns."""
+        df = PMOExporter.export_bioinformatics_methods_info_meta_table(
+            self.small_example_pmo_data
+        )
+        assert isinstance(df, pd.DataFrame)
+        assert "bioinformatics_methods_id" in df.columns
+        assert "method_id" in df.columns
+
+    def test_row_count_matches_total_methods_bioinformatics_methods_info(self):
+        """Total rows equals the sum of methods across all bioinformatics_methods_info entries."""
+        df = PMOExporter.export_bioinformatics_methods_info_meta_table(
+            self.small_example_pmo_data
+        )
+        expected_row_count = sum(
+            len(entry["methods"])
+            for entry in self.small_example_pmo_data["bioinformatics_methods_info"]
+        )
+        assert len(df) == expected_row_count
+
+    def test_row_count_matches_total_methods_combined_example_bioinformatics_methods_info(
+        self,
+    ):
+        """Row count matches sum of methods in combined example."""
+        df = PMOExporter.export_bioinformatics_methods_info_meta_table(
+            self.combined_pmo_data
+        )
+        expected_row_count = sum(
+            len(entry["methods"])
+            for entry in self.combined_pmo_data["bioinformatics_methods_info"]
+        )
+        assert len(df) == expected_row_count
+
+    def test_raises_on_missing_bioinformatics_methods_info(self):
+        """Raises ValueError when bioinformatics_methods_info key is absent."""
+        with self.assertRaises(ValueError) as context:
+            PMOExporter.export_bioinformatics_methods_info_meta_table(
+                {"pmo_header": {}}
+            )
+        self.assertIn(
+            "no bioinformatics_methods_info found",
+            str(context.exception),
+        )
+
+    def test_empty_bioinformatics_methods_info_list(self):
+        """Empty bioinformatics_methods_info list produces an empty DataFrame."""
+        pmodata = {"bioinformatics_methods_info": []}
+        df = PMOExporter.export_bioinformatics_methods_info_meta_table(pmodata)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 0
 
 
 if __name__ == "__main__":

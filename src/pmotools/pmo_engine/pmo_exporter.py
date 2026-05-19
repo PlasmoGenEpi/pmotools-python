@@ -135,7 +135,6 @@ class PMOExporter(object):
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the library_sample metadata
         """
-        # @todo write pytest export_bioinformatics_run_info_meta_table
         rows = []
         if "bioinformatics_run_info" not in pmodata.keys():
             raise ValueError("no bioinformatics_run_info found in input PMO")
@@ -328,7 +327,6 @@ class PMOExporter(object):
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the genomes metadata
         """
-        # @todo write pytest export_targeted_genomes_meta_table
         rows = []
         genome_id = 0
         if "targeted_genomes" not in pmodata.keys():
