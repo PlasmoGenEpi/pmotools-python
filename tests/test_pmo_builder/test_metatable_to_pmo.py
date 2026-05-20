@@ -398,7 +398,7 @@ class TestMetatableToPMO(unittest.TestCase):
             [
                 {
                     "specimen_name": "sample1",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Mozambique",
@@ -406,7 +406,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 },
                 {
                     "specimen_name": "sample2",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Ghana",
@@ -447,7 +447,7 @@ class TestMetatableToPMO(unittest.TestCase):
             [
                 {
                     "specimen_name": "sample1",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Mozambique",
@@ -460,7 +460,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 },
                 {
                     "specimen_name": "sample2",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Ghana",
@@ -504,7 +504,7 @@ class TestMetatableToPMO(unittest.TestCase):
             [
                 {
                     "specimen_name": "sample1",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Mozambique",
@@ -515,7 +515,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 },
                 {
                     "specimen_name": "sample2",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Ghana",
@@ -559,7 +559,7 @@ class TestMetatableToPMO(unittest.TestCase):
             [
                 {
                     "specimen_name": "sample1",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Mozambique",
@@ -569,7 +569,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 },
                 {
                     "specimen_name": "sample2",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Ghana",
@@ -1114,7 +1114,7 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertEqual(result[0]["specimen_type"], "field_sample")
         self.assertEqual(result[0]["specimen_collect_device"], "needle")
         self.assertNotIn("specimen_store_loc", result[0])
-        self.assertNotIn("specimen_comments", result[0])
+        self.assertNotIn("specimen_comments", [result[0]])
 
         # sample2: specimen_accession is empty string, specimen_type is None, specimen_collect_device is empty string
         # specimen_store_loc has value, specimen_comments has value
@@ -1123,7 +1123,7 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertNotIn("specimen_type", result[1])
         self.assertNotIn("specimen_collect_device", result[1])
         self.assertEqual(result[1]["specimen_store_loc"], "freezer1")
-        self.assertEqual(result[1]["specimen_comments"], "Some comment")
+        self.assertEqual(result[1]["specimen_comments"], ["Some comment"])
 
     def test_specimen_info_table_to_pmo_with_environment_fields(self):
         """Test environment-related optional fields"""
@@ -1198,19 +1198,19 @@ class TestMetatableToPMO(unittest.TestCase):
         # sample1: blood_meal has value (True), has_travel_out_six_month is None, treatment_status has value, specimen_accession has value
         self.assertEqual(result[0]["blood_meal"], True)
         self.assertNotIn("has_travel_out_six_month", result[0])
-        self.assertEqual(result[0]["treatment_status"], "cured")
+        self.assertEqual(result[0]["treatment_status"], ["cured"])
         self.assertEqual(result[0]["specimen_accession"], "ACC001")
 
         # sample2: blood_meal is None, has_travel_out_six_month has value (True), treatment_status is empty string, specimen_accession is None
         self.assertNotIn("blood_meal", result[1])
         self.assertEqual(result[1]["has_travel_out_six_month"], True)
-        self.assertNotIn("treatment_status", result[1])
+        self.assertNotIn("treatment_status", [result[1]])
         self.assertNotIn("specimen_accession", result[1])
 
         # sample3: blood_meal has value (False), has_travel_out_six_month is empty string, treatment_status is None, specimen_accession has value
         self.assertEqual(result[2]["blood_meal"], False)
         self.assertNotIn("has_travel_out_six_month", result[2])
-        self.assertNotIn("treatment_status", result[2])
+        self.assertNotIn("treatment_status", [result[2]])
         self.assertEqual(result[2]["specimen_accession"], "ACC003")
 
     def test_library_sample_info_table_to_pmo_default(self):
