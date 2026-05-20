@@ -1258,6 +1258,10 @@ class TestMetatableToPMO(unittest.TestCase):
                 "library_prep_plate_col": [1, 2],
                 "library_prep_plate_name": ["plate1", "plate1"],
                 "library_prep_plate_row": ["A", "B"],
+                "alternate_identifiers": [
+                    "positive_control,3D7",
+                    "sample2_MH_run1_repooled",
+                ],
             }
         )
 
@@ -1270,10 +1274,12 @@ class TestMetatableToPMO(unittest.TestCase):
             library_prep_plate_name_col="library_prep_plate_name",
             library_prep_plate_col_col="library_prep_plate_col",
             library_prep_plate_row_col="library_prep_plate_row",
+            alternate_identifiers_col="alternate_identifiers",
         )
         self.assertEqual(
             [
                 {
+                    "alternate_identifiers": ["positive_control", "3D7"],
                     "library_sample_name": "sample1_MH_run1",
                     "sequencing_info_name": "run1",
                     "specimen_name": "sample1",
@@ -1285,6 +1291,7 @@ class TestMetatableToPMO(unittest.TestCase):
                     },
                 },
                 {
+                    "alternate_identifiers": ["sample2_MH_run1_repooled"],
                     "library_sample_name": "sample2_MH_run1",
                     "sequencing_info_name": "run1",
                     "specimen_name": "sample2",
@@ -1517,14 +1524,14 @@ class TestMetatableToPMO(unittest.TestCase):
 
         # sample1: alternate_identifiers has value, experiment_accession has value, fastqs_loc is None, run_accession has value
         # Should remove: fastqs_loc
-        self.assertEqual(result[0]["alternate_identifiers"], "ID1,ID2")
+        self.assertEqual(result[0]["alternate_identifiers"], ["ID1", "ID2"])
         self.assertEqual(result[0]["experiment_accession"], "EXP001")
         self.assertNotIn("fastqs_loc", result[0])
         self.assertEqual(result[0]["run_accession"], "RUN001")
 
         # sample2: alternate_identifiers is empty string, experiment_accession is None, fastqs_loc has value, run_accession is empty string
         # Should remove: alternate_identifiers, experiment_accession, run_accession
-        self.assertNotIn("alternate_identifiers", result[1])
+        self.assertNotIn("alternate_identifiers", [result[1]])
         self.assertNotIn("experiment_accession", result[1])
         self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs")
         self.assertNotIn("run_accession", result[1])
@@ -1559,17 +1566,17 @@ class TestMetatableToPMO(unittest.TestCase):
         )
 
         # sample1: all optional fields have values
-        self.assertEqual(result[0]["alternate_identifiers"], "ID1")
+        self.assertEqual(result[0]["alternate_identifiers"], ["ID1"])
         self.assertEqual(result[0]["experiment_accession"], "EXP001")
         self.assertNotIn("fastqs_loc", result[0])  # None should be removed
 
         # sample2: alternate_identifiers is empty string, experiment_accession is None, fastqs_loc has value
-        self.assertNotIn("alternate_identifiers", result[1])
+        self.assertNotIn("alternate_identifiers", [result[1]])
         self.assertNotIn("experiment_accession", result[1])
         self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs")
 
         # sample3: alternate_identifiers is None, experiment_accession has value, fastqs_loc is empty string
-        self.assertNotIn("alternate_identifiers", result[2])
+        self.assertNotIn("alternate_identifiers", [result[2]])
         self.assertEqual(result[2]["experiment_accession"], "EXP003")
         self.assertNotIn("fastqs_loc", result[2])
 
@@ -1674,7 +1681,7 @@ class TestMetatableToPMO(unittest.TestCase):
         )
 
         # Check all fields are present
-        self.assertEqual(result[0]["alternate_identifiers"], "ID1")
+        self.assertEqual(result[0]["alternate_identifiers"], ["ID1"])
         self.assertEqual(result[0]["experiment_accession"], "EXP001")
         self.assertEqual(result[0]["fastqs_loc"], "/path/to/fastqs1")
         self.assertEqual(result[0]["run_accession"], "RUN001")
@@ -1682,7 +1689,7 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertIn("library_prep_plate_info", result[0])
         self.assertEqual(result[0]["library_prep_plate_info"]["plate_col"], 1)
 
-        self.assertEqual(result[1]["alternate_identifiers"], "ID2")
+        self.assertEqual(result[1]["alternate_identifiers"], ["ID2"])
         self.assertEqual(result[1]["experiment_accession"], "EXP002")
         self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs2")
         self.assertEqual(result[1]["run_accession"], "RUN002")

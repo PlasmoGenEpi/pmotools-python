@@ -47,6 +47,8 @@ def library_sample_info_table_to_pmo(
     parasite_density_method_col: str = None,
     run_accession_col: str = None,
     additional_library_sample_info_cols: list | None = None,
+    list_values_library_values: list | None = ["alternate_identifiers"],
+    list_values_library_values_delimiter: str = ",",
 ):
     """
     Converts a DataFrame containing library information into JSON.
@@ -67,6 +69,8 @@ def library_sample_info_table_to_pmo(
     :param parasite_density_method_col (Optional[str or list[str]]): The method of how the density was obtained. If set parasite_density_col must also be specified.
     :param run_accession_col (Optional[str]): Column name for run accession information.
     :param additional_library_sample_info_cols (Optional[List[str], None]]): Additional column names to include.
+    :param list_values_library_values (Optional[List[str], None]): columns that contain values that could be list, are delimited by the argument list_values_library_values_delimiter
+    :param list_values_library_values_delimiter (','): delimiter between list_values_library_values
 
     :return: JSON format where keys are `library_sample_id` and values are corresponding row data.
     """
@@ -146,6 +150,22 @@ def library_sample_info_table_to_pmo(
         "library_sample_name",
         entry_name="parasite_density_info",
     )
+    # listify columns that contain values that could be list, are delimited by the argument list_values_library_values_delimiter
+    primitives = (int, float, str, bool, complex)
+    for col in list_values_library_values:
+        if col in copy_contents.columns:
+            for lib in meta_json:
+                if isinstance(lib[col], str):
+                    lib[col] = lib[col].split(list_values_library_values_delimiter)
+                elif isinstance(lib[col], list):
+                    pass
+                elif isinstance(lib[col], primitives):
+                    lib[col] = [lib[col]]
+                else:
+                    raise ValueError(
+                        f"Column '{col}' must contain either strings or lists of strings."
+                    )
+
     meta_json = remove_optional_null_values(
         meta_json, list(optional_column_mapping.values())
     )
@@ -196,7 +216,7 @@ def specimen_info_table_to_pmo(
         "treatment_status",
         "specimen_taxon_id",
     ],
-    list_values_specimen_columns_delimiter: str = ",",
+    list_values_specimen_values_delimiter: str = ",",
 ):
     """
     Converts a DataFrame containing specimen information into JSON.
@@ -237,8 +257,8 @@ def specimen_info_table_to_pmo(
     :param specimen_type_col (Optional[str]): Type of specimen, e.g. negative_control, positive_control, field_sample
     :param treatment_status_col (Optional[str]): If person has been treated with drugs, what was the treatment outcome
     :param additional_specimen_cols (Optional[List[str], None]]): Additional column names to include
-    :param list_values_specimen_values (Optional[List[str], None]): columns that contain values that could be list, are delimited by the argument list_values_specimen_columns_delimiter
-    :param list_values_specimen_columns_delimiter (','): delimiter between list_values_specimen_values
+    :param list_values_specimen_values (Optional[List[str], None]): columns that contain values that could be list, are delimited by the argument list_values_specimen_values_delimiter
+    :param list_values_specimen_values_delimiter (','): delimiter between list_values_specimen_values
 
     :return: JSON format where keys are `specimen_name_col` and values are corresponding row data.
     """
@@ -371,14 +391,13 @@ def specimen_info_table_to_pmo(
         entry_name="storage_plate_info",
     )
 
-    # listify columns that contain values that could be list, are delimited by the argument list_values_specimen_columns_delimiter
+    # listify columns that contain values that could be list, are delimited by the argument list_values_specimen_values_delimiter
     primitives = (int, float, str, bool, complex)
-
     for col in list_values_specimen_values:
         if col in copy_contents.columns:
             for spec in meta_json:
                 if isinstance(spec[col], str):
-                    spec[col] = spec[col].split(list_values_specimen_columns_delimiter)
+                    spec[col] = spec[col].split(list_values_specimen_values_delimiter)
                 elif isinstance(spec[col], list):
                     pass
                 elif isinstance(spec[col], primitives):
