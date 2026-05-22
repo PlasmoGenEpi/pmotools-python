@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import warnings
 
+from .json_convert_utils import remove_optional_null_values
 from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 
 
@@ -579,6 +580,15 @@ def panel_info_table_to_pmo(
         "panel_info": [panel_dict],
         "target_info": targets_dict,
     }
+    remove_optional_null_values(
+        panel_info_dict["target_info"],
+        ["gene_name", "insert_location", "markers_of_interest", "target_attributes"],
+    )
+
     if genome_info:
         panel_info_dict["targeted_genomes"] = genome_info
+        remove_optional_null_values(
+            panel_info_dict["target_info"], ["chromosomes", "gff_url"]
+        )
+
     return panel_info_dict
