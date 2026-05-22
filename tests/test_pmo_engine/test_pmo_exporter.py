@@ -454,6 +454,67 @@ class TestPMOExporter(unittest.TestCase):
         assert isinstance(df, pd.DataFrame)
         assert len(df) == 0
 
+    def test_build_pmo_sheet_configs_required_sheets_always_present(self):
+        """Required sheets are always included regardless of optional fields."""
+        configs = PMOExporter._build_pmo_sheet_configs(self.small_example_pmo_data)
+        sheet_names = [c.sheet_name for c in configs]
+        required_sheets = [
+            "PMO Header",
+            "Required Panel Targets",
+            "Required Panel Info",
+            "Required Microhaplotype",
+        ]
+        for sheet in required_sheets:
+            self.assertIn(sheet, sheet_names)
+
+    def test_build_pmo_sheet_configs_optional_sheets_excluded_when_absent(self):
+        """Optional sheets are only included when their key exists in the PMO."""
+        configs = PMOExporter._build_pmo_sheet_configs(self.small_example_pmo_data)
+        sheet_names = [c.sheet_name for c in configs]
+        optional_key_sheet_pairs = [
+            ("targeted_genomes", "Optional GenomeInfo"),
+            ("project_info", "Optional ProjectInfo"),
+            ("sequencing_info", "Optional SequencingInfo"),
+            ("bioinformatics_methods_info", "Optional Bioinformatics Methods"),
+            ("bioinformatics_run_info", "Optional Bioinformatics Run"),
+        ]
+        for pmo_key, sheet_name in optional_key_sheet_pairs:
+            if pmo_key not in self.small_example_pmo_data:
+                self.assertNotIn(sheet_name, sheet_names)
+            else:
+                self.assertIn(sheet_name, sheet_names)
+
+    def test_build_pmo_sheet_configs_all_optional_sheets_present_in_combined(self):
+        """All optional sheets appear when the combined (fully-populated) PMO is used."""
+        configs = PMOExporter._build_pmo_sheet_configs(self.combined_pmo_data)
+        sheet_names = [c.sheet_name for c in configs]
+        optional_sheets = [
+            "Optional GenomeInfo",
+            "Optional ProjectInfo",
+            "Optional SequencingInfo",
+            "Optional Bioinformatics Methods",
+            "Optional Bioinformatics Run",
+        ]
+        for sheet in optional_sheets:
+            self.assertIn(sheet, sheet_names)
+
+    def test_export_to_excel_creates_valid_file_with_expected_sheets(self):
+        """export_to_excel writes a valid xlsx file containing all expected sheet names."""
+        output_fnp = os.path.join(self.test_dir.name, "test_export.xlsx")
+        PMOExporter.export_to_excel(self.small_example_pmo_data, output_fnp)
+        self.assertTrue(os.path.exists(output_fnp))
+        written_sheets = pd.ExcelFile(output_fnp).sheet_names
+        expected_sheets = [
+            "PMO Header",
+            "Required Panel Targets",
+            "Required Panel Info",
+            "Required Microhaplotype",
+            "Optional Specimen Level",
+            "Optional LibrarySampleInfo",
+        ]
+        for sheet in expected_sheets:
+            self.assertIn(sheet, written_sheets)
+
 
 if __name__ == "__main__":
     unittest.main()

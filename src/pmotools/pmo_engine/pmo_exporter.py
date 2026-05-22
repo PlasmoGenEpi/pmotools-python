@@ -5,6 +5,8 @@ import os
 from collections import defaultdict
 from typing import NamedTuple
 import pandas as pd
+from openpyxl.utils import get_column_letter
+from dataclasses import dataclass
 
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.pmo_engine.pmo_processor import PMOProcessor
@@ -312,6 +314,37 @@ class PMOExporter(object):
         df = pd.DataFrame(rows)
 
         priority_cols = ["target_name", "forward_primer_seq", "reverse_primer_seq"]
+        leading = [c for c in priority_cols if c in df.columns]
+        rest = sorted(c for c in df.columns if c not in priority_cols)
+
+        return df[leading + rest]
+
+    @staticmethod
+    def export_pmo_header_table(pmodata, separator: str = ",") -> pd.DataFrame:
+        """
+        Export the pmo header meta information of a PMO to a dataframe
+        :param pmodata: the pmo export the information from
+        :param separator: the separator to use for list values
+        :return: a pandas dataframe of the genomes metadata
+        """
+        rows = []
+
+        if "pmo_header" not in pmodata.keys():
+            raise ValueError("no pmo_header found in input PMO")
+        export_row = {}
+        for key, value in pmodata["pmo_header"].items():
+            if "generation_method" == key:
+                export_row["generation_method.program_version"] = value[
+                    "program_version"
+                ]
+                export_row["generation_method.program_name"] = value["program_name"]
+            elif PMOExporter.is_primitive(value):
+                export_row[key] = value
+            elif PMOExporter.is_primitive_list(value):
+                export_row[key] = separator.join(str(v) for v in value)
+        rows.append(export_row)
+        df = pd.DataFrame(rows)
+        priority_cols = ["pmo_version"]
         leading = [c for c in priority_cols if c in df.columns]
         rest = sorted(c for c in df.columns if c not in priority_cols)
 
@@ -785,3 +818,157 @@ class PMOExporter(object):
             columns=["specimen_name", "library_sample_name", "library_sample_count"],
         )
         return df
+
+    @staticmethod
+    def _write_sheet(writer: pd.ExcelWriter, config: "PMOExporter.SheetConfig") -> None:
+        """Write a single DataFrame to an Excel sheet and autofit its columns."""
+        config.df.to_excel(writer, sheet_name=config.sheet_name, index=False)
+        PMOExporter._autofit_columns(
+            writer,
+            config.sheet_name,
+            config.df,
+            specific_cols=config.specific_cols,
+            max_row_check=config.max_row_check,
+        )
+
+    @staticmethod
+    def _autofit_columns(
+        writer: pd.ExcelWriter,
+        sheet_name: str,
+        df: pd.DataFrame,
+        specific_cols: list[str] | None = None,
+        max_row_check: int | None = None,
+    ) -> None:
+        """
+        Auto-adjusts column widths in an Excel worksheet based on content length.
+
+        Args:
+            writer:        The active ExcelWriter instance (post df.to_excel call).
+            sheet_name:    The name of the worksheet to adjust.
+            df:            The DataFrame that was written to the sheet.
+            specific_cols: Optional list of column names to adjust. If None, all columns are adjusted.
+            max_row_check: Optional max number of rows to sample when calculating width.
+                           Always includes the header regardless of this value.
+                           If None, all rows are checked.
+        """
+        worksheet = writer.sheets[sheet_name]
+        columns = specific_cols if specific_cols is not None else list(df.columns)
+
+        for column in columns:
+            col_idx = df.columns.get_loc(column) + 1
+            sample = (
+                df[column] if max_row_check is None else df[column].iloc[:max_row_check]
+            )
+            max_length = max(
+                sample.astype(str).map(len).max() if len(sample) > 0 else 0,
+                len(str(column)),
+            )
+            col_letter = get_column_letter(col_idx)
+            worksheet.column_dimensions[col_letter].width = max_length + 1
+
+    @dataclass
+    class SheetConfig:
+        """Configuration for writing a DataFrame to an Excel sheet."""
+
+        sheet_name: str
+        df: pd.DataFrame
+        max_row_check: int | None = None
+        specific_cols: list[str] | None = None
+
+    @staticmethod
+    def _build_pmo_sheet_configs(pmo) -> "list[PMOExporter.SheetConfig]":
+        """
+        Build the ordered list of SheetConfigs to export from a PMO object.
+        Optional sheets are included only if their key is present in pmo.
+        """
+        sheet_conf = PMOExporter.SheetConfig
+
+        sheets = [
+            sheet_conf("PMO Header", PMOExporter.export_pmo_header_table(pmo)),
+            sheet_conf(
+                "Required Panel Targets", PMOExporter.export_target_info_meta_table(pmo)
+            ),
+            sheet_conf(
+                "Required Panel Info", PMOExporter.export_panel_info_meta_table(pmo)
+            ),
+        ]
+
+        if "targeted_genomes" in pmo:
+            sheets.append(
+                sheet_conf(
+                    "Optional GenomeInfo",
+                    PMOExporter.export_targeted_genomes_meta_table(pmo),
+                )
+            )
+
+        sheets.append(
+            sheet_conf(
+                "Required Microhaplotype",
+                # @todo add in the optional fields of the detected_microhaplotypes and representative_microhaplotypes
+                PMOExporter.extract_alleles_per_sample_table(
+                    pmo,
+                    additional_microhap_fields=["reads"],
+                    additional_representative_info_fields=["seq"],
+                ),
+                max_row_check=10,
+            )
+        )
+        sheets.append(
+            sheet_conf(
+                "Optional Specimen Level",
+                PMOExporter.export_specimen_meta_table(pmo),
+                max_row_check=10,
+            )
+        )
+
+        sheets.append(
+            sheet_conf(
+                "Optional LibrarySampleInfo",
+                PMOExporter.export_library_sample_meta_table(pmo),
+                max_row_check=10,
+            )
+        )
+
+        if "project_info" in pmo:
+            sheets.append(
+                sheet_conf(
+                    "Optional ProjectInfo",
+                    PMOExporter.export_project_info_meta_table(pmo),
+                )
+            )
+        if "sequencing_info" in pmo:
+            sheets.append(
+                sheet_conf(
+                    "Optional SequencingInfo",
+                    PMOExporter.export_sequencing_info_meta_table(pmo),
+                )
+            )
+        if "bioinformatics_methods_info" in pmo:
+            sheets.append(
+                sheet_conf(
+                    "Optional Bioinformatics Methods",
+                    PMOExporter.export_bioinformatics_methods_info_meta_table(pmo),
+                )
+            )
+        if "bioinformatics_run_info" in pmo:
+            sheets.append(
+                sheet_conf(
+                    "Optional Bioinformatics Run",
+                    PMOExporter.export_bioinformatics_run_info_meta_table(pmo),
+                )
+            )
+
+        return sheets
+
+    @staticmethod
+    def export_to_excel(pmo, output_path: str) -> None:
+        """
+        Export a PMO object to a multi-sheet Excel file.
+
+        Args:
+            pmo:         The PMO object to export.
+            output_path: The path to write the Excel file to.
+        """
+        with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
+            for config in PMOExporter._build_pmo_sheet_configs(pmo):
+                PMOExporter._write_sheet(writer, config)

@@ -4,7 +4,7 @@ A collection of tools to interact with [portable microhaplotype object (pmo) fil
 
 # Setup
 
-Install using pip
+Install using pip. Currently only supports python 3.11+
 ```bash
 pip install .
 ```

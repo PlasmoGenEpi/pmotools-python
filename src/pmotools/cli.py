@@ -75,6 +75,9 @@ from pmotools.scripts.pmo_to_tables.extract_refseq_of_inserts_of_panels import (
 
 # pmo to tables
 
+from pmotools.scripts.pmo_to_tables.export_pmo_into_xlsx import (
+    export_pmo_into_xlsx,
+)
 from pmotools.scripts.pmo_to_tables.export_specimen_meta_table import (
     export_specimen_meta_table,
 )
@@ -183,6 +186,9 @@ REGISTRY: Dict[str, Dict[str, PmoCommand]] = {
         )
     },
     "pmo_to_table": {
+        "export_pmo_into_xlsx": PmoCommand(
+            export_pmo_into_xlsx, "export all parts of a PMO into a .xlsx file"
+        ),
         "export_specimen_meta_table": PmoCommand(
             export_specimen_meta_table, "export the specimen meta table from a PMO file"
         ),

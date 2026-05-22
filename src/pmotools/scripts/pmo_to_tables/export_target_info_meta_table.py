@@ -45,7 +45,7 @@ def export_target_info_meta_table():
     # read in PMO
     pmo = PMOReader.read_in_pmo(args.file)
 
-    # count fields
+    # target info dataframe
     info_df = PMOExporter.export_target_info_meta_table(pmo)
 
     # output
