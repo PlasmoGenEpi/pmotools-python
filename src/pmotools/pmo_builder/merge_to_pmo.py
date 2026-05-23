@@ -20,7 +20,7 @@ def _convert_numpy_scalars(obj):
 
 def merge_to_pmo(
     mhap_info: dict,
-    panel_and_target_info: dict,
+    panel_target_info: dict,
     specimen_info: list | None = None,
     library_sample_info: list | None = None,
     sequencing_info: list | None = None,
@@ -32,22 +32,24 @@ def merge_to_pmo(
     """
     Merge components into PMO, replacing names with indeces.
 
+    The required input are mhap_info (must have fields:detected_microhaplotypes and representative_microhaplotypes) and panel_target_info (must have fields: target_info and panel_info). If no library_sample_info or specimen_info are provided, they will be automatically generated from the detected_microhaplotypes. Is also possible to provide only specimen_info or library_sample_info but their names must match up with the detected_microhaplotypes names.
+
     :param mhap_info (dict) : a dictionary containing the microhaplotypes within this project, both detected and representative, must contain fields detected_microhaplotypes and representative_microhaplotypes
-    :param panel_and_target_info (dict) : a dictionary containing the panel and target information for this project, must contain fields target_info and panel_info
-    :param specimen_info (list): a list of all the specimens within this project
-    :param library_sample_info (list) : a list of library samples within this project
-    :param sequencing_info (list) : a list of sequencing info for this project
-    :param bioinfo_method_info (list) : the bioinformatics pipeline/methods used to generated the amplicon analysis for this project
-    :param bioinfo_run_info (list) : the runtime info for the bioinformatics pipeline used to generated the amplicon analysis for this project
-    :param project_info (list) : the information about the projects stored in this PMO
+    :param panel_target_info (dict) : a dictionary containing the panel and target information for this project, must contain fields target_info and panel_info
+    :param specimen_info (Optional[list]): a list of all the specimens within this project
+    :param library_sample_info ((Optional[list]) : a list of library samples within this project
+    :param sequencing_info (Optional[list]) : a list of sequencing info for this project
+    :param bioinfo_method_info (Optional[list]) : the bioinformatics pipeline/methods used to generated the amplicon analysis for this project
+    :param bioinfo_run_info (Optional[list]) : the runtime info for the bioinformatics pipeline used to generated the amplicon analysis for this project
+    :param project_info (Optional[list]) : the information about the projects stored in this PMO
     :param read_counts_by_stage_info (Optional[list]) : the read counts by stage information for this project
 
     :return: a json formatted PMO string.
     """
     missing_fields = []
-    if "panel_info" not in panel_and_target_info:
+    if "panel_info" not in panel_target_info:
         missing_fields.append("panel_info")
-    if "target_info" not in panel_and_target_info:
+    if "target_info" not in panel_target_info:
         missing_fields.append("target_info")
     if "representative_microhaplotypes" not in mhap_info:
         missing_fields.append("representative_microhaplotypes")
@@ -55,7 +57,7 @@ def merge_to_pmo(
         missing_fields.append("detected_microhaplotypes")
     if missing_fields:
         raise ValueError(
-            f"Missing required fields for panel_and_target_info or mhap_info: {missing_fields}"
+            f"Missing required fields for panel_target_info or mhap_info: {missing_fields}"
         )
 
     if bioinfo_run_info is not None and bioinfo_method_info is None:
@@ -63,18 +65,42 @@ def merge_to_pmo(
             "bioinfo_method_info must be provided if bioinfo_run_info is provided"
         )
     if specimen_info is not None and library_sample_info is None:
-        raise ValueError(
-            "library_sample_info must be provided if specimen_info is provided"
+        spec_and_lib_info = create_minimum_library_specimen_dict_from_mhap_table(
+            mhap_info["detected_microhaplotypes"],
+            panel_target_info["panel_info"][0]["panel_name"],
         )
+        library_sample_info = spec_and_lib_info["library_sample_info"]
+
+        # Validate that library_sample_info and specimen_info have matching names
+        library_sample_names = {
+            item["library_sample_name"] for item in library_sample_info
+        }
+        specimen_names = {item["specimen_name"] for item in specimen_info}
+
+        # Check for names in library_sample_info that are not in specimen_info
+        missing_in_specimen = library_sample_names - specimen_names
+        if missing_in_specimen:
+            raise ValueError(
+                f"library_sample_names found in the detected_microhaplotypes that don't have corresponding supplied specimen_names: {sorted(missing_in_specimen)}"
+            )
+
+        # Check for names in specimen_info that are not in library_sample_info
+        missing_in_library = specimen_names - library_sample_names
+        if missing_in_library:
+            raise ValueError(
+                f"specimen_name were supplied that don't have corresponding library_sample_names in detected_microhaplotypes: {sorted(missing_in_library)}"
+            )
+
+        # names match, so the supplied specimen_info names will match up with the names in library_sample_info
     if specimen_info is None and library_sample_info is None:
-        if len(panel_and_target_info["panel_info"]) > 1:
+        if len(panel_target_info["panel_info"]) > 1:
             raise Exception(
-                "If providing only microhaplotypes, but not specimen_info or library_sample_info have to have only 1 panel to default to, found "
-                + str(len(panel_and_target_info["panel_info"]))
+                "If multiple panels are included in the panel information,specimen_info and library_sample_info must also be provided to indicate which panel was used for each specimen. Otherwise, provide only a single panel. Panels found: "
+                + str(len(panel_target_info["panel_info"]))
             )
         spec_and_lib_info = create_minimum_library_specimen_dict_from_mhap_table(
             mhap_info["detected_microhaplotypes"],
-            panel_and_target_info["panel_info"][0]["panel_name"],
+            panel_target_info["panel_info"][0]["panel_name"],
         )
         specimen_info = spec_and_lib_info["specimen_info"]
         library_sample_info = spec_and_lib_info["library_sample_info"]
@@ -92,7 +118,7 @@ def merge_to_pmo(
                 for library_sample in library_sample_info
             ]
 
-    panel_and_target_info = _convert_numpy_scalars(panel_and_target_info)
+    panel_target_info = _convert_numpy_scalars(panel_target_info)
     mhap_info = _convert_numpy_scalars(mhap_info)
     # optional
     if sequencing_info is not None:
@@ -122,7 +148,7 @@ def merge_to_pmo(
         project_info=project_info,
         library_sample_info=library_sample_info,
         sequencing_info=sequencing_info,
-        panel_and_target_info=panel_and_target_info,
+        panel_target_info=panel_target_info,
         mhap_info=mhap_info,
         bioinfo_run_info=bioinfo_run_info,
         read_counts_by_stage_info=read_counts_by_stage_info,
@@ -136,7 +162,7 @@ def merge_to_pmo(
             "library_sample_info": library_sample_info,
             "specimen_info": specimen_info,
         }
-        | panel_and_target_info
+        | panel_target_info
         | mhap_info
     )
 
@@ -244,7 +270,7 @@ def _report_missing_IDs(
 
 def _replace_names_with_IDs(
     specimen_info: list,
-    panel_and_target_info: dict,
+    panel_target_info: dict,
     mhap_info: dict,
     project_info: list | None = None,
     library_sample_info: list | None = None,
@@ -268,7 +294,7 @@ def _replace_names_with_IDs(
     )
     missing_panels = _replace_key_with_id(
         library_sample_info,
-        panel_and_target_info["panel_info"],
+        panel_target_info["panel_info"],
         "panel_name",
         "panel_id",
     )
@@ -286,7 +312,7 @@ def _replace_names_with_IDs(
     # replace target_name with ID
     missing_targets = _replace_key_with_id(
         mhap_info["representative_microhaplotypes"]["targets"],
-        panel_and_target_info["target_info"],
+        panel_target_info["target_info"],
         "target_name",
         "target_id",
     )
@@ -318,7 +344,7 @@ def _replace_names_with_IDs(
     missing_read_counts_bioinfo_runs = []
     missing_read_counts_libs = []
     missing_read_counts_targets = []
-    target_lookup = _make_lookup(panel_and_target_info["target_info"], "target_name")
+    target_lookup = _make_lookup(panel_target_info["target_info"], "target_name")
     if read_counts_by_stage_info is not None:
         if bioinfo_run_info is not None:
             # Replace bioinformatics_run_name with bioinformatics_run_id

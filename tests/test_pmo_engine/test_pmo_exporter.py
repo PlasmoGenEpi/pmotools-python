@@ -107,7 +107,8 @@ class TestPMOExporter(unittest.TestCase):
 
     def test_extract_alleles_per_sample_table(self):
         allele_data = PMOExporter.extract_alleles_per_sample_table(
-            self.combined_pmo_data
+            self.combined_pmo_data,
+            additional_microhap_fields=["mhap_id"],
         ).sort_values(
             by=[
                 "bioinformatics_run_name",
@@ -120,12 +121,10 @@ class TestPMOExporter(unittest.TestCase):
             self.test_dir.name, "extracted_alleles_per_sample_table_no_extra_args.csv"
         )
         allele_data.to_csv(output_fnp, index=False)
-        self.assertEqual("1a818a371bfc770cdad1c86ec6e681ea", md5sum_of_fnp(output_fnp))
+        self.assertEqual("0c9df242c0f990682b32e8211bfa198c", md5sum_of_fnp(output_fnp))
 
         allele_data_with_seq_reads = PMOExporter.extract_alleles_per_sample_table(
-            self.combined_pmo_data,
-            additional_microhap_fields=["reads"],
-            additional_representative_info_fields=["seq"],
+            self.combined_pmo_data, additional_microhap_fields=["reads", "mhap_id"]
         ).sort_values(
             by=[
                 "bioinformatics_run_name",
@@ -139,13 +138,12 @@ class TestPMOExporter(unittest.TestCase):
             "extracted_alleles_per_sample_table_no_extra_args_with_seq_reads.csv",
         )
         allele_data_with_seq_reads.to_csv(output_fnp, index=False)
-        self.assertEqual("cb1a2e599bfe728441a8ecfb06da94d9", md5sum_of_fnp(output_fnp))
+        self.assertEqual("742c2c40546bdb25d1e2d517174120bb", md5sum_of_fnp(output_fnp))
 
         allele_data_with_seq_reads_panel_id_collection_country = (
             PMOExporter.extract_alleles_per_sample_table(
                 self.combined_pmo_data,
-                additional_microhap_fields=["reads"],
-                additional_representative_info_fields=["seq"],
+                additional_microhap_fields=["reads", "mhap_id"],
                 additional_library_sample_info_fields=["panel_id"],
                 additional_specimen_info_fields=["collection_country"],
             ).sort_values(
@@ -164,11 +162,12 @@ class TestPMOExporter(unittest.TestCase):
         allele_data_with_seq_reads_panel_id_collection_country.to_csv(
             output_fnp, index=False
         )
-        self.assertEqual("7eba9420a002606d3c0501b8641c8e17", md5sum_of_fnp(output_fnp))
+        self.assertEqual("189f1c73418c3cb85fcec2a736ff23b9", md5sum_of_fnp(output_fnp))
 
     def test_extract_alleles_per_sample_table_minimum_fields_pmo_input(self):
         allele_data = PMOExporter.extract_alleles_per_sample_table(
-            self.minimum_fields_v1_1_0_pmo_data
+            self.minimum_fields_v1_1_0_pmo_data,
+            additional_microhap_fields=["mhap_id"],
         ).sort_values(
             by=[
                 "bioinformatics_run_name",
@@ -182,12 +181,11 @@ class TestPMOExporter(unittest.TestCase):
             "extracted_alleles_per_sample_table_no_extra_args_on_minimum_fields_pmo.csv",
         )
         allele_data.to_csv(output_fnp, index=False)
-        self.assertEqual("0f4a023f049a8c0e3544e68daaf9c2c0", md5sum_of_fnp(output_fnp))
+        self.assertEqual("cd016ab8d619328b32f11506b908e05f", md5sum_of_fnp(output_fnp))
 
         allele_data_with_seq_reads = PMOExporter.extract_alleles_per_sample_table(
             self.minimum_fields_v1_1_0_pmo_data,
-            additional_microhap_fields=["reads"],
-            additional_representative_info_fields=["seq"],
+            additional_microhap_fields=["reads", "mhap_id"],
         ).sort_values(
             by=[
                 "bioinformatics_run_name",
@@ -201,7 +199,7 @@ class TestPMOExporter(unittest.TestCase):
             "extracted_alleles_per_sample_table_no_extra_args_with_seq_reads_on_minimum_fields_pmo.csv",
         )
         allele_data_with_seq_reads.to_csv(output_fnp, index=False)
-        self.assertEqual("faab1121588a1a794c4e695da6799532", md5sum_of_fnp(output_fnp))
+        self.assertEqual("2810b465c005d4c1acbed12856ddfd26", md5sum_of_fnp(output_fnp))
 
     def test_export_specimen_meta_table(self):
         spec_table = PMOExporter.export_specimen_meta_table(self.small_example_pmo_data)

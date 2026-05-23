@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import sys
 
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
@@ -88,7 +89,7 @@ def parse_args_extract_for_allele_table():
       %(prog)s --file input.pmo --output output.tsv
       %(prog)s --file input.pmo.gz --output output.tsv --delim comma
       %(prog)s --file input.pmo --output output.tsv --allele_freqs_output freqs.tsv --overwrite
-      %(prog)s --file input.pmo --output output.tsv --microhap_fields reads --representative_haps_fields seq
+      %(prog)s --file input.pmo --output output.tsv --microhap_fields reads,mhap_id
       %(prog)s --file input.pmo --output output.tsv --specimen_info_meta_fields collection_date,collection_country
     """
     parser.formatter_class = argparse.RawDescriptionHelpFormatter
@@ -129,6 +130,7 @@ def extract_for_allele_table():
             checker = PMOChecker(schema_dict)
             # make sure PMO is valid
             checker.validate_pmo_json(pmodata)
+            sys.stderr.write("PMO is valid\n")
 
     if args.specimen_info_meta_fields is not None:
         args.specimen_info_meta_fields = Utils.parse_delimited_input_or_file(

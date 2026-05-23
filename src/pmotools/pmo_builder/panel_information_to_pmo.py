@@ -495,9 +495,9 @@ def panel_info_table_to_pmo(
     :param target_table: The dataframe containing the target information
     :param panel_name: the panel ID assigned to the panel
     :param genome_info: a dictionary containing reference genome information, needed if the target info contains genome location
-    :param target_name_col: the name of the column containing the target IDs
-    :param forward_primers_seq_col: the name of the column containing the sequence of the forward primer
-    :param reverse_primers_seq_col: the name of the column containing the sequence of the reverse primer
+    :param target_name_col: the name of the column containing the target IDs. Default: target_name
+    :param forward_primers_seq_col: the name of the column containing the sequence of the forward primer. Default: fwd_primer
+    :param reverse_primers_seq_col: the name of the column containing the sequence of the reverse primer. Default: rev_primer
     :param reaction_name_col(Optional): the name of the column containing which reaction the target was part of. By default they will all be put in one reaction.
     :param reaction_name_col_delimiter (Optional): the delimiter used to split the reaction name column into multiple reactions. Default is a comma.
     :param forward_primers_start_col (Optional): the name of the column containing the 0-based start coordinate of the forward primer

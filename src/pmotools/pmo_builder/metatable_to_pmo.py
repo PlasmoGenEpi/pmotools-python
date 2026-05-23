@@ -32,9 +32,9 @@ def pandas_table_to_json(contents: pd.DataFrame, return_indexed_dict: bool = Fal
 
 def library_sample_info_table_to_pmo(
     contents: pd.DataFrame,
-    library_sample_name_col: str = None,
-    specimen_name_col: str = None,
-    panel_name_col: str = None,
+    library_sample_name_col: str = "library_sample_name",
+    specimen_name_col: str = "specimen_name",
+    panel_name_col: str = "panel_name",
     sequencing_info_name_col: str = None,
     alternate_identifiers_col: str = None,
     experiment_accession_col: str = None,
@@ -57,7 +57,7 @@ def library_sample_info_table_to_pmo(
     :param library_sample_name_col (str): Column name for library sample names. Default: library_sample_name
     :param specimen_name_col (str): Column name for specimen IDs. Default: specimen_name
     :param panel_name_col (str): Column name for panel IDs. Default: panel_name
-    :param sequencing_info_name_col (Optional[str]): Column name for sequencing information names. Default: sequencing_info_name
+    :param sequencing_info_name_col (Optional[str]): Column name for sequencing information names
     :param alternate_identifiers_col (Optional[str]): Column name for alternate identifiers.
     :param experiment_accession_col (Optional[str]): Column name for experiment accession information.
     :param fastqs_loc_col (Optional[str]): Column name for location of fastqs.
@@ -223,11 +223,11 @@ def specimen_info_table_to_pmo(
 
     :param contents (pd.DataFrame): The input DataFrame containing library data.
     :param specimen_name_col (string): The column name for specimen sample IDs. Default: specimen_id
-    :param specimen_taxon_id_col (Optional[str]): NCBI taxonomy number of the organism. Default: samp_taxon_id
-    :param host_taxon_id_col (Optional[str]): NCBI taxonomy number of the host. Default: host_taxon_id
-    :param collection_date_col (Optional[str]): Date of the sample collection. Default: collection_date
-    :param collection_country_col (Optional[str]): Name of country collected in (admin level 0). Default : collection_country
-    :param project_name_col (Optional[str]): Name of the project. Default : project_name
+    :param specimen_taxon_id_col (Optional[str]): NCBI taxonomy number of the organism.
+    :param host_taxon_id_col (Optional[str]): NCBI taxonomy number of the host.
+    :param collection_date_col (Optional[str]): Date of the sample collection.
+    :param collection_country_col (Optional[str]): Name of country collected in (admin level 0).
+    :param project_name_col (Optional[str]): Name of the project.
     :param alternate_identifiers_col (Optional[str]): List of optional alternative names for the samples
     :param blood_meal_col (Optional[str]): Whether host specimen has had a recent blood meal
     :param drug_usage_col (Optional[str]): Any drug used by subject and the frequency of usage; can include multiple drugs used

@@ -63,7 +63,7 @@ def test_minimal_pmo_creation():
     no_spec_meta_pmo = merge_to_pmo(
         specimen_info=lib_and_spec_infos["specimen_info"],
         library_sample_info=lib_and_spec_infos["library_sample_info"],
-        panel_and_target_info=panel_and_target_info,
+        panel_target_info=panel_and_target_info,
         mhap_info=mhap_info,
     )
 
@@ -123,7 +123,7 @@ def test_minimal_pmo_creation():
             lib_and_spec_infos["specimen_info"], specimen_info, "specimen_name"
         ),
         library_sample_info=lib_and_spec_infos["library_sample_info"],
-        panel_and_target_info=panel_and_target_info,
+        panel_target_info=panel_and_target_info,
         mhap_info=mhap_info,
     )
 

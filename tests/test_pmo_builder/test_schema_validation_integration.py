@@ -276,7 +276,7 @@ def test_full_1_0_0_toy_pmo_validates_against_schema():
         specimen_info=specimen_info,
         library_sample_info=library_sample_info,
         sequencing_info=sequencing_info,
-        panel_and_target_info=panel_info,
+        panel_target_info=panel_info,
         mhap_info=mhap_info,
         bioinfo_method_info=bioinfo_methods_info,
         bioinfo_run_info=bioinfo_run_info,
@@ -492,7 +492,7 @@ def test_slimer_1_1_0_toy_pmo_validates_against_schema():
     pmo = merge_to_pmo(
         specimen_info=specimen_info,
         library_sample_info=library_sample_info,
-        panel_and_target_info=panel_info,
+        panel_target_info=panel_info,
         mhap_info=mhap_info,
     )
     # Load the schema and validate using PMOChecker

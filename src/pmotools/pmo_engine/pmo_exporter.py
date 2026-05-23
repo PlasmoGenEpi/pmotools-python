@@ -574,7 +574,7 @@ class PMOExporter(object):
         default_base_col_names: list[str] = [
             "library_sample_name",
             "target_name",
-            "mhap_id",
+            "seq",
         ],
         jsonschema_fnp=os.path.join(
             os.path.dirname(
@@ -593,7 +593,7 @@ class PMOExporter(object):
         :param additional_library_sample_info_fields: any additional fields to write from the library_samples object
         :param additional_microhap_fields: any additional fields to write from the microhap object
         :param additional_representative_info_fields: any additional fields to write from the representative_microhaplotype_sequences object
-        :param default_base_col_names: The default column name for the sample, locus and allele
+        :param default_base_col_names: The default column name for the library_sample_name, target_name and seq
         :param jsonschema_fnp: path to the jsonschema schema file to validate the PMO against
         :param validate_pmo: whether to validate the PMO with a jsonschema
         :return: pandas dataframe
@@ -671,12 +671,14 @@ class PMOExporter(object):
         # samples without this meta field will have NA
         if additional_representative_info_fields is not None:
             # Find meta fields that have at least some data
+            # not add seq as it's being added by default, so don't output twice
             additional_microhap_fields_with_data = {
                 additional_microhap_field
                 for additional_microhap_field in additional_representative_info_fields
                 for target_data in pmodata["representative_microhaplotypes"]["targets"]
                 for microhap_data in target_data["microhaplotypes"]
                 if additional_microhap_field in microhap_data
+                and additional_microhap_field != "seq"
             }
             # Determine meta fields with no samples having data
             additional_microhap_fields_with_no_samples = (
@@ -729,12 +731,13 @@ class PMOExporter(object):
                         rep_hap_meta = rep_haps[target_data["mhaps_target_id"]][
                             "microhaplotypes"
                         ][allele_id]
+
                         row = {
                             default_base_col_names[0]: library_meta[
                                 "library_sample_name"
                             ],
                             default_base_col_names[1]: target_name,
-                            default_base_col_names[2]: allele_id,
+                            default_base_col_names[2]: rep_hap_meta["seq"],
                         }
                         if (
                             bioinformatics_run_names is not None
@@ -906,9 +909,7 @@ class PMOExporter(object):
                 "Required Microhaplotype",
                 # @todo add in the optional fields of the detected_microhaplotypes and representative_microhaplotypes
                 PMOExporter.extract_alleles_per_sample_table(
-                    pmo,
-                    additional_microhap_fields=["reads"],
-                    additional_representative_info_fields=["seq"],
+                    pmo, additional_microhap_fields=["reads"]
                 ),
                 max_row_check=10,
             )

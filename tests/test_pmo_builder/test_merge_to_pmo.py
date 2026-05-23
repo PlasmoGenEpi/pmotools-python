@@ -31,6 +31,35 @@ class TestMergeToPMO(unittest.TestCase):
                 "program_version": "1.1.0",
             },
         }
+        self.for_merging_spec_info_panel_info = {
+            "panel_info": [{"panel_name": "panel1"}],
+            "target_info": [{"target_name": "target1"}],
+        }
+        self.for_merging_spec_info_mhap_info = {
+            "representative_microhaplotypes": {
+                "targets": [{"target_name": "target1", "microhaplotypes": []}]
+            },
+            "detected_microhaplotypes": [
+                {
+                    "library_samples": [
+                        {"library_sample_name": "samp_A", "target_results": []},
+                        {"library_sample_name": "samp_B", "target_results": []},
+                    ]
+                }
+            ],
+        }
+        self.for_merging_spec_info_specimen_info = [
+            {
+                "specimen_name": "samp_A",
+                "collection_country": "Mozambique",
+                "collection_date": "2022-01-01",
+            },
+            {
+                "specimen_name": "samp_B",
+                "collection_country": "Kenya",
+                "collection_date": "2022-02-01",
+            },
+        ]
 
     def test_report_missing_IDs_passes(self):
         _report_missing_IDs(
@@ -117,7 +146,7 @@ class TestMergeToPMO(unittest.TestCase):
             specimen_info=specimen_info,
             library_sample_info=library_sample_info,
             sequencing_info=sequencing_info,
-            panel_and_target_info=panel_info,
+            panel_target_info=panel_info,
             mhap_info=mhap_info,
             bioinfo_method_info=bioinfo_method_info,
             bioinfo_run_info=bioinfo_run_info,
@@ -163,7 +192,7 @@ class TestMergeToPMO(unittest.TestCase):
         }
 
         result = merge_to_pmo(
-            panel_and_target_info=panel_info,
+            panel_target_info=panel_info,
             mhap_info=mhap_info,
         )
 
@@ -215,7 +244,7 @@ class TestMergeToPMO(unittest.TestCase):
         }
 
         result = merge_to_pmo(
-            panel_and_target_info=panel_info,
+            panel_target_info=panel_info,
             mhap_info=mhap_info,
             library_sample_info=library_sample_info,
         )
@@ -241,36 +270,6 @@ class TestMergeToPMO(unittest.TestCase):
             sorted(["samp_A", "samp_B"]),
         )
 
-    def test_merge_to_pmo_minimum_info_raise_spec_but_no_lib(self):
-        panel_info = {
-            "panel_info": [{"panel_name": "panel1"}, {"panel_name": "panel2"}],
-            "target_info": [{"target_name": "target1"}],
-        }
-        specimen_info = [{"specimen_name": "samp_A"}, {"specimen_name": "samp_B"}]
-        mhap_info = {
-            "representative_microhaplotypes": {
-                "targets": [{"target_name": "target1", "microhaplotypes": []}]
-            },
-            "detected_microhaplotypes": [
-                {
-                    "library_samples": [
-                        {"library_sample_name": "samp_A", "target_results": []},
-                        {"library_sample_name": "samp_B", "target_results": []},
-                    ]
-                }
-            ],
-        }
-        with self.assertRaises(ValueError) as context:
-            merge_to_pmo(
-                panel_and_target_info=panel_info,
-                mhap_info=mhap_info,
-                specimen_info=specimen_info,
-            )
-        self.assertIn(
-            "library_sample_info must be provided if specimen_info is provided",
-            str(context.exception),
-        )
-
     def test_merge_to_pmo_minimum_info_raise_multi_panel_no_lib(self):
         panel_info = {
             "panel_info": [{"panel_name": "panel1"}, {"panel_name": "panel2"}],
@@ -290,9 +289,9 @@ class TestMergeToPMO(unittest.TestCase):
             ],
         }
         with self.assertRaises(Exception) as context:
-            merge_to_pmo(panel_and_target_info=panel_info, mhap_info=mhap_info)
+            merge_to_pmo(panel_target_info=panel_info, mhap_info=mhap_info)
         self.assertIn(
-            "If providing only microhaplotypes, but not specimen_info or library_sample_info have to have only 1 panel to default to, found",
+            "If multiple panels are included in the panel information,specimen_info and library_sample_info",
             str(context.exception),
         )
 
@@ -363,7 +362,7 @@ class TestMergeToPMO(unittest.TestCase):
             specimen_info=[{"specimens": "specinfo"}],
             library_sample_info=[{"library_samples": "library_samples"}],
             sequencing_info=[{"sequencing": "sequencing"}],
-            panel_and_target_info={
+            panel_target_info={
                 "panel_info": ["panels"],
                 "target_info": ["targets"],
             },
@@ -390,6 +389,72 @@ class TestMergeToPMO(unittest.TestCase):
             "detected_microhaplotypes": ["mhaps for sample"],
         }
         self.assertEqual(expected, actual)
+
+    def test_merge_to_pmo_specimen_info_matching_names_passes(self):
+        """merge_to_pmo succeeds and output library_sample_info names match provided specimen names."""
+        result = merge_to_pmo(
+            panel_target_info=self.for_merging_spec_info_panel_info,
+            mhap_info=self.for_merging_spec_info_mhap_info,
+            specimen_info=self.for_merging_spec_info_specimen_info,
+        )
+        expected_names = {
+            s["specimen_name"] for s in self.for_merging_spec_info_specimen_info
+        }
+        output_names = {s["library_sample_name"] for s in result["library_sample_info"]}
+        assert output_names == expected_names
+
+    def test_merge_to_pmo_specimen_info_missing_names_raises(self):
+        """Raises ValueError when specimen_info is missing names that exist in detected_microhaplotypes."""
+        incomplete_specimen_info = [
+            {
+                "specimen_name": "samp_A",
+                "collection_country": "Mozambique",
+                "collection_date": "2022-01-01",
+            },
+            # samp_B is missing
+        ]
+        with self.assertRaises(ValueError) as context:
+            merge_to_pmo(
+                panel_target_info=self.for_merging_spec_info_panel_info,
+                mhap_info=self.for_merging_spec_info_mhap_info,
+                specimen_info=incomplete_specimen_info,
+            )
+        self.assertIn("samp_B", str(context.exception))
+        self.assertIn(
+            "library_sample_names found in the detected_microhaplotypes that don't have corresponding supplied specimen_names",
+            str(context.exception),
+        )
+
+    def test_merge_to_pmo_specimen_info_extra_names_raises(self):
+        """Raises ValueError when specimen_info has names not present in detected_microhaplotypes."""
+        excess_specimen_info = [
+            {
+                "specimen_name": "samp_A",
+                "collection_country": "Mozambique",
+                "collection_date": "2022-01-01",
+            },
+            {
+                "specimen_name": "samp_B",
+                "collection_country": "Kenya",
+                "collection_date": "2022-02-01",
+            },
+            {
+                "specimen_name": "samp_C",
+                "collection_country": "Ghana",
+                "collection_date": "2022-03-01",
+            },
+        ]
+        with self.assertRaises(ValueError) as context:
+            merge_to_pmo(
+                panel_target_info=self.for_merging_spec_info_panel_info,
+                mhap_info=self.for_merging_spec_info_mhap_info,
+                specimen_info=excess_specimen_info,
+            )
+        self.assertIn("samp_C", str(context.exception))
+        self.assertIn(
+            "specimen_name were supplied that don't have corresponding library_sample_names",
+            str(context.exception),
+        )
 
 
 if __name__ == "__main__":
