@@ -127,16 +127,20 @@ git push origin feature/my-feature
 
 ### Documentation updating
 
-To update the documentation after changes to code or docstrings, run:
+Documentation for pmotools is automatically generated from docstring under `man/`. This is automatically built and deployed through GitHub actions on merging to main.
 
-Do need to install sphinx and its dependencies. In your developmental environment run
+You should check documentation before deployment. To update the documentation locally make sure you have pmotools-python installed.
+
+Next, from your development environment, install sphinx and its dependencies using the following command:
 
 ```bash
 pip install -r man/requirements.txt
 ```
 
+Build the documentation using the following commands
 ```bash
 cd man
 make update_autodocs
 make html
 ```
+You can open the html to review changes.
