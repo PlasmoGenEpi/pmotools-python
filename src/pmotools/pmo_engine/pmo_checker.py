@@ -1,7 +1,60 @@
 #!/usr/bin/env python3
 
-
 from jsonschema import Draft7Validator, validate
+import json
+import importlib.resources as resources
+from pmotools import __schema_version__
+
+
+def load_schema(name: str) -> dict:
+    """
+    Load a JSON schema from the pmotools.schemas package.
+
+    Parameters
+    ----------
+    name : str
+        The filename of the schema (e.g. "pmo_schema.json").
+
+    Returns
+    -------
+    dict
+        Parsed JSON schema as a Python dictionary.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the schema file does not exist.
+    json.JSONDecodeError
+        If the schema file is not valid JSON.
+    """
+    with resources.files("pmotools.schemas").joinpath(name).open(
+        "r", encoding="utf-8"
+    ) as f:
+        return json.load(f)
+
+
+def load_schema_by_version(version: str) -> dict:
+    """
+    Load a JSON schema from the pmotools.schemas package.
+
+    Parameters
+    ----------
+    version : str
+        The version of the schema to be loaded (e.g. "1.0.0", "1.1.0").
+
+    Returns
+    -------
+    dict
+        Parsed JSON schema as a Python dictionary.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the schema file does not exist.
+    json.JSONDecodeError
+        If the schema file is not valid JSON.
+    """
+    return load_schema(f"portable_microhaplotype_object_v{version}.schema.json")
 
 
 class PMOChecker:
@@ -9,7 +62,7 @@ class PMOChecker:
     A class to house utilities to help check the formatting of read in PMO files.
     """
 
-    def __init__(self, pmo_jsonschema: dict):
+    def __init__(self, pmo_jsonschema: dict | None = None):
         """
         Constructor for PMOChecker with the json read from the json schema file
 
@@ -19,6 +72,8 @@ class PMOChecker:
         or use loader
         PMOChecker checker(load_schema("portable_microhaplotype_object_v1.0.0.schema.json")
         """
+        if pmo_jsonschema is None:
+            pmo_jsonschema = load_schema_by_version(__schema_version__)
         self.pmo_jsonschema = pmo_jsonschema
         self.pmo_validator = Draft7Validator(pmo_jsonschema)
         # below assumes the jsonschema loaded is a specific pmo jsonschema and assumes these fields exist

@@ -7,10 +7,9 @@ import json
 
 import pandas as pd
 
-from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.pmo_engine.pmo_processor import PMOProcessor
 import hashlib
-from pmotools.utils.schema_loader import load_schema
+from pmotools.pmo_engine.pmo_checker import PMOChecker, load_schema
 
 
 def md5sum_of_fnp(filename):

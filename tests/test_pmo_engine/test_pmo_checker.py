@@ -4,8 +4,7 @@ import os
 import unittest
 import json
 from jsonschema import ValidationError
-from pmotools.pmo_engine.pmo_checker import PMOChecker
-from pmotools.utils.schema_loader import load_schema
+from pmotools.pmo_engine.pmo_checker import PMOChecker, load_schema
 
 
 class TestPMOChecker(unittest.TestCase):

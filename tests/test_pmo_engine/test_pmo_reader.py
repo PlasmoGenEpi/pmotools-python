@@ -3,9 +3,8 @@ import json
 import os
 import unittest
 
-from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.pmo_engine.pmo_reader import PMOReader
-from pmotools.utils.schema_loader import load_schema
+from pmotools.pmo_engine.pmo_checker import PMOChecker, load_schema
 
 
 class TestPMOReader(unittest.TestCase):

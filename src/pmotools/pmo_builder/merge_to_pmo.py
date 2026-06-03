@@ -2,6 +2,8 @@
 from datetime import date
 import numpy as np
 from pmotools import __version__ as __pmotools_version__
+from pmotools import __schema_version__
+
 from pmotools.pmo_builder.mhap_table_to_pmo import (
     create_minimum_library_specimen_dict_from_mhap_table,
 )
@@ -202,15 +204,16 @@ def _replace_key_with_id(target_list, reference_list, name_key, id_key, lookup=N
     return missing_items
 
 
-def _generate_pmo_header(version=__pmotools_version__):
+def _generate_pmo_header(
+    pmotools_version=__pmotools_version__, pmo_schema_version=__schema_version__
+):
     today = date.today().isoformat()
-    # TODO: update to grab pmo version - will put this in a seperate PR
     pmo_header = {
-        "pmo_version": version,
+        "pmo_version": pmo_schema_version,
         "creation_date": today,
         "generation_method": {
             "program_name": "pmotools-python",
-            "program_version": version,
+            "program_version": pmotools_version,
         },
     }
     return pmo_header
