@@ -1,0 +1,31 @@
+name: Check documentation build
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-docs:
+    name: Build Sphinx docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install -r man/requirements.txt
+
+      - name: Regenerate autodocs and build
+        run: |
+          cd man
+          make update_autodocs
+          make html
