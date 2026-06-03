@@ -10,8 +10,11 @@ from pmotools.utils.small_utils import Utils
 from pmotools import __version__ as __pmotools_version__
 
 
-def parse_args_validate_pmo():
-    parser = argparse.ArgumentParser()
+def get_parser_validate_pmo() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python validate_pmo",
+        description="Validate a PMO file against a JSON Schema",
+    )
     parser.add_argument("--pmo", type=str, required=True, help="a pmo file to validate")
     parser.add_argument(
         "--jsonschema_version",
@@ -27,10 +30,14 @@ def parse_args_validate_pmo():
         required=False,
         help="explicit jsonschema file path to validate against (overrides --jsonschema_version)",
     )
+    return parser
 
+
+def parse_args_validate_pmo():
+    parser = get_parser_validate_pmo()
     args = parser.parse_args()
 
-    # Resolve the schema file path if not explicitly provided
+    # post-parse resolution stays here, NOT in get_parser
     if args.jsonschema_file is None:
         args.jsonschema_file = os.path.join(
             os.path.dirname(
@@ -39,7 +46,6 @@ def parse_args_validate_pmo():
             "schemas/",
             f"portable_microhaplotype_object_v{args.jsonschema_version}.schema.json",
         )
-
     return args
 
 

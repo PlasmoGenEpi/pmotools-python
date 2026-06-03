@@ -6,15 +6,21 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_export_pmo_into_xlsx():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--pmo", type=str, required=True, help="PMO file")
-    parser.add_argument(
-        "--output", type=str, default="STDOUT", required=True, help="output file"
+def get_parser_export_pmo_into_xlsx() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python export_pmo_into_xlsx",
+        description="export all parts of a PMO into a .xlsx file",
     )
+    parser.add_argument("--pmo", type=str, required=True, help="PMO file")
+    parser.add_argument("--output", type=str, required=True, help="output file")
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
+
+
+def parse_args_export_pmo_into_xlsx():
+    parser = get_parser_export_pmo_into_xlsx()
     return parser.parse_args()
 
 

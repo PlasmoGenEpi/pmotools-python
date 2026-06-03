@@ -14,8 +14,20 @@ from pmotools.pmo_engine.pmo_exporter import PMOExporter
 from pmotools import __version__ as __pmotools_version__
 
 
-def parse_args_extract_for_allele_table():
-    parser = argparse.ArgumentParser()
+def get_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python extract_allele_table",
+        description="Extract allele tables for tools like dcifer or moire",
+        epilog="""
+    Examples:
+      %(prog)s --file input.pmo --output output.tsv
+      %(prog)s --file input.pmo.gz --output output.tsv --delim comma
+      %(prog)s --file input.pmo --output output.tsv --allele_freqs_output freqs.tsv --overwrite
+      %(prog)s --file input.pmo --output output.tsv --microhap_fields reads,mhap_id
+      %(prog)s --file input.pmo --output output.tsv --specimen_info_meta_fields collection_date,collection_country
+    """,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--jsonschema",
@@ -30,7 +42,6 @@ def parse_args_extract_for_allele_table():
         required=False,
         help="the jsonschema to check the PMO against",
     )
-
     parser.add_argument(
         "--delim",
         default="tab",
@@ -52,7 +63,6 @@ def parse_args_extract_for_allele_table():
         type=str,
         help="if also writing out allele frequencies, write to this file",
     )
-
     parser.add_argument(
         "--specimen_info_meta_fields",
         type=str,
@@ -84,16 +94,11 @@ def parse_args_extract_for_allele_table():
         default="library_sample_name,target_name,mhap_id",
         help="default base column names, must be length 3",
     )
-    parser.epilog = """
-    Examples:
-      %(prog)s --file input.pmo --output output.tsv
-      %(prog)s --file input.pmo.gz --output output.tsv --delim comma
-      %(prog)s --file input.pmo --output output.tsv --allele_freqs_output freqs.tsv --overwrite
-      %(prog)s --file input.pmo --output output.tsv --microhap_fields reads,mhap_id
-      %(prog)s --file input.pmo --output output.tsv --specimen_info_meta_fields collection_date,collection_country
-    """
-    parser.formatter_class = argparse.RawDescriptionHelpFormatter
+    return parser
 
+
+def parse_args_extract_for_allele_table():
+    parser = get_parser()
     return parser.parse_args()
 
 

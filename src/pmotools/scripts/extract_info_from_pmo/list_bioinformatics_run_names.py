@@ -8,8 +8,11 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_list_bioinformatics_run_names():
-    parser = argparse.ArgumentParser()
+def get_parser_list_bioinformatics_run_names() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python list_bioinformatics_run_names",
+        description="List all bioinformatics_run_names in a PMO",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, default="STDOUT", required=False, help="output file"
@@ -17,7 +20,11 @@ def parse_args_list_bioinformatics_run_names():
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
 
+
+def parse_args_list_bioinformatics_run_names():
+    parser = get_parser_list_bioinformatics_run_names()
     return parser.parse_args()
 
 

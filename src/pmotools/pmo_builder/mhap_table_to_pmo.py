@@ -31,33 +31,56 @@ def mhap_table_to_pmo(
     additional_mhap_detected_cols: list | None = None,
 ):
     """
-    Convert a dataframe of a microhaplotype calls into a dictionary containing a dictionary for the haplotypes_detected and a dictionary for the representative_haplotype_sequences.
+    Convert a dataframe of microhaplotype calls into a dictionary containing a dictionary for the haplotypes_detected and a dictionary for the representative_haplotype_sequences.
 
-    :param microhaplotype_table (pd.DataFrame): The dataframe containing microhaplotype calls
-    :param bioinformatics_run_name (Optional[str]) : Unique name for the bioinformatics run that generated the data (column name or individual run name): Default: None
-    :param library_sample_name_col (str) : the name of the column containing the experiment sample names. Default: library_sample_name
-    :param target_name_col (str) : the name of the column containing the targets. Default: target_name
-    :param seq_col (str) : the name of the column containing the microhaplotype sequences. Default: seq
-    :param reads_col (str) : the name of the column containing the reads counts. Default: reads
-    :param genome_id (Optional[int]) : the ID of the genome used as reference. Default: None
-    :param umis_col (Optional[str]) : the name of the column with unique molecular identifier count associated with this microhaplotype
-    :param chrom_col (Optional[str]) : the name of the column containing the chromosome name of the microhaplotype
-    :param start_col (Optional[str]) : the name of the column containing the start of the microhaplotype
-    :param end_col (Optional[str]) : the name of the column containing the end of the microhaplotype
-    :param ref_seq_col (Optional[str]) : the name of the column containing the reference sequence for the microhaplotype
-    :param strand_col (Optional[str]) : the name containing the strand of the microhaplotype
-    :param alt_annotations_col (Optional[str]) : the name of the column containing any alternative annotations
-    :param masking_seq_start_col (Optional[str]) : the name ofthe column containing a list of start positions for masking
-    :param masking_seq_segment_size_col (Optional[str]) : the name of the column containing a list of lengths of the segments in seq being masked
-    :param masking_replacement_size_col (Optional[str]) : the name of the column containing a list of lengths of the masking replacements
-    :param masking_delim (Optional[str]) : delim of the masking information. Default: ','
-    :param microhaplotype_name_col (Optional[str]) : the name of the column containing an optional name for this microhaplotype
-    :param pseudocigar_col (Optional[str]) : the name of the column containing a pseudocigar for the microhaplotype
-    :param quality_col (Optional[str]) : the name of the column containing the ansi fastq per base quality score for this sequence
-    :param additional_representative_mhap_cols (Optional[List[str], None]]): additional columns to add to the representative microhaplotypes table.
-    :param additional_mhap_detected_cols (Optional[List[str], None]]): additional columns to add to the detected microhaplotypes table.
-
+    :param microhaplotype_table: the dataframe containing microhaplotype calls
+    :type microhaplotype_table: pd.DataFrame
+    :param bioinformatics_run_name: unique name for the bioinformatics run that generated the data (column name or individual run name). Default: None
+    :type bioinformatics_run_name: str, optional
+    :param library_sample_name_col: the name of the column containing the library sample names. Default: library_sample_name
+    :type library_sample_name_col: str
+    :param target_name_col: the name of the column containing the targets. Default: target_name
+    :type target_name_col: str
+    :param seq_col: the name of the column containing the microhaplotype sequences. Default: seq
+    :type seq_col: str
+    :param reads_col: the name of the column containing the read counts. Default: reads
+    :type reads_col: str
+    :param genome_id: the ID of the genome used as reference. Default: None
+    :type genome_id: int, optional
+    :param umis_col: the name of the column with the unique molecular identifier count associated with this microhaplotype
+    :type umis_col: str, optional
+    :param chrom_col: the name of the column containing the chromosome name of the microhaplotype
+    :type chrom_col: str, optional
+    :param start_col: the name of the column containing the start of the microhaplotype
+    :type start_col: str, optional
+    :param end_col: the name of the column containing the end of the microhaplotype
+    :type end_col: str, optional
+    :param ref_seq_col: the name of the column containing the reference sequence for the microhaplotype
+    :type ref_seq_col: str, optional
+    :param strand_col: the name of the column containing the strand of the microhaplotype
+    :type strand_col: str, optional
+    :param alt_annotations_col: the name of the column containing any alternative annotations
+    :type alt_annotations_col: str, optional
+    :param masking_seq_start_col: the name of the column containing a list of start positions for masking
+    :type masking_seq_start_col: str, optional
+    :param masking_seq_segment_size_col: the name of the column containing a list of lengths of the segments in seq being masked
+    :type masking_seq_segment_size_col: str, optional
+    :param masking_replacement_size_col: the name of the column containing a list of lengths of the masking replacements
+    :type masking_replacement_size_col: str, optional
+    :param masking_delim: delimiter of the masking information. Default: ','
+    :type masking_delim: str, optional
+    :param microhaplotype_name_col: the name of the column containing an optional name for this microhaplotype
+    :type microhaplotype_name_col: str, optional
+    :param pseudocigar_col: the name of the column containing a pseudocigar for the microhaplotype
+    :type pseudocigar_col: str, optional
+    :param quality_col: the name of the column containing the ANSI FASTQ per-base quality score for this sequence
+    :type quality_col: str, optional
+    :param additional_representative_mhap_cols: additional columns to add to the representative microhaplotypes table
+    :type additional_representative_mhap_cols: list of str, optional
+    :param additional_mhap_detected_cols: additional columns to add to the detected microhaplotypes table
+    :type additional_mhap_detected_cols: list of str, optional
     :return: a dict of both the haplotypes_detected and representative_haplotype_sequences
+    :rtype: dict
     """
 
     representative_microhaplotype_dict = create_representative_microhaplotype_dict(
@@ -143,26 +166,44 @@ def create_representative_microhaplotype_dict(
     """
     Convert the read-in microhaplotype calls table into a representative microhaplotype JSON-like dictionary.
 
-    :param microhaplotype_table (pd.DataFrame): The dataframe containing microhaplotype calls
-    :param target_name_col (str) : the name of the column containing the targets. Default: target_name
-    :param seq_col (str) : the name of the column containing the microhaplotype sequences. Default: seq
-    :param genome_id (int) : the genome ID
-    :param chrom_col (Optional[str]) : the name of the column containing the chromosome name of the microhaplotype
-    :param start_col (Optional[str]) : the name of the column containing the start of the microhaplotype
-    :param end_col (Optional[str]) : the name of the column containing the end of the microhaplotype
-    :param ref_seq_col (Optional[str]) : the name of the column containing the reference sequence for the microhaplotype
-    :param strand_col (Optional[str]) : the name containing the strand of the microhaplotype
-    :param alt_annotations_col (Optional[str]) : the name of the column containing any alternative annotations
-    :param masking_seq_start_col (Optional[str]) : the name ofthe column containing a list of start positions for masking
-    :param masking_seq_segment_size_col (Optional[str]) : the name of the column containing a list of lengths of the segments in seq being masked
-    :param masking_replacement_size_col (Optional[str]) : the name of the column containing a list of lengths of the masking replacements
-    :param masking_delim (Optional[str]) : delim of the masking information. Default: ','
-    :param microhaplotype_name_col (Optional[str]) : the name of the column containing an optional name for this microhaplotype
-    :param pseudocigar_col (Optional[str]) : the name of the column containing a pseudocigar for the microhaplotype
-    :param quality_col (Optional[str]) : the name of the column containing the ansi fastq per base quality score for this sequence
-    :param additional_representative_mhap_cols (Optional[List[str], None]]): additional columns to add to the representative microhaplotypes table.
-
-    :return: A dictionary formatted for JSON output with representative microhaplotype sequences.
+    :param microhaplotype_table: the dataframe containing microhaplotype calls
+    :type microhaplotype_table: pd.DataFrame
+    :param target_name_col: the name of the column containing the targets. Default: target_name
+    :type target_name_col: str
+    :param seq_col: the name of the column containing the microhaplotype sequences. Default: seq
+    :type seq_col: str
+    :param genome_id: the genome ID
+    :type genome_id: int
+    :param chrom_col: the name of the column containing the chromosome name of the microhaplotype
+    :type chrom_col: str, optional
+    :param start_col: the name of the column containing the start of the microhaplotype
+    :type start_col: str, optional
+    :param end_col: the name of the column containing the end of the microhaplotype
+    :type end_col: str, optional
+    :param ref_seq_col: the name of the column containing the reference sequence for the microhaplotype
+    :type ref_seq_col: str, optional
+    :param strand_col: the name of the column containing the strand of the microhaplotype
+    :type strand_col: str, optional
+    :param alt_annotations_col: the name of the column containing any alternative annotations
+    :type alt_annotations_col: str, optional
+    :param masking_seq_start_col: the name of the column containing a list of start positions for masking
+    :type masking_seq_start_col: str, optional
+    :param masking_seq_segment_size_col: the name of the column containing a list of lengths of the segments in seq being masked
+    :type masking_seq_segment_size_col: str, optional
+    :param masking_replacement_size_col: the name of the column containing a list of lengths of the masking replacements
+    :type masking_replacement_size_col: str, optional
+    :param masking_delim: delimiter of the masking information. Default: ','
+    :type masking_delim: str, optional
+    :param microhaplotype_name_col: the name of the column containing an optional name for this microhaplotype
+    :type microhaplotype_name_col: str, optional
+    :param pseudocigar_col: the name of the column containing a pseudocigar for the microhaplotype
+    :type pseudocigar_col: str, optional
+    :param quality_col: the name of the column containing the ANSI FASTQ per-base quality score for this sequence
+    :type quality_col: str, optional
+    :param additional_representative_mhap_cols: additional columns to add to the representative microhaplotypes table
+    :type additional_representative_mhap_cols: list of str, optional
+    :return: a dictionary formatted for JSON output with representative microhaplotype sequences
+    :rtype: dict
     """
 
     if additional_representative_mhap_cols:
@@ -313,12 +354,12 @@ def create_detected_microhaplotype_dict(
 
     :param microhaplotype_table: Parsed microhaplotype calls table.
     :param representative_microhaplotype_dict: Dictionary of representative microhaplotypes.
-    :param bioinformatics_run_name:  Unique name for the bioinformatics run that generated the data.
+    :param bioinformatics_run_name: Optional Unique name for the bioinformatics run that generated the data.
     :param library_sample_name_col: Column containing the sample IDs.
     :param target_name_col: Column containing the locus IDs.
     :param seq_col: Column containing the microhaplotype sequences.
     :param reads_col: Column containing the read counts.
-    :param umis_col: : Ccolumn with unique molecular identifier count associated with this microhaplotype
+    :param umis_col: Optional Column with unique molecular identifier count associated with this microhaplotype
     :param additional_mhap_detected_cols: Optional additional columns to add to the microhaplotypes detected, the key is the pandas column and the value is what to name it in the output.
     :return: A dictionary of detected microhaplotype results.
     """

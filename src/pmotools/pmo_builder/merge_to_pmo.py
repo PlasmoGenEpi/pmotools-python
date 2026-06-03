@@ -30,22 +30,28 @@ def merge_to_pmo(
     read_counts_by_stage_info: list | None = None,
 ):
     """
-    Merge components into PMO, replacing names with indeces.
+    Merge components into PMO, replacing names with indices.
 
-    The required input are mhap_info (must have fields:detected_microhaplotypes and representative_microhaplotypes) and panel_target_info (must have fields: target_info and panel_info). If no library_sample_info or specimen_info are provided, they will be automatically generated from the detected_microhaplotypes. Is also possible to provide only specimen_info or library_sample_info but their names must match up with the detected_microhaplotypes names.
+    The required input are ``mhap_info`` (must have fields:detected_microhaplotypes and representative_microhaplotypes) and ``panel_target_info`` (must have fields: target_info and panel_info). If no ``library_sample_info`` or ``specimen_info`` are provided, they will be automatically generated from the detected_microhaplotypes. Is also possible to provide only ``specimen_info`` or ``library_sample_info`` but their names must match up with the detected_microhaplotypes names.
 
-    :param mhap_info (dict) : a dictionary containing the microhaplotypes within this project, both detected and representative, must contain fields detected_microhaplotypes and representative_microhaplotypes
-    :param panel_target_info (dict) : a dictionary containing the panel and target information for this project, must contain fields target_info and panel_info
-    :param specimen_info (Optional[list]): a list of all the specimens within this project
-    :param library_sample_info ((Optional[list]) : a list of library samples within this project
-    :param sequencing_info (Optional[list]) : a list of sequencing info for this project
-    :param bioinfo_method_info (Optional[list]) : the bioinformatics pipeline/methods used to generated the amplicon analysis for this project
-    :param bioinfo_run_info (Optional[list]) : the runtime info for the bioinformatics pipeline used to generated the amplicon analysis for this project
-    :param project_info (Optional[list]) : the information about the projects stored in this PMO
-    :param read_counts_by_stage_info (Optional[list]) : the read counts by stage information for this project
+    Args:
+        mhap_info (dict): microhaplotypes within this project, both detected
+            and representative; must contain ``detected_microhaplotypes`` and
+            ``representative_microhaplotypes``.
+        panel_target_info (dict): panel and target information; must contain
+            ``target_info`` and ``panel_info``.
+        specimen_info (list, optional): all the specimens within this project.
+        library_sample_info (list, optional): library samples within this project.
+        sequencing_info (list, optional): sequencing info for this project.
+        bioinfo_method_info (list, optional): bioinformatics pipeline/methods.
+        bioinfo_run_info (list, optional): runtime info for the pipeline.
+        project_info (list, optional): info about projects stored in this PMO.
+        read_counts_by_stage_info (list, optional): read counts by stage.
 
-    :return: a json formatted PMO string.
+    Returns:
+        str: a JSON-formatted PMO string.
     """
+
     missing_fields = []
     if "panel_info" not in panel_target_info:
         missing_fields.append("panel_info")

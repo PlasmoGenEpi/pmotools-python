@@ -31,6 +31,7 @@ class PMOChecker:
     def get_required_fields_for_pmo_class(self, pmo_class):
         """
         Get the required fields for the pmo_class from the pmo_jsonschema
+
         :param pmo_class: the class to get a required fields for, will throw an exception if class is not found within the schema
         :return: the required fields for the pmo_class
         """
@@ -44,6 +45,8 @@ class PMOChecker:
     def validate_pmo_json(self, pmo_json):
         """
         Validate the PMO json file with loaded schema
+
+        :param pmo_json: the pmo json to validate
         """
         validate(pmo_json, self.pmo_jsonschema)
 

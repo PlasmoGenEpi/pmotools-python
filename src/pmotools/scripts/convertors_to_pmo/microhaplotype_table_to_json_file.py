@@ -7,8 +7,11 @@ from pmotools.pmo_builder.mhap_table_to_pmo import mhap_table_to_pmo
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_microhaplotype_table_to_json_file():
-    parser = argparse.ArgumentParser()
+def get_parser_microhaplotype_table_to_json_file() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python microhaplotype_table_to_json_file",
+        description="Convert microhaplotype table to a JSON file",
+    )
     parser.add_argument("--file", type=str, required=True, help="Input excel file path")
     parser.add_argument(
         "--bioinfo_name",
@@ -54,6 +57,11 @@ def parse_args_microhaplotype_table_to_json_file():
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
+
+
+def parse_args_microhaplotype_table_to_json_file():
+    parser = get_parser_microhaplotype_table_to_json_file()
     return parser.parse_args()
 
 

@@ -46,12 +46,14 @@ class TestPMOUpdater(unittest.TestCase):
         ]
 
     def test_check_if_date_yyyy_mm_or_yyyy_mm_dd(self):
-        self.assertFalse(PMOUpdater.check_if_date_yyyy_mm_or_yyyy_mm_dd("2023/11/24"))
-        self.assertFalse(PMOUpdater.check_if_date_yyyy_mm_or_yyyy_mm_dd("11-24-2023"))
-        self.assertFalse(PMOUpdater.check_if_date_yyyy_mm_or_yyyy_mm_dd("invalid-date"))
+        self.assertFalse(PMOUpdater._check_if_date_yyyy_mm_or_yyyy_mm_dd("2023/11/24"))
+        self.assertFalse(PMOUpdater._check_if_date_yyyy_mm_or_yyyy_mm_dd("11-24-2023"))
+        self.assertFalse(
+            PMOUpdater._check_if_date_yyyy_mm_or_yyyy_mm_dd("invalid-date")
+        )
 
-        self.assertTrue(PMOUpdater.check_if_date_yyyy_mm_or_yyyy_mm_dd("2023-11-24"))
-        self.assertTrue(PMOUpdater.check_if_date_yyyy_mm_or_yyyy_mm_dd("2023-11"))
+        self.assertTrue(PMOUpdater._check_if_date_yyyy_mm_or_yyyy_mm_dd("2023-11-24"))
+        self.assertTrue(PMOUpdater._check_if_date_yyyy_mm_or_yyyy_mm_dd("2023-11"))
 
     def test_update_specimen_meta_with_traveler_info(self):
         test_pmo = {

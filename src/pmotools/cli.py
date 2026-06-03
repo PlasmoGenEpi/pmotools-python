@@ -37,9 +37,7 @@ from pmotools.scripts.extractors_from_pmo.extract_pmo_with_select_targets import
 from pmotools.scripts.extractors_from_pmo.extract_pmo_with_read_filter import (
     extract_pmo_with_read_filter,
 )
-from pmotools.scripts.pmo_to_tables.extract_allele_table import (
-    extract_for_allele_table,
-)
+
 
 # pmo_utils
 from pmotools.scripts.pmo_utils.combine_pmos import combine_pmos
@@ -108,6 +106,9 @@ from pmotools.scripts.pmo_to_tables.export_target_info_meta_table import (
 from pmotools.scripts.pmo_to_tables.export_panel_info_meta_table import (
     export_panel_info_meta_table,
 )
+from pmotools.scripts.pmo_to_tables.extract_allele_table import (
+    extract_for_allele_table,
+)
 
 
 @dataclass(frozen=True)
@@ -143,7 +144,7 @@ REGISTRY: Dict[str, Dict[str, PmoCommand]] = {
         ),
         "extract_pmo_with_select_library_sample_names": PmoCommand(
             extract_pmo_with_select_library_sample_names,
-            "Extract experiment sample names from experiment_info table",
+            "Extract library sample names from library_sample_info table",
         ),
         "extract_pmo_with_select_targets": PmoCommand(
             extract_pmo_with_select_targets, "Extract specific targets"
@@ -160,7 +161,7 @@ REGISTRY: Dict[str, Dict[str, PmoCommand]] = {
     "extract_basic_info_from_pmo": {
         "list_library_sample_names_per_specimen_name": PmoCommand(
             list_library_sample_names_per_specimen_name,
-            "List experiment_sample_ids per specimen_id",
+            "List library_sample_names per specimen_name",
         ),
         "list_specimen_meta_fields": PmoCommand(
             list_specimen_meta_fields,
@@ -168,7 +169,7 @@ REGISTRY: Dict[str, Dict[str, PmoCommand]] = {
         ),
         "list_bioinformatics_run_names": PmoCommand(
             list_bioinformatics_run_names,
-            "List all tar_amp_bioinformatics_info_ids in a PMO",
+            "List all tar_amp_bioinformatics_info_names in a PMO",
         ),
         "count_specimen_meta": PmoCommand(
             count_specimen_meta, "Count values of selected specimen meta fields"

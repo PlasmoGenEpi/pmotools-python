@@ -15,6 +15,7 @@ class PMOProcessor:
     def get_index_key_of_bioinformatics_run_names(pmodata):
         """
         Get key of bioinformatics_run_name to index in pmodata["bioinformatics_run_info"]
+
         :param pmodata: the PMO to get indexes from
         :return: a dictionary of indexes keyed by bioinformatics_run_name
         """
@@ -27,6 +28,7 @@ class PMOProcessor:
     def get_index_key_of_specimen_names(pmodata):
         """
         Get key of specimen_name to index in pmodata["specimen_info"]
+
         :param pmodata: the PMO to get indexes from
         :return: a dictionary of indexes keyed by specimen_name
         """
@@ -39,6 +41,7 @@ class PMOProcessor:
     def get_index_key_of_library_sample_names(pmodata):
         """
         Get key of library_sample_name to index in pmodata["library_sample_info"]
+
         :param pmodata: the PMO to get indexes from
         :return: a dictionary of indexes keyed by library_sample_name
         """
@@ -51,6 +54,7 @@ class PMOProcessor:
     def get_index_key_of_target_names(pmodata):
         """
         Get key of target_name to index in pmodata["target_info"]
+
         :param pmodata: the PMO to get indexes from
         :return: a dictionary of indexes keyed by target_name
         """
@@ -63,6 +67,7 @@ class PMOProcessor:
     def get_index_key_of_panel_names(pmodata):
         """
         Get key of panel_name to index in pmodata["panel_info"]
+
         :param pmodata: the PMO to get indexes from
         :return: a dictionary of indexes keyed by panel_name
         """
@@ -75,6 +80,7 @@ class PMOProcessor:
     def get_sorted_bioinformatics_run_names(pmodata) -> list[str]:
         """
         Get a name sorted list of bioinformatics_run_names in pmodata["bioinformatics_run_info"]
+
         :param pmodata: the PMO to get bioinformatics_run_names from
         :return: a list of all bioinformatics_run_names
         """
@@ -86,6 +92,7 @@ class PMOProcessor:
     def get_sorted_specimen_names(pmodata) -> list[str]:
         """
         Get a name sorted list of specimen_names in pmodata["specimen_info"]
+
         :param pmodata: the PMO to get specimen_names from
         :return: a list of all specimen_names
         """
@@ -95,6 +102,7 @@ class PMOProcessor:
     def get_sorted_library_sample_names(pmodata) -> list[str]:
         """
         Get a name sorted list of library_sample_names in pmodata["library_sample_info"]
+
         :param pmodata: the PMO to get library_sample_names from
         :return: a list of all library_sample_names
         """
@@ -106,6 +114,7 @@ class PMOProcessor:
     def get_sorted_target_names(pmodata) -> list[str]:
         """
         Get a name sorted list of target_names in pmodata["target_info"]
+
         :param pmodata: the PMO to get target_names from
         :return: a list of all target_names
         """
@@ -115,6 +124,7 @@ class PMOProcessor:
     def get_sorted_panel_names(pmodata) -> list[str]:
         """
         Get a name sorted list of panel_names in pmodata["panel_info"]
+
         :param pmodata: the PMO to get panel_names from
         :return: a list of all panel_names
         """
@@ -124,6 +134,7 @@ class PMOProcessor:
     def get_bioinformatics_run_names(pmodata) -> list[str]:
         """
         Get a list of bioinformatics_run_names in pmodata["bioinformatics_run_info"] in order they appear
+
         :param pmodata: the PMO to get bioinformatics_run_names from
         :return: a list of all bioinformatics_run_names
         """
@@ -140,6 +151,7 @@ class PMOProcessor:
     def get_specimen_names(pmodata) -> list[str]:
         """
         Get a list of specimen_names in pmodata["specimen_info"] in the order they appear
+
         :param pmodata: the PMO to get specimen_names from
         :return: a list of all specimen_names
         """
@@ -152,6 +164,7 @@ class PMOProcessor:
     def get_library_sample_names(pmodata) -> list[str]:
         """
         Get a list of library_sample_names in pmodata["library_sample_info"] in the order they appear
+
         :param pmodata: the PMO to get library_sample_names from
         :return: a list of all library_sample_names
         """
@@ -164,6 +177,7 @@ class PMOProcessor:
     def get_target_names(pmodata) -> list[str]:
         """
         Get a list of target_names in pmodata["target_info"] in the order they appear
+
         :param pmodata: the PMO to get target_names from
         :return: a list of all target_names
         """
@@ -176,6 +190,7 @@ class PMOProcessor:
     def get_panel_names(pmodata) -> list[str]:
         """
         Get a list of panel_names in pmodata["panel_info"] in the order they appear
+
         :param pmodata: the PMO to get panel_names from
         :return: a list of all panel_names
         """
@@ -188,6 +203,7 @@ class PMOProcessor:
     def get_index_key_of_target_in_representative_microhaplotypes(pmodata):
         """
         Get key of target_name to index for the representative microhaplotypes for the target_name in pmodata["representative_microhaplotypes"]
+
         :param pmodata: the PMO to get indexes from
         :return: a dictionary of indexes keyed by target_name
         """
@@ -208,6 +224,7 @@ class PMOProcessor:
     ):
         """
         Get index of bioinformatics_run_name in pmodata["bioinformatics_run_info"]
+
         :param pmodata: the PMO to get indexes from
         :param bioinformatics_run_names: a list of bioinformatics_run_names
         :return: the index of bioinformatics_run_names in pmodata["bioinformatics_run_name"] returned in the same order as bioinformatics_run_names
@@ -221,6 +238,7 @@ class PMOProcessor:
     def get_index_of_specimen_names(pmodata, specimen_names: list[str]):
         """
         Get index of specimen_name in pmodata["specimen_info"]
+
         :param pmodata: the PMO to get indexes from
         :param specimen_names: a list of specimen_names
         :return: the index of specimen_names in pmodata["specimen_info"] returned in the same order as specimen_names
@@ -232,6 +250,7 @@ class PMOProcessor:
     def get_index_of_library_sample_names(pmodata, library_sample_names: list[str]):
         """
         Get index of library_sample_name in pmodata["library_sample_info"]
+
         :param pmodata: the PMO to get indexes from
         :param library_sample_names: a list of library_sample_names
         :return: the index of library_sample_names in pmodata["library_sample_info"] returned in the same order as library_sample_names
@@ -243,6 +262,7 @@ class PMOProcessor:
     def get_index_of_target_names(pmodata, target_names: list[str]):
         """
         Get index of target_name in pmodata["target_info"]
+
         :param pmodata: the PMO to get indexes from
         :param target_names: a list of target_names
         :return: the index of target_names in pmodata["target_info"] returned in the same order as target_names
@@ -254,6 +274,7 @@ class PMOProcessor:
     def get_index_of_panel_names(pmodata, panel_names: list[str]):
         """
         Get index of panel_name in pmodata["panel_info"]
+
         :param pmodata: the PMO to get indexes from
         :param panel_names: a list of panel_names
         :return: the index of panel_names in pmodata["panel_info"] returned in the same order as panel_names
@@ -267,6 +288,7 @@ class PMOProcessor:
     ):
         """
         Get index of target_name in pmodata["representative_microhaplotypes"]["targets"]
+
         :param pmodata: the PMO to get indexes from
         :param target_names: a list of target_names
         :return: the index of target_names in pmodata["representative_microhaplotypes"]["targets"] returned in the same order as target_names
@@ -282,6 +304,7 @@ class PMOProcessor:
     def get_library_ids_for_specimen_ids(pmodata, specimen_ids: set[int]):
         """
         get a dictionary that lists the library_ids for a specimen_id
+
         :param pmodata: the PMO to get indexes from
         :param specimen_ids: a set of specimen_ids
         :return: a dictionary that lists the library_ids for a specimen_id
@@ -309,7 +332,7 @@ class PMOProcessor:
         pmodata, min_reads: float = 0.0
     ) -> pd.DataFrame:
         """
-        Count the number of targets per library sample, with optional collapsing across bioinformatics runs.
+        Count the number of targets per library sample.
 
         :param pmodata: the loaded PMO
         :param min_reads: a minimum number of reads for a target in order for it to be counted
@@ -354,9 +377,10 @@ class PMOProcessor:
         :param pmodata: the loaded PMO
         :param min_reads: the minimum number of reads for a target in order for it to be counted
         :param collapse_across_runs: if True, sums across bioinformatics_run_id per target
-        :return: a pandas dataframe
-                 - if collapse_across_runs=False: columns = [bioinformatics_run_id, target_name, sample_count]
-                 - if collapse_across_runs=True:  columns = [target_name, sample_count]
+        :return: a pandas dataframe:
+
+            - if ``collapse_across_runs=False``: columns are ``bioinformatics_run_id``, ``target_name``, ``sample_count``
+            - if ``collapse_across_runs=True``: columns are ``target_name``, ``sample_count``
         """
         records = []
         microhap_targets = pmodata["representative_microhaplotypes"]["targets"]
@@ -423,6 +447,7 @@ class PMOProcessor:
     def count_specimen_per_meta_fields(pmodata) -> pd.DataFrame:
         """
         Get a pandas dataframe of counts of the meta fields within the specimen_info section
+
         :param pmodata: the pmo to count from
         :return: a pandas dataframe of counts with the following columns: field, present_in_specimens_count, total_specimen_count
         """
@@ -493,7 +518,7 @@ class PMOProcessor:
         :param library_sample_names: optional list of library_sample_names to include
         :param target_names: optional list of target_names to include
         :param collapse_across_runs: whether to collapse count/freqs across bioinformatics_run_id runs
-        :return: DataFrame with columns: bioinformatics_run_id, target, mhap_id, count, freq, target_total
+        :return: DataFrame with columns: bioinformatics_run_id (if not collapsing), target_name, mhap_id, count, freq, target_total
         """
 
         allele_counts = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
@@ -573,6 +598,7 @@ class PMOProcessor:
     def filter_pmo_by_library_sample_ids(pmodata, library_sample_ids: set[int]):
         """
         Extract out of a load PMO the data associated with select library_sample_ids
+
         :param pmodata:the loaded PMO
         :param library_sample_ids: the library_sample_ids to extract the info for
         :return: a new PMO with only the data associated with the supplied library_sample_ids
@@ -705,6 +731,7 @@ class PMOProcessor:
     def filter_pmo_by_library_sample_names(pmodata, library_sample_names: set[str]):
         """
         Filters pmodata by library sample names
+
         :param pmodata: the pmodata object
         :param library_sample_names: set of library sample names, will be converted into indexes to extract out
         :return: filtered pmodata object containing only the indexes
@@ -721,6 +748,7 @@ class PMOProcessor:
     def filter_pmo_by_specimen_ids(pmodata, specimen_ids: set[int]):
         """
         Extract out of a load PMO the data associated with select specimen_ids
+
         :param pmodata:the loaded PMO
         :param specimen_ids: the specimen_ids to extract the info for
         :return: a new PMO with only the data associated with the supplied specimen_ids
@@ -750,7 +778,8 @@ class PMOProcessor:
     @staticmethod
     def filter_pmo_by_specimen_names(pmodata, specimen_names: set[str]):
         """
-        Extract out of a load PMO the data associated with select specimen_ids
+        Extract out of a loaded PMO the data associated with select specimen_names
+
         :param pmodata:the loaded PMO
         :param specimen_names: the specimen_names to extract the info for
         :return: a new PMO with only the data associated with the supplied specimen_names
@@ -765,6 +794,7 @@ class PMOProcessor:
     def filter_pmo_by_target_ids(pmodata, target_ids: set[int]):
         """
         Extract out data from the PMO for only select target IDs
+
         :param pmodata: the pmo to extract data from
         :param target_ids: the target_ids to extract
         :return: a new pmo with the data for only the targets supplied
@@ -923,7 +953,8 @@ class PMOProcessor:
     @staticmethod
     def filter_pmo_by_target_names(pmodata, target_names: set[str]):
         """
-        Extract out data from the PMO for only select target IDs
+        Extract out data from the PMO for only select target names
+
         :param pmodata: the pmo to extract data from
         :param target_names: the target_names to extract
         :return: a new pmo with the data for only the targets supplied
@@ -938,9 +969,10 @@ class PMOProcessor:
     def extract_from_pmo_samples_with_meta_groupings(pmodata, meta_fields_values: str):
         """
         Extract out of a PMO the data associated with specimens that belong to specific meta data groupings
+
         :param pmodata: the PMO to extract from
         :param meta_fields_values: Meta Fields to include, should either be a table with columns field, values (comma separated values) (and optionally group) or supplied command line as field1=value1,value2,value3:field2=value1,value2;field1=value5,value6, where each group is separated by a semicolon
-        :return: a pmodata with the input meta
+        :return: a tuple of (filtered PMO, group counts dataframe)
         """
         selected_meta_groups = {}
         # parse meta values
@@ -1030,6 +1062,7 @@ class PMOProcessor:
     def extract_from_pmo_with_read_filter(pmodata, read_filter: float):
         """
         Extract out data from the PMO with inconclusive read filter
+
         :param pmodata: the pmo to extract data from
         :param read_filter: the read filter to use, inconclusive filter
         :return: a new pmodata with the data only with detected microhaplotypes above this read filter

@@ -124,3 +124,19 @@ git add .
 git commit -m "Your message"
 git push origin feature/my-feature
 ```
+
+### Documentation updating
+
+To update the documentation after changes to code or docstrings, run:
+
+Do need to install sphinx and its dependencies. In your developmental environment run
+
+```bash
+pip install -r man/requirements.txt
+```
+
+```bash
+cd man
+make update_autodocs
+make html
+```

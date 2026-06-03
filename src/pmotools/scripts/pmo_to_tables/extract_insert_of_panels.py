@@ -6,8 +6,11 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_extract_insert_of_panels():
-    parser = argparse.ArgumentParser()
+def get_parser_extract_insert_of_panels() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python extract_insert_of_panels",
+        description="Extract inserts of panels from a PMO",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, default="STDOUT", required=False, help="output file"
@@ -20,7 +23,11 @@ def parse_args_extract_insert_of_panels():
         action="store_true",
         help="add ref seqs to the output as ref_seq",
     )
+    return parser
 
+
+def parse_args_extract_insert_of_panels():
+    parser = get_parser_extract_insert_of_panels()
     return parser.parse_args()
 
 

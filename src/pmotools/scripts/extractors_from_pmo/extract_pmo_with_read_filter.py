@@ -8,8 +8,11 @@ from pmotools.pmo_engine.pmo_writer import PMOWriter
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_extract_pmo_with_read_filter():
-    parser = argparse.ArgumentParser()
+def get_parser_extract_pmo_with_read_filter() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python extract_pmo_with_read_filter",
+        description="Extract with a read filter",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, required=True, help="Output json file path"
@@ -19,11 +22,15 @@ def parse_args_extract_pmo_with_read_filter():
     )
     parser.add_argument(
         "--read_count_minimum",
-        default=0.0,
         type=float,
         required=True,
         help="the minimum read count (inclusive) for detected haplotypes to be kept",
     )
+    return parser
+
+
+def parse_args_extract_pmo_with_read_filter():
+    parser = get_parser_extract_pmo_with_read_filter()
     return parser.parse_args()
 
 

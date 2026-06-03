@@ -7,8 +7,11 @@ import pandas as pd
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_terra_amp_output_to_json():
-    parser = argparse.ArgumentParser()
+def get_parser_terra_amp_output_to_json() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python terra_amp_output_to_json",
+        description="Convert Terra output to JSON sequence table",
+    )
     parser.add_argument("--file", type=str, required=True, help="Input excel file path")
     parser.add_argument(
         "--gt_sheet",
@@ -40,6 +43,11 @@ def parse_args_terra_amp_output_to_json():
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
+
+
+def parse_args_terra_amp_output_to_json():
+    parser = get_parser_terra_amp_output_to_json()
     return parser.parse_args()
 
 
