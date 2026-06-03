@@ -18,6 +18,7 @@ class PMOReader:
     def read_in_pmo(fnp: str | os.PathLike[str]):
         """
         Read in a PMO file, can either be compressed(.gz) or uncompressed
+
         :param fnp: the file name path of the PMO file to read in
         :return: a PMO like object
         """
@@ -36,6 +37,7 @@ class PMOReader:
     def read_in_pmos(fnps: list[str] | list[os.PathLike[str]]):
         """
         Read in a PMO file, can either be compressed(.gz) or uncompressed
+
         :param fnps: the file name path of the PMO file to read in
         :return: a list of PMO like object
         """
@@ -48,6 +50,7 @@ class PMOReader:
     def combine_multiple_pmos(pmos: list[dict]):
         """
         Combine multiple PMOs into one pmo
+
         :param pmos: a list of PMO objects
         :return: a combined PMO
         """
@@ -71,28 +74,34 @@ class PMOReader:
             },
         }
 
-        # combine targeted_genomes fields
-        pmo_out["targeted_genomes"] = copy.deepcopy(pmos[0]["targeted_genomes"])
+        # combine targeted_genomes fields if present
         # key: genome name + _ + genome_version, val: index
         targeted_genomes_out_index_key = {}
-        for genome_info_index, genome in enumerate(pmos[0]["targeted_genomes"]):
-            targeted_genomes_out_index_key[
-                genome["name"] + "_" + genome["genome_version"]
-            ] = genome_info_index
+        if "targeted_genomes" in pmos[0]:
+            pmo_out["targeted_genomes"] = copy.deepcopy(pmos[0]["targeted_genomes"])
+            for genome_info_index, genome in enumerate(pmos[0]["targeted_genomes"]):
+                targeted_genomes_out_index_key[
+                    genome["name"] + "_" + genome["genome_version"]
+                ] = genome_info_index
         # key1 pmo_index, key2 old_index, val new_index
         targeted_genomes_old_index_key = defaultdict(dict)
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
-            for genome_index, genome in enumerate(pmo["targeted_genomes"]):
-                genome_id = genome["name"] + "_" + genome["genome_version"]
-                if genome_id in targeted_genomes_out_index_key:
-                    targeted_genomes_old_index_key[pmo_index][
-                        genome_index
-                    ] = targeted_genomes_out_index_key[genome_id]
-                else:
-                    new_index = len(pmo_out["targeted_genomes"])
-                    pmo_out["targeted_genomes"].append(copy.deepcopy(genome))
-                    targeted_genomes_out_index_key[genome_id] = new_index
-                    targeted_genomes_old_index_key[pmo_index][genome_index] = new_index
+            if "targeted_genomes" in pmo:
+                for genome_index, genome in enumerate(pmo["targeted_genomes"]):
+                    genome_id = genome["name"] + "_" + genome["genome_version"]
+                    if genome_id in targeted_genomes_out_index_key:
+                        targeted_genomes_old_index_key[pmo_index][
+                            genome_index
+                        ] = targeted_genomes_out_index_key[genome_id]
+                    else:
+                        if "targeted_genomes" not in pmo_out:
+                            pmo_out["targeted_genomes"] = []
+                        new_index = len(pmo_out["targeted_genomes"])
+                        pmo_out["targeted_genomes"].append(copy.deepcopy(genome))
+                        targeted_genomes_out_index_key[genome_id] = new_index
+                        targeted_genomes_old_index_key[pmo_index][
+                            genome_index
+                        ] = new_index
 
         # combine target_info fields
         pmo_out["target_info"] = copy.deepcopy(pmos[0]["target_info"])
@@ -112,7 +121,10 @@ class PMOReader:
                     new_index = len(pmo_out["target_info"])
                     target_copy = copy.deepcopy(target)
                     # update genome_id if adding new target
-                    if len(pmo_out["targeted_genomes"]) > 1:
+                    if (
+                        "targeted_genomes" in pmo_out
+                        and len(pmo_out["targeted_genomes"]) > 1
+                    ):
                         if "insert_location" in target_copy:
                             # update genome_id
                             target_copy["insert_location"][
@@ -173,13 +185,18 @@ class PMOReader:
         # just concatenate sequencing infos. Only way this could have happened is if files were split into different
         # pmos and then rejoined but even if we concatenate sequencing_info of the same, they will still properly
         # have the right info per library
-        pmo_out["sequencing_info"] = copy.deepcopy(pmos[0]["sequencing_info"])
         # key1 pmo_index, key2 old_index, val new_index
         sequencing_info_old_index_key = defaultdict(dict)
+        if "sequencing_info" in pmos[0]:
+            pmo_out["sequencing_info"] = copy.deepcopy(pmos[0]["sequencing_info"])
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
+            if "sequencing_info" not in pmo:
+                continue
             for sequencing_info_index, sequencing_info in enumerate(
                 pmo["sequencing_info"]
             ):
+                if "sequencing_info" not in pmo_out:
+                    pmo_out["sequencing_info"] = []
                 new_index = len(pmo_out["sequencing_info"])
                 pmo_out["sequencing_info"].append(copy.deepcopy(sequencing_info))
                 sequencing_info_old_index_key[pmo_index][
@@ -188,33 +205,39 @@ class PMOReader:
 
         # combine project_info
         # could be possible to be combining PMOs across one project so check if project already exists
-        pmo_out["project_info"] = copy.deepcopy(pmos[0]["project_info"])
         project_info_old_index_key = defaultdict(dict)
+        if "project_info" in pmos[0]:
+            pmo_out["project_info"] = copy.deepcopy(pmos[0]["project_info"])
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
+            if "project_info" not in pmo:
+                continue
             for project_info_index, project_info in enumerate(pmo["project_info"]):
-                # check to see if project already exists
+                # check to see if the project already exists
                 found_project_info = False
-                for current_project_id, current_project_info in enumerate(
-                    pmo_out["project_info"]
-                ):
-                    if (
-                        current_project_info["project_name"]
-                        == project_info["project_name"]
+                if "project_info" in pmo_out:
+                    for current_project_id, current_project_info in enumerate(
+                        pmo_out["project_info"]
                     ):
                         if (
-                            current_project_info["project_description"]
-                            != project_info["project_description"]
+                            current_project_info["project_name"]
+                            == project_info["project_name"]
                         ):
-                            raise Exception(
-                                "Project description mismatch for project_name: "
-                                + project_info["project_name"]
-                            )
-                        else:
-                            project_info_old_index_key[pmo_index][
-                                project_info_index
-                            ] = current_project_id
-                            found_project_info = True
+                            if (
+                                current_project_info["project_description"]
+                                != project_info["project_description"]
+                            ):
+                                raise Exception(
+                                    "Project description mismatch for project_name: "
+                                    + project_info["project_name"]
+                                )
+                            else:
+                                project_info_old_index_key[pmo_index][
+                                    project_info_index
+                                ] = current_project_id
+                                found_project_info = True
                 if not found_project_info:
+                    if "project_info" not in pmo_out:
+                        pmo_out["project_info"] = []
                     new_index = len(pmo_out["project_info"])
                     pmo_out["project_info"].append(copy.deepcopy(project_info))
                     project_info_old_index_key[pmo_index][
@@ -262,11 +285,13 @@ class PMOReader:
                     )
                     specimen_names.append(specimen_info["specimen_name"])
                     new_index = len(pmo_out["specimen_info"])
-                    # update project_id
+
                     specimen_info_copy = copy.deepcopy(specimen_info)
-                    specimen_info_copy["project_id"] = project_info_old_index_key[
-                        pmo_index
-                    ][specimen_info_copy["project_id"]]
+                    # update project_id
+                    if "project_id" in specimen_info_copy:
+                        specimen_info_copy["project_id"] = project_info_old_index_key[
+                            pmo_index
+                        ][specimen_info_copy["project_id"]]
                     pmo_out["specimen_info"].append(specimen_info_copy)
                     specimen_info_old_index_key[pmo_index][
                         specimen_info_index
@@ -303,11 +328,12 @@ class PMOReader:
                 library_sample_info_copy["panel_id"] = panel_info_old_index_key[
                     pmo_index
                 ][library_sample_info_copy["panel_id"]]
-                library_sample_info_copy[
-                    "sequencing_info_id"
-                ] = sequencing_info_old_index_key[pmo_index][
-                    library_sample_info_copy["sequencing_info_id"]
-                ]
+                if "sequencing_info_id" in library_sample_info_copy:
+                    library_sample_info_copy[
+                        "sequencing_info_id"
+                    ] = sequencing_info_old_index_key[pmo_index][
+                        library_sample_info_copy["sequencing_info_id"]
+                    ]
                 # append to the out library_sample_info_copy after getting new index
                 new_index = len(pmo_out["library_sample_info"])
                 pmo_out["library_sample_info"].append(library_sample_info_copy)
@@ -331,16 +357,21 @@ class PMOReader:
 
         # update bioinformatics_methods_info
         # the different bioinformatics_methods_info might be the same but there's no easy way to perfectly match up right now
-        pmo_out["bioinformatics_methods_info"] = copy.deepcopy(
-            pmos[0]["bioinformatics_methods_info"]
-        )
+        if "bioinformatics_methods_info" in pmos[0]:
+            pmo_out["bioinformatics_methods_info"] = copy.deepcopy(
+                pmos[0]["bioinformatics_methods_info"]
+            )
         # key1 pmo_index, key2 old_index, val new_index
         bioinformatics_methods_info_old_index_key = defaultdict(dict)
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
+            if "bioinformatics_methods_info" not in pmo:
+                continue
             for (
                 bioinformatics_methods_info_index,
                 bioinformatics_methods_info,
             ) in enumerate(pmo["bioinformatics_methods_info"]):
+                if "bioinformatics_methods_info" not in pmo_out:
+                    pmo_out["bioinformatics_methods_info"] = []
                 new_index = len(pmo_out["bioinformatics_methods_info"])
                 pmo_out["bioinformatics_methods_info"].append(
                     copy.deepcopy(bioinformatics_methods_info)
@@ -350,12 +381,15 @@ class PMOReader:
                 ] = new_index
 
         # update bioinformatics_run_info
-        pmo_out["bioinformatics_run_info"] = copy.deepcopy(
-            pmos[0]["bioinformatics_run_info"]
-        )
+        if "bioinformatics_run_info" in pmos[0]:
+            pmo_out["bioinformatics_run_info"] = copy.deepcopy(
+                pmos[0]["bioinformatics_run_info"]
+            )
         # key1 pmo_index, key2 old_index, val new_index
         bioinformatics_run_info_old_index_key = defaultdict(dict)
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
+            if "bioinformatics_run_info" not in pmo:
+                continue
             for bioinformatics_run_info_index, bioinformatics_run_info in enumerate(
                 pmo["bioinformatics_run_info"]
             ):
@@ -365,6 +399,8 @@ class PMOReader:
                 ] = bioinformatics_methods_info_old_index_key[pmo_index][
                     bioinformatics_run_info_index
                 ]
+                if "bioinformatics_run_info" not in pmo_out:
+                    pmo_out["bioinformatics_run_info"] = []
                 new_index = len(pmo_out["bioinformatics_run_info"])
                 pmo_out["bioinformatics_run_info"].append(bioinformatics_run_info_copy)
                 bioinformatics_run_info_old_index_key[pmo_index][
@@ -392,6 +428,7 @@ class PMOReader:
         representative_microhaplotypes_hmap_for_target_index_old_index_key = (
             defaultdict(lambda: defaultdict(dict))
         )
+        # @todo need to check for mhap_location and update the genome_id if not the same genome
         for pmo_index, pmo in enumerate(pmos[1:], start=1):
             for (
                 representative_microhaplotypes_index,
@@ -416,7 +453,6 @@ class PMOReader:
                     ):
                         found = False
                         # print(pmo_out["representative_microhaplotypes"]["targets"][representative_microhaplotypes_out_index_key[pmo["target_info"][representative_microhaplotypes["target_id"]]["target_name"]]]["microhaplotypes"])
-                        # print("\n\n\n")
                         for (
                             already_have_microhap_index,
                             already_have_microhap,
@@ -430,7 +466,6 @@ class PMOReader:
                             ]["microhaplotypes"]
                         ):
                             # print(already_have_microhap)
-                            # print("\n")
                             if adding_microhap["seq"] == already_have_microhap["seq"]:
                                 representative_microhaplotypes_hmap_for_target_index_old_index_key[
                                     pmo_index
@@ -512,11 +547,12 @@ class PMOReader:
                     ] = library_sample_info_old_index_key[pmo_index][
                         library_sample["library_sample_id"]
                     ]
-                detected_microhaplotypes_copy[
-                    "bioinformatics_run_id"
-                ] = bioinformatics_run_info_old_index_key[pmo_index][
-                    detected_microhaplotypes_copy["bioinformatics_run_id"]
-                ]
+                if "bioinformatics_run_id" in detected_microhaplotypes_copy:
+                    detected_microhaplotypes_copy[
+                        "bioinformatics_run_id"
+                    ] = bioinformatics_run_info_old_index_key[pmo_index][
+                        detected_microhaplotypes_copy["bioinformatics_run_id"]
+                    ]
                 # append after the indexes have been updated
                 pmo_out["detected_microhaplotypes"].append(
                     detected_microhaplotypes_copy
@@ -562,10 +598,11 @@ class PMOReader:
                         ] = library_sample_info_old_index_key[pmo_index][
                             read_counts_by_library_sample_by_stage["library_sample_id"]
                         ]
-                    read_counts_by_stage_copy[
-                        "bioinformatics_run_id"
-                    ] = bioinformatics_run_info_old_index_key[pmo_index][
-                        read_counts_by_stage_copy["bioinformatics_run_id"]
-                    ]
+                    if "bioinformatics_run_id" in read_counts_by_stage_copy:
+                        read_counts_by_stage_copy[
+                            "bioinformatics_run_id"
+                        ] = bioinformatics_run_info_old_index_key[pmo_index][
+                            read_counts_by_stage_copy["bioinformatics_run_id"]
+                        ]
                     pmo_out["read_counts_by_stage"].append(read_counts_by_stage_copy)
         return pmo_out

@@ -1,26 +1,33 @@
 # pmotools/__init__.py
 from __future__ import annotations
 
-try:
-    # Python 3.8+
-    from importlib.metadata import version, PackageNotFoundError
-except Exception:  # pragma: no cover
-    # Very old Pythons can fallback to pkg_resources if you ever needed it
-    from pkg_resources import get_distribution as _gd  # type: ignore
+from importlib.metadata import version, PackageNotFoundError
 
-    class PackageNotFoundError(Exception):
-        ...
-
-    def version(pkg: str) -> str:  # type: ignore
-        try:
-            return _gd(pkg).version
-        except Exception as e:  # noqa: BLE001
-            raise PackageNotFoundError from e
-
+#: Version of the PMO schema this package targets. Single source of truth;
+#: bump when the schema changes. Independent of the package release version.
+__schema_version__ = "1.0.0"
 
 try:
-    # Use the installed distribution name (matches [project].name)
+    # Distribution version from installed metadata (matches [project].version)
     __version__ = version("pmotools")
 except PackageNotFoundError:
-    # When running from a source tree without being installed
+    # Running from a source tree without being installed
     __version__ = "0+local"
+
+
+def get_pmotools_version() -> str:
+    """Return the installed pmotools package version (e.g. '1.0.0')."""
+    return __version__
+
+
+def get_pmo_schema_version() -> str:
+    """Return the PMO schema version this package targets (e.g. '1.0.0')."""
+    return __schema_version__
+
+
+__all__ = [
+    "__version__",
+    "__schema_version__",
+    "get_pmotools_version",
+    "get_pmo_schema_version",
+]

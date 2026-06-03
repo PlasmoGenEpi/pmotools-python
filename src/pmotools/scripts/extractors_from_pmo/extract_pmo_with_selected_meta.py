@@ -9,8 +9,11 @@ from pmotools.pmo_engine.pmo_writer import PMOWriter
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_extract_pmo_with_selected_meta():
-    parser = argparse.ArgumentParser()
+def get_parser_extract_pmo_with_selected_meta() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python extract_pmo_with_selected_meta",
+        description="Extract samples + haplotypes using selected meta",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, required=True, help="Output json file path"
@@ -29,6 +32,11 @@ def parse_args_extract_pmo_with_selected_meta():
         required=True,
         help="Meta Fields to include, should either be a table with columns field, values (and optionally group) or supplied command line as field1=value1,value2,value3:field2=value1,value2",
     )
+    return parser
+
+
+def parse_args_extract_pmo_with_selected_meta():
+    parser = get_parser_extract_pmo_with_selected_meta()
     return parser.parse_args()
 
 

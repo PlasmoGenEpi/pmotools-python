@@ -385,12 +385,20 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
 
-        result = specimen_info_table_to_pmo(df)
+        result = specimen_info_table_to_pmo(
+            df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
+        )
         self.assertEqual(
             [
                 {
                     "specimen_name": "sample1",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Mozambique",
@@ -398,7 +406,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 },
                 {
                     "specimen_name": "sample2",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Ghana",
@@ -425,6 +433,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = specimen_info_table_to_pmo(
             df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             storage_plate_col_col="storage_plate_col",
             storage_plate_name_col="storage_plate_name",
             storage_plate_row_col="storage_plate_row",
@@ -433,7 +447,7 @@ class TestMetatableToPMO(unittest.TestCase):
             [
                 {
                     "specimen_name": "sample1",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Mozambique",
@@ -446,7 +460,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 },
                 {
                     "specimen_name": "sample2",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Ghana",
@@ -477,6 +491,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = specimen_info_table_to_pmo(
             df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             parasite_density_col="parasite_density",
             parasite_density_method_col="parasite_density_method",
         )
@@ -484,7 +504,7 @@ class TestMetatableToPMO(unittest.TestCase):
             [
                 {
                     "specimen_name": "sample1",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Mozambique",
@@ -495,7 +515,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 },
                 {
                     "specimen_name": "sample2",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Ghana",
@@ -526,13 +546,20 @@ class TestMetatableToPMO(unittest.TestCase):
         )
 
         result = specimen_info_table_to_pmo(
-            df, additional_specimen_cols=["special_field_1", "special_field_2"]
+            df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
+            additional_specimen_cols=["special_field_1", "special_field_2"],
         )
         self.assertEqual(
             [
                 {
                     "specimen_name": "sample1",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Mozambique",
@@ -542,7 +569,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 },
                 {
                     "specimen_name": "sample2",
-                    "specimen_taxon_id": 5833,
+                    "specimen_taxon_id": [5833],
                     "host_taxon_id": 9606,
                     "collection_date": "01/02/2023",
                     "collection_country": "Ghana",
@@ -566,7 +593,16 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo(df, drug_usage_col="specimen_name")
+            specimen_info_table_to_pmo(
+                df,
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+                drug_usage_col="specimen_name",
+            )
         self.assertEqual("Selected columns must be unique.", str(context.exception))
 
     def test_specimen_info_table_to_pmo_fails_with_missing_col(self):
@@ -581,7 +617,16 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo(df, drug_usage_col="drug_usage")
+            specimen_info_table_to_pmo(
+                df,
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+                drug_usage_col="drug_usage",
+            )
         self.assertEqual(
             "The following columns are not in the DataFrame: ['drug_usage']",
             str(context.exception),
@@ -589,7 +634,15 @@ class TestMetatableToPMO(unittest.TestCase):
 
     def test_specimen_info_table_to_pmo_fails_without_df(self):
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo("test")
+            specimen_info_table_to_pmo(
+                "test",
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+            )
         self.assertEqual("contents must be a pandas DataFrame.", str(context.exception))
 
     def test_specimen_info_table_to_pmo_fails_with_null_in_required_columns(self):
@@ -606,7 +659,15 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo(df1)
+            specimen_info_table_to_pmo(
+                df1,
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
@@ -625,7 +686,15 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo(df2)
+            specimen_info_table_to_pmo(
+                df2,
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
@@ -644,7 +713,15 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo(df3)
+            specimen_info_table_to_pmo(
+                df3,
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
@@ -663,7 +740,15 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo(df4)
+            specimen_info_table_to_pmo(
+                df4,
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
@@ -682,7 +767,15 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo(df5)
+            specimen_info_table_to_pmo(
+                df5,
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
@@ -701,7 +794,15 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo(df6)
+            specimen_info_table_to_pmo(
+                df6,
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
@@ -720,7 +821,15 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            specimen_info_table_to_pmo(df7)
+            specimen_info_table_to_pmo(
+                df7,
+                specimen_name_col="specimen_name",
+                specimen_taxon_id_col="specimen_taxon_id",
+                host_taxon_id_col="host_taxon_id",
+                collection_date_col="collection_date",
+                collection_country_col="collection_country",
+                project_name_col="project_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
@@ -755,6 +864,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = specimen_info_table_to_pmo(
             df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             lat_lon_col="lat_lon",
             host_age_col="host_age",
             host_sex_col="host_sex",
@@ -813,6 +928,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = specimen_info_table_to_pmo(
             df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             geo_admin1_col="geo_admin1",
             geo_admin2_col="geo_admin2",
             geo_admin3_col="geo_admin3",
@@ -849,6 +970,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result_with_empty_info = specimen_info_table_to_pmo(
             df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             storage_plate_col_col=None,
             storage_plate_name_col=None,
             storage_plate_row_col=None,
@@ -876,6 +1003,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result2 = specimen_info_table_to_pmo(
             df2,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             parasite_density_col="parasite_density",
             parasite_density_method_col=None,
         )
@@ -903,6 +1036,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = specimen_info_table_to_pmo(
             df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             host_age_col="host_age",
             host_sex_col="host_sex",
             host_subject_id="host_subject_id",
@@ -955,6 +1094,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = specimen_info_table_to_pmo(
             df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             specimen_accession_col="specimen_accession",
             specimen_type_col="specimen_type",
             specimen_collect_device_col="specimen_collect_device",
@@ -969,7 +1114,7 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertEqual(result[0]["specimen_type"], "field_sample")
         self.assertEqual(result[0]["specimen_collect_device"], "needle")
         self.assertNotIn("specimen_store_loc", result[0])
-        self.assertNotIn("specimen_comments", result[0])
+        self.assertNotIn("specimen_comments", [result[0]])
 
         # sample2: specimen_accession is empty string, specimen_type is None, specimen_collect_device is empty string
         # specimen_store_loc has value, specimen_comments has value
@@ -978,7 +1123,7 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertNotIn("specimen_type", result[1])
         self.assertNotIn("specimen_collect_device", result[1])
         self.assertEqual(result[1]["specimen_store_loc"], "freezer1")
-        self.assertEqual(result[1]["specimen_comments"], "Some comment")
+        self.assertEqual(result[1]["specimen_comments"], ["Some comment"])
 
     def test_specimen_info_table_to_pmo_with_environment_fields(self):
         """Test environment-related optional fields"""
@@ -998,6 +1143,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = specimen_info_table_to_pmo(
             df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             env_broad_scale_col="env_broad_scale",
             env_local_scale_col="env_local_scale",
             env_medium_col="env_medium",
@@ -1032,6 +1183,12 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = specimen_info_table_to_pmo(
             df,
+            specimen_name_col="specimen_name",
+            specimen_taxon_id_col="specimen_taxon_id",
+            host_taxon_id_col="host_taxon_id",
+            collection_date_col="collection_date",
+            collection_country_col="collection_country",
+            project_name_col="project_name",
             blood_meal_col="blood_meal",
             has_travel_out_six_month_col="has_travel_out_six_month",
             treatment_status_col="treatment_status",
@@ -1041,19 +1198,19 @@ class TestMetatableToPMO(unittest.TestCase):
         # sample1: blood_meal has value (True), has_travel_out_six_month is None, treatment_status has value, specimen_accession has value
         self.assertEqual(result[0]["blood_meal"], True)
         self.assertNotIn("has_travel_out_six_month", result[0])
-        self.assertEqual(result[0]["treatment_status"], "cured")
+        self.assertEqual(result[0]["treatment_status"], ["cured"])
         self.assertEqual(result[0]["specimen_accession"], "ACC001")
 
         # sample2: blood_meal is None, has_travel_out_six_month has value (True), treatment_status is empty string, specimen_accession is None
         self.assertNotIn("blood_meal", result[1])
         self.assertEqual(result[1]["has_travel_out_six_month"], True)
-        self.assertNotIn("treatment_status", result[1])
+        self.assertNotIn("treatment_status", [result[1]])
         self.assertNotIn("specimen_accession", result[1])
 
         # sample3: blood_meal has value (False), has_travel_out_six_month is empty string, treatment_status is None, specimen_accession has value
         self.assertEqual(result[2]["blood_meal"], False)
         self.assertNotIn("has_travel_out_six_month", result[2])
-        self.assertNotIn("treatment_status", result[2])
+        self.assertNotIn("treatment_status", [result[2]])
         self.assertEqual(result[2]["specimen_accession"], "ACC003")
 
     def test_library_sample_info_table_to_pmo_default(self):
@@ -1066,7 +1223,13 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
 
-        result = library_sample_info_table_to_pmo(df)
+        result = library_sample_info_table_to_pmo(
+            df,
+            library_sample_name_col="library_sample_name",
+            sequencing_info_name_col="sequencing_info_name",
+            specimen_name_col="specimen_name",
+            panel_name_col="panel_name",
+        )
         self.assertEqual(
             [
                 {
@@ -1095,18 +1258,28 @@ class TestMetatableToPMO(unittest.TestCase):
                 "library_prep_plate_col": [1, 2],
                 "library_prep_plate_name": ["plate1", "plate1"],
                 "library_prep_plate_row": ["A", "B"],
+                "alternate_identifiers": [
+                    "positive_control,3D7",
+                    "sample2_MH_run1_repooled",
+                ],
             }
         )
 
         result = library_sample_info_table_to_pmo(
             df,
+            library_sample_name_col="library_sample_name",
+            sequencing_info_name_col="sequencing_info_name",
+            specimen_name_col="specimen_name",
+            panel_name_col="panel_name",
             library_prep_plate_name_col="library_prep_plate_name",
             library_prep_plate_col_col="library_prep_plate_col",
             library_prep_plate_row_col="library_prep_plate_row",
+            alternate_identifiers_col="alternate_identifiers",
         )
         self.assertEqual(
             [
                 {
+                    "alternate_identifiers": ["positive_control", "3D7"],
                     "library_sample_name": "sample1_MH_run1",
                     "sequencing_info_name": "run1",
                     "specimen_name": "sample1",
@@ -1118,6 +1291,7 @@ class TestMetatableToPMO(unittest.TestCase):
                     },
                 },
                 {
+                    "alternate_identifiers": ["sample2_MH_run1_repooled"],
                     "library_sample_name": "sample2_MH_run1",
                     "sequencing_info_name": "run1",
                     "specimen_name": "sample2",
@@ -1145,7 +1319,12 @@ class TestMetatableToPMO(unittest.TestCase):
         )
 
         result = library_sample_info_table_to_pmo(
-            df, additional_library_sample_info_cols=["new_col1", "new_col2"]
+            df,
+            library_sample_name_col="library_sample_name",
+            sequencing_info_name_col="sequencing_info_name",
+            specimen_name_col="specimen_name",
+            panel_name_col="panel_name",
+            additional_library_sample_info_cols=["new_col1", "new_col2"],
         )
         self.assertEqual(
             [
@@ -1180,7 +1359,13 @@ class TestMetatableToPMO(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_pmo(df, specimen_name_col="panel_name")
+            library_sample_info_table_to_pmo(
+                df,
+                library_sample_name_col="library_sample_name",
+                sequencing_info_name_col="sequencing_info_name",
+                panel_name_col="panel_name",
+                specimen_name_col="panel_name",
+            )
         self.assertEqual("Selected columns must be unique.", str(context.exception))
 
     def test_library_sample_info_table_to_pmo_fails_with_missing_cols(self):
@@ -1192,7 +1377,13 @@ class TestMetatableToPMO(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_pmo(df)
+            library_sample_info_table_to_pmo(
+                df,
+                library_sample_name_col="library_sample_name",
+                sequencing_info_name_col="sequencing_info_name",
+                specimen_name_col="specimen_name",
+                panel_name_col="panel_name",
+            )
         self.assertEqual(
             "The following columns are not in the DataFrame: ['specimen_name', 'panel_name']",
             str(context.exception),
@@ -1200,7 +1391,13 @@ class TestMetatableToPMO(unittest.TestCase):
 
     def test_library_sample_info_table_to_pmo_fails_without_df(self):
         with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_pmo("test")
+            library_sample_info_table_to_pmo(
+                "test",
+                library_sample_name_col="library_sample_name",
+                sequencing_info_name_col="sequencing_info_name",
+                specimen_name_col="specimen_name",
+                panel_name_col="panel_name",
+            )
         self.assertEqual("contents must be a pandas DataFrame.", str(context.exception))
 
     def test_library_sample_info_table_to_pmo_fails_with_null_in_required_columns(self):
@@ -1215,29 +1412,18 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_pmo(df1)
+            library_sample_info_table_to_pmo(
+                df1,
+                library_sample_name_col="library_sample_name",
+                sequencing_info_name_col="sequencing_info_name",
+                specimen_name_col="specimen_name",
+                panel_name_col="panel_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
         )
         self.assertIn("library_sample_name", str(context.exception))
-
-        # Test with null in sequencing_info_name
-        df2 = pd.DataFrame(
-            {
-                "library_sample_name": ["sample1_MH_run1", "sample2_MH_run1"],
-                "sequencing_info_name": [None, "run1"],
-                "specimen_name": ["sample1", "sample2"],
-                "panel_name": ["MH", "MH"],
-            }
-        )
-        with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_pmo(df2)
-        self.assertIn(
-            "The following columns contain null values",
-            str(context.exception),
-        )
-        self.assertIn("sequencing_info_name", str(context.exception))
 
         # Test with null in specimen_name
         df3 = pd.DataFrame(
@@ -1249,7 +1435,13 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_pmo(df3)
+            library_sample_info_table_to_pmo(
+                df3,
+                library_sample_name_col="library_sample_name",
+                sequencing_info_name_col="sequencing_info_name",
+                specimen_name_col="specimen_name",
+                panel_name_col="panel_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
@@ -1266,7 +1458,13 @@ class TestMetatableToPMO(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_pmo(df4)
+            library_sample_info_table_to_pmo(
+                df4,
+                library_sample_name_col="library_sample_name",
+                sequencing_info_name_col="sequencing_info_name",
+                specimen_name_col="specimen_name",
+                panel_name_col="panel_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
@@ -1277,20 +1475,24 @@ class TestMetatableToPMO(unittest.TestCase):
         df5 = pd.DataFrame(
             {
                 "library_sample_name": ["sample1_MH_run1", None],
-                "sequencing_info_name": [None, "run1"],
-                "specimen_name": ["sample1", "sample2"],
+                "specimen_name": [None, "sample2"],
                 "panel_name": ["MH", "MH"],
             }
         )
         with self.assertRaises(ValueError) as context:
-            library_sample_info_table_to_pmo(df5)
+            library_sample_info_table_to_pmo(
+                df5,
+                library_sample_name_col="library_sample_name",
+                specimen_name_col="specimen_name",
+                panel_name_col="panel_name",
+            )
         self.assertIn(
             "The following columns contain null values",
             str(context.exception),
         )
         error_msg = str(context.exception)
         self.assertTrue(
-            "library_sample_name" in error_msg and "sequencing_info_name" in error_msg
+            "library_sample_name" in error_msg and "specimen_name" in error_msg
         )
 
     def test_library_sample_info_table_to_pmo_with_new_optional_fields(self):
@@ -1310,6 +1512,10 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = library_sample_info_table_to_pmo(
             df,
+            library_sample_name_col="library_sample_name",
+            sequencing_info_name_col="sequencing_info_name",
+            specimen_name_col="specimen_name",
+            panel_name_col="panel_name",
             alternate_identifiers_col="alternate_identifiers",
             experiment_accession_col="experiment_accession",
             fastqs_loc_col="fastqs_loc",
@@ -1318,14 +1524,14 @@ class TestMetatableToPMO(unittest.TestCase):
 
         # sample1: alternate_identifiers has value, experiment_accession has value, fastqs_loc is None, run_accession has value
         # Should remove: fastqs_loc
-        self.assertEqual(result[0]["alternate_identifiers"], "ID1,ID2")
+        self.assertEqual(result[0]["alternate_identifiers"], ["ID1", "ID2"])
         self.assertEqual(result[0]["experiment_accession"], "EXP001")
         self.assertNotIn("fastqs_loc", result[0])
         self.assertEqual(result[0]["run_accession"], "RUN001")
 
         # sample2: alternate_identifiers is empty string, experiment_accession is None, fastqs_loc has value, run_accession is empty string
         # Should remove: alternate_identifiers, experiment_accession, run_accession
-        self.assertNotIn("alternate_identifiers", result[1])
+        self.assertNotIn("alternate_identifiers", [result[1]])
         self.assertNotIn("experiment_accession", result[1])
         self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs")
         self.assertNotIn("run_accession", result[1])
@@ -1350,23 +1556,27 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = library_sample_info_table_to_pmo(
             df,
+            library_sample_name_col="library_sample_name",
+            sequencing_info_name_col="sequencing_info_name",
+            specimen_name_col="specimen_name",
+            panel_name_col="panel_name",
             alternate_identifiers_col="alternate_identifiers",
             experiment_accession_col="experiment_accession",
             fastqs_loc_col="fastqs_loc",
         )
 
         # sample1: all optional fields have values
-        self.assertEqual(result[0]["alternate_identifiers"], "ID1")
+        self.assertEqual(result[0]["alternate_identifiers"], ["ID1"])
         self.assertEqual(result[0]["experiment_accession"], "EXP001")
         self.assertNotIn("fastqs_loc", result[0])  # None should be removed
 
         # sample2: alternate_identifiers is empty string, experiment_accession is None, fastqs_loc has value
-        self.assertNotIn("alternate_identifiers", result[1])
+        self.assertNotIn("alternate_identifiers", [result[1]])
         self.assertNotIn("experiment_accession", result[1])
         self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs")
 
         # sample3: alternate_identifiers is None, experiment_accession has value, fastqs_loc is empty string
-        self.assertNotIn("alternate_identifiers", result[2])
+        self.assertNotIn("alternate_identifiers", [result[2]])
         self.assertEqual(result[2]["experiment_accession"], "EXP003")
         self.assertNotIn("fastqs_loc", result[2])
 
@@ -1385,6 +1595,10 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = library_sample_info_table_to_pmo(
             df,
+            library_sample_name_col="library_sample_name",
+            sequencing_info_name_col="sequencing_info_name",
+            specimen_name_col="specimen_name",
+            panel_name_col="panel_name",
             parasite_density_col="parasite_density",
             parasite_density_method_col="parasite_density_method",
         )
@@ -1416,6 +1630,10 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = library_sample_info_table_to_pmo(
             df,
+            library_sample_name_col="library_sample_name",
+            sequencing_info_name_col="sequencing_info_name",
+            specimen_name_col="specimen_name",
+            panel_name_col="panel_name",
             parasite_density_col=["density1", "density2"],
             parasite_density_method_col=["method1", "method2"],
         )
@@ -1447,6 +1665,10 @@ class TestMetatableToPMO(unittest.TestCase):
 
         result = library_sample_info_table_to_pmo(
             df,
+            library_sample_name_col="library_sample_name",
+            sequencing_info_name_col="sequencing_info_name",
+            specimen_name_col="specimen_name",
+            panel_name_col="panel_name",
             alternate_identifiers_col="alternate_identifiers",
             experiment_accession_col="experiment_accession",
             fastqs_loc_col="fastqs_loc",
@@ -1459,7 +1681,7 @@ class TestMetatableToPMO(unittest.TestCase):
         )
 
         # Check all fields are present
-        self.assertEqual(result[0]["alternate_identifiers"], "ID1")
+        self.assertEqual(result[0]["alternate_identifiers"], ["ID1"])
         self.assertEqual(result[0]["experiment_accession"], "EXP001")
         self.assertEqual(result[0]["fastqs_loc"], "/path/to/fastqs1")
         self.assertEqual(result[0]["run_accession"], "RUN001")
@@ -1467,7 +1689,7 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertIn("library_prep_plate_info", result[0])
         self.assertEqual(result[0]["library_prep_plate_info"]["plate_col"], 1)
 
-        self.assertEqual(result[1]["alternate_identifiers"], "ID2")
+        self.assertEqual(result[1]["alternate_identifiers"], ["ID2"])
         self.assertEqual(result[1]["experiment_accession"], "EXP002")
         self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs2")
         self.assertEqual(result[1]["run_accession"], "RUN002")

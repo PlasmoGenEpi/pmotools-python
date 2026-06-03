@@ -8,8 +8,11 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_export_sequencing_info_meta_table():
-    parser = argparse.ArgumentParser()
+def get_parser_export_sequencing_info_meta_table() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python export_sequencing_info_meta_table",
+        description="export the sequencing_info meta table from a PMO file",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, default="STDOUT", required=False, help="output file"
@@ -24,7 +27,11 @@ def parse_args_export_sequencing_info_meta_table():
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
 
+
+def parse_args_export_sequencing_info_meta_table():
+    parser = get_parser_export_sequencing_info_meta_table()
     return parser.parse_args()
 
 

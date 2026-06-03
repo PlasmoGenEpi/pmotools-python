@@ -10,6 +10,7 @@ from pmotools.pmo_builder.mhap_table_to_pmo import (
     create_detected_microhaplotype_dict,
     get_target_id_in_representative_mhaps,
     get_mhap_index_in_representative_mhaps,
+    create_minimum_library_specimen_dict_from_mhap_table,
 )
 
 
@@ -154,6 +155,22 @@ class TestMhapTableToPMO(unittest.TestCase):
                 "run3",
                 "run3",
             ],
+        }
+        self.small_detected_dict_for_sample_testing = {
+            "detected_microhaplotypes": [
+                {
+                    "library_samples": [
+                        {"library_sample_name": "pop1_samp_0", "target_results": []},
+                        {"library_sample_name": "pop1_samp_1", "target_results": []},
+                    ]
+                },
+                {
+                    "library_samples": [
+                        {"library_sample_name": "pop2_samp_0", "target_results": []},
+                        {"library_sample_name": "pop2_samp_1", "target_results": []},
+                    ]
+                },
+            ]
         }
         self.small_mhap_table = pd.DataFrame(data=small_mhap_data)
         self.small_df_mhaps_target_id_values = [0, 1, 2, 0, 1, 1, 2, 0, 1, 0, 0, 0, 2]
@@ -791,6 +808,495 @@ class TestMhapTableToPMO(unittest.TestCase):
                 "detected_microhaplotypes": expected_detected,
             },
         )
+
+    # tests for create_minimum_library_specimen_dict_from_mhap_table
+    def test_create_minimum_library_specimen_no_specimen_key_specimen_name_equals_library_sample_name(
+        self,
+    ):
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+        )
+        for entry in result["library_sample_info"]:
+            self.assertEqual(entry["specimen_name"], entry["library_sample_name"])
+
+    def test_create_minimum_library_specimen_no_specimen_key_correct_library_sample_names(
+        self,
+    ):
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+        )
+        names = [e["library_sample_name"] for e in result["library_sample_info"]]
+        self.assertListEqual(
+            names, ["pop1_samp_0", "pop1_samp_1", "pop2_samp_0", "pop2_samp_1"]
+        )
+
+    def test_create_minimum_library_specimen_no_specimen_key_output_keys(self):
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+        )
+        self.assertEqual(set(result.keys()), {"library_sample_info", "specimen_info"})
+        for entry in result["library_sample_info"]:
+            self.assertEqual(
+                set(entry.keys()),
+                {"library_sample_name", "panel_name", "specimen_name"},
+            )
+        for entry in result["specimen_info"]:
+            self.assertEqual(set(entry.keys()), {"specimen_name"})
+
+    def test_create_minimum_library_specimen_no_specimen_key_specimen_info_unique(self):
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+        )
+        specimen_names = [e["specimen_name"] for e in result["specimen_info"]]
+        self.assertEqual(len(specimen_names), len(set(specimen_names)))
+
+    # create_minimum_library_specimen_dict_from_mhap_table testing with library_sample_specimen_key
+    def test_create_minimum_library_specimen_with_specimen_key_maps_correctly(self):
+        key_map = {
+            "pop1_samp_0": "specimen_X",
+            "pop1_samp_1": "specimen_X",
+            "pop2_samp_0": "specimen_Y",
+            "pop2_samp_1": "specimen_Z",
+        }
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_map,
+        )
+        name_to_specimen = {
+            e["library_sample_name"]: e["specimen_name"]
+            for e in result["library_sample_info"]
+        }
+        self.assertEqual(name_to_specimen["pop1_samp_0"], "specimen_X")
+        self.assertEqual(name_to_specimen["pop1_samp_1"], "specimen_X")
+        self.assertEqual(name_to_specimen["pop2_samp_0"], "specimen_Y")
+        self.assertEqual(name_to_specimen["pop2_samp_1"], "specimen_Z")
+
+    def test_create_minimum_library_specimen_multiple_library_samples_collapse_to_one_specimen(
+        self,
+    ):
+        # Two library samples mapping to the same specimen create only one specimen_info entry
+        key_map = {
+            "pop1_samp_0": "specimen_X",
+            "pop1_samp_1": "specimen_X",
+            "pop2_samp_0": "specimen_Y",
+            "pop2_samp_1": "specimen_Z",
+        }
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_map,
+        )
+        specimen_names = [e["specimen_name"] for e in result["specimen_info"]]
+        self.assertListEqual(
+            sorted(specimen_names), ["specimen_X", "specimen_Y", "specimen_Z"]
+        )
+        self.assertEqual(len(specimen_names), len(set(specimen_names)))
+
+    # using create_minimum_library_specimen_dict_from_mhap_table with a library_sample_key
+
+    def test_create_minimum_library_specimen_custom_library_sample_key(self):
+        detected = [
+            {
+                "library_samples": [
+                    {"custom_key": "samp_A", "target_results": []},
+                    {"custom_key": "samp_B", "target_results": []},
+                ]
+            }
+        ]
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            detected, panel_name="panel_A", library_sample_field_name="custom_key"
+        )
+        names = [e["library_sample_name"] for e in result["library_sample_info"]]
+        self.assertListEqual(names, ["samp_A", "samp_B"])
+
+    def test_create_minimum_library_specimen_custom_key_output_uses_canonical_key_name(
+        self,
+    ):
+        # Regardless of the input key name, output always uses 'library_sample_name'
+        detected = [
+            {"library_samples": [{"custom_key": "samp_A", "target_results": []}]}
+        ]
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            detected, panel_name="panel_A", library_sample_field_name="custom_key"
+        )
+        self.assertIn("library_sample_name", result["library_sample_info"][0])
+        self.assertNotIn("custom_key", result["library_sample_info"][0])
+
+    # testing create_minimum_library_specimen_dict_from_mhap_table, test that missing_library_sample_becomes_specimen_name raises
+
+    def test_create_minimum_library_specimen_missing_specimen_key_entry_raises_by_default(
+        self,
+    ):
+        # If a library_sample_name is absent from the key map and flag is False, raise KeyError
+        partial_key_map = {"pop1_samp_0": "specimen_X"}
+        with self.assertRaises(KeyError) as context:
+            create_minimum_library_specimen_dict_from_mhap_table(
+                self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+                panel_name="panel_A",
+                library_sample_specimen_key=partial_key_map,
+                missing_library_sample_becomes_specimen_name=False,
+            )
+        self.assertIn("pop1_samp_1", str(context.exception))
+
+    def test_create_minimum_library_specimen_missing_specimen_key_falls_back_when_flag_true(
+        self,
+    ):
+        # Missing entries fall back to library_sample_name as specimen_name when flag is True
+        partial_key_map = {"pop1_samp_0": "specimen_X"}
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=partial_key_map,
+            missing_library_sample_becomes_specimen_name=True,
+        )
+        name_to_specimen = {
+            e["library_sample_name"]: e["specimen_name"]
+            for e in result["library_sample_info"]
+        }
+        self.assertEqual(name_to_specimen["pop1_samp_0"], "specimen_X")
+        self.assertEqual(name_to_specimen["pop1_samp_1"], "pop1_samp_1")
+        self.assertEqual(name_to_specimen["pop2_samp_0"], "pop2_samp_0")
+        self.assertEqual(name_to_specimen["pop2_samp_1"], "pop2_samp_1")
+
+    # create_minimum_library_specimen_dict_from_mhap_table, testing raising for expected errors for
+    def test_create_minimum_library_specimen_missing_library_sample_field_name_raises(
+        self,
+    ):
+        detected = [
+            {
+                "library_samples": [
+                    {"library_sample_name": "samp_A", "target_results": []},
+                    {"WRONG_KEY": "samp_B", "target_results": []},
+                ]
+            }
+        ]
+        with self.assertRaises(KeyError):
+            create_minimum_library_specimen_dict_from_mhap_table(
+                detected, panel_name="panel_A"
+            )
+
+    def test_create_minimum_library_specimen_all_missing_library_sample_field_names_raise(
+        self,
+    ):
+        detected = [
+            {"library_samples": [{"WRONG_KEY": "samp_A"}, {"WRONG_KEY": "samp_B"}]}
+        ]
+        with self.assertRaises(KeyError):
+            create_minimum_library_specimen_dict_from_mhap_table(
+                detected, panel_name="panel_A"
+            )
+
+    # testing create_minimum_library_specimen_dict_from_mhap_table for failing duplicate library_sample_names
+
+    def test_create_minimum_library_specimen_duplicate_names_raises(self):
+        detected = [
+            {
+                "library_samples": [
+                    {"library_sample_name": "samp_A", "target_results": []},
+                    {"library_sample_name": "samp_A", "target_results": []},
+                ]
+            }
+        ]
+        with self.assertRaises(ValueError) as context:
+            create_minimum_library_specimen_dict_from_mhap_table(
+                detected, panel_name="panel_A"
+            )
+        self.assertIn("samp_A", str(context.exception))
+
+    def test_create_minimum_library_specimen_duplicate_names_across_entries_raises(
+        self,
+    ):
+        """Duplicates that span separate list entries should also be caught."""
+        detected = [
+            {
+                "library_samples": [
+                    {"library_sample_name": "samp_A", "target_results": []}
+                ]
+            },
+            {
+                "library_samples": [
+                    {"library_sample_name": "samp_A", "target_results": []}
+                ]
+            },
+        ]
+        with self.assertRaises(ValueError) as context:
+            create_minimum_library_specimen_dict_from_mhap_table(
+                detected, panel_name="panel_A"
+            )
+        self.assertIn("samp_A", str(context.exception))
+
+    # testing create_minimum_library_specimen_dict_from_mhap_table - various edge cases
+
+    def test_create_minimum_library_specimen_empty_detected_microhaps(self):
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            [], panel_name="panel_A"
+        )
+        self.assertDictEqual(result, {"library_sample_info": [], "specimen_info": []})
+
+    def test_create_minimum_library_specimen_single_sample(self):
+        detected = [
+            {
+                "library_samples": [
+                    {"library_sample_name": "only_samp", "target_results": []}
+                ]
+            }
+        ]
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            detected, panel_name="panel_A"
+        )
+        self.assertEqual(len(result["library_sample_info"]), 1)
+        self.assertEqual(len(result["specimen_info"]), 1)
+        self.assertEqual(result["library_sample_info"][0]["specimen_name"], "only_samp")
+
+    def test_create_minimum_library_specimen_specimen_info_preserves_insertion_order(
+        self,
+    ):
+        # specimen_info order should match first-seen order of specimen_names
+        key_map = {
+            "pop1_samp_0": "specimen_Z",
+            "pop1_samp_1": "specimen_A",
+            "pop2_samp_0": "specimen_M",
+            "pop2_samp_1": "specimen_Z",  # already seen; should not re-appear
+        }
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_map,
+        )
+        specimen_names = [e["specimen_name"] for e in result["specimen_info"]]
+        self.assertListEqual(specimen_names, ["specimen_Z", "specimen_A", "specimen_M"])
+
+    # library_sample_specimen_key as DataFrame
+
+    def test_create_minimum_library_specimen_dataframe_key_maps_correctly(self):
+        key_df = pd.DataFrame(
+            {
+                "library_sample_name": [
+                    "pop1_samp_0",
+                    "pop1_samp_1",
+                    "pop2_samp_0",
+                    "pop2_samp_1",
+                ],
+                "specimen_name": [
+                    "specimen_X",
+                    "specimen_X",
+                    "specimen_Y",
+                    "specimen_Z",
+                ],
+            }
+        )
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_df,
+        )
+        name_to_specimen = {
+            e["library_sample_name"]: e["specimen_name"]
+            for e in result["library_sample_info"]
+        }
+        self.assertEqual(name_to_specimen["pop1_samp_0"], "specimen_X")
+        self.assertEqual(name_to_specimen["pop1_samp_1"], "specimen_X")
+        self.assertEqual(name_to_specimen["pop2_samp_0"], "specimen_Y")
+        self.assertEqual(name_to_specimen["pop2_samp_1"], "specimen_Z")
+
+    def test_create_minimum_library_specimen_dataframe_key_collapses_specimen_info(
+        self,
+    ):
+        """Two library samples mapping to same specimen -> only one specimen_info entry."""
+        key_df = pd.DataFrame(
+            {
+                "library_sample_name": [
+                    "pop1_samp_0",
+                    "pop1_samp_1",
+                    "pop2_samp_0",
+                    "pop2_samp_1",
+                ],
+                "specimen_name": [
+                    "specimen_X",
+                    "specimen_X",
+                    "specimen_Y",
+                    "specimen_Z",
+                ],
+            }
+        )
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_df,
+        )
+        specimen_names = [e["specimen_name"] for e in result["specimen_info"]]
+        self.assertListEqual(
+            sorted(specimen_names), ["specimen_X", "specimen_Y", "specimen_Z"]
+        )
+        self.assertEqual(len(specimen_names), len(set(specimen_names)))
+
+    def test_create_minimum_library_specimen_dataframe_key_custom_col_names(self):
+        """DataFrame with non-default column names, using library_sample_name_col and specimen_name_col."""
+        key_df = pd.DataFrame(
+            {
+                "lib_samp": [
+                    "pop1_samp_0",
+                    "pop1_samp_1",
+                    "pop2_samp_0",
+                    "pop2_samp_1",
+                ],
+                "spec": ["specimen_X", "specimen_Y", "specimen_Y", "specimen_Z"],
+            }
+        )
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_df,
+            library_sample_name_col="lib_samp",
+            specimen_name_col="spec",
+        )
+        name_to_specimen = {
+            e["library_sample_name"]: e["specimen_name"]
+            for e in result["library_sample_info"]
+        }
+        self.assertEqual(name_to_specimen["pop1_samp_0"], "specimen_X")
+        self.assertEqual(name_to_specimen["pop1_samp_1"], "specimen_Y")
+        self.assertEqual(name_to_specimen["pop2_samp_0"], "specimen_Y")
+        self.assertEqual(name_to_specimen["pop2_samp_1"], "specimen_Z")
+
+    def test_create_minimum_library_specimen_dataframe_key_output_keys(self):
+        """Output structure is unchanged when a DataFrame key is provided."""
+        key_df = pd.DataFrame(
+            {
+                "library_sample_name": [
+                    "pop1_samp_0",
+                    "pop1_samp_1",
+                    "pop2_samp_0",
+                    "pop2_samp_1",
+                ],
+                "specimen_name": [
+                    "specimen_A",
+                    "specimen_B",
+                    "specimen_C",
+                    "specimen_D",
+                ],
+            }
+        )
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_df,
+        )
+        self.assertEqual(set(result.keys()), {"library_sample_info", "specimen_info"})
+        for entry in result["library_sample_info"]:
+            self.assertEqual(
+                set(entry.keys()),
+                {"library_sample_name", "panel_name", "specimen_name"},
+            )
+        for entry in result["specimen_info"]:
+            self.assertEqual(set(entry.keys()), {"specimen_name"})
+
+    def test_create_minimum_library_specimen_dataframe_key_does_not_mutate_dataframe(
+        self,
+    ):
+        """The input DataFrame should not be modified (e.g. no set_index side-effects on original)."""
+        key_df = pd.DataFrame(
+            {
+                "library_sample_name": [
+                    "pop1_samp_0",
+                    "pop1_samp_1",
+                    "pop2_samp_0",
+                    "pop2_samp_1",
+                ],
+                "specimen_name": [
+                    "specimen_X",
+                    "specimen_X",
+                    "specimen_Y",
+                    "specimen_Z",
+                ],
+            }
+        )
+        original_columns = key_df.columns.tolist()
+        original_index = key_df.index.tolist()
+        create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_df,
+        )
+        self.assertListEqual(key_df.columns.tolist(), original_columns)
+        self.assertListEqual(key_df.index.tolist(), original_index)
+
+    # --- Happy path: partial DataFrame key with fallback ---
+
+    def test_create_minimum_library_specimen_dataframe_partial_key_falls_back_when_flag_true(
+        self,
+    ):
+        """Library samples absent from the DataFrame fall back to library_sample_name when flag is True."""
+        key_df = pd.DataFrame(
+            {
+                "library_sample_name": ["pop1_samp_0"],
+                "specimen_name": ["specimen_X"],
+            }
+        )
+        result = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_df,
+            missing_library_sample_becomes_specimen_name=True,
+        )
+        name_to_specimen = {
+            e["library_sample_name"]: e["specimen_name"]
+            for e in result["library_sample_info"]
+        }
+        self.assertEqual(name_to_specimen["pop1_samp_0"], "specimen_X")
+        self.assertEqual(name_to_specimen["pop1_samp_1"], "pop1_samp_1")
+        self.assertEqual(name_to_specimen["pop2_samp_0"], "pop2_samp_0")
+        self.assertEqual(name_to_specimen["pop2_samp_1"], "pop2_samp_1")
+
+    def test_create_minimum_library_specimen_dataframe_partial_key_raises_when_flag_false(
+        self,
+    ):
+        """Library samples absent from the DataFrame raise KeyError when flag is False."""
+        key_df = pd.DataFrame(
+            {
+                "library_sample_name": ["pop1_samp_0"],
+                "specimen_name": ["specimen_X"],
+            }
+        )
+        with self.assertRaises(KeyError) as context:
+            create_minimum_library_specimen_dict_from_mhap_table(
+                self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+                panel_name="panel_A",
+                library_sample_specimen_key=key_df,
+                missing_library_sample_becomes_specimen_name=False,
+            )
+        self.assertIn("pop1_samp_1", str(context.exception))
+
+    def test_create_minimum_library_specimen_dataframe_and_dict_key_equivalent(self):
+        """Passing a DataFrame and an equivalent dict should produce identical output."""
+        key_dict = {
+            "pop1_samp_0": "specimen_X",
+            "pop1_samp_1": "specimen_Y",
+            "pop2_samp_0": "specimen_Y",
+            "pop2_samp_1": "specimen_Z",
+        }
+        key_df = pd.DataFrame(
+            {
+                "library_sample_name": list(key_dict.keys()),
+                "specimen_name": list(key_dict.values()),
+            }
+        )
+        result_dict = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_dict,
+        )
+        result_df = create_minimum_library_specimen_dict_from_mhap_table(
+            self.small_detected_dict_for_sample_testing["detected_microhaplotypes"],
+            panel_name="panel_A",
+            library_sample_specimen_key=key_df,
+        )
+        self.assertDictEqual(result_dict, result_df)
 
 
 if __name__ == "__main__":

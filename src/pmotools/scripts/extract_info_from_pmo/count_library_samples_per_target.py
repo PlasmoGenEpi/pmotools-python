@@ -8,8 +8,11 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_count_library_samples_per_target():
-    parser = argparse.ArgumentParser()
+def get_parser_count_library_samples_per_target() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python count_library_samples_per_target",
+        description="Count number of samples per target",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, default="STDOUT", required=False, help="output file"
@@ -31,7 +34,11 @@ def parse_args_count_library_samples_per_target():
         required=False,
         help="the minimum read count (inclusive) to be counted as covered by sample",
     )
+    return parser
 
+
+def parse_args_count_library_samples_per_target():
+    parser = get_parser_count_library_samples_per_target()
     return parser.parse_args()
 
 

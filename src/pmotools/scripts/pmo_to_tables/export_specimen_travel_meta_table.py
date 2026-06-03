@@ -8,8 +8,11 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_export_specimen_travel_meta_table():
-    parser = argparse.ArgumentParser()
+def get_parser_export_specimen_travel_meta_table() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python export_specimen_travel_meta_table",
+        description="export the specimen travel_info meta table from a PMO file",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, default="STDOUT", required=False, help="output file"
@@ -24,7 +27,11 @@ def parse_args_export_specimen_travel_meta_table():
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
 
+
+def parse_args_export_specimen_travel_meta_table():
+    parser = get_parser_export_specimen_travel_meta_table()
     return parser.parse_args()
 
 
@@ -47,6 +54,11 @@ def export_specimen_travel_meta_table():
 
     # count fields
     info_df = PMOExporter.export_specimen_travel_meta_table(pmo)
+
+    # check if dataframe is empty
+    if info_df.empty:
+        sys.stderr.write("No travel history loaded for any specimens to export\n")
+        sys.exit(1)
 
     # output
     info_df.to_csv(

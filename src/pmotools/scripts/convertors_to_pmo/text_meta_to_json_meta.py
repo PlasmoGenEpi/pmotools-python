@@ -6,8 +6,11 @@ from pmotools.pmo_builder.mhap_table_to_pmo import mhap_table_to_pmo
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_text_meta_to_json_meta():
-    parser = argparse.ArgumentParser()
+def get_parser_text_meta_to_json_meta() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python text_meta_to_json_meta",
+        description="Convert text file meta to JSON Meta",
+    )
     parser.add_argument("--file", type=str, required=True, help="Input text file path")
     parser.add_argument(
         "--delim",
@@ -28,6 +31,11 @@ def parse_args_text_meta_to_json_meta():
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
+
+
+def parse_args_text_meta_to_json_meta():
+    parser = get_parser_text_meta_to_json_meta()
     return parser.parse_args()
 
 

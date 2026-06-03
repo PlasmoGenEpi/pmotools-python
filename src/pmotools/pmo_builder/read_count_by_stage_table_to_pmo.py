@@ -19,22 +19,36 @@ def read_count_by_stage_table_to_pmo(
     """
     Convert tables of read counts by stage into PMO read_counts_by_stage format.
 
-    :param bioinformatics_run_name (str): Name for the bioinformatics run (column name or individual run name)
-    :param total_raw_count_table (pd.DataFrame): Table with total raw counts per sample
-    :param reads_by_stage_table (Optional[pd.DataFrame]): Table of reads per sample, per locus, per stage. Can be long format (single stage column) or wide format (multiple stage columns)
-    :param library_sample_name_col (str): Column name for library sample names. Default: library_sample_name
-    :param target_name_col (str): Column name for target names. Default: target_name
-    :param total_raw_count_col (str): Column name for total raw counts. Default: total_raw_count
-    :param stage_col (str or list): Column name for pipeline stages (long format), or list of stage column names for wide format. Default: stage
-    :param read_count_col (str): Column name for read counts. Default: read_count
-    :param additional_library_sample_cols (Optional[List[str]]): Additional columns to include for library samples
-    :param additional_target_cols (Optional[List[str]]): Additional columns to include for targets
+    :param bioinformatics_run_name: name for the bioinformatics run (column name or individual run name)
+    :type bioinformatics_run_name: str
+    :param total_raw_count_table: table with total raw counts per sample
+    :type total_raw_count_table: pd.DataFrame
+    :param reads_by_stage_table: table of reads per sample, per locus, per stage. Can be long
+        format (single stage column) or wide format (multiple stage columns)
+    :type reads_by_stage_table: pd.DataFrame, optional
+    :param library_sample_name_col: column name for library sample names. Default: library_sample_name
+    :type library_sample_name_col: str
+    :param target_name_col: column name for target names. Default: target_name
+    :type target_name_col: str
+    :param total_raw_count_col: column name for total raw counts. Default: total_raw_count
+    :type total_raw_count_col: str
+    :param stage_col: column name for pipeline stages (long format), or list of stage column
+        names for wide format. Default: stage
+    :type stage_col: str or list
+    :param read_count_col: column name for read counts. Default: read_count
+    :type read_count_col: str
+    :param additional_library_sample_cols: additional columns to include for library samples
+    :type additional_library_sample_cols: list of str, optional
+    :param additional_target_cols: additional columns to include for targets
+    :type additional_target_cols: list of str, optional
+    :return: list of dicts formatted for the PMO read_counts_by_stage section. Always returns
+        a list, with one entry for single runs or multiple entries when bioinformatics_run_name
+        is a column in total_raw_count_table.
+    :rtype: list of dict
 
-    :return: list of dicts formatted for PMO read_counts_by_stage section. Always returns a list, with one
-    entry for single runs or multiple entries when bioinformatics_run_name is a column in total_raw_count_table.
-
-    Note: For wide format data, provide stage_col as a list of column names. The function will use pd.melt()
-    to convert wide format to long format before processing.
+    .. note::
+        For wide-format data, provide ``stage_col`` as a list of column names. The function
+        uses ``pd.melt()`` to convert wide format to long format before processing.
     """
 
     # Validate input
