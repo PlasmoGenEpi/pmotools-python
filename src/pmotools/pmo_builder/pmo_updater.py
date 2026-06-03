@@ -12,9 +12,10 @@ logger = logging.getLogger(__name__)
 
 class PMOUpdater(object):
     @staticmethod
-    def check_if_date_yyyy_mm_or_yyyy_mm_dd(date_string: str) -> bool:
+    def _check_if_date_yyyy_mm_or_yyyy_mm_dd(date_string: str) -> bool:
         """
         Checks if a string is in YYYY-MM or YYYY-MM-DD format.
+
         :param date_string: the string to be checked
         """
         try:
@@ -44,6 +45,7 @@ class PMOUpdater(object):
     ):
         """
         Update a PMO's specimen's metadata with travel info
+
         :param pmo: the PMO to update, will directly modify this PMO
         :param traveler_info: the traveler info
         :param specimen_name_col: the specimen name column within the traveler input table
@@ -117,7 +119,7 @@ class PMOUpdater(object):
                         f"Missing required date value in column '{date_col}' for specimen '{specimen_name}'"
                     )
                 val_str = str(val)
-                if not PMOUpdater.check_if_date_yyyy_mm_or_yyyy_mm_dd(val_str):
+                if not PMOUpdater._check_if_date_yyyy_mm_or_yyyy_mm_dd(val_str):
                     raise ValueError(
                         f"Invalid date format in '{date_col}' for specimen '{specimen_name}': '{val_str}'. "
                         f"Expected YYYY-MM or YYYY-MM-DD"

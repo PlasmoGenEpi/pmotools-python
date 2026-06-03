@@ -8,8 +8,11 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_count_specimen_meta():
-    parser = argparse.ArgumentParser()
+def get_parser_count_specimen_meta() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python count_specimen_meta",
+        description="Count values of selected specimen meta fields",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, default="STDOUT", required=False, help="output file"
@@ -30,7 +33,11 @@ def parse_args_count_specimen_meta():
         required=True,
         help="the fields to count the subfields of, can supply multiple separated by commas, e.g. --meta_fields collection_country,collection_date",
     )
+    return parser
 
+
+def parse_args_count_specimen_meta():
+    parser = get_parser_count_specimen_meta()
     return parser.parse_args()
 
 

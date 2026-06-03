@@ -8,8 +8,11 @@ from pmotools.pmo_engine.pmo_writer import PMOWriter
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_extract_pmo_with_select_specimen_names():
-    parser = argparse.ArgumentParser()
+def get_parser_extract_pmo_with_select_specimen_names() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python extract_pmo_with_select_specimen_names",
+        description="Extract specific samples from the specimens table",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, required=True, help="Output json file path"
@@ -28,6 +31,11 @@ def parse_args_extract_pmo_with_select_specimen_names():
         required=True,
         help="Can either comma separated specimen_names, or a plain text file where each line is a specimen_name",
     )
+    return parser
+
+
+def parse_args_extract_pmo_with_select_specimen_names():
+    parser = get_parser_extract_pmo_with_select_specimen_names()
     return parser.parse_args()
 
 

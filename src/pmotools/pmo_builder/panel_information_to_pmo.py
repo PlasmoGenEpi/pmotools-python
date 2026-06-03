@@ -11,6 +11,39 @@ from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 
 
 class PMOPanelBuilder:
+    """
+    Build PMO ``target_info`` and ``panel_info`` structures from a target table.
+
+    Wraps a dataframe of one-row-per-target panel data and converts it into the
+    nested dictionaries a PMO expects. Most users should call
+    :func:`panel_info_table_to_pmo` instead of using this class directly.
+
+    :param target_table: dataframe with one row per target
+    :param panel_name: name assigned to the panel
+    :param target_name_col: column holding the target names. Default: ``target_name``
+    :param forward_primers_seq_col: column holding the forward primer sequence. Default: ``fwd_primer``
+    :param reverse_primers_seq_col: column holding the reverse primer sequence. Default: ``rev_primer``
+    :param reaction_name_col: optional column naming which reaction each target
+        belongs to; if omitted, all targets go in a single reaction
+    :param reaction_name_col_delimiter: delimiter splitting the reaction column
+        into multiple reactions. Default: ``,``
+    :param forward_primers_start_col: optional column with the 0-based forward primer start
+    :param forward_primers_end_col: optional column with the 0-based forward primer end
+    :param reverse_primers_start_col: optional column with the 0-based reverse primer start
+    :param reverse_primers_end_col: optional column with the 0-based reverse primer end
+    :param insert_start_col: optional column with the 0-based insert start
+    :param insert_end_col: optional column with the 0-based insert end
+    :param chrom_col: optional chromosome column; required if any location columns are set
+    :param strand_col: optional strand column
+    :param ref_seq_col: optional reference-sequence column for the insert
+    :param gene_name_col: optional gene-name column
+    :param target_attributes_col: optional column of target attribute classifications
+    :param target_attributes_col_delimiter: delimiter splitting the attributes
+        column into multiple attributes. Default: ``,``
+    :param additional_target_info_cols: optional list of extra column names to
+        copy verbatim into each target dict
+    """
+
     def __init__(
         self,
         target_table: pd.DataFrame,
@@ -58,6 +91,15 @@ class PMOPanelBuilder:
         self.location_info_cols = self.check_location_columns()
 
     def check_location_columns(self):
+        """
+        Validate the optional genomic-location column configuration.
+
+        If any location column is set, enforces that ``chrom_col`` is present and
+        that primer/insert start and end columns are supplied as pairs.
+
+        :raises ValueError: if location columns are set inconsistently
+        :return: the list of location columns if any were provided, otherwise None
+        """
         location_cols = [
             self.forward_primers_start_col,
             self.forward_primers_end_col,
@@ -102,6 +144,7 @@ class PMOPanelBuilder:
     def check_target_names_are_unique(self):
         """
         Raise an exception if the target names are not unique
+
         :return: Nothing
         """
         duplications = self.target_table[
@@ -115,6 +158,7 @@ class PMOPanelBuilder:
     def check_unique_target_info(self, columns_to_check):
         """
         Raise an exception if the target info is not unique
+
         :param columns_to_check: the columns to check to ensure the target info is unique
         :return: Nothing
         """
@@ -137,6 +181,17 @@ class PMOPanelBuilder:
             raise ValueError("\n".join(msg_lines))
 
     def summarise_targets_missing_optional_info(self):
+        """
+        Warn about targets missing optional location fields.
+
+        For each of insert, forward-primer, and reverse-primer locations that was
+        requested, finds targets with empty coordinate fields and emits a warning.
+        Targets listed here are skipped when their location block is built.
+
+        :return: a tuple ``(missing_insert_loc, missing_fwd_primer_loc,
+            missing_rev_primer_loc)``; each element is a list of target names, or
+            None if that location type was not requested
+        """
         missing_insert_loc = None
         missing_fwd_primer_loc = None
         missing_rev_primer_loc = None
@@ -188,6 +243,17 @@ class PMOPanelBuilder:
         self,
         genome_id_col: str | None = None,
     ):
+        """
+        Build the list of target_info dictionaries from the target table.
+
+        Validates target-name uniqueness and primer/location uniqueness, then
+        assembles one dict per target including primer sequences and, where
+        available, insert and primer genomic locations.
+
+        :param genome_id_col: optional column holding the genome id for each
+            target; if omitted, a genome_id of 0 is used
+        :return: a list of target_info dictionaries
+        """
         # Check targets before putting into JSON
         (
             forward_primers_start_col,
@@ -292,6 +358,16 @@ class PMOPanelBuilder:
         return targets_dicts
 
     def build_panel_info_dict(self, targets_dict):
+        """
+        Build the panel_info dictionary, grouping targets into reactions.
+
+        If no reaction column was configured, all targets are placed in a single
+        reaction named ``full``.
+
+        :param targets_dict: the target_info list from :meth:`build_target_info_dict`
+        :return: a panel_info dictionary with ``panel_name`` and ``reactions``,
+            where each reaction lists target indices into ``targets_dict``
+        """
         panel_dict = {"panel_name": self.panel_name, "reactions": []}
         target_indices = dict()
         for i, target_dict in enumerate(targets_dict):
@@ -336,6 +412,17 @@ class PMOPanelBuilder:
 
 
 def check_genome_info(genome_info):
+    """
+    Validate that genome info contains the required keys.
+
+    Accepts either a single genome dict or a list of them, and checks each for
+    the keys ``name``, ``genome_version``, ``taxon_id``, and ``url``.
+
+    :param genome_info: a genome dict or list of genome dicts
+    :raises TypeError: if genome_info is not a dict or list, or a list element is not a dict
+    :raises ValueError: if the list is empty or any entry is missing required keys
+    :return: Nothing
+    """
     if isinstance(genome_info, dict):
         required_keys = {"name", "genome_version", "taxon_id", "url"}
         missing_keys = required_keys - genome_info.keys()
@@ -370,6 +457,13 @@ def merge_panel_info_dicts(panel_info_dicts: list[dict]) -> dict:
     Target lists are concatenated (deduplicated by target_name) and all
     genome references are collapsed so that genome identifiers remain valid
     across the merged structure.
+
+    :param panel_info_dicts: a list of panel_info dicts, each with ``target_info``
+        and ``panel_info`` (and optionally ``targeted_genomes``)
+    :raises ValueError: if the list is empty, a dict lacks ``target_info``, or a
+        target has location data without accompanying ``targeted_genomes``
+    :return: a merged dict with ``panel_info`` and ``target_info`` keys, plus
+        ``targeted_genomes`` if any genomes were present
     """
     if not panel_info_dicts:
         raise ValueError("panel_info_dicts must contain at least one entry.")
@@ -492,28 +586,52 @@ def panel_info_table_to_pmo(
     """
     Convert a dataframe containing panel information into dictionary of targets and reference information
 
-    :param target_table: The dataframe containing the target information
+    :param target_table: the dataframe containing the target information
+    :type target_table: pd.DataFrame
     :param panel_name: the panel ID assigned to the panel
-    :param genome_info: a dictionary containing reference genome information, needed if the target info contains genome location
+    :type panel_name: str
+    :param genome_info: reference genome information, needed if the target info contains genome location
+    :type genome_info: dict or list, optional
     :param target_name_col: the name of the column containing the target IDs. Default: target_name
+    :type target_name_col: str
     :param forward_primers_seq_col: the name of the column containing the sequence of the forward primer. Default: fwd_primer
+    :type forward_primers_seq_col: str
     :param reverse_primers_seq_col: the name of the column containing the sequence of the reverse primer. Default: rev_primer
-    :param reaction_name_col(Optional): the name of the column containing which reaction the target was part of. By default they will all be put in one reaction.
-    :param reaction_name_col_delimiter (Optional): the delimiter used to split the reaction name column into multiple reactions. Default is a comma.
-    :param forward_primers_start_col (Optional): the name of the column containing the 0-based start coordinate of the forward primer
-    :param forward_primers_end_col (Optional): the name of the column containing the 0-based end coordinate of the forward primer
-    :param reverse_primers_start_col (Optional): the name of the column containing the 0-based start coordinate of the reverse primer
-    :param reverse_primers_end_col (Optional): the name of the column containing the 0-based end coordinate of the reverse primer
-    :param insert_start_col (Optional): the name of the column containing the 0-based start coordinate of the insert
-    :param insert_end_col (Optional): the name of the column containing the 0-based end coordinate of the insert
-    :param chrom_col (Optional): the name of the column containing the chromosome for the target
-    :param gene_name_col (Optional): the name of the column containing the gene id
-    :param strand_col (Optional): the name of the column containing the strand for the target
-    :param target_attributes_col (Optional): a list of classification type for the primer target
-    :param target_attributes_col_delimter (Optional): the delimiter used to split the target attributes column into multiple attributes. Default is a comma.
-    :param genome_id_col (Optional): the name of the column containing the genome ID (default is 0)
-    :param additional_target_info_cols (Optional): dictionary of optional additional columns to add to the target information dictionary. Keys are column names and values are the type.
+    :type reverse_primers_seq_col: str
+    :param reaction_name_col: the name of the column containing which reaction the target was part of. By default they will all be put in one reaction.
+    :type reaction_name_col: str, optional
+    :param reaction_name_col_delimiter: the delimiter used to split the reaction name column into multiple reactions. Default is a comma.
+    :type reaction_name_col_delimiter: str
+    :param forward_primers_start_col: the name of the column containing the 0-based start coordinate of the forward primer
+    :type forward_primers_start_col: str, optional
+    :param forward_primers_end_col: the name of the column containing the 0-based end coordinate of the forward primer
+    :type forward_primers_end_col: str, optional
+    :param reverse_primers_start_col: the name of the column containing the 0-based start coordinate of the reverse primer
+    :type reverse_primers_start_col: str, optional
+    :param reverse_primers_end_col: the name of the column containing the 0-based end coordinate of the reverse primer
+    :type reverse_primers_end_col: str, optional
+    :param insert_start_col: the name of the column containing the 0-based start coordinate of the insert
+    :type insert_start_col: str, optional
+    :param insert_end_col: the name of the column containing the 0-based end coordinate of the insert
+    :type insert_end_col: str, optional
+    :param chrom_col: the name of the column containing the chromosome for the target
+    :type chrom_col: str, optional
+    :param gene_name_col: the name of the column containing the gene id
+    :type gene_name_col: str, optional
+    :param strand_col: the name of the column containing the strand for the target
+    :type strand_col: str, optional
+    :param ref_seq_col: the name of the column containing the reference sequence for the insert
+    :type ref_seq_col: str, optional
+    :param target_attributes_col: a list of classification type for the primer target
+    :type target_attributes_col: str, optional
+    :param target_attributes_col_delimiter: the delimiter used to split the target attributes column into multiple attributes. Default is a comma.
+    :type target_attributes_col_delimiter: str
+    :param genome_id_col: the name of the column containing the genome ID (default is 0)
+    :type genome_id_col: str, optional
+    :param additional_target_info_cols: a list of additional column names to copy verbatim into each target information dictionary
+    :type additional_target_info_cols: list, optional
     :return: a dict of the panel information
+    :rtype: dict
     """
 
     if not isinstance(target_table, pd.DataFrame):

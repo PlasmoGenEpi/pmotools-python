@@ -13,19 +13,32 @@ from pmotools.pmo_engine.pmo_processor import PMOProcessor
 
 from pmotools import __version__ as __pmotools_version__
 
-bed_loc_tuple = NamedTuple(
-    "bed_loc",
-    [
-        ("chrom", str),
-        ("start", int),
-        ("end", int),
-        ("name", str),
-        ("score", float),
-        ("strand", str),
-        ("ref_seq", str),
-        ("extra_info", str),
-    ],
-)
+
+class BedLoc(NamedTuple):
+    """
+    A single BED-format genomic location.
+
+    Used when extracting target / panel insert locations out of a PMO so they
+    can be written to a BED file.
+
+    :ivar chrom: chromosome / contig name
+    :ivar start: 0-based start position
+    :ivar end: end position (exclusive)
+    :ivar name: target name
+    :ivar score: BED score column; here the insert length (``end - start``)
+    :ivar strand: ``+`` or ``-``
+    :ivar ref_seq: reference sequence for the insert, empty string if not loaded
+    :ivar extra_info: free-text key/value annotation, e.g. genome name/version
+    """
+
+    chrom: str
+    start: int
+    end: int
+    name: str
+    score: float
+    strand: str
+    ref_seq: str
+    extra_info: str
 
 
 class PMOExporter(object):
@@ -34,18 +47,40 @@ class PMOExporter(object):
     """
 
     @staticmethod
-    def is_primitive(x) -> bool:
+    def _is_primitive(x) -> bool:
+        """
+        Check whether a value is a primitive that can be written directly to a table cell.
+
+        :param x: the value to check
+        :return: True if ``x`` is a str, int, float, bool, or None
+        """
         return isinstance(x, (str, int, float, bool)) or x is None
 
     @staticmethod
-    def is_primitive_list(x) -> bool:
+    def _is_primitive_list(x) -> bool:
+        """
+        Check whether a value is a list or tuple containing only primitives.
+
+        :param x: the value to check
+        :return: True if ``x`` is a list/tuple and every element is a primitive
+            (see :meth:`is_primitive`)
+        """
         return isinstance(x, (list, tuple)) and all(
-            PMOExporter.is_primitive(i) for i in x
+            PMOExporter._is_primitive(i) for i in x
         )
 
     @staticmethod
-    def is_exportable(x) -> bool:
-        return PMOExporter.is_primitive(x) or PMOExporter.is_primitive_list(x)
+    def _is_exportable(x) -> bool:
+        """
+        Check whether a value can be exported to a flat table.
+
+        A value is exportable if it is a primitive or a list/tuple of primitives;
+        complex nested objects (e.g. TravelInfo, parasite densities) are not.
+
+        :param x: the value to check
+        :return: True if ``x`` is a primitive or a primitive list
+        """
+        return PMOExporter._is_primitive(x) or PMOExporter._is_primitive_list(x)
 
     @staticmethod
     def export_specimen_travel_meta_table(
@@ -54,6 +89,7 @@ class PMOExporter(object):
         """
         Export the specimen meta information of a PMO to a dataframe
         Currently avoiding exporting values of complex object types like TravelInfo or Parasite densities, best to export such values in their own tables
+
         :param pmodata: the pmo export the information from
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the specimen metadata
@@ -64,9 +100,9 @@ class PMOExporter(object):
                 for travel_meta in specimen["travel_out_six_month"]:
                     export_row = {"specimen_name": specimen["specimen_name"]}
                     for key, value in travel_meta.items():
-                        if PMOExporter.is_primitive(value):
+                        if PMOExporter._is_primitive(value):
                             export_row[key] = value
-                        elif PMOExporter.is_primitive_list(value):
+                        elif PMOExporter._is_primitive_list(value):
                             export_row[key] = separator.join(str(v) for v in value)
                     rows.append(export_row)
         return pd.DataFrame(rows)
@@ -76,6 +112,7 @@ class PMOExporter(object):
         """
         Export the specimen meta information of a PMO to a dataframe
         Currently avoiding exporting values of complex object types like TravelInfo or Parasite densities, best to export such values in their own tables
+
         :param pmodata: the pmo export the information from
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the specimen metadata
@@ -88,9 +125,9 @@ class PMOExporter(object):
                     export_row["project_name"] = pmodata["project_info"][value][
                         "project_name"
                     ]
-                elif PMOExporter.is_primitive(value):
+                elif PMOExporter._is_primitive(value):
                     export_row[key] = value
-                elif PMOExporter.is_primitive_list(value):
+                elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
             rows.append(export_row)
         return pd.DataFrame(rows)
@@ -99,6 +136,7 @@ class PMOExporter(object):
     def export_library_sample_meta_table(pmodata, separator: str = ",") -> pd.DataFrame:
         """
         Export the library_sample meta information of a PMO to a dataframe
+
         :param pmodata: the pmo export the information from
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the library_sample metadata
@@ -119,9 +157,9 @@ class PMOExporter(object):
                     export_row["panel_name"] = pmodata["panel_info"][value][
                         "panel_name"
                     ]
-                elif PMOExporter.is_primitive(value):
+                elif PMOExporter._is_primitive(value):
                     export_row[key] = value
-                elif PMOExporter.is_primitive_list(value):
+                elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
             rows.append(export_row)
         return pd.DataFrame(rows)
@@ -146,9 +184,9 @@ class PMOExporter(object):
             export_row["run_id"] = run_id
             run_id += 1
             for key, value in bioinformatics_run_info.items():
-                if PMOExporter.is_primitive(value):
+                if PMOExporter._is_primitive(value):
                     export_row[key] = value
-                elif PMOExporter.is_primitive_list(value):
+                elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
             rows.append(export_row)
         return pd.DataFrame(rows)
@@ -174,9 +212,9 @@ class PMOExporter(object):
             export_row = {}
             for key, value in bioinformatics_methods_info.items():
                 export_row["bioinformatics_methods_id"] = bioinformatics_methods_id
-                if PMOExporter.is_primitive(value):
+                if PMOExporter._is_primitive(value):
                     export_row[key] = value
-                elif PMOExporter.is_primitive_list(value):
+                elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
 
             method_count = 0
@@ -195,6 +233,7 @@ class PMOExporter(object):
     ) -> pd.DataFrame:
         """
         Export the sequencing_info meta information of a PMO to a dataframe
+
         :param pmodata: the pmo export the information from
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the sequencing_info metadata
@@ -206,9 +245,9 @@ class PMOExporter(object):
         for sequencing_info in pmodata["sequencing_info"]:
             export_row = {}
             for key, value in sequencing_info.items():
-                if PMOExporter.is_primitive(value):
+                if PMOExporter._is_primitive(value):
                     export_row[key] = value
-                elif PMOExporter.is_primitive_list(value):
+                elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
             rows.append(export_row)
         return pd.DataFrame(rows)
@@ -217,6 +256,7 @@ class PMOExporter(object):
     def export_project_info_meta_table(pmodata, separator: str = ",") -> pd.DataFrame:
         """
         Export the project_info meta information of a PMO to a dataframe
+
         :param pmodata: the pmo export the information from
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the project_info metadata
@@ -228,9 +268,9 @@ class PMOExporter(object):
         for project_info in pmodata["project_info"]:
             export_row = {}
             for key, value in project_info.items():
-                if PMOExporter.is_primitive(value):
+                if PMOExporter._is_primitive(value):
                     export_row[key] = value
-                elif PMOExporter.is_primitive_list(value):
+                elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
             rows.append(export_row)
         return pd.DataFrame(rows)
@@ -239,6 +279,7 @@ class PMOExporter(object):
     def export_panel_info_meta_table(pmodata, separator: str = ",") -> pd.DataFrame:
         """
         Export the panel meta information of a PMO to a dataframe
+
         :param pmodata: the pmo export the information from
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the panel metadata
@@ -247,9 +288,9 @@ class PMOExporter(object):
         for panel_info in pmodata["panel_info"]:
             export_row = {}
             for key, value in panel_info.items():
-                if PMOExporter.is_primitive(value):
+                if PMOExporter._is_primitive(value):
                     export_row[key] = value
-                elif PMOExporter.is_primitive_list(value):
+                elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
             reactions_for_target = defaultdict(list)
             for reaction in panel_info["reactions"]:
@@ -268,6 +309,7 @@ class PMOExporter(object):
     def export_target_info_meta_table(pmodata, separator: str = ",") -> pd.DataFrame:
         """
         Export the target meta information of a PMO to a dataframe
+
         :param pmodata: the pmo export the information from
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the panel metadata
@@ -305,9 +347,9 @@ class PMOExporter(object):
                 elif "insert_location" == key:
                     for insert_key in value.keys():
                         export_row["insert_" + insert_key] = value[insert_key]
-                elif PMOExporter.is_primitive(value):
+                elif PMOExporter._is_primitive(value):
                     export_row[key] = value
-                elif PMOExporter.is_primitive_list(value):
+                elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
             rows.append(export_row)
 
@@ -323,6 +365,7 @@ class PMOExporter(object):
     def export_pmo_header_table(pmodata, separator: str = ",") -> pd.DataFrame:
         """
         Export the pmo header meta information of a PMO to a dataframe
+
         :param pmodata: the pmo export the information from
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the genomes metadata
@@ -338,9 +381,9 @@ class PMOExporter(object):
                     "program_version"
                 ]
                 export_row["generation_method.program_name"] = value["program_name"]
-            elif PMOExporter.is_primitive(value):
+            elif PMOExporter._is_primitive(value):
                 export_row[key] = value
-            elif PMOExporter.is_primitive_list(value):
+            elif PMOExporter._is_primitive_list(value):
                 export_row[key] = separator.join(str(v) for v in value)
         rows.append(export_row)
         df = pd.DataFrame(rows)
@@ -356,6 +399,7 @@ class PMOExporter(object):
     ) -> pd.DataFrame:
         """
         Export the targeted genomes meta information of a PMO to a dataframe
+
         :param pmodata: the pmo export the information from
         :param separator: the separator to use for list values
         :return: a pandas dataframe of the genomes metadata
@@ -369,9 +413,9 @@ class PMOExporter(object):
             export_row["genome_id"] = genome_id
             genome_id += 1
             for key, value in genome_info.items():
-                if PMOExporter.is_primitive(value):
+                if PMOExporter._is_primitive(value):
                     export_row[key] = value
-                elif PMOExporter.is_primitive_list(value):
+                elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
             rows.append(export_row)
 
@@ -383,10 +427,11 @@ class PMOExporter(object):
         return df[leading + rest]
 
     @staticmethod
-    def write_bed_locs(bed_locs: list[bed_loc_tuple], fnp, add_header: bool = False):
+    def write_bed_locs(bed_locs: list[BedLoc], fnp, add_header: bool = False):
         """
-        Write out a list of bed_loc_tuple to a file, will auto overwrite it
-        :param bed_locs: a list of bed_loc_tuple
+        Write out a list of BedLoc to a file, will auto overwrite it
+
+        :param bed_locs: a list of BedLoc
         :param fnp: output file path, will be overwritten if it exists
         :param add_header: add header of #chrom,start end,name,score,strand,ref_seq,extra_info, starts with comment so tools will treat it as a comment line
         """
@@ -429,12 +474,12 @@ class PMOExporter(object):
     ):
         """
         Extract out of a PMO the insert location for targets, will add ref seq if loaded into PMO
+
         :param pmodata: the PMO to extract from
         :param select_target_ids: a list of target ids to select, if None will select all targets
         :param sort_output: whether to sort output by genomic location
-        :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, extra_info, ref_seq
+        :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, ref_seq, extra_info
         """
-        # bed_loc = NamedTuple("bed_loc", [("chrom", str), ("start", int), ("end", int), ("name", str), ("score", float), ("strand", str), ("extra_info", str), ("ref_seq", str)])
         bed_loc_out = []
         if select_target_ids is None:
             select_target_ids = list(range(len(pmodata["target_info"])))
@@ -468,7 +513,7 @@ class PMOExporter(object):
                 else tar["insert_location"]["ref_seq"]
             )
             bed_loc_out.append(
-                bed_loc_tuple(
+                BedLoc(
                     tar["insert_location"]["chrom"],
                     tar["insert_location"]["start"],
                     tar["insert_location"]["end"],
@@ -489,10 +534,11 @@ class PMOExporter(object):
     ):
         """
         Extract out of a PMO the insert location for panels, will add ref seq if loaded into PMO
+
         :param pmodata: the PMO to extract from
         :param select_panel_ids: a list of panels ids to select, if None will select all panels
         :param sort_output: whether to sort output by genomic location
-        :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, extra_info, ref_seq
+        :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, ref_seq, extra_info
         """
         bed_loc_out = {}
         if select_panel_ids is None:
@@ -544,7 +590,7 @@ class PMOExporter(object):
                         else tar["insert_location"]["ref_seq"]
                     )
                     bed_loc_out_per_panel.append(
-                        bed_loc_tuple(
+                        BedLoc(
                             tar["insert_location"]["chrom"],
                             tar["insert_location"]["start"],
                             tar["insert_location"]["end"],
@@ -775,6 +821,7 @@ class PMOExporter(object):
     ) -> pd.DataFrame:
         """
         List all the library_sample_names per specimen_name
+
         :param pmodata: the PMO
         :param select_specimen_ids: a list of specimen_ids to select, if None, all specimen_ids are used
         :param select_specimen_names: a list of specimen_names to select, if None, all specimen_names are used

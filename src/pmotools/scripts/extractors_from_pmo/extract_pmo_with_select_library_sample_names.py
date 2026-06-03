@@ -8,8 +8,13 @@ from pmotools.pmo_engine.pmo_writer import PMOWriter
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_extract_pmo_with_select_library_sample_names():
-    parser = argparse.ArgumentParser()
+def get_parser_extract_pmo_with_select_library_sample_names() -> (
+    argparse.ArgumentParser
+):
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python extract_pmo_with_select_library_sample_names",
+        description="Extract library sample names from library_sample_info table",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, required=True, help="Output json file path"
@@ -28,6 +33,11 @@ def parse_args_extract_pmo_with_select_library_sample_names():
         required=True,
         help="Can either comma separated library_sample_names, or a plain text file where each line is a library_sample_name",
     )
+    return parser
+
+
+def parse_args_extract_pmo_with_select_library_sample_names():
+    parser = get_parser_extract_pmo_with_select_library_sample_names()
     return parser.parse_args()
 
 

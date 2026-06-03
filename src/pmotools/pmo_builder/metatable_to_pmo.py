@@ -51,28 +51,46 @@ def library_sample_info_table_to_pmo(
     list_values_library_values_delimiter: str = ",",
 ):
     """
-    Converts a DataFrame containing library information into JSON.
+    Convert a DataFrame containing library information into JSON.
 
-    :param contents (pd.DataFrame): Input DataFrame containing library data.
-    :param library_sample_name_col (str): Column name for library sample names. Default: library_sample_name
-    :param specimen_name_col (str): Column name for specimen IDs. Default: specimen_name
-    :param panel_name_col (str): Column name for panel IDs. Default: panel_name
-    :param sequencing_info_name_col (Optional[str]): Column name for sequencing information names
-    :param alternate_identifiers_col (Optional[str]): Column name for alternate identifiers.
-    :param experiment_accession_col (Optional[str]): Column name for experiment accession information.
-    :param fastqs_loc_col (Optional[str]): Column name for location of fastqs.
-    :param library_prep_plate_name_col (Optional[str]): Column name containing plate name for sequencing.
-    :param library_prep_plate_col_col (Optional[str]): Column name for col of sample on sequencing plate.
-    :param library_prep_plate_row_col (Optional[str]): Column name for row of sample on sequencing plate.
-    :param library_prep_plate_position_col (Optional[str]): Column name for position on sequencing plate (e.g. A01). Can't be set if library_prep_plate_col_col and library_prep_plate_row_col are specified.
-    :param parasite_density_col (Optional[str, list[str]]): The parasite density in parasites per microliters
-    :param parasite_density_method_col (Optional[str or list[str]]): The method of how the density was obtained. If set parasite_density_col must also be specified.
-    :param run_accession_col (Optional[str]): Column name for run accession information.
-    :param additional_library_sample_info_cols (Optional[List[str], None]]): Additional column names to include.
-    :param list_values_library_values (Optional[List[str], None]): columns that contain values that could be list, are delimited by the argument list_values_library_values_delimiter
-    :param list_values_library_values_delimiter (','): delimiter between list_values_library_values
-
-    :return: JSON format where keys are `library_sample_id` and values are corresponding row data.
+    :param contents: input DataFrame containing library data
+    :type contents: pd.DataFrame
+    :param library_sample_name_col: column name for library sample names. Default: library_sample_name
+    :type library_sample_name_col: str
+    :param specimen_name_col: column name for specimen names. Default: specimen_name
+    :type specimen_name_col: str
+    :param panel_name_col: column name for panel names. Default: panel_name
+    :type panel_name_col: str
+    :param sequencing_info_name_col: column name for sequencing information names
+    :type sequencing_info_name_col: str, optional
+    :param alternate_identifiers_col: column name for alternate identifiers
+    :type alternate_identifiers_col: str, optional
+    :param experiment_accession_col: column name for experiment accession information
+    :type experiment_accession_col: str, optional
+    :param fastqs_loc_col: column name for location of fastqs
+    :type fastqs_loc_col: str, optional
+    :param library_prep_plate_name_col: column name containing plate name for sequencing
+    :type library_prep_plate_name_col: str, optional
+    :param library_prep_plate_col_col: column name for the column of the sample on the sequencing plate
+    :type library_prep_plate_col_col: str, optional
+    :param library_prep_plate_row_col: column name for the row of the sample on the sequencing plate
+    :type library_prep_plate_row_col: str, optional
+    :param library_prep_plate_position_col: column name for position on the sequencing plate (e.g. A01). Can't be set if library_prep_plate_col_col and library_prep_plate_row_col are specified.
+    :type library_prep_plate_position_col: str, optional
+    :param parasite_density_col: the parasite density in parasites per microliter
+    :type parasite_density_col: str or list of str, optional
+    :param parasite_density_method_col: the method of how the density was obtained. If set, parasite_density_col must also be specified.
+    :type parasite_density_method_col: str or list of str, optional
+    :param run_accession_col: column name for run accession information
+    :type run_accession_col: str, optional
+    :param additional_library_sample_info_cols: additional column names to include
+    :type additional_library_sample_info_cols: list of str, optional
+    :param list_values_library_values: columns that contain values that could be a list, delimited by list_values_library_values_delimiter
+    :type list_values_library_values: list of str, optional
+    :param list_values_library_values_delimiter: delimiter between list_values_library_values. Default: ','
+    :type list_values_library_values_delimiter: str
+    :return: JSON format where keys are ``library_sample_id`` and values are corresponding row data
+    :rtype: dict
     """
     # Check contents is a dataframe
     if not isinstance(contents, pd.DataFrame):
@@ -219,48 +237,86 @@ def specimen_info_table_to_pmo(
     list_values_specimen_values_delimiter: str = ",",
 ):
     """
-    Converts a DataFrame containing specimen information into JSON.
+    Convert a DataFrame containing specimen information into JSON.
 
-    :param contents (pd.DataFrame): The input DataFrame containing library data.
-    :param specimen_name_col (string): The column name for specimen sample IDs. Default: specimen_id
-    :param specimen_taxon_id_col (Optional[str]): NCBI taxonomy number of the organism.
-    :param host_taxon_id_col (Optional[str]): NCBI taxonomy number of the host.
-    :param collection_date_col (Optional[str]): Date of the sample collection.
-    :param collection_country_col (Optional[str]): Name of country collected in (admin level 0).
-    :param project_name_col (Optional[str]): Name of the project.
-    :param alternate_identifiers_col (Optional[str]): List of optional alternative names for the samples
-    :param blood_meal_col (Optional[str]): Whether host specimen has had a recent blood meal
-    :param drug_usage_col (Optional[str]): Any drug used by subject and the frequency of usage; can include multiple drugs used
-    :param env_broad_scale_col (Optional[str]): The broad environment from which the specimen was collected
-    :param env_local_scale_col (Optional[str]): The local environment from which the specimen was collected
-    :param env_medium_col (Optional[str]): The environment medium from which the specimen was collected from
-    :param geo_admin1_col (Optional[str]): Geographical admin level 1
-    :param geo_admin2_col (Optional[str]): Geographical admin level 2
-    :param geo_admin3_col (Optional[str]): Geographical admin level 3
-    :param gravid_col (Optional[str]): Whether host specimen is pregnant
-    :param gravidity_col (Optional[str]): The number of previous pregnancies
-    :param has_travel_out_six_month_col (Optional[str]): Whether host specimen has travelled out from local region in the last six months
-    :param host_age_col (Optional[str]): The age in years of the person
-    :param host_sex_col (Optional[str]): If specimen is from a person, the sex of that person
-    :param host_subject_id (Optional[str]): ID for the individual a specimen was collected from
-    :param lat_lon_col (Optional[str]): Latitude and longitude of the collection site
-    :param parasite_density_col (Optional[str, list[str]]): The parasite density in parasites per microliters
-    :param parasite_density_method_col (Optional[str or list[str]]): The method of how the density was obtained. If set parasite_density_col must also be specified.
-    :param specimen_accession_col (Optional[str]): The accession number of the specimen
-    :param storage_plate_col_col (Optional[str]): Column the specimen was in in the plate. If set storage_plate_row_col must also be specified.
-    :param storage_plate_name_col (Optional[str]): Name of plate the specimen was in
-    :param storage_plate_row_col (Optional[str]): Row the specimen was in in the plate. If set storage_plate_col_col must also be specified.
-    :param storage_plate_position_col (Optional[str]): Position of the specimen on the plate (e.g. A01). Can't be set if storage_plate_col_col and storage_plate_row_col are specified.
-    :param specimen_collect_device_col (Optional[str]): The way the specimen was collected
-    :param specimen_comments_col (Optional[str]): Additional comments about the specimen
-    :param specimen_store_loc_col (Optional[str]): Specimen storage site
-    :param specimen_type_col (Optional[str]): Type of specimen, e.g. negative_control, positive_control, field_sample
-    :param treatment_status_col (Optional[str]): If person has been treated with drugs, what was the treatment outcome
-    :param additional_specimen_cols (Optional[List[str], None]]): Additional column names to include
-    :param list_values_specimen_values (Optional[List[str], None]): columns that contain values that could be list, are delimited by the argument list_values_specimen_values_delimiter
-    :param list_values_specimen_values_delimiter (','): delimiter between list_values_specimen_values
-
-    :return: JSON format where keys are `specimen_name_col` and values are corresponding row data.
+    :param contents: the input DataFrame containing specimen data
+    :type contents: pd.DataFrame
+    :param specimen_name_col: the column name for specimen names. Default: specimen_name
+    :type specimen_name_col: str
+    :param specimen_taxon_id_col: NCBI taxonomy number of the organism
+    :type specimen_taxon_id_col: str, optional
+    :param host_taxon_id_col: NCBI taxonomy number of the host
+    :type host_taxon_id_col: str, optional
+    :param collection_date_col: date of the sample collection
+    :type collection_date_col: str, optional
+    :param collection_country_col: name of country collected in (admin level 0)
+    :type collection_country_col: str, optional
+    :param project_name_col: name of the project
+    :type project_name_col: str, optional
+    :param alternate_identifiers_col: list of optional alternative names for the samples
+    :type alternate_identifiers_col: str, optional
+    :param blood_meal_col: whether the host specimen has had a recent blood meal
+    :type blood_meal_col: str, optional
+    :param drug_usage_col: any drug used by the subject and the frequency of usage; can include multiple drugs used
+    :type drug_usage_col: str, optional
+    :param env_broad_scale_col: the broad environment from which the specimen was collected
+    :type env_broad_scale_col: str, optional
+    :param env_local_scale_col: the local environment from which the specimen was collected
+    :type env_local_scale_col: str, optional
+    :param env_medium_col: the environment medium from which the specimen was collected
+    :type env_medium_col: str, optional
+    :param geo_admin1_col: geographical admin level 1
+    :type geo_admin1_col: str, optional
+    :param geo_admin2_col: geographical admin level 2
+    :type geo_admin2_col: str, optional
+    :param geo_admin3_col: geographical admin level 3
+    :type geo_admin3_col: str, optional
+    :param gravid_col: whether the host specimen is pregnant
+    :type gravid_col: str, optional
+    :param gravidity_col: the number of previous pregnancies
+    :type gravidity_col: str, optional
+    :param has_travel_out_six_month_col: whether the host specimen has travelled out from the local region in the last six months
+    :type has_travel_out_six_month_col: str, optional
+    :param host_age_col: the age in years of the person
+    :type host_age_col: str, optional
+    :param host_sex_col: if the specimen is from a person, the sex of that person
+    :type host_sex_col: str, optional
+    :param host_subject_id: ID for the individual a specimen was collected from
+    :type host_subject_id: str, optional
+    :param lat_lon_col: latitude and longitude of the collection site
+    :type lat_lon_col: str, optional
+    :param parasite_density_col: the parasite density in parasites per microliter
+    :type parasite_density_col: str or list of str, optional
+    :param parasite_density_method_col: the method of how the density was obtained. If set, parasite_density_col must also be specified.
+    :type parasite_density_method_col: str or list of str, optional
+    :param specimen_accession_col: the accession number of the specimen
+    :type specimen_accession_col: str, optional
+    :param storage_plate_col_col: column the specimen was in on the plate. If set, storage_plate_row_col must also be specified.
+    :type storage_plate_col_col: str, optional
+    :param storage_plate_name_col: name of the plate the specimen was in
+    :type storage_plate_name_col: str, optional
+    :param storage_plate_row_col: row the specimen was in on the plate. If set, storage_plate_col_col must also be specified.
+    :type storage_plate_row_col: str, optional
+    :param storage_plate_position_col: position of the specimen on the plate (e.g. A01). Can't be set if storage_plate_col_col and storage_plate_row_col are specified.
+    :type storage_plate_position_col: str, optional
+    :param specimen_collect_device_col: the way the specimen was collected
+    :type specimen_collect_device_col: str, optional
+    :param specimen_comments_col: additional comments about the specimen
+    :type specimen_comments_col: str, optional
+    :param specimen_store_loc_col: specimen storage site
+    :type specimen_store_loc_col: str, optional
+    :param specimen_type_col: type of specimen, e.g. negative_control, positive_control, field_sample
+    :type specimen_type_col: str, optional
+    :param treatment_status_col: if the person has been treated with drugs, what the treatment outcome was
+    :type treatment_status_col: str, optional
+    :param additional_specimen_cols: additional column names to include
+    :type additional_specimen_cols: list of str, optional
+    :param list_values_specimen_values: columns that contain values that could be a list, delimited by list_values_specimen_values_delimiter
+    :type list_values_specimen_values: list of str, optional
+    :param list_values_specimen_values_delimiter: delimiter between list_values_specimen_values. Default: ','
+    :type list_values_specimen_values_delimiter: str
+    :return: JSON format where keys are ``specimen_name`` and values are corresponding row data
+    :rtype: dict
     """
     # Check contents is a dataframe
     if not isinstance(contents, pd.DataFrame):

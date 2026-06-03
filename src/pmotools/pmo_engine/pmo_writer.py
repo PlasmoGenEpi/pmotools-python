@@ -18,6 +18,7 @@ class PMOWriter:
     def write_out_pmo(pmo, fnp: str | os.PathLike[str], overwrite: bool = False):
         """
         Write out a PMO, will write to zip file if the output fnp name ends with .gz
+
         :param pmo: the PMO to write
         :param fnp: the output filename path
         :param overwrite: whether to overwrite output file if it exists
