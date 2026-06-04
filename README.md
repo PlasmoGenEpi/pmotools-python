@@ -151,9 +151,7 @@ You can open the html to review changes.
 
 ### Releasing pmotools-python
 
-To release pmotools-python you need to update the version in two places:
-* update `version` in `pyproject.toml`, adhering to semantic versioning conventions.
-* update `release` in the documentation by updating `man/source/conf.py`
+To release pmotools-python you need to update `version` in `pyproject.toml`, adhering to semantic versioning conventions.
 
 **Note:** It is not always the case, but sometimes a release of pmotools-python will coincide with a new schema version. See the section below for notes on updating the schema version.
 
