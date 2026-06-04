@@ -291,9 +291,9 @@ class TestMergeToPMO(unittest.TestCase):
     def test_generate_pmo_header(self, mock_date):
         mock_date.today.return_value = date(2025, 7, 22)
         mock_date.side_effect = lambda *args, **kwargs: date(*args, **kwargs)
-        actual = _generate_pmo_header("1.0.0")
-        # expected = {'pmo_version': '1.0.0', 'creation_date': '2025-07-22', 'generation_method': {
-        #     'program_name': 'pmotools-python', 'program_version': '1.0.0'}}
+        actual = _generate_pmo_header(
+            pmotools_version="1.1.0", pmo_schema_version="1.1.0"
+        )
         self.assertEqual(actual, self.pmo_header_v1_1_0)
 
     def test_replace_key_with_id(self):
