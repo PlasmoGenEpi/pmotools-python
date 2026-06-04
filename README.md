@@ -1,79 +1,83 @@
 # pmotools
 
-A collection of tools to interact with [portable microhaplotype object (pmo) file format](https://github.com/PlasmoGenEpi/portable-microhaplotype-object)
+A collection of tools to interact with the [portable microhaplotype object (PMO) file format](https://github.com/PlasmoGenEpi/portable-microhaplotype-object).
 
-# Setup
+Documentation on the format and pmotools-python, including detailed tutorials can be found [here](https://plasmogenepi.github.io/PMO_Docs/).
 
-Install using pip. Currently only supports python 3.11+
+The manual for pmotools-python can be found [here](https://plasmogenepi.github.io/pmotools-python/index.html).
+
+# Installation
+
+Requires Python 3.11+.
+
 ```bash
-pip install .
+pip install pmotools
 ```
+
+This installs the `pmotools-python` command-line tool and the `pmotools` Python library.
 
 # Usage
 
-This package is built to either be used as a library in python projects and a command line interface already created which can be called from the commandline `pmotools-python` which will install with `pip install .`.
+pmotools-python can be used from the command line or imported as a Python library.
 
+## Command line
+
+After installation, the `pmotools-python` command is available:
+
+```bash
+pmotools-python --help
+pmotools-python validate_pmo --help
+```
+
+Examples:
+
+```bash
+pmotools-python validate_pmo --pmo my_data.pmo.json
+pmotools-python combine_pmos --pmo_files run1.pmo.json run2.pmo.json --output combined.pmo.json
+```
+
+Commands are grouped by task:
+
+| Group | Purpose |
+| --- | --- |
+| `convertors_to_json` | Convert tables and metadata into PMO inputs |
+| `extractors_from_pmo` | Subset PMOs by metadata, samples, targets, or read counts |
+| `pmo_to_table` | Export PMO contents to spreadsheets or other formats |
+| `extract_basic_info_from_pmo` | Inspect metadata and counts |
+| `working_with_multiple_pmos` | Combine PMOs |
+| `validation` | Validate PMO files against the JSON schema |
+
+See the [command-line manual](https://plasmogenepi.github.io/pmotools-python/commands/index.html) for full documentation of each command.
+
+## Python library
+
+Import pmotools in your own code to read, validate, write, and build PMO files:
+
+```python
+from pmotools.pmo_engine.pmo_reader import PMOReader
+from pmotools.pmo_engine.pmo_checker import PMOChecker
+
+pmo = PMOReader.read_in_pmo("example.pmo.json")
+
+checker = PMOChecker()
+checker.validate_pmo_json(pmo)
+```
+
+Core modules:
+
+- `pmotools.pmo_engine` — read, write, validate, and export PMOs
+- `pmotools.pmo_builder` — build PMOs from tables and metadata
+- `pmotools.scripts` — the same logic used by the CLI
+
+See the [API reference](https://plasmogenepi.github.io/pmotools-python/api/modules.html) for module-level documentation.
 
 ## Auto completion
 
-If you want to add auto-completion to the scripts master function [pmotools-python](scripts/pmotools-runner.py) you can add the following to your `~/.bash_completion`. This can also be found in etc/bash_completion in the current directory. Or can be generated with `pmotools-python --bash-completion`
+To enable bash tab completion for `pmotools-python`, append the script from `etc/bash_completion` to your `~/.bash_completion`, or generate it with:
 
 ```bash
-# bash completion for pmotools-python
-# add the below to your ~/.bash_completion
-
-_pmotools_python_complete()
-{
-    # Make sure underscores (and =) are NOT treated as word breaks
-    # so options like --pmo_files or --file=path complete as one token.
-    local _OLD_WB="${COMP_WORDBREAKS-}"
-    COMP_WORDBREAKS="${COMP_WORDBREAKS//_/}"
-    COMP_WORDBREAKS="${COMP_WORDBREAKS//=}"
-
-    local cur prev
-    COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
-
-    # 1) Completing the command name (1st arg): list all commands
-    if [[ ${COMP_CWORD} -eq 1 ]]; then
-        # Our CLI prints machine-friendly list via --list-plain:
-        # "<command>\t<group>\t<help>"
-        local lines cmds
-        lines="$(${COMP_WORDS[0]} --list-plain 2>/dev/null)"
-        cmds="$(printf '%s\n' "${lines}" | awk -F'\t' '{print $1}')"
-        COMPREPLY=( $(compgen -W "${cmds}" -- "${cur}") )
-
-        # restore wordbreaks before returning
-        COMP_WORDBREAKS="$_OLD_WB"
-        return 0
-    fi
-
-    # 2) Completing flags for a leaf command: scrape leaf -h
-    if [[ "${cur}" == -* ]]; then
-        local helps opts
-        helps="$(${COMP_WORDS[0]} ${COMP_WORDS[1]} -h 2>/dev/null)"
-        # Pull out flag tokens and split comma-separated forms
-        # Keep underscores intact in the tokens.
-        opts="$(printf '%s\n' "${helps}" \
-            | sed -n 's/^[[:space:]]\{0,\}\(-[-[:alnum:]_][-[:alnum:]_]*\)\(, *-[[:alnum:]_][-[:alnum:]_]*\)\{0,\}.*/\1/p' \
-            | sed 's/, / /g')"
-        COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-
-        COMP_WORDBREAKS="$_OLD_WB"
-        return 0
-    fi
-
-    # 3) Otherwise, fall back to filename completion for positional args
-    COMPREPLY=( $(compgen -f -- "${cur}") )
-
-    # restore original word breaks
-    COMP_WORDBREAKS="$_OLD_WB"
-    return 0
-}
-
-complete -F _pmotools_python_complete pmotools-python
-
+pmotools-python --bash-completion >> ~/.bash_completion
+source ~/.bash_completion
 ```
 
 ## Developer Setup
@@ -144,3 +148,19 @@ make update_autodocs
 make html
 ```
 You can open the html to review changes.
+
+### Releasing pmotools-python
+
+To release pmotools-python you need to update the version in two places:
+* update `version` in `pyproject.toml`, adhering to semantic versioning conventions.
+* update `release` in the documentation by updating `man/source/conf.py`
+
+**Note:** It is not always the case, but sometimes a release of pmotools-python will coincide with a new schema version. See the section below for notes on updating the schema version.
+
+Once you have merged these updates into the `main` branch, create a new release with notes. GitHub actions will automatically deploy to PyPi.
+
+### Updating the schema version
+
+You can release pmotools-python without updating the schema version. However, for the schema to be updated and become the default within pmotools-python, you must update the schema and then do a release of pmotools-python by following the instructions above.
+
+Update `__schema_version__` in `src/pmotools/__init__.py` to the new version of the schema. Do not include the `v` here (e.g. 1.0.0 not v1.0.0).
