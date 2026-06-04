@@ -7,6 +7,7 @@ from pmotools import __schema_version__
 from pmotools.pmo_builder.mhap_table_to_pmo import (
     create_minimum_library_specimen_dict_from_mhap_table,
 )
+import warnings
 
 
 def _convert_numpy_scalars(obj):
@@ -86,19 +87,19 @@ def merge_to_pmo(
         specimen_names = {item["specimen_name"] for item in specimen_info}
 
         # Check for names in library_sample_info that are not in specimen_info
-        missing_in_specimen = library_sample_names - specimen_names
-        if missing_in_specimen:
-            raise ValueError(
-                f"library_sample_names found in the detected_microhaplotypes that don't have corresponding supplied specimen_names: {sorted(missing_in_specimen)}"
-            )
-
         # Check for names in specimen_info that are not in library_sample_info
+        missing_in_specimen = library_sample_names - specimen_names
         missing_in_library = specimen_names - library_sample_names
+        if missing_in_specimen:
+            warnings.warn(
+                f"library_sample_names found in the detected_microhaplotypes that don't have corresponding supplied specimen_names: {sorted(missing_in_specimen)}, will be added to specimen_info with no meta"
+            )
         if missing_in_library:
-            raise ValueError(
+            warnings.warn(
                 f"specimen_name were supplied that don't have corresponding library_sample_names in detected_microhaplotypes: {sorted(missing_in_library)}"
             )
-
+        for missing_lib_name in missing_in_library:
+            specimen_info.append({"specimen_name": missing_lib_name})
         # names match, so the supplied specimen_info names will match up with the names in library_sample_info
     if specimen_info is None and library_sample_info is None:
         if len(panel_target_info["panel_info"]) > 1:
