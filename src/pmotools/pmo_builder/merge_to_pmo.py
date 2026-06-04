@@ -8,6 +8,7 @@ from pmotools.pmo_builder.mhap_table_to_pmo import (
     create_minimum_library_specimen_dict_from_mhap_table,
 )
 import warnings
+import copy
 
 
 def _convert_numpy_scalars(obj):
@@ -54,6 +55,31 @@ def merge_to_pmo(
     Returns:
         str: a JSON-formatted PMO string.
     """
+
+    # Deep copy every provided input up front so the caller's objects are never
+    # mutated by anything below (name replacement, appends, numpy conversion,
+    # etc.). All work happens on these local copies.
+    mhap_info = copy.deepcopy(mhap_info)
+    panel_target_info = copy.deepcopy(panel_target_info)
+    specimen_info = copy.deepcopy(specimen_info) if specimen_info is not None else None
+    library_sample_info = (
+        copy.deepcopy(library_sample_info) if library_sample_info is not None else None
+    )
+    sequencing_info = (
+        copy.deepcopy(sequencing_info) if sequencing_info is not None else None
+    )
+    bioinfo_method_info = (
+        copy.deepcopy(bioinfo_method_info) if bioinfo_method_info is not None else None
+    )
+    bioinfo_run_info = (
+        copy.deepcopy(bioinfo_run_info) if bioinfo_run_info is not None else None
+    )
+    project_info = copy.deepcopy(project_info) if project_info is not None else None
+    read_counts_by_stage_info = (
+        copy.deepcopy(read_counts_by_stage_info)
+        if read_counts_by_stage_info is not None
+        else None
+    )
 
     missing_fields = []
     if "panel_info" not in panel_target_info:
@@ -114,40 +140,32 @@ def merge_to_pmo(
         )
         specimen_info = spec_and_lib_info["specimen_info"]
         library_sample_info = spec_and_lib_info["library_sample_info"]
-    else:
-        # Make copies to avoid editing input
-        library_sample_info = [dict(d) for d in library_sample_info]
-        if specimen_info is not None:
-            specimen_info = [dict(d) for d in specimen_info]
-        else:
-            # if giving only library sample info can default to the specimen being just the library_sample_names
-            for library_sample in library_sample_info:
-                library_sample["specimen_name"] = library_sample["library_sample_name"]
-            specimen_info = [
-                {"specimen_name": library_sample["library_sample_name"]}
-                for library_sample in library_sample_info
-            ]
+    elif specimen_info is None:
+        # if giving only library sample info can default to the specimen being
+        # just the library_sample_names
+        for library_sample in library_sample_info:
+            library_sample["specimen_name"] = library_sample["library_sample_name"]
+        specimen_info = [
+            {"specimen_name": library_sample["library_sample_name"]}
+            for library_sample in library_sample_info
+        ]
 
     panel_target_info = _convert_numpy_scalars(panel_target_info)
     mhap_info = _convert_numpy_scalars(mhap_info)
     # optional
     if sequencing_info is not None:
-        sequencing_info = [dict(d) for d in sequencing_info]
         sequencing_info = _convert_numpy_scalars(sequencing_info)
     if bioinfo_method_info is not None:
-        bioinfo_method_info = [dict(d) for d in bioinfo_method_info]
         bioinfo_method_info = _convert_numpy_scalars(bioinfo_method_info)
     if bioinfo_run_info is not None:
-        bioinfo_run_info = [dict(d) for d in bioinfo_run_info]
         bioinfo_run_info = _convert_numpy_scalars(bioinfo_run_info)
     if project_info is not None:
-        project_info = [dict(d) for d in project_info]
         project_info = _convert_numpy_scalars(project_info)
 
     # Handle read_counts_by_stage_info if provided
     if read_counts_by_stage_info is not None:
         read_counts_by_stage_info = [
-            _convert_numpy_scalars(dict(d)) for d in read_counts_by_stage_info
+            _convert_numpy_scalars(d) for d in read_counts_by_stage_info
         ]
 
     specimen_info = _convert_numpy_scalars(specimen_info)
