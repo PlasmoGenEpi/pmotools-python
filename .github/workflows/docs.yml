@@ -2,11 +2,9 @@ name: Deploy Sphinx docs to Pages
 
 on:
   push:
-    branches: [main]
-    paths:
-      - "src/pmotools/**"
-      - "man/**"
-      - ".github/workflows/docs.yml"
+    tags:
+      - 'v*.*.*'
+      - 'test*'
   workflow_dispatch:
 
 permissions:

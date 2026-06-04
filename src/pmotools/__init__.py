@@ -5,7 +5,7 @@ from importlib.metadata import version, PackageNotFoundError
 
 #: Version of the PMO schema this package targets. Single source of truth;
 #: bump when the schema changes. Independent of the package release version.
-__schema_version__ = "1.0.0"
+__schema_version__ = "1.1.0"
 
 try:
     # Distribution version from installed metadata (matches [project].version)
