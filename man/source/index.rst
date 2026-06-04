@@ -5,6 +5,7 @@
 
 Welcome to pmotools-python's documentation!
 ===========================================
+**Version:** |version|
 
 .. toctree::
    :maxdepth: 2
