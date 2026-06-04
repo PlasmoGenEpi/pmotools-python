@@ -7,6 +7,7 @@ from pmotools import __schema_version__
 from pmotools.pmo_builder.mhap_table_to_pmo import (
     create_minimum_library_specimen_dict_from_mhap_table,
 )
+import warnings
 
 
 def _convert_numpy_scalars(obj):
@@ -86,16 +87,17 @@ def merge_to_pmo(
         specimen_names = {item["specimen_name"] for item in specimen_info}
 
         # Check for names in library_sample_info that are not in specimen_info
-        missing_in_specimen = library_sample_names - specimen_names
-        if missing_in_specimen:
-            raise ValueError(
-                f"library_sample_names found in the detected_microhaplotypes that don't have corresponding supplied specimen_names: {sorted(missing_in_specimen)}"
-            )
-
         # Check for names in specimen_info that are not in library_sample_info
+        missing_in_specimen = library_sample_names - specimen_names
         missing_in_library = specimen_names - library_sample_names
+        for missing_lib_name in missing_in_specimen:
+            specimen_info.append({"specimen_name": missing_lib_name})
+        if missing_in_specimen:
+            warnings.warn(
+                f"library_sample_names found in the detected_microhaplotypes that don't have corresponding supplied specimen_names: {sorted(missing_in_specimen)}, will be added to specimen_info with no meta"
+            )
         if missing_in_library:
-            raise ValueError(
+            warnings.warn(
                 f"specimen_name were supplied that don't have corresponding library_sample_names in detected_microhaplotypes: {sorted(missing_in_library)}"
             )
 
@@ -289,12 +291,17 @@ def _replace_names_with_IDs(
 ):
     # SPECIMEN INFO
     # replace name with project ID
+    any_missing_project_names = False
+    missing_projects = []
     if project_info is not None:
-        missing_projects = _replace_key_with_id(
-            specimen_info, project_info, "project_name", "project_id"
-        )
-    else:
-        missing_projects = []
+        for spec in specimen_info:
+            if "project_name" not in spec:
+                any_missing_project_names = True
+                break
+        if not any_missing_project_names:
+            missing_projects = _replace_key_with_id(
+                specimen_info, project_info, "project_name", "project_id"
+            )
 
     # LIBRARY SAMPLE INFO
     # replace with sequencing_info_id, specimen_id, panel_id
@@ -307,15 +314,20 @@ def _replace_names_with_IDs(
         "panel_name",
         "panel_id",
     )
+    any_missing_sequence_info_names = False
+    missing_sequencing = []
     if sequencing_info is not None:
-        missing_sequencing = _replace_key_with_id(
-            library_sample_info,
-            sequencing_info,
-            "sequencing_info_name",
-            "sequencing_info_id",
-        )
-    else:
-        missing_sequencing = []
+        for lib_sample in library_sample_info:
+            if "sequencing_info_name" not in lib_sample:
+                any_missing_sequence_info_names = True
+                break
+        if not any_missing_sequence_info_names:
+            missing_sequencing = _replace_key_with_id(
+                library_sample_info,
+                sequencing_info,
+                "sequencing_info_name",
+                "sequencing_info_id",
+            )
 
     # REP MHAPS
     # replace target_name with ID
@@ -328,15 +340,21 @@ def _replace_names_with_IDs(
 
     # DETECTED MHAPS
     # Replace library_sample_name and bioinformatics_run_name
+    any_missing_bioinfo_run_names = False
+    missing_bioinfo_runs = []
     if bioinfo_run_info is not None:
-        missing_bioinfo_runs = _replace_key_with_id(
-            mhap_info["detected_microhaplotypes"],
-            bioinfo_run_info,
-            "bioinformatics_run_name",
-            "bioinformatics_run_id",
-        )
-    else:
-        missing_bioinfo_runs = []
+        for detected in mhap_info["detected_microhaplotypes"]:
+            if "bioinformatics_run_name" not in detected:
+                any_missing_bioinfo_run_names = True
+                break
+        if not any_missing_bioinfo_run_names:
+            missing_bioinfo_runs = _replace_key_with_id(
+                mhap_info["detected_microhaplotypes"],
+                bioinfo_run_info,
+                "bioinformatics_run_name",
+                "bioinformatics_run_id",
+            )
+
     lib_sample_lookup = _make_lookup(library_sample_info, "library_sample_name")
     missing_libs = []
     for detected in mhap_info["detected_microhaplotypes"]:
@@ -354,17 +372,23 @@ def _replace_names_with_IDs(
     missing_read_counts_libs = []
     missing_read_counts_targets = []
     target_lookup = _make_lookup(panel_target_info["target_info"], "target_name")
+    any_read_counts_by_stage_missing_bioinfo_run_names = False
     if read_counts_by_stage_info is not None:
-        if bioinfo_run_info is not None:
-            # Replace bioinformatics_run_name with bioinformatics_run_id
-            missing_read_counts_bioinfo_runs = _replace_key_with_id(
-                read_counts_by_stage_info,
-                bioinfo_run_info,
-                "bioinformatics_run_name",
-                "bioinformatics_run_id",
-            )
-        else:
-            missing_read_counts_bioinfo_runs = []
+        for read_counts_run in read_counts_by_stage_info:
+            if "bioinformatics_run_name" not in read_counts_run:
+                any_read_counts_by_stage_missing_bioinfo_run_names = True
+                break
+        if not any_read_counts_by_stage_missing_bioinfo_run_names:
+            if bioinfo_run_info is not None:
+                # Replace bioinformatics_run_name with bioinformatics_run_id
+                missing_read_counts_bioinfo_runs = _replace_key_with_id(
+                    read_counts_by_stage_info,
+                    bioinfo_run_info,
+                    "bioinformatics_run_name",
+                    "bioinformatics_run_id",
+                )
+            else:
+                missing_read_counts_bioinfo_runs = []
 
         # Replace library_sample_name with library_sample_id in each run and map targets
         for read_counts_run in read_counts_by_stage_info:
@@ -388,7 +412,28 @@ def _replace_names_with_IDs(
                         target_entry["target_id"] = target_lookup[target_name]
                     else:
                         missing_read_counts_targets.append(target_name)
-
+    merging_warnings = []
+    if any_missing_project_names and project_info:
+        merging_warnings.append(
+            "project_info provided but there are specimens missing project_name field"
+        )
+    if any_missing_sequence_info_names and sequencing_info:
+        merging_warnings.append(
+            "sequencing_info provided but there are library samples missing sequencing_info_name field"
+        )
+    if any_missing_bioinfo_run_names and bioinfo_run_info:
+        merging_warnings.append(
+            "bioinformatics_run_info provided but there are detected microhaplotypes missing bioinformatics_run_name field"
+        )
+    if any_read_counts_by_stage_missing_bioinfo_run_names and bioinfo_run_info:
+        merging_warnings.append(
+            "bioinformatics_run_info provided but there are read counts by stage missing bioinformatics_run_name field"
+        )
+    if merging_warnings:
+        warnings_text = "\n".join(merging_warnings)
+        raise Exception(
+            f"The following warnings were encountered during merging:\n{warnings_text}"
+        )
     # If any names were missing from reference tables error
     _report_missing_IDs(
         missing_projects,

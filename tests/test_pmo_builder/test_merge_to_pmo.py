@@ -403,8 +403,8 @@ class TestMergeToPMO(unittest.TestCase):
         output_names = {s["library_sample_name"] for s in result["library_sample_info"]}
         assert output_names == expected_names
 
-    def test_merge_to_pmo_specimen_info_missing_names_raises(self):
-        """Raises ValueError when specimen_info is missing names that exist in detected_microhaplotypes."""
+    def test_merge_to_pmo_specimen_info_missing_names_warns(self):
+        """Warns (does not raise) when specimen_info is missing names that exist in detected_microhaplotypes."""
         incomplete_specimen_info = [
             {
                 "specimen_name": "samp_A",
@@ -413,20 +413,24 @@ class TestMergeToPMO(unittest.TestCase):
             },
             # samp_B is missing
         ]
-        with self.assertRaises(ValueError) as context:
-            merge_to_pmo(
+        with self.assertWarns(UserWarning) as context:
+            result = merge_to_pmo(
                 panel_target_info=self.for_merging_spec_info_panel_info,
                 mhap_info=self.for_merging_spec_info_mhap_info,
                 specimen_info=incomplete_specimen_info,
             )
-        self.assertIn("samp_B", str(context.exception))
+
+        warning_message = str(context.warning)
+        self.assertIn("samp_B", warning_message)
         self.assertIn(
             "library_sample_names found in the detected_microhaplotypes that don't have corresponding supplied specimen_names",
-            str(context.exception),
+            warning_message,
         )
+        # merge should still succeed and produce a result
+        self.assertIsNotNone(result)
 
-    def test_merge_to_pmo_specimen_info_extra_names_raises(self):
-        """Raises ValueError when specimen_info has names not present in detected_microhaplotypes."""
+    def test_merge_to_pmo_specimen_info_extra_names_warns(self):
+        """Warns (does not raise) when specimen_info has names not present in detected_microhaplotypes."""
         excess_specimen_info = [
             {
                 "specimen_name": "samp_A",
@@ -444,17 +448,20 @@ class TestMergeToPMO(unittest.TestCase):
                 "collection_date": "2022-03-01",
             },
         ]
-        with self.assertRaises(ValueError) as context:
-            merge_to_pmo(
+        with self.assertWarns(UserWarning) as context:
+            result = merge_to_pmo(
                 panel_target_info=self.for_merging_spec_info_panel_info,
                 mhap_info=self.for_merging_spec_info_mhap_info,
                 specimen_info=excess_specimen_info,
             )
-        self.assertIn("samp_C", str(context.exception))
+        warning_message = str(context.warning)
+        self.assertIn("samp_C", warning_message)
         self.assertIn(
             "specimen_name were supplied that don't have corresponding library_sample_names",
-            str(context.exception),
+            warning_message,
         )
+        # merge should still succeed and produce a result
+        self.assertIsNotNone(result)
 
 
 if __name__ == "__main__":
