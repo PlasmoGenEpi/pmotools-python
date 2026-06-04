@@ -7,29 +7,32 @@ from pmotools.pmo_builder.mhap_table_to_pmo import mhap_table_to_pmo
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_microhaplotype_table_to_json_file():
-    parser = argparse.ArgumentParser()
+def get_parser_microhaplotype_table_to_json_file() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python microhaplotype_table_to_json_file",
+        description="Convert microhaplotype table to a JSON file",
+    )
     parser.add_argument("--file", type=str, required=True, help="Input excel file path")
     parser.add_argument(
-        "--bioinfo_id",
+        "--bioinfo_name",
         type=str,
-        required=True,
+        required=False,
         help="Identifier of bioinformatics processing run",
     )
     parser.add_argument(
-        "--sampleID_col",
+        "--library_sample_name_col",
         type=str,
-        default="sampleID",
-        help="Column name containing sampleIDs",
+        default="library_sample_name",
+        help="Column name containing library_sample_name",
     )
     parser.add_argument(
-        "--locus_col",
+        "--target_name_col",
         type=str,
-        default="locus",
-        help="Column name containing locus information",
+        default="target_name",
+        help="Column name containing target_name information",
     )
     parser.add_argument(
-        "--mhap_col",
+        "--seq_col",
         type=str,
         default="asv",
         help="Column name containing microhaplotypes",
@@ -54,13 +57,19 @@ def parse_args_microhaplotype_table_to_json_file():
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
+
+
+def parse_args_microhaplotype_table_to_json_file():
+    parser = get_parser_microhaplotype_table_to_json_file()
     return parser.parse_args()
 
 
 def microhaplotype_table_to_json_file():
     args = parse_args_microhaplotype_table_to_json_file()
 
-    args.output = Utils.appendStrAsNeeded(args.output, ".json")
+    ext = ".json.gz" if args.output.endswith(".json.gz") else ".json"
+    args.output = Utils.appendStrAsNeeded(args.output, ext)
 
     addCols = None
     if args.additional_cols is not None:
@@ -85,16 +94,16 @@ def microhaplotype_table_to_json_file():
     contents = pd.read_csv(args.file, sep=args.delim)
     output_data = mhap_table_to_pmo(
         contents,
-        args.bioinfo_id,
-        args.sampleID_col,
-        args.locus_col,
-        args.mhap_col,
+        args.bioinfo_name,
+        args.library_sample_name_col,
+        args.target_name_col,
+        args.seq_col,
         args.reads_col,
         addCols,
     )
     # Write output as json
     json_str = json.dumps(output_data, indent=4)
-    with open(args.output, "w") as json_file:
+    with Utils.smart_open_write(args.output) as json_file:
         json_file.write(json_str)
 
 

@@ -13,7 +13,8 @@ dependencies = [
     "pandas>=2.2.2",
     "biopython>=1.83",
     "jsonschema>=4.23.0",
-    "pre-commit"
+    "pre-commit",
+    "openpyxl>=3.1.5",
 ]
 
 [project.scripts]

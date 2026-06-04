@@ -45,7 +45,6 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.min_builder = PMOPanelBuilder(
             self.min_target_table,
             "test_panel",
-            self.genome_info,
             "target_name",
             "fwd_primer",
             "rev_primer",
@@ -60,7 +59,6 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.builder_with_locations = PMOPanelBuilder(
             min_target_table_with_locations,
             "test_panel",
-            self.genome_info,
             "target_name",
             "fwd_primer",
             "rev_primer",
@@ -83,7 +81,6 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.builder_with_missing_locations = PMOPanelBuilder(
             min_target_table_with_locations_missing,
             "test_panel",
-            self.genome_info,
             "target_name",
             "fwd_primer",
             "rev_primer",
@@ -96,10 +93,15 @@ class TestPanelInformationToPMO(unittest.TestCase):
             chrom_col="chrom",
         )
 
-    def test_check_targets_are_unique_passes(self):
-        self.min_builder.check_targets_are_unique()
+    def test_check_target_names_are_unique_passes(self):
+        self.min_builder.check_unique_target_info(
+            [
+                self.min_builder.forward_primers_seq_col,
+                self.min_builder.reverse_primers_seq_col,
+            ]
+        )
 
-    def test_check_targets_are_unique_fails(self):
+    def test_check_target_names_are_unique_fails(self):
         new_row = pd.DataFrame(
             {"target_name": ["target1"], "fwd_primer": ["TTT"], "rev_primer": ["GGG"]}
         )
@@ -107,14 +109,13 @@ class TestPanelInformationToPMO(unittest.TestCase):
         builder = PMOPanelBuilder(
             duplicate_target_table,
             "test_panel",
-            self.genome_info,
             "target_name",
             "fwd_primer",
             "rev_primer",
         )
 
         with self.assertRaises(ValueError) as context:
-            builder.check_targets_are_unique()
+            builder.check_target_names_are_unique()
         self.assertEqual(
             str(context.exception),
             "The following target_ids are duplicated: ['target1']",
@@ -131,7 +132,6 @@ class TestPanelInformationToPMO(unittest.TestCase):
         builder = PMOPanelBuilder(
             duplicate_target_primers_table,
             "test_panel",
-            self.genome_info,
             "target_name",
             "fwd_primer",
             "rev_primer",
@@ -217,11 +217,11 @@ class TestPanelInformationToPMO(unittest.TestCase):
             )
         self.assertIn("genome_info[1] missing required keys", str(context.exception))
 
-    def test_build_panel_info(self):
-        panel_info = self.min_builder.build_panel_info(self.min_target_json)
+    def test_build_panel_info_dict(self):
+        panel_info = self.min_builder.build_panel_info_dict(self.min_target_json)
         expected_panel_info = {
             "panel_name": "test_panel",
-            "reactions": [{"reaction_name": "1", "panel_targets": [0, 1, 2]}],
+            "reactions": [{"reaction_name": "full", "panel_targets": [0, 1, 2]}],
         }
         self.assertEqual(panel_info, expected_panel_info)
 
@@ -341,7 +341,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
 
         self.assertEqual(merged, expected_merged)
 
-    def test_build_panel_info_multi_reaction(self):
+    def test_build_panel_info_dict_multi_reaction(self):
         target_table_with_reactions = self.min_target_table
         target_table_with_reactions["reaction"] = [
             "reaction1",
@@ -351,13 +351,12 @@ class TestPanelInformationToPMO(unittest.TestCase):
         builder = PMOPanelBuilder(
             target_table_with_reactions,
             "test_panel",
-            self.genome_info,
             "target_name",
             "fwd_primer",
             "rev_primer",
             reaction_name_col="reaction",
         )
-        panel_info = builder.build_panel_info(self.min_target_json)
+        panel_info = builder.build_panel_info_dict(self.min_target_json)
         expected_panel_info = {
             "panel_name": "test_panel",
             "reactions": [
@@ -368,7 +367,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.assertEqual(panel_info, expected_panel_info)
 
     @patch(
-        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_target_names_are_unique"
     )
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
@@ -376,18 +375,18 @@ class TestPanelInformationToPMO(unittest.TestCase):
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
     )
-    def test_create_targets_dict_min_info(
+    def test_build_target_info_dict_min_info(
         self,
         mock_summarise_targets_missing_optional_info,
         mock_check_unique_target_info,
-        mock_check_targets_are_unique,
+        mock_check_target_names_are_unique,
     ):
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
-        target_info = self.min_builder.create_targets_dict()
+        target_info = self.min_builder.build_target_info_dict()
         self.assertEqual(self.min_target_json, target_info)
 
     @patch(
-        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_target_names_are_unique"
     )
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
@@ -395,14 +394,14 @@ class TestPanelInformationToPMO(unittest.TestCase):
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
     )
-    def test_create_targets_dict_full_info(
+    def test_build_target_info_dict_full_info(
         self,
         mock_summarise_targets_missing_optional_info,
         mock_check_unique_target_info,
-        mock_check_targets_are_unique,
+        mock_check_target_names_are_unique,
     ):
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
-        target_info = self.builder_with_locations.create_targets_dict()
+        target_info = self.builder_with_locations.build_target_info_dict()
         expected_json = [
             {
                 "target_name": "target1",
@@ -489,7 +488,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.assertEqual(expected_json, target_info)
 
     @patch(
-        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_target_names_are_unique"
     )
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
@@ -497,11 +496,11 @@ class TestPanelInformationToPMO(unittest.TestCase):
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
     )
-    def test_create_targets_dict_missing_info(
+    def test_build_target_info_dict_missing_info(
         self,
         mock_summarise_targets_missing_optional_info,
         mock_check_unique_target_info,
-        mock_check_targets_are_unique,
+        mock_check_target_names_are_unique,
     ):
         missing_insert_loc = ["target2", "target3"]
         missing_fwd_primer_loc = ["target2", "target3"]
@@ -512,7 +511,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
             missing_fwd_primer_loc,
             missing_rev_primer_loc,
         )
-        target_info = self.builder_with_locations.create_targets_dict()
+        target_info = self.builder_with_locations.build_target_info_dict()
         expected_json = [
             {
                 "target_name": "target1",
@@ -547,7 +546,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.assertEqual(expected_json, target_info)
 
     @patch(
-        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_target_names_are_unique"
     )
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
@@ -555,11 +554,11 @@ class TestPanelInformationToPMO(unittest.TestCase):
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
     )
-    def test_create_targets_dict_additional_info(
+    def test_build_target_info_dict_additional_info(
         self,
         mock_summarise_targets_missing_optional_info,
         mock_check_unique_target_info,
-        mock_check_targets_are_unique,
+        mock_check_target_names_are_unique,
     ):
         target_table = self.min_target_table.copy()
         target_table["extra_col"] = "my target description"
@@ -567,11 +566,10 @@ class TestPanelInformationToPMO(unittest.TestCase):
         builder = PMOPanelBuilder(
             target_table,
             "test_panel",
-            self.genome_info,
             additional_target_info_cols=["extra_col", "special_col"],
         )
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
-        target_info = builder.create_targets_dict()
+        target_info = builder.build_target_info_dict()
         expected_json = [
             {
                 "target_name": "target1",
@@ -598,7 +596,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.assertEqual(expected_json, target_info)
 
     @patch(
-        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_target_names_are_unique"
     )
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
@@ -610,7 +608,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self,
         mock_summarise_targets_missing_optional_info,
         mock_check_unique_target_info,
-        mock_check_targets_are_unique,
+        mock_check_target_names_are_unique,
     ):
         """Test panel_info_table_to_pmo with dict genome_info (should be converted to list)"""
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
@@ -626,7 +624,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.assertIn("target_info", result)
 
     @patch(
-        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_target_names_are_unique"
     )
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
@@ -638,7 +636,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self,
         mock_summarise_targets_missing_optional_info,
         mock_check_unique_target_info,
-        mock_check_targets_are_unique,
+        mock_check_target_names_are_unique,
     ):
         """Test panel_info_table_to_pmo with list genome_info"""
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
@@ -668,7 +666,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.assertIn("target_info", result)
 
     @patch(
-        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_target_names_are_unique"
     )
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
@@ -676,13 +674,13 @@ class TestPanelInformationToPMO(unittest.TestCase):
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
     )
-    def test_create_targets_dict_with_genome_id_col(
+    def test_build_target_info_dict_with_genome_id_col(
         self,
         mock_summarise_targets_missing_optional_info,
         mock_check_unique_target_info,
-        mock_check_targets_are_unique,
+        mock_check_target_names_are_unique,
     ):
-        """Test create_targets_dict with genome_id_col parameter"""
+        """Test build_target_info_dict with genome_id_col parameter"""
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
         target_table = self.min_target_table.copy()
         target_table["target_start"] = [1, 2, 3]
@@ -699,7 +697,6 @@ class TestPanelInformationToPMO(unittest.TestCase):
         builder = PMOPanelBuilder(
             target_table,
             "test_panel",
-            self.genome_info,
             "target_name",
             "fwd_primer",
             "rev_primer",
@@ -712,7 +709,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
             chrom_col="chrom",
         )
 
-        target_info = builder.create_targets_dict(genome_id_col="genome_id")
+        target_info = builder.build_target_info_dict(genome_id_col="genome_id")
 
         # Check that genome_id values come from the column
         self.assertEqual(target_info[0]["insert_location"]["genome_id"], 0)
@@ -728,7 +725,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self.assertEqual(target_info[2]["reverse_primer"]["location"]["genome_id"], 0)
 
     @patch(
-        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_target_names_are_unique"
     )
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
@@ -736,13 +733,13 @@ class TestPanelInformationToPMO(unittest.TestCase):
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.summarise_targets_missing_optional_info"
     )
-    def test_create_targets_dict_without_genome_id_col(
+    def test_build_target_info_dict_without_genome_id_col(
         self,
         mock_summarise_targets_missing_optional_info,
         mock_check_unique_target_info,
-        mock_check_targets_are_unique,
+        mock_check_target_names_are_unique,
     ):
-        """Test create_targets_dict without genome_id_col (should default to 0)"""
+        """Test build_target_info_dict without genome_id_col (should default to 0)"""
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
         target_table = self.min_target_table.copy()
         target_table["target_start"] = [1, 2, 3]
@@ -754,7 +751,6 @@ class TestPanelInformationToPMO(unittest.TestCase):
         builder = PMOPanelBuilder(
             target_table,
             "test_panel",
-            self.genome_info,
             "target_name",
             "fwd_primer",
             "rev_primer",
@@ -767,7 +763,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
             chrom_col="chrom",
         )
 
-        target_info = builder.create_targets_dict()
+        target_info = builder.build_target_info_dict()
 
         # Check that genome_id defaults to 0 when genome_id_col is not provided
         for target in target_info:
@@ -776,7 +772,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
             self.assertEqual(target["reverse_primer"]["location"]["genome_id"], 0)
 
     @patch(
-        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_targets_are_unique"
+        "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_target_names_are_unique"
     )
     @patch(
         "pmotools.pmo_builder.panel_information_to_pmo.PMOPanelBuilder.check_unique_target_info"
@@ -788,7 +784,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         self,
         mock_summarise_targets_missing_optional_info,
         mock_check_unique_target_info,
-        mock_check_targets_are_unique,
+        mock_check_target_names_are_unique,
     ):
         """Test panel_info_table_to_pmo with genome_id_col parameter"""
         mock_summarise_targets_missing_optional_info.return_value = [], [], []
@@ -803,7 +799,7 @@ class TestPanelInformationToPMO(unittest.TestCase):
         result = panel_info_table_to_pmo(
             target_table,
             "test_panel",
-            self.genome_info,
+            genome_info=self.genome_info,
             forward_primers_start_col="target_start",
             forward_primers_end_col="insert_start",
             reverse_primers_start_col="insert_end",

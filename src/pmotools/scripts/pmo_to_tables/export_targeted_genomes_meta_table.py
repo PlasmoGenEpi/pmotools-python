@@ -8,10 +8,10 @@ from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.utils.small_utils import Utils
 
 
-def get_parser_export_project_info_meta_table() -> argparse.ArgumentParser:
+def get_parser_export_targeted_genomes_meta_table() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="pmotools-python export_project_info_meta_table",
-        description="export the project_info meta table from a PMO file",
+        prog="pmotools-python export_targeted_genomes_meta_table",
+        description="export the targeted genomes info meta table from a PMO file",
     )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
@@ -30,13 +30,13 @@ def get_parser_export_project_info_meta_table() -> argparse.ArgumentParser:
     return parser
 
 
-def parse_args_export_project_info_meta_table():
-    parser = get_parser_export_project_info_meta_table()
+def parse_args_export_targeted_genomes_meta_table():
+    parser = get_parser_export_targeted_genomes_meta_table()
     return parser.parse_args()
 
 
-def export_project_info_meta_table():
-    args = parse_args_export_project_info_meta_table()
+def export_targeted_genomes_meta_table():
+    args = parse_args_export_targeted_genomes_meta_table()
 
     # check files
     output_delim, output_extension = Utils.process_delimiter_and_output_extension(
@@ -53,7 +53,7 @@ def export_project_info_meta_table():
     pmo = PMOReader.read_in_pmo(args.file)
 
     # count fields
-    info_df = PMOExporter.export_project_info_meta_table(pmo)
+    info_df = PMOExporter.export_targeted_genomes_meta_table(pmo)
 
     # output
     info_df.to_csv(
@@ -64,4 +64,4 @@ def export_project_info_meta_table():
 
 
 if __name__ == "__main__":
-    export_project_info_meta_table()
+    export_targeted_genomes_meta_table()

@@ -7,8 +7,11 @@ from pmotools.utils.small_utils import Utils
 from pmotools.pmo_engine.pmo_reader import PMOReader
 
 
-def parse_args_combine_pmos():
-    parser = argparse.ArgumentParser()
+def get_parser_combine_pmos() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python combine_pmos",
+        description="Combine multiple PMOs of the same panel",
+    )
     parser.add_argument(
         "--pmo_files",
         type=str,
@@ -21,7 +24,11 @@ def parse_args_combine_pmos():
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
 
+
+def parse_args_combine_pmos():
+    parser = get_parser_combine_pmos()
     return parser.parse_args()
 
 

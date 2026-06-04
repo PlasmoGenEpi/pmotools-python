@@ -8,8 +8,11 @@ from pmotools.pmo_engine.pmo_writer import PMOWriter
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_extract_pmo_with_select_targets():
-    parser = argparse.ArgumentParser()
+def get_parser_extract_pmo_with_select_targets() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python extract_pmo_with_select_targets",
+        description="Extract specific targets",
+    )
     parser.add_argument("--file", type=str, required=True, help="PMO file")
     parser.add_argument(
         "--output", type=str, required=True, help="Output json file path"
@@ -26,8 +29,13 @@ def parse_args_extract_pmo_with_select_targets():
         "--targets",
         type=str,
         required=True,
-        help="Can either comma separated target_namess, or a plain text file where each line is a target_namess",
+        help="Can either comma separated target_names, or a plain text file where each line is a target_name",
     )
+    return parser
+
+
+def parse_args_extract_pmo_with_select_targets():
+    parser = get_parser_extract_pmo_with_select_targets()
     return parser.parse_args()
 
 

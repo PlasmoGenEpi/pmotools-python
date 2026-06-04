@@ -7,12 +7,12 @@ from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 
 def mhap_table_to_pmo(
     microhaplotype_table: pd.DataFrame,
-    bioinformatics_run_name: str,
+    bioinformatics_run_name: str | None = None,
     library_sample_name_col: str = "library_sample_name",
     target_name_col: str = "target_name",
     seq_col: str = "seq",
     reads_col: str = "reads",
-    genome_id=0,
+    genome_id: int = 0,
     umis_col: str | None = None,
     chrom_col: str | None = None,
     start_col: str | None = None,
@@ -27,58 +27,81 @@ def mhap_table_to_pmo(
     microhaplotype_name_col: str | None = None,
     pseudocigar_col: str | None = None,
     quality_col: str | None = None,
-    additional_representative_mhap_cols: str | None = None,
+    additional_representative_mhap_cols: list | None = None,
     additional_mhap_detected_cols: list | None = None,
 ):
     """
-    Convert a dataframe of a microhaplotype calls into a dictionary containing a dictionary for the haplotypes_detected and a dictionary for the representative_haplotype_sequences.
+    Convert a dataframe of microhaplotype calls into a dictionary containing a dictionary for the haplotypes_detected and a dictionary for the representative_haplotype_sequences.
 
-    :param microhaplotype_table (pd.DataFrame): The dataframe containing microhaplotype calls
-    :param bioinformatics_run_name (str) : Unique name for the bioinformatics run that generated the data (column name or individual run name).
-    :param library_sample_name_col (str) : the name of the column containing the experiment sample names. Default: library_sample_name
-    :param target_name_col (str) : the name of the column containing the targets. Default: target_name
-    :param seq_col (str) : the name of the column containing the microhaplotype sequences. Default: seq
-    :param reads_col (str) : the name of the column containing the reads counts. Default: reads
-    :param genome_id (int) : the ID of the genome used as reference. Default: 0
-    :param umis_col (Optional[str]) : the name of the column with unique molecular identifier count associated with this microhaplotype
-    :param chrom_col (Optional[str]) : the name of the column containing the chromosome name of the microhaplotype
-    :param start_col (Optional[str]) : the name of the column containing the start of the microhaplotype
-    :param end_col (Optional[str]) : the name of the column containing the end of the microhaplotype
-    :param ref_seq_col (Optional[str]) : the name of the column containing the reference sequence for the microhaplotype
-    :param strand_col (Optional[str]) : the name containing the strand of the microhaplotype
-    :param alt_annotations_col (Optional[str]) : the name of the column containing any alternative annotations
-    :param masking_seq_start_col (Optional[str]) : the name ofthe column containing a list of start positions for masking
-    :param masking_seq_segment_size_col (Optional[str]) : the name of the column containing a list of lengths of the segments in seq being masked
-    :param masking_replacement_size_col (Optional[str]) : the name of the column containing a list of lengths of the masking replacements
-    :param masking_delim (Optional[str]) : delim of the masking information. Default: ','
-    :param microhaplotype_name_col (Optional[str]) : the name of the column containing an optional name for this microhaplotype
-    :param pseudocigar_col (Optional[str]) : the name of the column containing a pseudocigar for the microhaplotype
-    :param quality_col (Optional[str]) : the name of the column containing the ansi fastq per base quality score for this sequence
-    :param additional_representative_mhap_cols (Optional[List[str], None]]): additional columns to add to the representative microhaplotypes table.
-    :param additional_mhap_detected_cols (Optional[List[str], None]]): additional columns to add to the detected microhaplotypes table.
-
+    :param microhaplotype_table: the dataframe containing microhaplotype calls
+    :type microhaplotype_table: pd.DataFrame
+    :param bioinformatics_run_name: unique name for the bioinformatics run that generated the data (column name or individual run name). Default: None
+    :type bioinformatics_run_name: str, optional
+    :param library_sample_name_col: the name of the column containing the library sample names. Default: library_sample_name
+    :type library_sample_name_col: str
+    :param target_name_col: the name of the column containing the targets. Default: target_name
+    :type target_name_col: str
+    :param seq_col: the name of the column containing the microhaplotype sequences. Default: seq
+    :type seq_col: str
+    :param reads_col: the name of the column containing the read counts. Default: reads
+    :type reads_col: str
+    :param genome_id: the ID of the genome used as reference. Default: None
+    :type genome_id: int, optional
+    :param umis_col: the name of the column with the unique molecular identifier count associated with this microhaplotype
+    :type umis_col: str, optional
+    :param chrom_col: the name of the column containing the chromosome name of the microhaplotype
+    :type chrom_col: str, optional
+    :param start_col: the name of the column containing the start of the microhaplotype
+    :type start_col: str, optional
+    :param end_col: the name of the column containing the end of the microhaplotype
+    :type end_col: str, optional
+    :param ref_seq_col: the name of the column containing the reference sequence for the microhaplotype
+    :type ref_seq_col: str, optional
+    :param strand_col: the name of the column containing the strand of the microhaplotype
+    :type strand_col: str, optional
+    :param alt_annotations_col: the name of the column containing any alternative annotations
+    :type alt_annotations_col: str, optional
+    :param masking_seq_start_col: the name of the column containing a list of start positions for masking
+    :type masking_seq_start_col: str, optional
+    :param masking_seq_segment_size_col: the name of the column containing a list of lengths of the segments in seq being masked
+    :type masking_seq_segment_size_col: str, optional
+    :param masking_replacement_size_col: the name of the column containing a list of lengths of the masking replacements
+    :type masking_replacement_size_col: str, optional
+    :param masking_delim: delimiter of the masking information. Default: ','
+    :type masking_delim: str, optional
+    :param microhaplotype_name_col: the name of the column containing an optional name for this microhaplotype
+    :type microhaplotype_name_col: str, optional
+    :param pseudocigar_col: the name of the column containing a pseudocigar for the microhaplotype
+    :type pseudocigar_col: str, optional
+    :param quality_col: the name of the column containing the ANSI FASTQ per-base quality score for this sequence
+    :type quality_col: str, optional
+    :param additional_representative_mhap_cols: additional columns to add to the representative microhaplotypes table
+    :type additional_representative_mhap_cols: list of str, optional
+    :param additional_mhap_detected_cols: additional columns to add to the detected microhaplotypes table
+    :type additional_mhap_detected_cols: list of str, optional
     :return: a dict of both the haplotypes_detected and representative_haplotype_sequences
+    :rtype: dict
     """
 
     representative_microhaplotype_dict = create_representative_microhaplotype_dict(
-        microhaplotype_table,
-        target_name_col,
-        seq_col,
-        genome_id,
-        chrom_col,
-        start_col,
-        end_col,
-        ref_seq_col,
-        strand_col,
-        alt_annotations_col,
-        masking_seq_start_col,
-        masking_seq_segment_size_col,
-        masking_replacement_size_col,
-        masking_delim,
-        microhaplotype_name_col,
-        pseudocigar_col,
-        quality_col,
-        additional_representative_mhap_cols,
+        microhaplotype_table=microhaplotype_table,
+        target_name_col=target_name_col,
+        seq_col=seq_col,
+        genome_id=genome_id,
+        chrom_col=chrom_col,
+        start_col=start_col,
+        end_col=end_col,
+        ref_seq_col=ref_seq_col,
+        strand_col=strand_col,
+        alt_annotations_col=alt_annotations_col,
+        masking_seq_start_col=masking_seq_start_col,
+        masking_seq_segment_size_col=masking_seq_segment_size_col,
+        masking_replacement_size_col=masking_replacement_size_col,
+        masking_delim=masking_delim,
+        microhaplotype_name_col=microhaplotype_name_col,
+        pseudocigar_col=pseudocigar_col,
+        quality_col=quality_col,
+        additional_representative_mhap_cols=additional_representative_mhap_cols,
     )
 
     detected_mhap_dict_list = []
@@ -88,28 +111,28 @@ def mhap_table_to_pmo(
                 microhaplotype_table[bioinformatics_run_name] == bioinfo_run
             ]
             detected_mhap_dict = create_detected_microhaplotype_dict(
-                microhaplotype_table_per_run,
-                bioinfo_run,
-                representative_microhaplotype_dict,
-                library_sample_name_col,
-                target_name_col,
-                seq_col,
-                reads_col,
-                umis_col,
-                additional_mhap_detected_cols,
+                microhaplotype_table=microhaplotype_table_per_run,
+                representative_microhaplotype_dict=representative_microhaplotype_dict,
+                bioinformatics_run_name=bioinfo_run,
+                library_sample_name_col=library_sample_name_col,
+                target_name_col=target_name_col,
+                seq_col=seq_col,
+                reads_col=reads_col,
+                umis_col=umis_col,
+                additional_mhap_detected_cols=additional_mhap_detected_cols,
             )
             detected_mhap_dict_list.append(detected_mhap_dict)
     else:
         detected_mhap_dict = create_detected_microhaplotype_dict(
-            microhaplotype_table,
-            bioinformatics_run_name,
-            representative_microhaplotype_dict,
-            library_sample_name_col,
-            target_name_col,
-            seq_col,
-            reads_col,
-            umis_col,
-            additional_mhap_detected_cols,
+            microhaplotype_table=microhaplotype_table,
+            representative_microhaplotype_dict=representative_microhaplotype_dict,
+            bioinformatics_run_name=bioinformatics_run_name,
+            library_sample_name_col=library_sample_name_col,
+            target_name_col=target_name_col,
+            seq_col=seq_col,
+            reads_col=reads_col,
+            umis_col=umis_col,
+            additional_mhap_detected_cols=additional_mhap_detected_cols,
         )
         detected_mhap_dict_list.append(detected_mhap_dict)
 
@@ -143,26 +166,44 @@ def create_representative_microhaplotype_dict(
     """
     Convert the read-in microhaplotype calls table into a representative microhaplotype JSON-like dictionary.
 
-    :param microhaplotype_table (pd.DataFrame): The dataframe containing microhaplotype calls
-    :param target_name_col (str) : the name of the column containing the targets. Default: target_name
-    :param seq_col (str) : the name of the column containing the microhaplotype sequences. Default: seq
-    :param genome_id (int) : the genome ID
-    :param chrom_col (Optional[str]) : the name of the column containing the chromosome name of the microhaplotype
-    :param start_col (Optional[str]) : the name of the column containing the start of the microhaplotype
-    :param end_col (Optional[str]) : the name of the column containing the end of the microhaplotype
-    :param ref_seq_col (Optional[str]) : the name of the column containing the reference sequence for the microhaplotype
-    :param strand_col (Optional[str]) : the name containing the strand of the microhaplotype
-    :param alt_annotations_col (Optional[str]) : the name of the column containing any alternative annotations
-    :param masking_seq_start_col (Optional[str]) : the name ofthe column containing a list of start positions for masking
-    :param masking_seq_segment_size_col (Optional[str]) : the name of the column containing a list of lengths of the segments in seq being masked
-    :param masking_replacement_size_col (Optional[str]) : the name of the column containing a list of lengths of the masking replacements
-    :param masking_delim (Optional[str]) : delim of the masking information. Default: ','
-    :param microhaplotype_name_col (Optional[str]) : the name of the column containing an optional name for this microhaplotype
-    :param pseudocigar_col (Optional[str]) : the name of the column containing a pseudocigar for the microhaplotype
-    :param quality_col (Optional[str]) : the name of the column containing the ansi fastq per base quality score for this sequence
-    :param additional_representative_mhap_cols (Optional[List[str], None]]): additional columns to add to the representative microhaplotypes table.
-
-    :return: A dictionary formatted for JSON output with representative microhaplotype sequences.
+    :param microhaplotype_table: the dataframe containing microhaplotype calls
+    :type microhaplotype_table: pd.DataFrame
+    :param target_name_col: the name of the column containing the targets. Default: target_name
+    :type target_name_col: str
+    :param seq_col: the name of the column containing the microhaplotype sequences. Default: seq
+    :type seq_col: str
+    :param genome_id: the genome ID
+    :type genome_id: int
+    :param chrom_col: the name of the column containing the chromosome name of the microhaplotype
+    :type chrom_col: str, optional
+    :param start_col: the name of the column containing the start of the microhaplotype
+    :type start_col: str, optional
+    :param end_col: the name of the column containing the end of the microhaplotype
+    :type end_col: str, optional
+    :param ref_seq_col: the name of the column containing the reference sequence for the microhaplotype
+    :type ref_seq_col: str, optional
+    :param strand_col: the name of the column containing the strand of the microhaplotype
+    :type strand_col: str, optional
+    :param alt_annotations_col: the name of the column containing any alternative annotations
+    :type alt_annotations_col: str, optional
+    :param masking_seq_start_col: the name of the column containing a list of start positions for masking
+    :type masking_seq_start_col: str, optional
+    :param masking_seq_segment_size_col: the name of the column containing a list of lengths of the segments in seq being masked
+    :type masking_seq_segment_size_col: str, optional
+    :param masking_replacement_size_col: the name of the column containing a list of lengths of the masking replacements
+    :type masking_replacement_size_col: str, optional
+    :param masking_delim: delimiter of the masking information. Default: ','
+    :type masking_delim: str, optional
+    :param microhaplotype_name_col: the name of the column containing an optional name for this microhaplotype
+    :type microhaplotype_name_col: str, optional
+    :param pseudocigar_col: the name of the column containing a pseudocigar for the microhaplotype
+    :type pseudocigar_col: str, optional
+    :param quality_col: the name of the column containing the ANSI FASTQ per-base quality score for this sequence
+    :type quality_col: str, optional
+    :param additional_representative_mhap_cols: additional columns to add to the representative microhaplotypes table
+    :type additional_representative_mhap_cols: list of str, optional
+    :return: a dictionary formatted for JSON output with representative microhaplotype sequences
+    :rtype: dict
     """
 
     if additional_representative_mhap_cols:
@@ -299,8 +340,8 @@ def create_representative_microhaplotype_dict(
 
 def create_detected_microhaplotype_dict(
     microhaplotype_table: pd.DataFrame,
-    bioinformatics_run_name: str,
     representative_microhaplotype_dict: dict,
+    bioinformatics_run_name: str | None = None,
     library_sample_name_col: str = "library_sample_name",
     target_name_col: str = "target_name",
     seq_col: str = "seq",
@@ -312,13 +353,13 @@ def create_detected_microhaplotype_dict(
     Convert the read-in microhaplotype calls table into the detected microhaplotype dictionary.
 
     :param microhaplotype_table: Parsed microhaplotype calls table.
-    :param bioinformatics_run_name:  Unique name for the bioinformatics run that generated the data.
     :param representative_microhaplotype_dict: Dictionary of representative microhaplotypes.
+    :param bioinformatics_run_name: Optional Unique name for the bioinformatics run that generated the data.
     :param library_sample_name_col: Column containing the sample IDs.
     :param target_name_col: Column containing the locus IDs.
     :param seq_col: Column containing the microhaplotype sequences.
     :param reads_col: Column containing the read counts.
-    :param umis_col: : Ccolumn with unique molecular identifier count associated with this microhaplotype
+    :param umis_col: Optional Column with unique molecular identifier count associated with this microhaplotype
     :param additional_mhap_detected_cols: Optional additional columns to add to the microhaplotypes detected, the key is the pandas column and the value is what to name it in the output.
     :return: A dictionary of detected microhaplotype results.
     """
@@ -356,9 +397,10 @@ def build_detected_mhap_dict(
         always_include = ["mhap_id", "reads"]
 
     mhap_detected = {
-        "bioinformatics_run_name": bioinformatics_run_name,
         "library_samples": [],
     }
+    if bioinformatics_run_name is not None:
+        mhap_detected["bioinformatics_run_name"] = bioinformatics_run_name
 
     for sample, sample_df in df.groupby("library_sample_name"):
         target_results = []
@@ -411,3 +453,107 @@ def get_mhap_index_in_representative_mhaps(df, representative_dict):
             f"Some seq values not found in representative microhaplotype table:\n{missing_seqs}"
         )
     return df
+
+
+def create_minimum_library_specimen_dict_from_mhap_table(
+    detected_microhaps: list[dict],
+    panel_name: str,
+    library_sample_field_name: str = "library_sample_name",
+    library_sample_specimen_key: dict[str, str] | pd.DataFrame | None = None,
+    library_sample_name_col: str = "library_sample_name",
+    specimen_name_col: str = "specimen_name",
+    missing_library_sample_becomes_specimen_name: bool = False,
+):
+    """
+    Create a minimum library_sample_info and specimen_info dicts from the detected microhaps
+
+    :param detected_microhaps: the detected microhaps object created by create_detected_microhaplotype_dict
+    :param panel_name: the panel_name for the library_sample
+    :param library_sample_field_name: the field name to use to extract the library_sample_name from the detected_michrohaplotypes
+    :param library_sample_specimen_key: a dict mapping library_sample_name -> specimen_name,
+                                        or a pandas DataFrame with two columns for renaming controlled by library_sample_name_col and specimen_name_col
+                                        if None, specimen_name == library_sample_name
+    :param library_sample_name_col: the column name in library_sample_specimen_key that contains the library_sample_name
+    :param specimen_name_col: the column name in library_sample_specimen_key that contains the specimen_name
+    :param missing_library_sample_becomes_specimen_name: if True and a library_sample_name is missing
+                                                         from library_sample_specimen_key, fall back to
+                                                         using the library_sample_name as the specimen_name;
+                                                         if False, raise an error
+    :return: dict with keys 'library_sample_info' and 'specimen_info'
+    """
+    # Collect all sample dicts across every entry in detected_microhaps
+    all_samples: list[dict] = []
+    for entry in detected_microhaps:
+        all_samples.extend(entry.get("library_samples", []))
+
+    # check that every sample has the expected key
+    missing_key_indices = [
+        i for i, s in enumerate(all_samples) if library_sample_field_name not in s
+    ]
+    if missing_key_indices:
+        raise KeyError(
+            f"The following sample indices are missing the field name '{library_sample_field_name}': "
+            f"{missing_key_indices}"
+        )
+
+    # check that all library_sample_name values are unique
+    raw_names: list[str] = [s[library_sample_field_name] for s in all_samples]
+    seen: set[str] = set()
+    duplicates: set[str] = set()
+    for name in raw_names:
+        if name in seen:
+            duplicates.add(name)
+        seen.add(name)
+    if duplicates:
+        raise ValueError(f"Duplicate library sample names found: {sorted(duplicates)}")
+    actual_library_sample_specimen_key = None
+    if library_sample_specimen_key is not None and isinstance(
+        library_sample_specimen_key, dict
+    ):
+        actual_library_sample_specimen_key = library_sample_specimen_key
+    elif library_sample_specimen_key is not None and isinstance(
+        library_sample_specimen_key, pd.DataFrame
+    ):
+        actual_library_sample_specimen_key = library_sample_specimen_key.set_index(
+            library_sample_name_col
+        )[specimen_name_col].to_dict()
+    # now construct library_sample_info
+    library_sample_info: list[dict] = []
+    for sample in all_samples:
+        lib_name: str = sample[library_sample_field_name]
+        # use look up table to get specimen_name if provided, otherwise use library_sample_name as specimen_name
+        if actual_library_sample_specimen_key is not None:
+            if lib_name in actual_library_sample_specimen_key:
+                specimen_name = actual_library_sample_specimen_key[lib_name]
+            elif missing_library_sample_becomes_specimen_name:
+                # if not in key but allowing missing to become specimen_name, use library_sample_name as specimen_name
+                specimen_name = lib_name
+            else:
+                raise KeyError(
+                    f"library_sample_name '{lib_name}' not found in library_sample_specimen_key "
+                    f"and missing_library_sample_becomes_specimen_name is False."
+                )
+        else:
+            specimen_name = lib_name
+
+        library_sample_info.append(
+            {
+                "library_sample_name": lib_name,
+                "panel_name": panel_name,
+                "specimen_name": specimen_name,
+            }
+        )
+
+    # build specimen_info from unique specimen_names (preserving first-seen order)
+    seen_specimens: set[str] = set()
+    specimen_info: list[dict] = []
+    for entry in library_sample_info:
+        sp = entry["specimen_name"]
+        if sp not in seen_specimens:
+            seen_specimens.add(sp)
+            specimen_info.append({"specimen_name": sp})
+
+    return {
+        "library_sample_info": library_sample_info,
+        "specimen_info": specimen_info,
+    }

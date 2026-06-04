@@ -6,8 +6,11 @@ from pmotools.pmo_builder.metatable_to_pmo import pandas_table_to_json
 from pmotools.utils.small_utils import Utils
 
 
-def parse_args_excel_meta_to_json_meta():
-    parser = argparse.ArgumentParser()
+def get_parser_excel_meta_to_json_meta() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="pmotools-python excel_meta_to_json_meta",
+        description="Convert Excel file meta to JSON Meta",
+    )
     parser.add_argument("--file", type=str, required=True, help="Input excel file path")
     parser.add_argument(
         "--sheet",
@@ -28,6 +31,11 @@ def parse_args_excel_meta_to_json_meta():
     parser.add_argument(
         "--overwrite", action="store_true", help="If output file exists, overwrite it"
     )
+    return parser
+
+
+def parse_args_excel_meta_to_json_meta():
+    parser = get_parser_excel_meta_to_json_meta()
     return parser.parse_args()
 
 

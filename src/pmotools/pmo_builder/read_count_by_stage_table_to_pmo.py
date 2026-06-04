@@ -5,8 +5,8 @@ from ..pmo_builder.json_convert_utils import check_additional_columns_exist
 
 
 def read_count_by_stage_table_to_pmo(
-    bioinformatics_run_name: str,
     total_raw_count_table: pd.DataFrame,
+    bioinformatics_run_name: str | None = None,
     reads_by_stage_table: pd.DataFrame | None = None,
     library_sample_name_col: str = "library_sample_name",
     target_name_col: str = "target_name",
@@ -19,22 +19,37 @@ def read_count_by_stage_table_to_pmo(
     """
     Convert tables of read counts by stage into PMO read_counts_by_stage format.
 
-    :param bioinformatics_run_name (str): Name for the bioinformatics run (column name or individual run name)
-    :param total_raw_count_table (pd.DataFrame): Table with total raw counts per sample
-    :param reads_by_stage_table (Optional[pd.DataFrame]): Table of reads per sample, per locus, per stage. Can be long format (single stage column) or wide format (multiple stage columns)
-    :param library_sample_name_col (str): Column name for library sample names. Default: library_sample_name
-    :param target_name_col (str): Column name for target names. Default: target_name
-    :param total_raw_count_col (str): Column name for total raw counts. Default: total_raw_count
-    :param stage_col (str or list): Column name for pipeline stages (long format), or list of stage column names for wide format. Default: stage
-    :param read_count_col (str): Column name for read counts. Default: read_count
-    :param additional_library_sample_cols (Optional[List[str]]): Additional columns to include for library samples
-    :param additional_target_cols (Optional[List[str]]): Additional columns to include for targets
 
-    :return: list of dicts formatted for PMO read_counts_by_stage section. Always returns a list, with one
-    entry for single runs or multiple entries when bioinformatics_run_name is a column in total_raw_count_table.
+    :param total_raw_count_table: table with total raw counts per sample
+    :type total_raw_count_table: pd.DataFrame
+    :param bioinformatics_run_name: name for the bioinformatics run (column name or individual run name)
+    :type bioinformatics_run_name: str, optional
+    :param reads_by_stage_table: table of reads per sample, per locus, per stage. Can be long
+        format (single stage column) or wide format (multiple stage columns)
+    :type reads_by_stage_table: pd.DataFrame, optional
+    :param library_sample_name_col: column name for library sample names. Default: library_sample_name
+    :type library_sample_name_col: str
+    :param target_name_col: column name for target names. Default: target_name
+    :type target_name_col: str
+    :param total_raw_count_col: column name for total raw counts. Default: total_raw_count
+    :type total_raw_count_col: str
+    :param stage_col: column name for pipeline stages (long format), or list of stage column
+        names for wide format. Default: stage
+    :type stage_col: str or list
+    :param read_count_col: column name for read counts. Default: read_count
+    :type read_count_col: str
+    :param additional_library_sample_cols: additional columns to include for library samples
+    :type additional_library_sample_cols: list of str, optional
+    :param additional_target_cols: additional columns to include for targets
+    :type additional_target_cols: list of str, optional
+    :return: list of dicts formatted for the PMO read_counts_by_stage section. Always returns
+        a list, with one entry for single runs or multiple entries when bioinformatics_run_name
+        is a column in total_raw_count_table.
+    :rtype: list of dict
 
-    Note: For wide format data, provide stage_col as a list of column names. The function will use pd.melt()
-    to convert wide format to long format before processing.
+    .. note::
+        For wide-format data, provide ``stage_col`` as a list of column names. The function
+        uses ``pd.melt()`` to convert wide format to long format before processing.
     """
 
     # Validate input
@@ -56,7 +71,10 @@ def read_count_by_stage_table_to_pmo(
         check_additional_columns_exist(reads_by_stage_table, additional_target_cols)
 
     # Check if bioinformatics_run_name is a column in total_raw_count_table
-    if bioinformatics_run_name in total_raw_count_table.columns:
+    if (
+        bioinformatics_run_name is not None
+        and bioinformatics_run_name in total_raw_count_table.columns
+    ):
         # Create separate entries for each unique run
         output_data_list = []
         unique_runs = total_raw_count_table[bioinformatics_run_name].unique()
@@ -278,14 +296,14 @@ def _process_reads_by_stage_table(
 def _build_read_counts_by_stage_output(
     library_sample_data: dict,
     reads_by_stage_data: dict | None,
-    bioinformatics_run_name: str,
+    bioinformatics_run_name: str | None = None,
 ) -> dict:
     """
     Build the final output structure for read_counts_by_stage.
 
     :param library_sample_data: Dictionary with library sample data
     :param reads_by_stage_data: Optional dictionary with reads by stage data
-    :param bioinformatics_run_name: Name for the bioinformatics run
+    :param bioinformatics_run_name: Optional name for the bioinformatics run
 
     :return: Dictionary formatted for PMO read_counts_by_stage section
     """
@@ -330,8 +348,8 @@ def _build_read_counts_by_stage_output(
 
     # Build the final output structure
     output_data = {
-        "bioinformatics_run_name": bioinformatics_run_name,
         "read_counts_by_library_sample_by_stage": read_counts_by_library_sample_by_stage,
     }
-
+    if bioinformatics_run_name is not None:
+        output_data["bioinformatics_run_name"] = bioinformatics_run_name
     return output_data

@@ -75,7 +75,6 @@ class ColorText:
         :param t: the text
         :return: the text but with terminal escape characters to bold and make the text red
         """
-
         return ColorText.red + ColorText.bold + t + ColorText.reset
 
     @staticmethod
@@ -101,7 +100,7 @@ class ColorText:
     @staticmethod
     def boldWhite(t: str) -> str:
         """
-        Create a bolded blue text
+        Create a bolded white text
 
         :param t: the text
         :return: the text but with terminal escape characters to bold and make the text white
@@ -124,28 +123,28 @@ class ColorText:
         Takes a number between 16 and 231 to change text color, gives a bigger range of colors than the regular offered ones
 
         :param color_code: a code between 16 and 231
-        :return: change the text to the color code given
-        @todo: Put a check to make sure it's a number between 16 and 231
-        """
+        :return: the escape sequence that changes the text to the given color code
 
+        .. todo:: Add a check to make sure it's a number between 16 and 231.
+        """
         return "\033[38;5;" + str(color_code) + "m"
 
     @staticmethod
     def addBGColor(color_code: int) -> str:
         """
-        Takes a number between 16 and 231 to change background color of text, gives a bigger range of colors than the regular offered ones
+        Takes a number between 16 and 231 to change the background color of text, gives a bigger range of colors than the regular offered ones
 
         :param color_code: a code between 16 and 231
-        :return: generates the
-        @todo: Put a check to make sure it's a number between 16 and 231
-        """
+        :return: the escape sequence that changes the background to the given color code
 
+        .. todo:: Add a check to make sure it's a number between 16 and 231.
+        """
         return "\033[48;5;" + str(color_code) + "m"
 
     @staticmethod
     def outputColors():
         """
-        prints out to stdout the colors with their backgrounds those colors so you can see
+        Prints out to stdout the colors with their backgrounds so you can see them
 
         :return: nothing
         """

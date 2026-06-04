@@ -6,113 +6,53 @@ import numpy as np
 import pandas as pd
 import warnings
 
+from .json_convert_utils import remove_optional_null_values
 from ..pmo_builder.json_convert_utils import check_additional_columns_exist
-from ..pmo_engine.pmo_processor import PMOProcessor
-
-
-def panel_info_table_to_pmo(
-    target_table: pd.DataFrame,
-    panel_name: str,
-    genome_info: dict | list,
-    target_name_col: str = "target_name",
-    forward_primers_seq_col: str = "fwd_primer",
-    reverse_primers_seq_col: str = "rev_primer",
-    reaction_name_col: str | None = None,
-    forward_primers_start_col: int | None = None,
-    forward_primers_end_col: int | None = None,
-    reverse_primers_start_col: int | None = None,
-    reverse_primers_end_col: int | None = None,
-    insert_start_col: int | None = None,
-    insert_end_col: int | None = None,
-    chrom_col: str | None = None,
-    strand_col: str | None = None,
-    ref_seq_col: str | None = None,
-    gene_name_col: str | None = None,
-    genome_id_col: str | None = None,
-    target_attributes_col: str | None = None,
-    additional_target_info_cols: list | None = None,
-):
-    """
-    Convert a dataframe containing panel information into dictionary of targets and reference information
-
-
-    :param target_table: The dataframe containing the target information
-    :param panel_name: the panel ID assigned to the panel
-    :param genome_info: A dictionary or list of dictionaries containing the genome information
-    :param target_name_col: the name of the column containing the target IDs
-    :param forward_primers_seq_col: the name of the column containing the sequence of the forward primer
-    :param reverse_primers_seq_col: the name of the column containing the sequence of the reverse primer
-    :param reaction_name_col: the name of the column containing which reaction the target was part of. By default they will all be put in one reaction.
-    :param forward_primers_start_col (Optional): the name of the column containing the 0-based start coordinate of the forward primer
-    :param forward_primers_end_col (Optional): the name of the column containing the 0-based end coordinate of the forward primer
-    :param reverse_primers_start_col (Optional): the name of the column containing the 0-based start coordinate of the reverse primer
-    :param reverse_primers_end_col (Optional): the name of the column containing the 0-based end coordinate of the reverse primer
-    :param insert_start_col (Optional): the name of the column containing the 0-based start coordinate of the insert
-    :param insert_end_col (Optional): the name of the column containing the 0-based end coordinate of the insert
-    :param chrom_col (Optional): the name of the column containing the chromosome for the target
-    :param gene_name_col (Optional): the name of the column containing the gene id
-    :param strand_col (Optional): the name of the column containing the strand for the target
-    :param target_attributes_col (Optional): a list of classification type for the primer target
-    :param genome_id_col (Optional): the name of the column containing the genome ID (default is 0)
-    :param additional_target_info_cols (Optional): dictionary of optional additional columns to add to the target information dictionary. Keys are column names and values are the type.
-    :return: a dict of the panel information
-    """
-
-    if not isinstance(target_table, pd.DataFrame):
-        raise ValueError("target_table must be a pandas DataFrame.")
-
-    # Convert genome_info to list if it's a dict
-    if isinstance(genome_info, dict):
-        genome_info = [genome_info]
-
-    check_genome_info(genome_info)
-
-    # Check additional columns if any are added
-    check_additional_columns_exist(target_table, additional_target_info_cols)
-    builder = PMOPanelBuilder(
-        target_table,
-        panel_name,
-        genome_info,
-        target_name_col,
-        forward_primers_seq_col,
-        reverse_primers_seq_col,
-        reaction_name_col,
-        forward_primers_start_col,
-        forward_primers_end_col,
-        reverse_primers_start_col,
-        reverse_primers_end_col,
-        insert_start_col,
-        insert_end_col,
-        chrom_col,
-        strand_col,
-        ref_seq_col,
-        gene_name_col,
-        target_attributes_col,
-        additional_target_info_cols,
-    )
-
-    # Create dictionary of targets and panels
-    targets_dict = builder.create_targets_dict(genome_id_col)
-    panel_dict = builder.build_panel_info(targets_dict)
-    # Put together components
-    panel_info_dict = {
-        "panel_info": [panel_dict],
-        "targeted_genomes": genome_info,
-        "target_info": targets_dict,
-    }
-    return panel_info_dict
 
 
 class PMOPanelBuilder:
+    """
+    Build PMO ``target_info`` and ``panel_info`` structures from a target table.
+
+    Wraps a dataframe of one-row-per-target panel data and converts it into the
+    nested dictionaries a PMO expects. Most users should call
+    :func:`panel_info_table_to_pmo` instead of using this class directly.
+
+    :param target_table: dataframe with one row per target
+    :param panel_name: name assigned to the panel
+    :param target_name_col: column holding the target names. Default: ``target_name``
+    :param forward_primers_seq_col: column holding the forward primer sequence. Default: ``fwd_primer``
+    :param reverse_primers_seq_col: column holding the reverse primer sequence. Default: ``rev_primer``
+    :param reaction_name_col: optional column naming which reaction each target
+        belongs to; if omitted, all targets go in a single reaction
+    :param reaction_name_col_delimiter: delimiter splitting the reaction column
+        into multiple reactions. Default: ``,``
+    :param forward_primers_start_col: optional column with the 0-based forward primer start
+    :param forward_primers_end_col: optional column with the 0-based forward primer end
+    :param reverse_primers_start_col: optional column with the 0-based reverse primer start
+    :param reverse_primers_end_col: optional column with the 0-based reverse primer end
+    :param insert_start_col: optional column with the 0-based insert start
+    :param insert_end_col: optional column with the 0-based insert end
+    :param chrom_col: optional chromosome column; required if any location columns are set
+    :param strand_col: optional strand column
+    :param ref_seq_col: optional reference-sequence column for the insert
+    :param gene_name_col: optional gene-name column
+    :param target_attributes_col: optional column of target attribute classifications
+    :param target_attributes_col_delimiter: delimiter splitting the attributes
+        column into multiple attributes. Default: ``,``
+    :param additional_target_info_cols: optional list of extra column names to
+        copy verbatim into each target dict
+    """
+
     def __init__(
         self,
         target_table: pd.DataFrame,
         panel_name: str,
-        genome_info: dict | list,
         target_name_col: str = "target_name",
         forward_primers_seq_col: str = "fwd_primer",
         reverse_primers_seq_col: str = "rev_primer",
         reaction_name_col: str | None = None,
+        reaction_name_col_delimiter: str = ",",
         forward_primers_start_col: int | None = None,
         forward_primers_end_col: int | None = None,
         reverse_primers_start_col: int | None = None,
@@ -124,15 +64,16 @@ class PMOPanelBuilder:
         ref_seq_col: str | None = None,
         gene_name_col: str | None = None,
         target_attributes_col: str | None = None,
+        target_attributes_col_delimiter: str = ",",
         additional_target_info_cols: list | None = None,
     ):
         self.target_table = target_table
         self.panel_name = panel_name
-        self.genome_info = genome_info
         self.target_name_col = target_name_col
         self.forward_primers_seq_col = forward_primers_seq_col
         self.reverse_primers_seq_col = reverse_primers_seq_col
         self.reaction_name_col = reaction_name_col
+        self.reaction_name_col_delimiter = reaction_name_col_delimiter
         self.forward_primers_start_col = forward_primers_start_col
         self.forward_primers_end_col = forward_primers_end_col
         self.reverse_primers_start_col = reverse_primers_start_col
@@ -144,11 +85,21 @@ class PMOPanelBuilder:
         self.ref_seq_col = ref_seq_col
         self.gene_name_col = gene_name_col
         self.target_attributes_col = target_attributes_col
+        self.target_attributes_col_delimiter = target_attributes_col_delimiter
         self.additional_target_info_cols = additional_target_info_cols
 
         self.location_info_cols = self.check_location_columns()
 
     def check_location_columns(self):
+        """
+        Validate the optional genomic-location column configuration.
+
+        If any location column is set, enforces that ``chrom_col`` is present and
+        that primer/insert start and end columns are supplied as pairs.
+
+        :raises ValueError: if location columns are set inconsistently
+        :return: the list of location columns if any were provided, otherwise None
+        """
         location_cols = [
             self.forward_primers_start_col,
             self.forward_primers_end_col,
@@ -190,7 +141,12 @@ class PMOPanelBuilder:
             return location_cols
         return None
 
-    def check_targets_are_unique(self):
+    def check_target_names_are_unique(self):
+        """
+        Raise an exception if the target names are not unique
+
+        :return: Nothing
+        """
         duplications = self.target_table[
             self.target_table[self.target_name_col].duplicated(keep=False)
         ]
@@ -200,6 +156,12 @@ class PMOPanelBuilder:
             )
 
     def check_unique_target_info(self, columns_to_check):
+        """
+        Raise an exception if the target info is not unique
+
+        :param columns_to_check: the columns to check to ensure the target info is unique
+        :return: Nothing
+        """
         groups = (
             self.target_table.groupby(columns_to_check)[self.target_name_col]
             .apply(list)
@@ -219,6 +181,17 @@ class PMOPanelBuilder:
             raise ValueError("\n".join(msg_lines))
 
     def summarise_targets_missing_optional_info(self):
+        """
+        Warn about targets missing optional location fields.
+
+        For each of insert, forward-primer, and reverse-primer locations that was
+        requested, finds targets with empty coordinate fields and emits a warning.
+        Targets listed here are skipped when their location block is built.
+
+        :return: a tuple ``(missing_insert_loc, missing_fwd_primer_loc,
+            missing_rev_primer_loc)``; each element is a list of target names, or
+            None if that location type was not requested
+        """
         missing_insert_loc = None
         missing_fwd_primer_loc = None
         missing_rev_primer_loc = None
@@ -264,13 +237,23 @@ class PMOPanelBuilder:
             if self.reverse_primers_start_col
             else None
         )
-
         return missing_insert_loc, missing_fwd_primer_loc, missing_rev_primer_loc
 
-    def create_targets_dict(
+    def build_target_info_dict(
         self,
         genome_id_col: str | None = None,
     ):
+        """
+        Build the list of target_info dictionaries from the target table.
+
+        Validates target-name uniqueness and primer/location uniqueness, then
+        assembles one dict per target including primer sequences and, where
+        available, insert and primer genomic locations.
+
+        :param genome_id_col: optional column holding the genome id for each
+            target; if omitted, a genome_id of 0 is used
+        :return: a list of target_info dictionaries
+        """
         # Check targets before putting into JSON
         (
             forward_primers_start_col,
@@ -285,7 +268,7 @@ class PMOPanelBuilder:
         ) = self.location_info_cols if self.location_info_cols else [None] * 9
 
         # Check target information in the dataframe
-        self.check_targets_are_unique()
+        self.check_target_names_are_unique()
         columns_to_check = [self.forward_primers_seq_col, self.reverse_primers_seq_col]
         if self.location_info_cols:
             columns_to_check += [col for col in self.location_info_cols if col]
@@ -296,7 +279,7 @@ class PMOPanelBuilder:
             missing_rev_primer_loc,
         ) = self.summarise_targets_missing_optional_info()
 
-        # Put targets together in dictionary
+        # Put targets together in a dictionary
         targets_dicts = []
         for _, row in self.target_table.iterrows():
             target_name = row[self.target_name_col]
@@ -306,7 +289,9 @@ class PMOPanelBuilder:
             if self.gene_name_col:
                 target_dict["gene_name"] = row[self.gene_name_col]
             if self.target_attributes_col:
-                target_dict["target_attributes"] = row[self.target_attributes_col]
+                target_dict["target_attributes"] = row[
+                    self.target_attributes_col
+                ].split(self.target_attributes_col_delimiter)
             if self.additional_target_info_cols:
                 for col in self.additional_target_info_cols:
                     value = row[col]
@@ -372,28 +357,72 @@ class PMOPanelBuilder:
 
         return targets_dicts
 
-    def build_panel_info(self, targets_dict):
+    def build_panel_info_dict(self, targets_dict):
+        """
+        Build the panel_info dictionary, grouping targets into reactions.
+
+        If no reaction column was configured, all targets are placed in a single
+        reaction named ``full``.
+
+        :param targets_dict: the target_info list from :meth:`build_target_info_dict`
+        :return: a panel_info dictionary with ``panel_name`` and ``reactions``,
+            where each reaction lists target indices into ``targets_dict``
+        """
         panel_dict = {"panel_name": self.panel_name, "reactions": []}
+        target_indices = dict()
+        for i, target_dict in enumerate(targets_dict):
+            target_indices[target_dict["target_name"]] = i
+
         if self.reaction_name_col:
-            reactions = self.target_table[self.reaction_name_col].unique()
-        else:
-            reactions = ["1"]
-            self.target_table["reaction"] = "1"
-            self.reaction_name_col = "reaction"
-        for reaction in reactions:
-            reaction_target_table = self.target_table[
-                self.target_table[self.reaction_name_col] == reaction
-            ]
-            target_indeces = PMOProcessor.get_index_of_target_names(
-                {"target_info": targets_dict},
-                reaction_target_table[self.target_name_col].to_list(),
+            reactions = (
+                self.target_table[self.reaction_name_col]
+                .str.split(self.reaction_name_col_delimiter)
+                .explode()
+                .str.strip()  # Remove leading/trailing whitespace
+                .unique()
             )
-            reaction_dict = {"reaction_name": reaction, "panel_targets": target_indeces}
-            panel_dict["reactions"].append(reaction_dict)
+        else:
+            reactions = ["full"]
+            self.target_table["reaction"] = "full"
+            self.reaction_name_col = "reaction"
+
+        for reaction in reactions:
+            # Filter rows where the reaction column contains this reaction
+            matching_rows = self.target_table[
+                self.target_table[self.reaction_name_col]
+                .str.split(self.reaction_name_col_delimiter)
+                .apply(
+                    lambda x: reaction in [item.strip() for item in x]
+                    if isinstance(x, list)
+                    else False
+                )
+            ]
+            # Get the indices for these targets
+            target_indices_for_reaction = [
+                target_indices[target_name]
+                for target_name in matching_rows[self.target_name_col]
+            ]
+            panel_dict["reactions"].append(
+                {
+                    "reaction_name": reaction,
+                    "panel_targets": target_indices_for_reaction,
+                }
+            )
         return panel_dict
 
 
 def check_genome_info(genome_info):
+    """
+    Validate that genome info contains the required keys.
+
+    Accepts either a single genome dict or a list of them, and checks each for
+    the keys ``name``, ``genome_version``, ``taxon_id``, and ``url``.
+
+    :param genome_info: a genome dict or list of genome dicts
+    :raises TypeError: if genome_info is not a dict or list, or a list element is not a dict
+    :raises ValueError: if the list is empty or any entry is missing required keys
+    :return: Nothing
+    """
     if isinstance(genome_info, dict):
         required_keys = {"name", "genome_version", "taxon_id", "url"}
         missing_keys = required_keys - genome_info.keys()
@@ -428,6 +457,13 @@ def merge_panel_info_dicts(panel_info_dicts: list[dict]) -> dict:
     Target lists are concatenated (deduplicated by target_name) and all
     genome references are collapsed so that genome identifiers remain valid
     across the merged structure.
+
+    :param panel_info_dicts: a list of panel_info dicts, each with ``target_info``
+        and ``panel_info`` (and optionally ``targeted_genomes``)
+    :raises ValueError: if the list is empty, a dict lacks ``target_info``, or a
+        target has location data without accompanying ``targeted_genomes``
+    :return: a merged dict with ``panel_info`` and ``target_info`` keys, plus
+        ``targeted_genomes`` if any genomes were present
     """
     if not panel_info_dicts:
         raise ValueError("panel_info_dicts must contain at least one entry.")
@@ -459,16 +495,14 @@ def merge_panel_info_dicts(panel_info_dicts: list[dict]) -> dict:
                         primer_loc["genome_id"] = mapping[old_id]
 
     for panel_dict in panel_info_dicts:
-        if "targeted_genomes" not in panel_dict:
-            raise ValueError("panel_info_dict missing 'targeted_genomes'.")
-
         genome_mapping: dict[int, int] = {}
-        for idx, genome in enumerate(panel_dict["targeted_genomes"]):
-            signature = canonicalise_genome(genome)
-            if signature not in genome_signature_to_index:
-                genome_signature_to_index[signature] = len(merged_genomes)
-                merged_genomes.append(genome)
-            genome_mapping[idx] = genome_signature_to_index[signature]
+        if "targeted_genomes" in panel_dict:
+            for idx, genome in enumerate(panel_dict["targeted_genomes"]):
+                signature = canonicalise_genome(genome)
+                if signature not in genome_signature_to_index:
+                    genome_signature_to_index[signature] = len(merged_genomes)
+                    merged_genomes.append(genome)
+                genome_mapping[idx] = genome_signature_to_index[signature]
 
         if "target_info" not in panel_dict:
             raise ValueError("panel_info_dict missing 'target_info'.")
@@ -480,7 +514,28 @@ def merge_panel_info_dicts(panel_info_dicts: list[dict]) -> dict:
 
             if target_name not in target_name_to_index:
                 target_copy = copy.deepcopy(target)
-                remap_genome_ids(target_copy, genome_mapping)
+                if "targeted_genomes" in panel_dict:
+                    remap_genome_ids(target_copy, genome_mapping)
+                else:
+                    # check to see if there is location data but no genomes loaded
+                    if "insert_location" in target_copy:
+                        raise ValueError(
+                            "target"
+                            + target_name
+                            + " has insert_location but no targeted_genomes information is included"
+                        )
+                    if "location" in target_copy["forward_primer"]:
+                        raise ValueError(
+                            "target"
+                            + target_name
+                            + " has forward primer location but no targeted_genomes information is included"
+                        )
+                    if "location" in target_copy["reverse_primer"]:
+                        raise ValueError(
+                            "target"
+                            + target_name
+                            + " has reverse primer location but no targeted_genomes information is included"
+                        )
                 target_name_to_index[target_name] = len(merged_targets)
                 merged_targets.append(target_copy)
 
@@ -498,9 +553,160 @@ def merge_panel_info_dicts(panel_info_dicts: list[dict]) -> dict:
                     }
                 )
             merged_panels.append(remapped_panel)
+    ret = {"panel_info": merged_panels, "target_info": merged_targets}
+    if len(merged_genomes) > 0:
+        ret["targeted_genomes"] = merged_genomes
+    return ret
 
-    return {
-        "panel_info": merged_panels,
-        "target_info": merged_targets,
-        "targeted_genomes": merged_genomes,
+
+def panel_info_table_to_pmo(
+    target_table: pd.DataFrame,
+    panel_name: str,
+    genome_info: dict | list | None = None,
+    target_name_col: str = "target_name",
+    forward_primers_seq_col: str = "fwd_primer",
+    reverse_primers_seq_col: str = "rev_primer",
+    reaction_name_col: str | None = None,
+    reaction_name_col_delimiter: str = ",",
+    forward_primers_start_col: str | None = None,
+    forward_primers_end_col: str | None = None,
+    reverse_primers_start_col: str | None = None,
+    reverse_primers_end_col: str | None = None,
+    insert_start_col: str | None = None,
+    insert_end_col: str | None = None,
+    chrom_col: str | None = None,
+    strand_col: str | None = None,
+    ref_seq_col: str | None = None,
+    gene_name_col: str | None = None,
+    genome_id_col: str | None = None,
+    target_attributes_col: str | None = None,
+    target_attributes_col_delimiter: str = ",",
+    additional_target_info_cols: list | None = None,
+):
+    """
+    Convert a dataframe containing panel information into dictionary of targets and reference information
+
+    :param target_table: the dataframe containing the target information
+    :type target_table: pd.DataFrame
+    :param panel_name: the panel ID assigned to the panel
+    :type panel_name: str
+    :param genome_info: reference genome information, needed if the target info contains genome location
+    :type genome_info: dict or list, optional
+    :param target_name_col: the name of the column containing the target IDs. Default: target_name
+    :type target_name_col: str
+    :param forward_primers_seq_col: the name of the column containing the sequence of the forward primer. Default: fwd_primer
+    :type forward_primers_seq_col: str
+    :param reverse_primers_seq_col: the name of the column containing the sequence of the reverse primer. Default: rev_primer
+    :type reverse_primers_seq_col: str
+    :param reaction_name_col: the name of the column containing which reaction the target was part of. By default they will all be put in one reaction.
+    :type reaction_name_col: str, optional
+    :param reaction_name_col_delimiter: the delimiter used to split the reaction name column into multiple reactions. Default is a comma.
+    :type reaction_name_col_delimiter: str
+    :param forward_primers_start_col: the name of the column containing the 0-based start coordinate of the forward primer
+    :type forward_primers_start_col: str, optional
+    :param forward_primers_end_col: the name of the column containing the 0-based end coordinate of the forward primer
+    :type forward_primers_end_col: str, optional
+    :param reverse_primers_start_col: the name of the column containing the 0-based start coordinate of the reverse primer
+    :type reverse_primers_start_col: str, optional
+    :param reverse_primers_end_col: the name of the column containing the 0-based end coordinate of the reverse primer
+    :type reverse_primers_end_col: str, optional
+    :param insert_start_col: the name of the column containing the 0-based start coordinate of the insert
+    :type insert_start_col: str, optional
+    :param insert_end_col: the name of the column containing the 0-based end coordinate of the insert
+    :type insert_end_col: str, optional
+    :param chrom_col: the name of the column containing the chromosome for the target
+    :type chrom_col: str, optional
+    :param gene_name_col: the name of the column containing the gene id
+    :type gene_name_col: str, optional
+    :param strand_col: the name of the column containing the strand for the target
+    :type strand_col: str, optional
+    :param ref_seq_col: the name of the column containing the reference sequence for the insert
+    :type ref_seq_col: str, optional
+    :param target_attributes_col: a list of classification type for the primer target
+    :type target_attributes_col: str, optional
+    :param target_attributes_col_delimiter: the delimiter used to split the target attributes column into multiple attributes. Default is a comma.
+    :type target_attributes_col_delimiter: str
+    :param genome_id_col: the name of the column containing the genome ID (default is 0)
+    :type genome_id_col: str, optional
+    :param additional_target_info_cols: a list of additional column names to copy verbatim into each target information dictionary
+    :type additional_target_info_cols: list, optional
+    :return: a dict of the panel information
+    :rtype: dict
+    """
+
+    if not isinstance(target_table, pd.DataFrame):
+        raise ValueError("target_table must be a pandas DataFrame.")
+
+    # Check additional columns if any are added
+    check_additional_columns_exist(target_table, additional_target_info_cols)
+    builder = PMOPanelBuilder(
+        target_table=target_table,
+        panel_name=panel_name,
+        target_name_col=target_name_col,
+        forward_primers_seq_col=forward_primers_seq_col,
+        reverse_primers_seq_col=reverse_primers_seq_col,
+        reaction_name_col=reaction_name_col,
+        reaction_name_col_delimiter=reaction_name_col_delimiter,
+        forward_primers_start_col=forward_primers_start_col,
+        forward_primers_end_col=forward_primers_end_col,
+        reverse_primers_start_col=reverse_primers_start_col,
+        reverse_primers_end_col=reverse_primers_end_col,
+        insert_start_col=insert_start_col,
+        insert_end_col=insert_end_col,
+        chrom_col=chrom_col,
+        strand_col=strand_col,
+        ref_seq_col=ref_seq_col,
+        gene_name_col=gene_name_col,
+        target_attributes_col=target_attributes_col,
+        target_attributes_col_delimiter=target_attributes_col_delimiter,
+        additional_target_info_cols=additional_target_info_cols,
+    )
+
+    # check and process genome_info if given
+    # Convert genome_info to list if it's a dict
+    if genome_info and isinstance(genome_info, dict):
+        genome_info = [genome_info]
+
+    if genome_info:
+        check_genome_info(genome_info)
+
+    # Create a dictionary of targets and panels
+    targets_dict = builder.build_target_info_dict(genome_id_col)
+    if not genome_info:
+        for target in targets_dict:
+            if "insert_location" in target:
+                raise Exception(
+                    "insert_location is provided for "
+                    + target["target_name"]
+                    + " but no targeted_genomes is not provided."
+                )
+            if "location" in target["forward_primer"]:
+                raise Exception(
+                    "location is provided for "
+                    + target["target_name"]
+                    + " but no targeted_genomes is not provided."
+                )
+            if "location" in target["reverse_primer"]:
+                raise Exception(
+                    "location is provided for "
+                    + target["target_name"]
+                    + " but no targeted_genomes is not provided."
+                )
+    panel_dict = builder.build_panel_info_dict(targets_dict)
+    # Put together components
+    panel_info_dict = {
+        "panel_info": [panel_dict],
+        "target_info": targets_dict,
     }
+    remove_optional_null_values(
+        panel_info_dict["target_info"],
+        ["gene_name", "insert_location", "markers_of_interest", "target_attributes"],
+    )
+
+    if genome_info:
+        panel_info_dict["targeted_genomes"] = genome_info
+        remove_optional_null_values(
+            panel_info_dict["target_info"], ["chromosomes", "gff_url"]
+        )
+
+    return panel_info_dict
