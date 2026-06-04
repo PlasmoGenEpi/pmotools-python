@@ -90,6 +90,8 @@ def merge_to_pmo(
         # Check for names in specimen_info that are not in library_sample_info
         missing_in_specimen = library_sample_names - specimen_names
         missing_in_library = specimen_names - library_sample_names
+        for missing_lib_name in missing_in_specimen:
+            specimen_info.append({"specimen_name": missing_lib_name})
         if missing_in_specimen:
             warnings.warn(
                 f"library_sample_names found in the detected_microhaplotypes that don't have corresponding supplied specimen_names: {sorted(missing_in_specimen)}, will be added to specimen_info with no meta"
@@ -98,8 +100,7 @@ def merge_to_pmo(
             warnings.warn(
                 f"specimen_name were supplied that don't have corresponding library_sample_names in detected_microhaplotypes: {sorted(missing_in_library)}"
             )
-        for missing_lib_name in missing_in_library:
-            specimen_info.append({"specimen_name": missing_lib_name})
+
         # names match, so the supplied specimen_info names will match up with the names in library_sample_info
     if specimen_info is None and library_sample_info is None:
         if len(panel_target_info["panel_info"]) > 1:
