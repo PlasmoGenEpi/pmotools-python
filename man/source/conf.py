@@ -1,7 +1,9 @@
 import os
 import sys
+from pmotools import get_pmotools_version
 
 sys.path.insert(0, os.path.abspath("../../src"))
+
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -14,7 +16,9 @@ sys.path.insert(0, os.path.abspath("../../src"))
 project = "pmotools-python"
 copyright = "2026, Nicholas Hathaway, Kathryn Murie"
 author = "Nicholas Hathaway, Kathryn Murie"
-release = "v1.1.0"
+
+release = get_pmotools_version()  # full version, e.g. "v1.1.0"
+version = release  # use the full string everywhere
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
