@@ -1073,23 +1073,29 @@ class PMOProcessor:
         pmo_out = {
             "pmo_header": copy.deepcopy(pmodata["pmo_header"]),
             "panel_info": copy.deepcopy(pmodata["panel_info"]),
-            "sequencing_info": copy.deepcopy(pmodata["sequencing_info"]),
             "target_info": copy.deepcopy(pmodata["target_info"]),
             "specimen_info": copy.deepcopy(pmodata["specimen_info"]),
             "library_sample_info": copy.deepcopy(pmodata["library_sample_info"]),
-            "project_info": copy.deepcopy(pmodata["project_info"]),
-            "targeted_genomes": copy.deepcopy(pmodata["targeted_genomes"]),
             "representative_microhaplotypes": copy.deepcopy(
                 pmodata["representative_microhaplotypes"]
             ),
-            "bioinformatics_methods_info": copy.deepcopy(
-                pmodata["bioinformatics_methods_info"]
-            ),
-            "bioinformatics_run_info": copy.deepcopy(
-                pmodata["bioinformatics_run_info"]
-            ),
             "detected_microhaplotypes": [],
         }
+        # only copy optional sections if they are present (no longer required by the schema)
+        if "sequencing_info" in pmodata:
+            pmo_out["sequencing_info"] = copy.deepcopy(pmodata["sequencing_info"])
+        if "project_info" in pmodata:
+            pmo_out["project_info"] = copy.deepcopy(pmodata["project_info"])
+        if "targeted_genomes" in pmodata:
+            pmo_out["targeted_genomes"] = copy.deepcopy(pmodata["targeted_genomes"])
+        if "bioinformatics_methods_info" in pmodata:
+            pmo_out["bioinformatics_methods_info"] = copy.deepcopy(
+                pmodata["bioinformatics_methods_info"]
+            )
+        if "bioinformatics_run_info" in pmodata:
+            pmo_out["bioinformatics_run_info"] = copy.deepcopy(
+                pmodata["bioinformatics_run_info"]
+            )
         # if has optional read_counts_by_stage then add as well
         # if does contain, @todo consider updating with new counts now that a filter has been applied
 

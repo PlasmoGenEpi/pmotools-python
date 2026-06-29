@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import copy
 import os
 import tempfile
 import unittest
@@ -317,8 +318,33 @@ class TestPMOProcessor(unittest.TestCase):
         )
         with open(output_fnp, "w") as f:
             json.dump(pmo_data_filtered, f)
-        self.assertEqual("879b1a0c62a77a8fcc910a21d8ec9de6", md5sum_of_fnp(output_fnp))
+        self.assertEqual("59e24e7efd4cd7822acde70828ad6119", md5sum_of_fnp(output_fnp))
         checker = PMOChecker(self.pmo_jsonschema_data)
+        checker.validate_pmo_json(pmo_data_filtered)
+
+    def test_extract_from_pmo_with_read_filter_missing_optional_sections(self):
+        # the v1.1.0 schema relaxed the required fields, so a PMO may omit these
+        # optional sections; the extracted PMO must not copy them in as null/empty keys
+        optional_sections = [
+            "sequencing_info",
+            "project_info",
+            "targeted_genomes",
+            "bioinformatics_methods_info",
+            "bioinformatics_run_info",
+            "read_counts_by_stage",
+        ]
+        stripped_pmo_data = copy.deepcopy(self.combined_pmo_data)
+        for section in optional_sections:
+            stripped_pmo_data.pop(section, None)
+        pmo_data_filtered = PMOProcessor.extract_from_pmo_with_read_filter(
+            stripped_pmo_data, 1000
+        )
+        for section in optional_sections:
+            self.assertNotIn(section, pmo_data_filtered)
+        # the relaxed required fields are a v1.1.0 change, so validate against v1.1.0
+        checker = PMOChecker(
+            load_schema("portable_microhaplotype_object_v1.1.0.schema.json")
+        )
         checker.validate_pmo_json(pmo_data_filtered)
 
     def test_filter_pmo_by_target_ids(self):
