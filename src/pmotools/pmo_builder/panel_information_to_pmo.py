@@ -332,8 +332,8 @@ class PMOPanelBuilder:
                 fwd_primer_dict["location"] = {
                     "genome_id": genome_id,
                     "chrom": row[chrom_col],
-                    "end": int(row[forward_primers_start_col]),
-                    "start": int(row[forward_primers_end_col]),
+                    "start": int(row[forward_primers_start_col]),
+                    "end": int(row[forward_primers_end_col]),
                 }
                 if strand_col and pd.notna(row[strand_col]):
                     fwd_primer_dict["location"]["strand"] = row[strand_col]
