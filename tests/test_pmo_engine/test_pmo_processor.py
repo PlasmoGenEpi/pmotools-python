@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import copy
+import gzip
 import os
 import tempfile
 import unittest
@@ -37,6 +38,16 @@ class TestPMOProcessor(unittest.TestCase):
             )
         ) as f:
             self.minimum_pmo_data = json.load(f)
+        # a real, schema-valid v1.1.0 PMO that contains only the required top-level
+        # sections (no sequencing_info/project_info/targeted_genomes/bioinformatics_*/
+        # read_counts_by_stage) to guard against unguarded optional-section access
+        with gzip.open(
+            os.path.join(
+                os.path.dirname(self.working_dir),
+                "data/minimum_Furstenau2025_PMO.json.gz",
+            )
+        ) as f:
+            self.minimum_v1_1_0_pmo_data = json.load(f)
 
     def tearDown(self):
         self.test_dir.cleanup()
@@ -346,6 +357,23 @@ class TestPMOProcessor(unittest.TestCase):
             load_schema("portable_microhaplotype_object_v1.1.0.schema.json")
         )
         checker.validate_pmo_json(pmo_data_filtered)
+
+    def test_bioinformatics_run_name_lookups_without_run_info(self):
+        # bioinformatics_run_info is optional as of v1.1.0; the run-name lookups
+        # must not raise a raw KeyError on a valid PMO that omits it
+        self.assertNotIn("bioinformatics_run_info", self.minimum_v1_1_0_pmo_data)
+        self.assertEqual(
+            {},
+            PMOProcessor.get_index_key_of_bioinformatics_run_names(
+                self.minimum_v1_1_0_pmo_data
+            ),
+        )
+        self.assertEqual(
+            [],
+            PMOProcessor.get_sorted_bioinformatics_run_names(
+                self.minimum_v1_1_0_pmo_data
+            ),
+        )
 
     def test_filter_pmo_by_target_ids(self):
         pmo_data_select_targets = PMOProcessor.filter_pmo_by_target_ids(

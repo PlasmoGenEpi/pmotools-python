@@ -20,6 +20,10 @@ class PMOProcessor:
         :return: a dictionary of indexes keyed by bioinformatics_run_name
         """
         ret = {}
+        # bioinformatics_run_info is optional as of schema v1.1.0; a PMO without it
+        # simply has no run-name to index mapping
+        if "bioinformatics_run_info" not in pmodata:
+            return ret
         for idx, bioinformatics_run in enumerate(pmodata["bioinformatics_run_info"]):
             ret[bioinformatics_run["bioinformatics_run_name"]] = idx
         return ret
