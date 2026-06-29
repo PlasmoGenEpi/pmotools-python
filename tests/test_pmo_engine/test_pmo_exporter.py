@@ -105,6 +105,54 @@ class TestPMOExporter(unittest.TestCase):
         PMOExporter.write_bed_locs(all_target_inserts, output_fnp)
         self.assertEqual("52b1f79a3a89f8265573fa54b5a7ce57", md5sum_of_fnp(output_fnp))
 
+    def test_extract_panels_insert_bed_loc_covers_all_reactions(self):
+        # regression: previously the function returned early inside the reaction
+        # loop, so only the first reaction of the first panel was returned.
+        import copy
+
+        pmo = copy.deepcopy(self.combined_pmo_data)
+        panel = pmo["panel_info"][0]
+        targets = panel["reactions"][0]["panel_targets"]
+        half = len(targets) // 2
+        panel["reactions"] = [
+            {"reaction_name": "pool1", "panel_targets": targets[:half]},
+            {"reaction_name": "pool2", "panel_targets": targets[half:]},
+        ]
+        bed_locs = PMOExporter.extract_panels_insert_bed_loc(pmo, sort_output=False)
+        # every target across BOTH reactions is present
+        self.assertEqual(len(bed_locs), len(targets))
+        self.assertEqual(
+            {b.name for b in bed_locs},
+            {pmo["target_info"][t]["target_name"] for t in targets},
+        )
+
+    def test_write_bed_locs_header_on_own_line(self):
+        # regression: header was written without a trailing newline, gluing the
+        # first data row onto it.
+        bed_locs = PMOExporter.extract_targets_insert_bed_loc(
+            self.combined_pmo_data, sort_output=True
+        )
+        out_fnp = os.path.join(self.test_dir.name, "with_header.bed")
+        PMOExporter.write_bed_locs(bed_locs, out_fnp, add_header=True)
+        with open(out_fnp) as f:
+            lines = f.read().splitlines()
+        self.assertEqual(
+            lines[0],
+            "\t".join(
+                [
+                    "#chrom",
+                    "start",
+                    "end",
+                    "name",
+                    "score",
+                    "strand",
+                    "ref_seq",
+                    "extra_info",
+                ]
+            ),
+        )
+        self.assertEqual(len(lines), len(bed_locs) + 1)
+
     def test_extract_alleles_per_sample_table(self):
         allele_data = PMOExporter.extract_alleles_per_sample_table(
             self.combined_pmo_data,

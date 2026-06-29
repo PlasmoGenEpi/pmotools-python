@@ -451,6 +451,7 @@ class PMOExporter(object):
                         ]
                     )
                 )
+                f.write("\n")
             for bed_loc in bed_locs:
                 f.write(
                     "\t".join(
@@ -540,11 +541,10 @@ class PMOExporter(object):
         :param sort_output: whether to sort output by genomic location
         :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, ref_seq, extra_info
         """
-        bed_loc_out = {}
+        bed_loc_out = []
         if select_panel_ids is None:
             select_panel_ids = list(range(len(pmodata["panel_info"])))
         for panel_id in select_panel_ids:
-            bed_loc_out_per_panel = []
             for reaction_id in range(len(pmodata["panel_info"][panel_id]["reactions"])):
                 for target_id in pmodata["panel_info"][panel_id]["reactions"][
                     reaction_id
@@ -589,7 +589,7 @@ class PMOExporter(object):
                         if "ref_seq" not in tar["insert_location"]
                         else tar["insert_location"]["ref_seq"]
                     )
-                    bed_loc_out_per_panel.append(
+                    bed_loc_out.append(
                         BedLoc(
                             tar["insert_location"]["chrom"],
                             tar["insert_location"]["start"],
@@ -602,12 +602,8 @@ class PMOExporter(object):
                             extra_info,
                         )
                     )
-                if sort_output:
-                    return sorted(
-                        bed_loc_out_per_panel,
-                        key=lambda bed: (bed.chrom, bed.start, bed.end),
-                    )
-            bed_loc_out[panel_id] = bed_loc_out_per_panel
+        if sort_output:
+            return sorted(bed_loc_out, key=lambda bed: (bed.chrom, bed.start, bed.end))
         return bed_loc_out
 
     @staticmethod
