@@ -1603,13 +1603,18 @@ class TestMetatableToPMO(unittest.TestCase):
             parasite_density_method_col="parasite_density_method",
         )
 
-        self.assertEqual(result[0]["parasite_density_info"][0]["parasite_density"], 10)
         self.assertEqual(
-            result[0]["parasite_density_info"][0]["parasite_density_method"], "qPCR"
+            result[0]["qpcr_parasite_density_info"][0]["parasite_density"], 10
         )
-        self.assertEqual(result[1]["parasite_density_info"][0]["parasite_density"], 100)
         self.assertEqual(
-            result[1]["parasite_density_info"][0]["parasite_density_method"],
+            result[0]["qpcr_parasite_density_info"][0]["parasite_density_method"],
+            "qPCR",
+        )
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][0]["parasite_density"], 100
+        )
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][0]["parasite_density_method"],
             "microscopy",
         )
 
@@ -1638,10 +1643,18 @@ class TestMetatableToPMO(unittest.TestCase):
             parasite_density_method_col=["method1", "method2"],
         )
 
-        self.assertEqual(result[0]["parasite_density_info"][0]["parasite_density"], 15)
-        self.assertEqual(result[0]["parasite_density_info"][1]["parasite_density"], 10)
-        self.assertEqual(result[1]["parasite_density_info"][0]["parasite_density"], 107)
-        self.assertEqual(result[1]["parasite_density_info"][1]["parasite_density"], 100)
+        self.assertEqual(
+            result[0]["qpcr_parasite_density_info"][0]["parasite_density"], 15
+        )
+        self.assertEqual(
+            result[0]["qpcr_parasite_density_info"][1]["parasite_density"], 10
+        )
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][0]["parasite_density"], 107
+        )
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][1]["parasite_density"], 100
+        )
 
     def test_library_sample_info_table_to_pmo_with_all_new_fields(self):
         """Test all new optional fields together"""
@@ -1685,7 +1698,9 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertEqual(result[0]["experiment_accession"], "EXP001")
         self.assertEqual(result[0]["fastqs_loc"], "/path/to/fastqs1")
         self.assertEqual(result[0]["run_accession"], "RUN001")
-        self.assertEqual(result[0]["parasite_density_info"][0]["parasite_density"], 10)
+        self.assertEqual(
+            result[0]["qpcr_parasite_density_info"][0]["parasite_density"], 10
+        )
         self.assertIn("library_prep_plate_info", result[0])
         self.assertEqual(result[0]["library_prep_plate_info"]["plate_col"], 1)
 
@@ -1693,7 +1708,9 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertEqual(result[1]["experiment_accession"], "EXP002")
         self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs2")
         self.assertEqual(result[1]["run_accession"], "RUN002")
-        self.assertEqual(result[1]["parasite_density_info"][0]["parasite_density"], 100)
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][0]["parasite_density"], 100
+        )
         self.assertIn("library_prep_plate_info", result[1])
         self.assertEqual(result[1]["library_prep_plate_info"]["plate_col"], 2)
 

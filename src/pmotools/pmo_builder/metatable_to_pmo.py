@@ -157,7 +157,7 @@ def library_sample_info_table_to_pmo(
         library_prep_plate_position_col,
         meta_json,
         copy_contents,
-        "specimen_name",
+        "library_sample_name",
         "library_prep_plate_info",
     )
     meta_json = add_parasite_density_info(
@@ -166,7 +166,7 @@ def library_sample_info_table_to_pmo(
         meta_json,
         copy_contents,
         "library_sample_name",
-        entry_name="parasite_density_info",
+        entry_name="qpcr_parasite_density_info",
     )
     # listify columns that contain values that could be list, are delimited by the argument list_values_library_values_delimiter
     primitives = (int, float, str, bool, complex)
@@ -494,7 +494,7 @@ def add_plate_info(
     plate_position_col,
     meta_json,
     df,
-    specimen_name_col,
+    match_col,
     entry_name="plate_info",
 ):
     if all(
@@ -531,7 +531,7 @@ def add_plate_info(
                 ) from e
 
     for row in meta_json:
-        content_row = df[df[specimen_name_col] == row[specimen_name_col]]
+        content_row = df[df[match_col] == row[match_col]]
         plate_name_val = content_row[plate_name_col].iloc[0] if plate_name_col else None
         plate_row_val = (
             content_row[plate_row_col].iloc[0].upper() if plate_row_col else None
@@ -560,7 +560,7 @@ def add_parasite_density_info(
     parasite_density_method_col,
     meta_json,
     df,
-    specimen_name_col,
+    match_col,
     entry_name,
 ):
     density_method_pairs = []
@@ -608,7 +608,7 @@ def add_parasite_density_info(
 
     # Add parasite density info to meta_json
     for row in meta_json:
-        content_row = df[df[specimen_name_col] == row[specimen_name_col]]
+        content_row = df[df[match_col] == row[match_col]]
         density_infos = []
         for density_col, method_col in density_method_pairs:
             density_val = content_row[density_col].iloc[0] if density_col else None
