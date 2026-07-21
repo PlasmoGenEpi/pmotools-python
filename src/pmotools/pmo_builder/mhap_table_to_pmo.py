@@ -26,6 +26,13 @@ def mhap_table_to_pmo(
     masking_delim: str = ",",
     microhaplotype_name_col: str | None = None,
     pseudocigar_col: str | None = None,
+    pseudocigar_chrom_col: str | None = None,
+    pseudocigar_start_col: str | None = None,
+    pseudocigar_end_col: str | None = None,
+    pseudocigar_ref_seq_col: str | None = None,
+    pseudocigar_strand_col: str | None = None,
+    pseudocigar_genome_id: int | None = None,
+    pseudocigar_generation_description_col: str | None = None,
     quality_col: str | None = None,
     additional_representative_mhap_cols: list | None = None,
     additional_mhap_detected_cols: list | None = None,
@@ -73,6 +80,20 @@ def mhap_table_to_pmo(
     :type microhaplotype_name_col: str, optional
     :param pseudocigar_col: the name of the column containing a pseudocigar for the microhaplotype
     :type pseudocigar_col: str, optional
+    :param pseudocigar_chrom_col: column for the pseudocigar ref_loc chromosome; defaults to chrom_col
+    :type pseudocigar_chrom_col: str, optional
+    :param pseudocigar_start_col: column for the pseudocigar ref_loc start (required if pseudocigar_col is set)
+    :type pseudocigar_start_col: str, optional
+    :param pseudocigar_end_col: column for the pseudocigar ref_loc end (required if pseudocigar_col is set)
+    :type pseudocigar_end_col: str, optional
+    :param pseudocigar_ref_seq_col: optional column for the pseudocigar ref_loc reference sequence
+    :type pseudocigar_ref_seq_col: str, optional
+    :param pseudocigar_strand_col: optional column for the pseudocigar ref_loc strand
+    :type pseudocigar_strand_col: str, optional
+    :param pseudocigar_genome_id: genome id for the pseudocigar ref_loc; defaults to genome_id
+    :type pseudocigar_genome_id: int, optional
+    :param pseudocigar_generation_description_col: optional column describing how the pseudocigar was generated
+    :type pseudocigar_generation_description_col: str, optional
     :param quality_col: the name of the column containing the ANSI FASTQ per-base quality score for this sequence
     :type quality_col: str, optional
     :param additional_representative_mhap_cols: additional columns to add to the representative microhaplotypes table
@@ -100,6 +121,13 @@ def mhap_table_to_pmo(
         masking_delim=masking_delim,
         microhaplotype_name_col=microhaplotype_name_col,
         pseudocigar_col=pseudocigar_col,
+        pseudocigar_chrom_col=pseudocigar_chrom_col,
+        pseudocigar_start_col=pseudocigar_start_col,
+        pseudocigar_end_col=pseudocigar_end_col,
+        pseudocigar_ref_seq_col=pseudocigar_ref_seq_col,
+        pseudocigar_strand_col=pseudocigar_strand_col,
+        pseudocigar_genome_id=pseudocigar_genome_id,
+        pseudocigar_generation_description_col=pseudocigar_generation_description_col,
         quality_col=quality_col,
         additional_representative_mhap_cols=additional_representative_mhap_cols,
     )
@@ -160,6 +188,13 @@ def create_representative_microhaplotype_dict(
     masking_delim: str = ",",
     microhaplotype_name_col: str | None = None,
     pseudocigar_col: str | None = None,
+    pseudocigar_chrom_col: str | None = None,
+    pseudocigar_start_col: str | None = None,
+    pseudocigar_end_col: str | None = None,
+    pseudocigar_ref_seq_col: str | None = None,
+    pseudocigar_strand_col: str | None = None,
+    pseudocigar_genome_id: int | None = None,
+    pseudocigar_generation_description_col: str | None = None,
     quality_col: str | None = None,
     additional_representative_mhap_cols: list[str] | None = None,
 ):
@@ -198,6 +233,20 @@ def create_representative_microhaplotype_dict(
     :type microhaplotype_name_col: str, optional
     :param pseudocigar_col: the name of the column containing a pseudocigar for the microhaplotype
     :type pseudocigar_col: str, optional
+    :param pseudocigar_chrom_col: column for the pseudocigar ref_loc chromosome; defaults to chrom_col
+    :type pseudocigar_chrom_col: str, optional
+    :param pseudocigar_start_col: column for the pseudocigar ref_loc start (required if pseudocigar_col is set)
+    :type pseudocigar_start_col: str, optional
+    :param pseudocigar_end_col: column for the pseudocigar ref_loc end (required if pseudocigar_col is set)
+    :type pseudocigar_end_col: str, optional
+    :param pseudocigar_ref_seq_col: optional column for the pseudocigar ref_loc reference sequence
+    :type pseudocigar_ref_seq_col: str, optional
+    :param pseudocigar_strand_col: optional column for the pseudocigar ref_loc strand
+    :type pseudocigar_strand_col: str, optional
+    :param pseudocigar_genome_id: genome id for the pseudocigar ref_loc; defaults to genome_id
+    :type pseudocigar_genome_id: int, optional
+    :param pseudocigar_generation_description_col: optional column describing how the pseudocigar was generated
+    :type pseudocigar_generation_description_col: str, optional
     :param quality_col: the name of the column containing the ANSI FASTQ per-base quality score for this sequence
     :type quality_col: str, optional
     :param additional_representative_mhap_cols: additional columns to add to the representative microhaplotypes table
@@ -209,6 +258,23 @@ def create_representative_microhaplotype_dict(
     if additional_representative_mhap_cols:
         check_additional_columns_exist(
             microhaplotype_table, additional_representative_mhap_cols
+        )
+
+    # the pseudocigar ref_loc shares the chromosome / genome with the
+    # microhaplotype location by default, but each may use its own column
+    pseudocigar_chrom_col = (
+        pseudocigar_chrom_col if pseudocigar_chrom_col else chrom_col
+    )
+    ps_genome_id = (
+        pseudocigar_genome_id if pseudocigar_genome_id is not None else genome_id
+    )
+    if pseudocigar_col and not (
+        pseudocigar_chrom_col and pseudocigar_start_col and pseudocigar_end_col
+    ):
+        raise ValueError(
+            "pseudocigar_col is set, so a Pseudocigar ref_loc must be "
+            "constructable: set a chromosome (pseudocigar_chrom_col or "
+            "chrom_col), pseudocigar_start_col, and pseudocigar_end_col."
         )
 
     def get_if_present(row, col):
@@ -263,6 +329,12 @@ def create_representative_microhaplotype_dict(
         alt_annotations_col,
         microhaplotype_name_col,
         pseudocigar_col,
+        pseudocigar_chrom_col,
+        pseudocigar_start_col,
+        pseudocigar_end_col,
+        pseudocigar_ref_seq_col,
+        pseudocigar_strand_col,
+        pseudocigar_generation_description_col,
         quality_col,
     ]
     masking_cols = [
@@ -319,7 +391,34 @@ def create_representative_microhaplotype_dict(
             if val := get_if_present(row, microhaplotype_name_col):
                 mhap["microhaplotype_name"] = val
             if val := get_if_present(row, pseudocigar_col):
-                mhap["pseudo_cigar"] = val
+                if not (
+                    pd.notna(row[pseudocigar_chrom_col])
+                    and pd.notna(row[pseudocigar_start_col])
+                    and pd.notna(row[pseudocigar_end_col])
+                ):
+                    raise ValueError(
+                        f"pseudocigar present for target {target}, seq "
+                        f"{row[seq_col]} but its ref_loc chrom/start/end "
+                        "is missing"
+                    )
+                ref_loc = {
+                    "genome_id": ps_genome_id,
+                    "chrom": row[pseudocigar_chrom_col],
+                    "start": row[pseudocigar_start_col],
+                    "end": row[pseudocigar_end_col],
+                }
+                if pseudocigar_ref_seq_col and pd.notna(row[pseudocigar_ref_seq_col]):
+                    ref_loc["ref_seq"] = row[pseudocigar_ref_seq_col]
+                if pseudocigar_strand_col and pd.notna(row[pseudocigar_strand_col]):
+                    ref_loc["strand"] = row[pseudocigar_strand_col]
+                pseudocigar = {"pseudocigar_seq": val, "ref_loc": ref_loc}
+                if pseudocigar_generation_description_col and pd.notna(
+                    row[pseudocigar_generation_description_col]
+                ):
+                    pseudocigar["pseudocigar_generation_description"] = row[
+                        pseudocigar_generation_description_col
+                    ]
+                mhap["pseudocigar"] = pseudocigar
             if val := get_if_present(row, quality_col):
                 mhap["quality"] = val
             if additional_representative_mhap_cols:

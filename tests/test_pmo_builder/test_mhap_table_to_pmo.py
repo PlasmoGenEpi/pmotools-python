@@ -510,51 +510,48 @@ class TestMhapTableToPMO(unittest.TestCase):
         mhap_table_ad_cols = self.small_mhap_table.copy()
         mhap_table_ad_cols["adcol1"] = "this"
         mhap_table_ad_cols["adcol2"] = "that"
-        mhap_table_ad_cols["cig"] = "cigs"
 
         rep_dict_with_ad_cols = copy.deepcopy(self.small_representative_dict)
-        rep_dict_with_ad_cols["targets"][0]["microhaplotypes"][0]["adcol1"] = "this"
-        rep_dict_with_ad_cols["targets"][0]["microhaplotypes"][0]["adcol2"] = "that"
-        rep_dict_with_ad_cols["targets"][0]["microhaplotypes"][0][
-            "pseudo_cigar"
-        ] = "cigs"
-        rep_dict_with_ad_cols["targets"][0]["microhaplotypes"][1]["adcol1"] = "this"
-        rep_dict_with_ad_cols["targets"][0]["microhaplotypes"][1]["adcol2"] = "that"
-        rep_dict_with_ad_cols["targets"][0]["microhaplotypes"][1][
-            "pseudo_cigar"
-        ] = "cigs"
-        rep_dict_with_ad_cols["targets"][0]["microhaplotypes"][2]["adcol1"] = "this"
-        rep_dict_with_ad_cols["targets"][0]["microhaplotypes"][2]["adcol2"] = "that"
-        rep_dict_with_ad_cols["targets"][0]["microhaplotypes"][2][
-            "pseudo_cigar"
-        ] = "cigs"
-        rep_dict_with_ad_cols["targets"][1]["microhaplotypes"][0]["adcol1"] = "this"
-        rep_dict_with_ad_cols["targets"][1]["microhaplotypes"][0]["adcol2"] = "that"
-        rep_dict_with_ad_cols["targets"][1]["microhaplotypes"][0][
-            "pseudo_cigar"
-        ] = "cigs"
-        rep_dict_with_ad_cols["targets"][1]["microhaplotypes"][1]["adcol1"] = "this"
-        rep_dict_with_ad_cols["targets"][1]["microhaplotypes"][1]["adcol2"] = "that"
-        rep_dict_with_ad_cols["targets"][1]["microhaplotypes"][1][
-            "pseudo_cigar"
-        ] = "cigs"
-        rep_dict_with_ad_cols["targets"][2]["microhaplotypes"][0]["adcol1"] = "this"
-        rep_dict_with_ad_cols["targets"][2]["microhaplotypes"][0]["adcol2"] = "that"
-        rep_dict_with_ad_cols["targets"][2]["microhaplotypes"][0][
-            "pseudo_cigar"
-        ] = "cigs"
-        rep_dict_with_ad_cols["targets"][2]["microhaplotypes"][1]["adcol1"] = "this"
-        rep_dict_with_ad_cols["targets"][2]["microhaplotypes"][1]["adcol2"] = "that"
-        rep_dict_with_ad_cols["targets"][2]["microhaplotypes"][1][
-            "pseudo_cigar"
-        ] = "cigs"
+        for target in rep_dict_with_ad_cols["targets"]:
+            for mhap in target["microhaplotypes"]:
+                mhap["adcol1"] = "this"
+                mhap["adcol2"] = "that"
 
         actual = create_representative_microhaplotype_dict(
             mhap_table_ad_cols,
             additional_representative_mhap_cols=["adcol1", "adcol2"],
-            pseudocigar_col="cig",
         )
         self.assertEqual(actual, rep_dict_with_ad_cols)
+
+    def test_create_representative_microhaplotype_dict_with_pseudocigar(self):
+        tbl = self.small_mhap_table.copy()
+        tbl["chrom"] = "chr1"
+        tbl["start"] = 100
+        tbl["end"] = 150
+        tbl["cig"] = "8M"
+        actual = create_representative_microhaplotype_dict(
+            tbl,
+            chrom_col="chrom",
+            start_col="start",
+            end_col="end",
+            pseudocigar_col="cig",
+            pseudocigar_start_col="start",
+            pseudocigar_end_col="end",
+        )
+        first = actual["targets"][0]["microhaplotypes"][0]
+        # pseudocigar is a Pseudocigar object with a GenomicLocation ref_loc;
+        # the chromosome is reused from chrom_col and genome_id defaults to 0
+        self.assertEqual(first["pseudocigar"]["pseudocigar_seq"], "8M")
+        self.assertEqual(
+            first["pseudocigar"]["ref_loc"],
+            {"genome_id": 0, "chrom": "chr1", "start": 100, "end": 150},
+        )
+
+    def test_pseudocigar_without_ref_loc_columns_raises(self):
+        tbl = self.small_mhap_table.copy()
+        tbl["cig"] = "8M"
+        with self.assertRaises(ValueError):
+            create_representative_microhaplotype_dict(tbl, pseudocigar_col="cig")
 
     @patch(
         "pmotools.pmo_builder.mhap_table_to_pmo.create_representative_microhaplotype_dict"
