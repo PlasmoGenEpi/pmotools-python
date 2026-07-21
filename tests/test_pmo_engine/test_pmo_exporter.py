@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import copy
 import gzip
 import hashlib
 import os
@@ -38,6 +39,15 @@ class TestPMOExporter(unittest.TestCase):
             "rt",
         ) as f:
             self.minimum_fields_v1_1_0_pmo_data = json.load(f)
+        # a real, schema-valid v1.1.0 PMO with only the required top-level sections
+        with gzip.open(
+            os.path.join(
+                os.path.dirname(self.working_dir),
+                "data/minimum_Furstenau2025_PMO.json.gz",
+            ),
+            "rt",
+        ) as f:
+            self.minimum_v1_1_0_pmo_data = json.load(f)
 
     def tearDown(self):
         self.test_dir.cleanup()
@@ -292,6 +302,28 @@ class TestPMOExporter(unittest.TestCase):
             "7c433a74d215708e9339b5f6dece0bf3",
             md5sum_of_fnp(os.path.join(self.test_dir.name, "library_sample_table.csv")),
         )
+
+    def test_export_meta_tables_without_optional_cross_ref_sections(self):
+        # project_info and sequencing_info are optional as of v1.1.0; the specimen and
+        # library_sample meta-table exporters must not raise a raw KeyError when a
+        # referencing id is present but the referenced optional section is absent
+        self.assertNotIn("project_info", self.minimum_v1_1_0_pmo_data)
+        self.assertNotIn("sequencing_info", self.minimum_v1_1_0_pmo_data)
+        # a clean minimal PMO (no dangling ids) should export fine
+        PMOExporter.export_specimen_meta_table(self.minimum_v1_1_0_pmo_data)
+        PMOExporter.export_library_sample_meta_table(self.minimum_v1_1_0_pmo_data)
+
+        # inject the referencing ids without the optional sections (referential dangling)
+        # the raw id is kept rather than resolving an unavailable name
+        dangling = copy.deepcopy(self.minimum_v1_1_0_pmo_data)
+        dangling["specimen_info"][0]["project_id"] = 0
+        dangling["library_sample_info"][0]["sequencing_info_id"] = 0
+        spec_table = PMOExporter.export_specimen_meta_table(dangling)
+        self.assertIn("project_id", spec_table.columns)
+        self.assertNotIn("project_name", spec_table.columns)
+        library_table = PMOExporter.export_library_sample_meta_table(dangling)
+        self.assertIn("sequencing_info_id", library_table.columns)
+        self.assertNotIn("sequencing_info_name", library_table.columns)
 
     def test_export_sequencing_info_meta_table(self):
         sequencing_info_table = PMOExporter.export_sequencing_info_meta_table(
