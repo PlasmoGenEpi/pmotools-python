@@ -262,12 +262,14 @@ def create_representative_microhaplotype_dict(
 
     # the pseudocigar ref_loc shares the chromosome / genome with the
     # microhaplotype location by default, but each may use its own column
-    ps_chrom_col = pseudocigar_chrom_col if pseudocigar_chrom_col else chrom_col
+    pseudocigar_chrom_col = (
+        pseudocigar_chrom_col if pseudocigar_chrom_col else chrom_col
+    )
     ps_genome_id = (
         pseudocigar_genome_id if pseudocigar_genome_id is not None else genome_id
     )
     if pseudocigar_col and not (
-        ps_chrom_col and pseudocigar_start_col and pseudocigar_end_col
+        pseudocigar_chrom_col and pseudocigar_start_col and pseudocigar_end_col
     ):
         raise ValueError(
             "pseudocigar_col is set, so a Pseudocigar ref_loc must be "
@@ -327,7 +329,7 @@ def create_representative_microhaplotype_dict(
         alt_annotations_col,
         microhaplotype_name_col,
         pseudocigar_col,
-        ps_chrom_col,
+        pseudocigar_chrom_col,
         pseudocigar_start_col,
         pseudocigar_end_col,
         pseudocigar_ref_seq_col,
@@ -390,7 +392,7 @@ def create_representative_microhaplotype_dict(
                 mhap["microhaplotype_name"] = val
             if val := get_if_present(row, pseudocigar_col):
                 if not (
-                    pd.notna(row[ps_chrom_col])
+                    pd.notna(row[pseudocigar_chrom_col])
                     and pd.notna(row[pseudocigar_start_col])
                     and pd.notna(row[pseudocigar_end_col])
                 ):
@@ -401,7 +403,7 @@ def create_representative_microhaplotype_dict(
                     )
                 ref_loc = {
                     "genome_id": ps_genome_id,
-                    "chrom": row[ps_chrom_col],
+                    "chrom": row[pseudocigar_chrom_col],
                     "start": row[pseudocigar_start_col],
                     "end": row[pseudocigar_end_col],
                 }
