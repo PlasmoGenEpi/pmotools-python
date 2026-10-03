@@ -212,7 +212,7 @@ def specimen_info_table_to_pmo(
     has_travel_out_six_month_col: str = None,
     host_age_col: str = None,
     host_sex_col: str = None,
-    host_subject_id: str = None,
+    host_subject_name_col: str = None,
     lat_lon_col: str = None,
     parasite_density_col: str = None,
     parasite_density_method_col: str = None,
@@ -281,8 +281,8 @@ def specimen_info_table_to_pmo(
     :type host_age_col: str, optional
     :param host_sex_col: if the specimen is from a person, the sex of that person
     :type host_sex_col: str, optional
-    :param host_subject_id: ID for the individual a specimen was collected from
-    :type host_subject_id: str, optional
+    :param host_subject_name_col: identifier for the individual a specimen was collected from
+    :type host_subject_name_col: str, optional
     :param lat_lon_col: latitude and longitude of the collection site
     :type lat_lon_col: str, optional
     :param parasite_density_col: the parasite density in parasites per microliter
@@ -353,7 +353,7 @@ def specimen_info_table_to_pmo(
         geo_admin3_col: "geo_admin3",
         host_age_col: "host_age",
         host_sex_col: "host_sex",
-        host_subject_id: "host_subject_id",
+        host_subject_name_col: "host_subject_name",
         lat_lon_col: "lat_lon",
         specimen_accession_col: "specimen_accession",
         specimen_type_col: "specimen_type",
@@ -392,7 +392,7 @@ def specimen_info_table_to_pmo(
             geo_admin3_col,
             host_age_col,
             host_sex_col,
-            host_subject_id,
+            host_subject_name_col,
             lat_lon_col,
             specimen_accession_col,
             specimen_type_col,
