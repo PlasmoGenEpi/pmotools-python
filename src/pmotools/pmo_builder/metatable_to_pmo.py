@@ -487,6 +487,14 @@ def check_columns_exist(df, columns):
         )
 
 
+def _is_blank(value):
+    if value is None:
+        return True
+    if isinstance(value, str):
+        return not value.strip()
+    return bool(pd.isna(value))
+
+
 def add_plate_info(
     plate_col_col,
     plate_name_col,
@@ -516,38 +524,39 @@ def add_plate_info(
             plate_row_col = "plate_row"
             plate_col_col = "plate_col"
 
-            try:
-                df[plate_row_col] = (
-                    df[plate_position_col].str.extract(r"(?i)^([A-H])")[0].str.upper()
-                )
-                df[plate_col_col] = (
-                    df[plate_position_col]
-                    .str.extract(r"(?i)^[A-H]0*([1-9]|1[0-2])$")[0]
-                    .astype(int)
-                )
-            except (AttributeError, ValueError, IndexError, KeyError) as e:
+            positions = df[plate_position_col]
+            blank = positions.map(_is_blank)
+            parsed = (
+                positions[~blank]
+                .astype(str)
+                .str.strip()
+                .str.extract(r"(?i)^([A-H])0*([1-9]|1[0-2])$")
+            )
+            if parsed.isna().any().any():
                 raise ValueError(
                     f"Values in '{plate_position_col}' must start with a single letter A-H/a-h followed by number 1-12."
-                ) from e
+                )
+            df[plate_row_col] = None
+            df.loc[~blank, plate_row_col] = parsed[0].str.upper()
+            df[plate_col_col] = pd.Series(pd.NA, index=df.index, dtype="Int64")
+            df.loc[~blank, plate_col_col] = parsed[1].astype(int)
 
     for row in meta_json:
         content_row = df[df[match_col] == row[match_col]]
         plate_name_val = content_row[plate_name_col].iloc[0] if plate_name_col else None
-        plate_row_val = (
-            content_row[plate_row_col].iloc[0].upper() if plate_row_col else None
-        )
+        plate_row_val = content_row[plate_row_col].iloc[0] if plate_row_col else None
         plate_col_val = content_row[plate_col_col].iloc[0] if plate_col_col else None
-        if plate_col_val is not None and not pd.isna(plate_col_val):
+        if not _is_blank(plate_col_val):
             try:
                 plate_col_val = int(plate_col_val)
             except (TypeError, ValueError):
                 plate_col_val = plate_col_val
         plate_info = {}
-        if plate_name_val:
+        if not _is_blank(plate_name_val):
             plate_info["plate_name"] = plate_name_val
-        if plate_row_val:
-            plate_info["plate_row"] = plate_row_val
-        if plate_col_val is not None and not pd.isna(plate_col_val):
+        if not _is_blank(plate_row_val):
+            plate_info["plate_row"] = str(plate_row_val).strip().upper()
+        if not _is_blank(plate_col_val):
             plate_info["plate_col"] = plate_col_val
 
         if plate_info:
