@@ -80,7 +80,7 @@ def mhap_table_to_pmo(
     :type microhaplotype_name_col: str, optional
     :param pseudocigar_col: the name of the column containing a pseudocigar for the microhaplotype
     :type pseudocigar_col: str, optional
-    :param pseudocigar_chrom_col: column for the pseudocigar ref_loc chromosome; defaults to chrom_col
+    :param pseudocigar_chrom_col: column for the pseudocigar ref_loc chromosome; defaults to chrom_col. chrom_col can only be set together with start_col and end_col, so use pseudocigar_chrom_col when there is no full microhaplotype location
     :type pseudocigar_chrom_col: str, optional
     :param pseudocigar_start_col: column for the pseudocigar ref_loc start (required if pseudocigar_col is set)
     :type pseudocigar_start_col: str, optional
@@ -233,7 +233,7 @@ def create_representative_microhaplotype_dict(
     :type microhaplotype_name_col: str, optional
     :param pseudocigar_col: the name of the column containing a pseudocigar for the microhaplotype
     :type pseudocigar_col: str, optional
-    :param pseudocigar_chrom_col: column for the pseudocigar ref_loc chromosome; defaults to chrom_col
+    :param pseudocigar_chrom_col: column for the pseudocigar ref_loc chromosome; defaults to chrom_col. chrom_col can only be set together with start_col and end_col, so use pseudocigar_chrom_col when there is no full microhaplotype location
     :type pseudocigar_chrom_col: str, optional
     :param pseudocigar_start_col: column for the pseudocigar ref_loc start (required if pseudocigar_col is set)
     :type pseudocigar_start_col: str, optional
@@ -273,8 +273,9 @@ def create_representative_microhaplotype_dict(
     ):
         raise ValueError(
             "pseudocigar_col is set, so a Pseudocigar ref_loc must be "
-            "constructable: set a chromosome (pseudocigar_chrom_col or "
-            "chrom_col), pseudocigar_start_col, and pseudocigar_end_col."
+            "constructable: set a chromosome (pseudocigar_chrom_col, or "
+            "chrom_col together with start_col and end_col), "
+            "pseudocigar_start_col, and pseudocigar_end_col."
         )
 
     def get_if_present(row, col):
