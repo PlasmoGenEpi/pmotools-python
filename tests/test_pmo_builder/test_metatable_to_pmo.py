@@ -1103,7 +1103,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 "project_name": ["project1", "project2", "project3"],
                 "host_age": [25, None, 30],
                 "host_sex": ["M", "F", ""],
-                "host_subject_id": ["SUB001", "", "SUB003"],
+                "host_subject_name": ["SUB001", "", "SUB003"],
                 "gravid": [True, None, False],
                 "gravidity": [2, None, 0],
             }
@@ -1119,7 +1119,7 @@ class TestMetatableToPMO(unittest.TestCase):
             project_name_col="project_name",
             host_age_col="host_age",
             host_sex_col="host_sex",
-            host_subject_id="host_subject_id",
+            host_subject_name_col="host_subject_name",
             gravid_col="gravid",
             gravidity_col="gravidity",
         )
@@ -1127,25 +1127,25 @@ class TestMetatableToPMO(unittest.TestCase):
         # sample1: all fields have values
         self.assertEqual(result[0]["host_age"], 25)
         self.assertEqual(result[0]["host_sex"], "M")
-        self.assertEqual(result[0]["host_subject_id"], "SUB001")
+        self.assertEqual(result[0]["host_subject_name"], "SUB001")
         self.assertEqual(result[0]["gravid"], True)
         self.assertEqual(result[0]["gravidity"], 2)
 
-        # sample2: host_age is None, host_subject_id is empty string, gravid is None, gravidity is None
-        # Should remove: host_age, host_subject_id, gravid, gravidity
+        # sample2: host_age is None, host_subject_name is empty string, gravid is None, gravidity is None
+        # Should remove: host_age, host_subject_name, gravid, gravidity
         # Should keep: host_sex
         self.assertNotIn("host_age", result[1])
         self.assertEqual(result[1]["host_sex"], "F")
-        self.assertNotIn("host_subject_id", result[1])
+        self.assertNotIn("host_subject_name", result[1])
         self.assertNotIn("gravid", result[1])
         self.assertNotIn("gravidity", result[1])
 
         # sample3: host_sex is empty string
         # Should remove: host_sex
-        # Should keep: host_age, host_subject_id, gravid, gravidity
+        # Should keep: host_age, host_subject_name, gravid, gravidity
         self.assertEqual(result[2]["host_age"], 30)
         self.assertNotIn("host_sex", result[2])
-        self.assertEqual(result[2]["host_subject_id"], "SUB003")
+        self.assertEqual(result[2]["host_subject_name"], "SUB003")
         self.assertEqual(result[2]["gravid"], False)
         self.assertEqual(result[2]["gravidity"], 0)
 
