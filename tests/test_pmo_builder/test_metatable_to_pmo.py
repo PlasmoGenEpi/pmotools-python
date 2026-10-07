@@ -219,6 +219,81 @@ class TestMetatableToPMO(unittest.TestCase):
             result, [{"specimen_name": "sample1"}, {"specimen_name": "sample2"}]
         )
 
+    def test_add_plate_info_row_col_skips_blank_cells(self):
+        df = pd.DataFrame(
+            {
+                "specimen_name": ["sample1", "sample2"],
+                "plate_row": ["A", None],
+                "plate_col": [1, None],
+                "plate_name": ["Plate1", None],
+            }
+        )
+        result = add_plate_info(
+            "plate_col",
+            "plate_name",
+            "plate_row",
+            None,
+            self.small_json_example,
+            df,
+            "specimen_name",
+        )
+        self.assertEqual(
+            result[0]["plate_info"],
+            {"plate_name": "Plate1", "plate_row": "A", "plate_col": 1},
+        )
+        self.assertNotIn("plate_info", result[1])
+
+    def test_add_plate_info_position_skips_blank_cells(self):
+        df = pd.DataFrame(
+            {
+                "specimen_name": ["sample1", "sample2", "sample3"],
+                "plate_position": ["A01", None, "  "],
+                "plate_name": ["Plate1", float("nan"), ""],
+            }
+        )
+        json_example = [
+            {"specimen_name": "sample1"},
+            {"specimen_name": "sample2"},
+            {"specimen_name": "sample3"},
+        ]
+        result = add_plate_info(
+            None,
+            "plate_name",
+            None,
+            "plate_position",
+            json_example,
+            df,
+            "specimen_name",
+        )
+        self.assertEqual(
+            result[0]["plate_info"],
+            {"plate_name": "Plate1", "plate_row": "A", "plate_col": 1},
+        )
+        self.assertNotIn("plate_info", result[1])
+        self.assertNotIn("plate_info", result[2])
+
+    def test_add_plate_info_position_fails_with_invalid_value_among_blanks(self):
+        df = pd.DataFrame(
+            {
+                "specimen_name": ["sample1", "sample2"],
+                "plate_position": [None, "K10"],
+            }
+        )
+        with self.assertRaises(ValueError) as context:
+            add_plate_info(
+                None,
+                None,
+                None,
+                "plate_position",
+                self.small_json_example,
+                df,
+                "specimen_name",
+            )
+        self.assertEqual(
+            "Values in 'plate_position' must start with a single letter A-H/a-h followed by number 1-12.",
+            str(context.exception),
+        )
+
     def test_add_parasite_density_info_single_value(self):
         df = pd.DataFrame(
             {
