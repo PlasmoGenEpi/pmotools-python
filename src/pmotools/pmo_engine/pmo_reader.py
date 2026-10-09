@@ -7,6 +7,7 @@ import os
 import sys
 from collections import defaultdict
 from pmotools import __version__ as __pmotools_version__
+from pmotools import __schema_version__
 
 
 class PMOReader:
@@ -66,7 +67,7 @@ class PMOReader:
         # currently losing all info about previous header info,
         # consider coming up with something in standard that might preserve this info if needed
         pmo_out["pmo_header"] = {
-            "pmo_version": __pmotools_version__,
+            "pmo_version": __schema_version__,
             "creation_date": datetime.datetime.now().strftime("%Y-%m-%d"),
             "generation_method": {
                 "program_name": "pmotools-python.PMOReader.combine_multiple_pmos",

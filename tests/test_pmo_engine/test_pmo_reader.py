@@ -3,6 +3,7 @@ import json
 import os
 import unittest
 
+from pmotools import __schema_version__, __version__
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.pmo_engine.pmo_checker import PMOChecker, load_schema
 
@@ -121,6 +122,11 @@ class TestPMOReader(unittest.TestCase):
         )
         checker = PMOChecker(pmo_jsonschema_data)
         checker.validate_pmo_json(combined_pmo)
+        self.assertEqual(combined_pmo["pmo_header"]["pmo_version"], __schema_version__)
+        self.assertEqual(
+            combined_pmo["pmo_header"]["generation_method"]["program_version"],
+            __version__,
+        )
         # check against expected
         with open(
             os.path.join(

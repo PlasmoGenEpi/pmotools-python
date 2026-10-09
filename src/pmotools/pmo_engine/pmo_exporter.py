@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.pmo_engine.pmo_processor import PMOProcessor
 
-from pmotools import __version__ as __pmotools_version__
+from pmotools import __schema_version__
 
 
 class BedLoc(NamedTuple):
@@ -627,11 +627,9 @@ class PMOExporter(object):
             "seq",
         ],
         jsonschema_fnp=os.path.join(
-            os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            ),
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             "schemas/",
-            f"portable_microhaplotype_object_v{__pmotools_version__}.schema.json",
+            f"portable_microhaplotype_object_v{__schema_version__}.schema.json",
         ),
         validate_pmo: bool = False,
     ) -> pd.DataFrame:
