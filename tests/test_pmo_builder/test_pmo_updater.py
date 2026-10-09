@@ -152,11 +152,11 @@ class TestPMOUpdater(unittest.TestCase):
                             "travel_country": "Kenya",
                             "travel_start_date": "2024-01",
                             "travel_end_date": "2024-01-20",
-                            "bed_net": 0.5,
-                            "admin1": "Nairobi",
-                            "admin2": "SubCounty1",
-                            "admin3": "Ward1",
-                            "latlon": "-1.2921,36.8219",
+                            "bed_net_usage": 0.5,
+                            "geo_admin1": "Nairobi",
+                            "geo_admin2": "SubCounty1",
+                            "geo_admin3": "Ward1",
+                            "lat_lon": "-1.2921,36.8219",
                         }
                     ],
                 },
@@ -167,11 +167,11 @@ class TestPMOUpdater(unittest.TestCase):
                             "travel_country": "Tanzania",
                             "travel_start_date": "2024-02",
                             "travel_end_date": "2024-02-15",
-                            "bed_net": 0.0,
-                            "admin1": "Dar es Salaam",
-                            "admin2": "SubCounty2",
-                            "admin3": "Ward2",
-                            "latlon": "-6.7924,39.2083",
+                            "bed_net_usage": 0.0,
+                            "geo_admin1": "Dar es Salaam",
+                            "geo_admin2": "SubCounty2",
+                            "geo_admin3": "Ward2",
+                            "lat_lon": "-6.7924,39.2083",
                         }
                     ],
                 },
@@ -233,11 +233,11 @@ class TestPMOUpdater(unittest.TestCase):
                             "travel_country": "Kenya",
                             "travel_start_date": "2024-01",
                             "travel_end_date": "2024-01-20",
-                            "bed_net": 0.5,
-                            "admin1": "Nairobi",
-                            "admin2": "SubCounty1",
-                            "admin3": "Ward1",
-                            "latlon": "-1.2921,36.8219",
+                            "bed_net_usage": 0.5,
+                            "geo_admin1": "Nairobi",
+                            "geo_admin2": "SubCounty1",
+                            "geo_admin3": "Ward1",
+                            "lat_lon": "-1.2921,36.8219",
                         }
                     ],
                 },
@@ -248,17 +248,284 @@ class TestPMOUpdater(unittest.TestCase):
                             "travel_country": "Tanzania",
                             "travel_start_date": "2024-02",
                             "travel_end_date": "2024-02-15",
-                            "bed_net": 0.0,
-                            "admin1": "Dar es Salaam",
-                            "admin2": "SubCounty2",
-                            "admin3": "Ward2",
-                            "latlon": "-6.7924,39.2083",
+                            "bed_net_usage": 0.0,
+                            "geo_admin1": "Dar es Salaam",
+                            "geo_admin2": "SubCounty2",
+                            "geo_admin3": "Ward2",
+                            "lat_lon": "-6.7924,39.2083",
                         }
                     ],
                 },
             ]
         }
         self.assertEqual(test_out_pmo, test_pmo)
+
+    def test_update_specimen_meta_with_traveler_info_skips_blank_optional(self):
+        test_pmo = {"specimen_info": [{"specimen_name": "spec1"}]}
+        traveler_info = pd.DataFrame(
+            {
+                "specimen_name": ["spec1"],
+                "travel_country": ["Kenya"],
+                "travel_start_date": ["2024-01"],
+                "travel_end_date": ["2024-02"],
+                "bed_net": [None],
+                "admin1": [""],
+            }
+        )
+        PMOUpdater.update_specimen_meta_with_traveler_info(
+            test_pmo,
+            traveler_info,
+            bed_net_usage_col="bed_net",
+            geo_admin1_col="admin1",
+        )
+        self.assertEqual(
+            test_pmo["specimen_info"][0]["travel_out_six_month"],
+            [
+                {
+                    "travel_country": "Kenya",
+                    "travel_start_date": "2024-01",
+                    "travel_end_date": "2024-02",
+                }
+            ],
+        )
+
+    def test_update_target_info_with_markers_of_interest(self):
+        test_pmo = {
+            "target_info": [{"target_name": "t1"}, {"target_name": "t2"}],
+        }
+        markers_info = pd.DataFrame(
+            {
+                "target_name": ["t1", "t1"],
+                "chrom": ["Pf3D7_04_v3", "Pf3D7_04_v3"],
+                "start": [748238, 748409],
+                "end": [748239, 748410],
+                "ref_seq": ["A", ""],
+                "associations": ["SP resistance, dhfr", None],
+            }
+        )
+        PMOUpdater.update_target_info_with_markers_of_interest(
+            test_pmo,
+            markers_info,
+            ref_seq_col="ref_seq",
+            associations_col="associations",
+        )
+        self.assertEqual(
+            test_pmo["target_info"][0]["markers_of_interest"],
+            [
+                {
+                    "marker_location": {
+                        "genome_id": 0,
+                        "chrom": "Pf3D7_04_v3",
+                        "start": 748238,
+                        "end": 748239,
+                        "ref_seq": "A",
+                    },
+                    "associations": ["SP resistance", "dhfr"],
+                },
+                {
+                    "marker_location": {
+                        "genome_id": 0,
+                        "chrom": "Pf3D7_04_v3",
+                        "start": 748409,
+                        "end": 748410,
+                    }
+                },
+            ],
+        )
+        self.assertNotIn("markers_of_interest", test_pmo["target_info"][1])
+
+    def test_update_target_info_with_markers_of_interest_replace(self):
+        old_marker = {
+            "marker_location": {"genome_id": 0, "chrom": "c", "start": 1, "end": 2}
+        }
+        markers_info = pd.DataFrame(
+            {"target_name": ["t1"], "chrom": ["c"], "start": [5], "end": [6]}
+        )
+        for replace, expected_count in ((False, 2), (True, 1)):
+            test_pmo = {
+                "target_info": [
+                    {"target_name": "t1", "markers_of_interest": [dict(old_marker)]}
+                ]
+            }
+            PMOUpdater.update_target_info_with_markers_of_interest(
+                test_pmo, markers_info, replace_current_markers=replace
+            )
+            self.assertEqual(
+                len(test_pmo["target_info"][0]["markers_of_interest"]),
+                expected_count,
+            )
+
+    def test_update_target_info_with_markers_of_interest_raises(self):
+        test_pmo = {"target_info": [{"target_name": "t1"}]}
+        unknown_target = pd.DataFrame(
+            {"target_name": ["t9"], "chrom": ["c"], "start": [1], "end": [2]}
+        )
+        with self.assertRaises(ValueError):
+            PMOUpdater.update_target_info_with_markers_of_interest(
+                test_pmo, unknown_target
+            )
+        blank_start = pd.DataFrame(
+            {"target_name": ["t1"], "chrom": ["c"], "start": [None], "end": [2]}
+        )
+        with self.assertRaises(ValueError):
+            PMOUpdater.update_target_info_with_markers_of_interest(
+                test_pmo, blank_start
+            )
+        with self.assertRaises(ValueError):
+            PMOUpdater.update_target_info_with_markers_of_interest(
+                test_pmo, unknown_target, chrom_col="not_a_column"
+            )
+
+    def _rep_mhap_pmo(self):
+        return {
+            "target_info": [{"target_name": "t1"}, {"target_name": "t2"}],
+            "representative_microhaplotypes": {
+                "targets": [
+                    {
+                        "target_id": 1,
+                        "microhaplotypes": [{"seq": "ACGT"}, {"seq": "ACTT"}],
+                    }
+                ]
+            },
+        }
+
+    def test_update_representative_microhaplotypes_with_seq_variants(self):
+        test_pmo = self._rep_mhap_pmo()
+        seq_variants_info = pd.DataFrame(
+            {
+                "target_name": ["t2", "t2"],
+                "seq": ["ACTT", "ACTT"],
+                "chrom": ["c", "c"],
+                "start": [2, 3],
+                "end": [3, 4],
+                "ref_seq": ["G", "T"],
+                "alt_seq": ["T", None],
+            }
+        )
+        PMOUpdater.update_representative_microhaplotypes_with_seq_variants(
+            test_pmo,
+            seq_variants_info,
+            ref_seq_col="ref_seq",
+            alt_seq_col="alt_seq",
+        )
+        mhaps = test_pmo["representative_microhaplotypes"]["targets"][0][
+            "microhaplotypes"
+        ]
+        self.assertNotIn("associated_seq_variants", mhaps[0])
+        self.assertEqual(
+            mhaps[1]["associated_seq_variants"],
+            [
+                {
+                    "genome_id": 0,
+                    "chrom": "c",
+                    "start": 2,
+                    "end": 3,
+                    "ref_seq": "G",
+                    "alt_seq": "T",
+                },
+                {"genome_id": 0, "chrom": "c", "start": 3, "end": 4, "ref_seq": "T"},
+            ],
+        )
+
+    def test_update_representative_microhaplotypes_with_seq_variants_raises(self):
+        for target_name, seq in (("t2", "GGGG"), ("t1", "ACGT")):
+            seq_variants_info = pd.DataFrame(
+                {
+                    "target_name": [target_name],
+                    "seq": [seq],
+                    "chrom": ["c"],
+                    "start": [1],
+                    "end": [2],
+                }
+            )
+            with self.assertRaises(ValueError):
+                PMOUpdater.update_representative_microhaplotypes_with_seq_variants(
+                    self._rep_mhap_pmo(), seq_variants_info
+                )
+
+    def test_update_representative_microhaplotypes_with_protein_variants(self):
+        test_pmo = self._rep_mhap_pmo()
+        protein_variants_info = pd.DataFrame(
+            {
+                "target_name": ["t2", "t2"],
+                "seq": ["ACGT", "ACGT"],
+                "transcript": ["PF3D7_0417200.1", "PF3D7_0417200.1"],
+                "protein_start": [50, 107],
+                "protein_end": [51, 108],
+                "protein_ref": ["C", "S"],
+                "protein_alt": ["R", "N"],
+                "gene": ["dhfr", ""],
+                "codon_chrom": ["Pf3D7_04_v3", None],
+                "codon_start": [748238, None],
+                "codon_end": [748241, None],
+            }
+        )
+        PMOUpdater.update_representative_microhaplotypes_with_protein_variants(
+            test_pmo,
+            protein_variants_info,
+            protein_ref_seq_col="protein_ref",
+            protein_alt_seq_col="protein_alt",
+            gene_name_col="gene",
+            codon_chrom_col="codon_chrom",
+            codon_start_col="codon_start",
+            codon_end_col="codon_end",
+        )
+        mhaps = test_pmo["representative_microhaplotypes"]["targets"][0][
+            "microhaplotypes"
+        ]
+        self.assertEqual(
+            mhaps[0]["associated_protein_variants"],
+            [
+                {
+                    "protein_location": {
+                        "genome_id": 0,
+                        "chrom": "PF3D7_0417200.1",
+                        "start": 50,
+                        "end": 51,
+                        "ref_seq": "C",
+                        "alt_seq": "R",
+                    },
+                    "gene_name": "dhfr",
+                    "codon_genomic_location": {
+                        "genome_id": 0,
+                        "chrom": "Pf3D7_04_v3",
+                        "start": 748238,
+                        "end": 748241,
+                    },
+                },
+                {
+                    "protein_location": {
+                        "genome_id": 0,
+                        "chrom": "PF3D7_0417200.1",
+                        "start": 107,
+                        "end": 108,
+                        "ref_seq": "S",
+                        "alt_seq": "N",
+                    },
+                },
+            ],
+        )
+        self.assertNotIn("associated_protein_variants", mhaps[1])
+
+    def test_update_representative_microhaplotypes_with_protein_variants_partial_codon_cols(
+        self,
+    ):
+        protein_variants_info = pd.DataFrame(
+            {
+                "target_name": ["t2"],
+                "seq": ["ACGT"],
+                "transcript": ["tx"],
+                "protein_start": [1],
+                "protein_end": [2],
+                "codon_chrom": ["c"],
+            }
+        )
+        with self.assertRaises(ValueError):
+            PMOUpdater.update_representative_microhaplotypes_with_protein_variants(
+                self._rep_mhap_pmo(),
+                protein_variants_info,
+                codon_chrom_col="codon_chrom",
+            )
 
     # PMOUpdater.merge_dicts_by_key
     def test_merge_dicts_by_key_correct_fields_added(self):

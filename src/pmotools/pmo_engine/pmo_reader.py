@@ -394,10 +394,11 @@ class PMOReader:
                 pmo["bioinformatics_run_info"]
             ):
                 bioinformatics_run_info_copy = copy.deepcopy(bioinformatics_run_info)
+                # remap using the run's own methods id, not its position index
                 bioinformatics_run_info_copy[
                     "bioinformatics_methods_id"
                 ] = bioinformatics_methods_info_old_index_key[pmo_index][
-                    bioinformatics_run_info_index
+                    bioinformatics_run_info_copy["bioinformatics_methods_id"]
                 ]
                 if "bioinformatics_run_info" not in pmo_out:
                     pmo_out["bioinformatics_run_info"] = []
@@ -501,8 +502,13 @@ class PMOReader:
                     new_mhaps_target_index = len(
                         pmo_out["representative_microhaplotypes"]["targets"]
                     )
+                    new_rep_target = copy.deepcopy(representative_microhaplotypes)
+                    # remap the new target's target_id to the combined target_info
+                    new_rep_target["target_id"] = target_info_old_index_key[pmo_index][
+                        new_rep_target["target_id"]
+                    ]
                     pmo_out["representative_microhaplotypes"]["targets"].append(
-                        copy.deepcopy(representative_microhaplotypes)
+                        new_rep_target
                     )
                     representative_microhaplotypes_old_index_key[pmo_index][
                         representative_microhaplotypes_index

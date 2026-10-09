@@ -91,7 +91,7 @@ def get_parser() -> argparse.ArgumentParser:
         "--default_base_col_names",
         type=str,
         required=False,
-        default="library_sample_name,target_name,mhap_id",
+        default="library_sample_name,target_name,seq",
         help="default base column names, must be length 3",
     )
     return parser

@@ -416,8 +416,8 @@ class TestPanelInformationToPMO(unittest.TestCase):
                     "location": {
                         "genome_id": 0,
                         "chrom": "chrom1",
-                        "end": 1,
-                        "start": 2,
+                        "start": 1,
+                        "end": 2,
                     },
                 },
                 "reverse_primer": {
@@ -443,8 +443,8 @@ class TestPanelInformationToPMO(unittest.TestCase):
                     "location": {
                         "genome_id": 0,
                         "chrom": "chrom1",
-                        "end": 1,
-                        "start": 2,
+                        "start": 1,
+                        "end": 2,
                     },
                 },
                 "reverse_primer": {
@@ -470,8 +470,8 @@ class TestPanelInformationToPMO(unittest.TestCase):
                     "location": {
                         "genome_id": 0,
                         "chrom": "chrom1",
-                        "end": 1,
-                        "start": 2,
+                        "start": 1,
+                        "end": 2,
                     },
                 },
                 "reverse_primer": {
@@ -526,8 +526,8 @@ class TestPanelInformationToPMO(unittest.TestCase):
                     "location": {
                         "genome_id": 0,
                         "chrom": "chrom1",
-                        "end": 1,
-                        "start": 2,
+                        "start": 1,
+                        "end": 2,
                     },
                 },
                 "reverse_primer": {"seq": "GTT"},

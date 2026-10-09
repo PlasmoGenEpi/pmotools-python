@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import copy
 import gzip
 import hashlib
 import os
@@ -38,6 +39,15 @@ class TestPMOExporter(unittest.TestCase):
             "rt",
         ) as f:
             self.minimum_fields_v1_1_0_pmo_data = json.load(f)
+        # a real, schema-valid v1.1.0 PMO with only the required top-level sections
+        with gzip.open(
+            os.path.join(
+                os.path.dirname(self.working_dir),
+                "data/minimum_Furstenau2025_PMO.json.gz",
+            ),
+            "rt",
+        ) as f:
+            self.minimum_v1_1_0_pmo_data = json.load(f)
 
     def tearDown(self):
         self.test_dir.cleanup()
@@ -104,6 +114,54 @@ class TestPMOExporter(unittest.TestCase):
         output_fnp = os.path.join(self.test_dir.name, "all_panel_inserts_test1.bed")
         PMOExporter.write_bed_locs(all_target_inserts, output_fnp)
         self.assertEqual("52b1f79a3a89f8265573fa54b5a7ce57", md5sum_of_fnp(output_fnp))
+
+    def test_extract_panels_insert_bed_loc_covers_all_reactions(self):
+        # regression: previously the function returned early inside the reaction
+        # loop, so only the first reaction of the first panel was returned.
+        import copy
+
+        pmo = copy.deepcopy(self.combined_pmo_data)
+        panel = pmo["panel_info"][0]
+        targets = panel["reactions"][0]["panel_targets"]
+        half = len(targets) // 2
+        panel["reactions"] = [
+            {"reaction_name": "pool1", "panel_targets": targets[:half]},
+            {"reaction_name": "pool2", "panel_targets": targets[half:]},
+        ]
+        bed_locs = PMOExporter.extract_panels_insert_bed_loc(pmo, sort_output=False)
+        # every target across BOTH reactions is present
+        self.assertEqual(len(bed_locs), len(targets))
+        self.assertEqual(
+            {b.name for b in bed_locs},
+            {pmo["target_info"][t]["target_name"] for t in targets},
+        )
+
+    def test_write_bed_locs_header_on_own_line(self):
+        # regression: header was written without a trailing newline, gluing the
+        # first data row onto it.
+        bed_locs = PMOExporter.extract_targets_insert_bed_loc(
+            self.combined_pmo_data, sort_output=True
+        )
+        out_fnp = os.path.join(self.test_dir.name, "with_header.bed")
+        PMOExporter.write_bed_locs(bed_locs, out_fnp, add_header=True)
+        with open(out_fnp) as f:
+            lines = f.read().splitlines()
+        self.assertEqual(
+            lines[0],
+            "\t".join(
+                [
+                    "#chrom",
+                    "start",
+                    "end",
+                    "name",
+                    "score",
+                    "strand",
+                    "ref_seq",
+                    "extra_info",
+                ]
+            ),
+        )
+        self.assertEqual(len(lines), len(bed_locs) + 1)
 
     def test_extract_alleles_per_sample_table(self):
         allele_data = PMOExporter.extract_alleles_per_sample_table(
@@ -244,6 +302,28 @@ class TestPMOExporter(unittest.TestCase):
             "7c433a74d215708e9339b5f6dece0bf3",
             md5sum_of_fnp(os.path.join(self.test_dir.name, "library_sample_table.csv")),
         )
+
+    def test_export_meta_tables_without_optional_cross_ref_sections(self):
+        # project_info and sequencing_info are optional as of v1.1.0; the specimen and
+        # library_sample meta-table exporters must not raise a raw KeyError when a
+        # referencing id is present but the referenced optional section is absent
+        self.assertNotIn("project_info", self.minimum_v1_1_0_pmo_data)
+        self.assertNotIn("sequencing_info", self.minimum_v1_1_0_pmo_data)
+        # a clean minimal PMO (no dangling ids) should export fine
+        PMOExporter.export_specimen_meta_table(self.minimum_v1_1_0_pmo_data)
+        PMOExporter.export_library_sample_meta_table(self.minimum_v1_1_0_pmo_data)
+
+        # inject the referencing ids without the optional sections (referential dangling)
+        # the raw id is kept rather than resolving an unavailable name
+        dangling = copy.deepcopy(self.minimum_v1_1_0_pmo_data)
+        dangling["specimen_info"][0]["project_id"] = 0
+        dangling["library_sample_info"][0]["sequencing_info_id"] = 0
+        spec_table = PMOExporter.export_specimen_meta_table(dangling)
+        self.assertIn("project_id", spec_table.columns)
+        self.assertNotIn("project_name", spec_table.columns)
+        library_table = PMOExporter.export_library_sample_meta_table(dangling)
+        self.assertIn("sequencing_info_id", library_table.columns)
+        self.assertNotIn("sequencing_info_name", library_table.columns)
 
     def test_export_sequencing_info_meta_table(self):
         sequencing_info_table = PMOExporter.export_sequencing_info_meta_table(

@@ -219,6 +219,81 @@ class TestMetatableToPMO(unittest.TestCase):
             result, [{"specimen_name": "sample1"}, {"specimen_name": "sample2"}]
         )
 
+    def test_add_plate_info_row_col_skips_blank_cells(self):
+        df = pd.DataFrame(
+            {
+                "specimen_name": ["sample1", "sample2"],
+                "plate_row": ["A", None],
+                "plate_col": [1, None],
+                "plate_name": ["Plate1", None],
+            }
+        )
+        result = add_plate_info(
+            "plate_col",
+            "plate_name",
+            "plate_row",
+            None,
+            self.small_json_example,
+            df,
+            "specimen_name",
+        )
+        self.assertEqual(
+            result[0]["plate_info"],
+            {"plate_name": "Plate1", "plate_row": "A", "plate_col": 1},
+        )
+        self.assertNotIn("plate_info", result[1])
+
+    def test_add_plate_info_position_skips_blank_cells(self):
+        df = pd.DataFrame(
+            {
+                "specimen_name": ["sample1", "sample2", "sample3"],
+                "plate_position": ["A01", None, "  "],
+                "plate_name": ["Plate1", float("nan"), ""],
+            }
+        )
+        json_example = [
+            {"specimen_name": "sample1"},
+            {"specimen_name": "sample2"},
+            {"specimen_name": "sample3"},
+        ]
+        result = add_plate_info(
+            None,
+            "plate_name",
+            None,
+            "plate_position",
+            json_example,
+            df,
+            "specimen_name",
+        )
+        self.assertEqual(
+            result[0]["plate_info"],
+            {"plate_name": "Plate1", "plate_row": "A", "plate_col": 1},
+        )
+        self.assertNotIn("plate_info", result[1])
+        self.assertNotIn("plate_info", result[2])
+
+    def test_add_plate_info_position_fails_with_invalid_value_among_blanks(self):
+        df = pd.DataFrame(
+            {
+                "specimen_name": ["sample1", "sample2"],
+                "plate_position": [None, "K10"],
+            }
+        )
+        with self.assertRaises(ValueError) as context:
+            add_plate_info(
+                None,
+                None,
+                None,
+                "plate_position",
+                self.small_json_example,
+                df,
+                "specimen_name",
+            )
+        self.assertEqual(
+            "Values in 'plate_position' must start with a single letter A-H/a-h followed by number 1-12.",
+            str(context.exception),
+        )
+
     def test_add_parasite_density_info_single_value(self):
         df = pd.DataFrame(
             {
@@ -1028,7 +1103,7 @@ class TestMetatableToPMO(unittest.TestCase):
                 "project_name": ["project1", "project2", "project3"],
                 "host_age": [25, None, 30],
                 "host_sex": ["M", "F", ""],
-                "host_subject_id": ["SUB001", "", "SUB003"],
+                "host_subject_name": ["SUB001", "", "SUB003"],
                 "gravid": [True, None, False],
                 "gravidity": [2, None, 0],
             }
@@ -1044,7 +1119,7 @@ class TestMetatableToPMO(unittest.TestCase):
             project_name_col="project_name",
             host_age_col="host_age",
             host_sex_col="host_sex",
-            host_subject_id="host_subject_id",
+            host_subject_name_col="host_subject_name",
             gravid_col="gravid",
             gravidity_col="gravidity",
         )
@@ -1052,25 +1127,25 @@ class TestMetatableToPMO(unittest.TestCase):
         # sample1: all fields have values
         self.assertEqual(result[0]["host_age"], 25)
         self.assertEqual(result[0]["host_sex"], "M")
-        self.assertEqual(result[0]["host_subject_id"], "SUB001")
+        self.assertEqual(result[0]["host_subject_name"], "SUB001")
         self.assertEqual(result[0]["gravid"], True)
         self.assertEqual(result[0]["gravidity"], 2)
 
-        # sample2: host_age is None, host_subject_id is empty string, gravid is None, gravidity is None
-        # Should remove: host_age, host_subject_id, gravid, gravidity
+        # sample2: host_age is None, host_subject_name is empty string, gravid is None, gravidity is None
+        # Should remove: host_age, host_subject_name, gravid, gravidity
         # Should keep: host_sex
         self.assertNotIn("host_age", result[1])
         self.assertEqual(result[1]["host_sex"], "F")
-        self.assertNotIn("host_subject_id", result[1])
+        self.assertNotIn("host_subject_name", result[1])
         self.assertNotIn("gravid", result[1])
         self.assertNotIn("gravidity", result[1])
 
         # sample3: host_sex is empty string
         # Should remove: host_sex
-        # Should keep: host_age, host_subject_id, gravid, gravidity
+        # Should keep: host_age, host_subject_name, gravid, gravidity
         self.assertEqual(result[2]["host_age"], 30)
         self.assertNotIn("host_sex", result[2])
-        self.assertEqual(result[2]["host_subject_id"], "SUB003")
+        self.assertEqual(result[2]["host_subject_name"], "SUB003")
         self.assertEqual(result[2]["gravid"], False)
         self.assertEqual(result[2]["gravidity"], 0)
 
@@ -1603,13 +1678,18 @@ class TestMetatableToPMO(unittest.TestCase):
             parasite_density_method_col="parasite_density_method",
         )
 
-        self.assertEqual(result[0]["parasite_density_info"][0]["parasite_density"], 10)
         self.assertEqual(
-            result[0]["parasite_density_info"][0]["parasite_density_method"], "qPCR"
+            result[0]["qpcr_parasite_density_info"][0]["parasite_density"], 10
         )
-        self.assertEqual(result[1]["parasite_density_info"][0]["parasite_density"], 100)
         self.assertEqual(
-            result[1]["parasite_density_info"][0]["parasite_density_method"],
+            result[0]["qpcr_parasite_density_info"][0]["parasite_density_method"],
+            "qPCR",
+        )
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][0]["parasite_density"], 100
+        )
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][0]["parasite_density_method"],
             "microscopy",
         )
 
@@ -1638,10 +1718,18 @@ class TestMetatableToPMO(unittest.TestCase):
             parasite_density_method_col=["method1", "method2"],
         )
 
-        self.assertEqual(result[0]["parasite_density_info"][0]["parasite_density"], 15)
-        self.assertEqual(result[0]["parasite_density_info"][1]["parasite_density"], 10)
-        self.assertEqual(result[1]["parasite_density_info"][0]["parasite_density"], 107)
-        self.assertEqual(result[1]["parasite_density_info"][1]["parasite_density"], 100)
+        self.assertEqual(
+            result[0]["qpcr_parasite_density_info"][0]["parasite_density"], 15
+        )
+        self.assertEqual(
+            result[0]["qpcr_parasite_density_info"][1]["parasite_density"], 10
+        )
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][0]["parasite_density"], 107
+        )
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][1]["parasite_density"], 100
+        )
 
     def test_library_sample_info_table_to_pmo_with_all_new_fields(self):
         """Test all new optional fields together"""
@@ -1685,7 +1773,9 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertEqual(result[0]["experiment_accession"], "EXP001")
         self.assertEqual(result[0]["fastqs_loc"], "/path/to/fastqs1")
         self.assertEqual(result[0]["run_accession"], "RUN001")
-        self.assertEqual(result[0]["parasite_density_info"][0]["parasite_density"], 10)
+        self.assertEqual(
+            result[0]["qpcr_parasite_density_info"][0]["parasite_density"], 10
+        )
         self.assertIn("library_prep_plate_info", result[0])
         self.assertEqual(result[0]["library_prep_plate_info"]["plate_col"], 1)
 
@@ -1693,7 +1783,9 @@ class TestMetatableToPMO(unittest.TestCase):
         self.assertEqual(result[1]["experiment_accession"], "EXP002")
         self.assertEqual(result[1]["fastqs_loc"], "/path/to/fastqs2")
         self.assertEqual(result[1]["run_accession"], "RUN002")
-        self.assertEqual(result[1]["parasite_density_info"][0]["parasite_density"], 100)
+        self.assertEqual(
+            result[1]["qpcr_parasite_density_info"][0]["parasite_density"], 100
+        )
         self.assertIn("library_prep_plate_info", result[1])
         self.assertEqual(result[1]["library_prep_plate_info"]["plate_col"], 2)
 

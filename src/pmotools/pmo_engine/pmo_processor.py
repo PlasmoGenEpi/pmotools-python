@@ -20,6 +20,10 @@ class PMOProcessor:
         :return: a dictionary of indexes keyed by bioinformatics_run_name
         """
         ret = {}
+        # bioinformatics_run_info is optional as of schema v1.1.0; a PMO without it
+        # simply has no run-name to index mapping
+        if "bioinformatics_run_info" not in pmodata:
+            return ret
         for idx, bioinformatics_run in enumerate(pmodata["bioinformatics_run_info"]):
             ret[bioinformatics_run["bioinformatics_run_name"]] = idx
         return ret
@@ -646,8 +650,6 @@ class PMOProcessor:
         if "targeted_genomes" in pmodata:
             pmo_out["targeted_genomes"] = copy.deepcopy(pmodata["targeted_genomes"])
 
-        if "read_counts_by_stage" in pmodata:
-            pmo_out["read_counts_by_stage"] = []
         # need to update read_counts_by_stage, library_sample_info, specimen_info, detected_microhaplotypes
 
         # specimen_info
@@ -703,6 +705,7 @@ class PMOProcessor:
             pmo_out["detected_microhaplotypes"].append(new_detected_microhaplotypes)
         # read_counts_by_stage
         if "read_counts_by_stage" in pmodata:
+            pmo_out["read_counts_by_stage"] = []
             for read_count in pmodata["read_counts_by_stage"]:
                 new_read_count = {
                     "read_counts_by_library_sample_by_stage": [],
@@ -725,6 +728,7 @@ class PMOProcessor:
                         ]["library_sample_id"] = library_id_index_key[
                             sample["library_sample_id"]
                         ]
+                pmo_out["read_counts_by_stage"].append(new_read_count)
         return pmo_out
 
     @staticmethod
@@ -884,11 +888,12 @@ class PMOProcessor:
                     pmo_out["representative_microhaplotypes"]["targets"]
                 )
                 # update new target_id index
-                microhap_info["target_id"] = target_info_index_key[
+                microhap_info_copy = copy.deepcopy(microhap_info)
+                microhap_info_copy["target_id"] = target_info_index_key[
                     microhap_info["target_id"]
                 ]
                 pmo_out["representative_microhaplotypes"]["targets"].append(
-                    copy.deepcopy(microhap_info)
+                    microhap_info_copy
                 )
         # representative_microhaplotypes
         pmo_out["detected_microhaplotypes"] = []
@@ -908,10 +913,11 @@ class PMOProcessor:
                 for target in sample["target_results"]:
                     if target["mhaps_target_id"] in mhaps_target_id_new_key:
                         # update with new mhaps_target_id id
-                        target["mhaps_target_id"] = mhaps_target_id_new_key[
+                        target_copy = copy.deepcopy(target)
+                        target_copy["mhaps_target_id"] = mhaps_target_id_new_key[
                             target["mhaps_target_id"]
                         ]
-                        new_sample["target_results"].append(copy.deepcopy(target))
+                        new_sample["target_results"].append(target_copy)
                 new_detected_microhaplotypes["library_samples"].append(new_sample)
             pmo_out["detected_microhaplotypes"].append(new_detected_microhaplotypes)
 
@@ -938,11 +944,12 @@ class PMOProcessor:
                         for target in sample["read_counts_for_targets"]:
                             if target["target_id"] in target_ids:
                                 # update with new target_id index
-                                target["target_id"] = target_info_index_key[
+                                target_copy = copy.deepcopy(target)
+                                target_copy["target_id"] = target_info_index_key[
                                     target["target_id"]
                                 ]
                                 new_samples["read_counts_for_targets"].append(
-                                    copy.deepcopy(target)
+                                    target_copy
                                 )
                     new_read_counts_by_bioid[
                         "read_counts_by_library_sample_by_stage"
@@ -1073,23 +1080,29 @@ class PMOProcessor:
         pmo_out = {
             "pmo_header": copy.deepcopy(pmodata["pmo_header"]),
             "panel_info": copy.deepcopy(pmodata["panel_info"]),
-            "sequencing_info": copy.deepcopy(pmodata["sequencing_info"]),
             "target_info": copy.deepcopy(pmodata["target_info"]),
             "specimen_info": copy.deepcopy(pmodata["specimen_info"]),
             "library_sample_info": copy.deepcopy(pmodata["library_sample_info"]),
-            "project_info": copy.deepcopy(pmodata["project_info"]),
-            "targeted_genomes": copy.deepcopy(pmodata["targeted_genomes"]),
             "representative_microhaplotypes": copy.deepcopy(
                 pmodata["representative_microhaplotypes"]
             ),
-            "bioinformatics_methods_info": copy.deepcopy(
-                pmodata["bioinformatics_methods_info"]
-            ),
-            "bioinformatics_run_info": copy.deepcopy(
-                pmodata["bioinformatics_run_info"]
-            ),
             "detected_microhaplotypes": [],
         }
+        # only copy optional sections if they are present (no longer required by the schema)
+        if "sequencing_info" in pmodata:
+            pmo_out["sequencing_info"] = copy.deepcopy(pmodata["sequencing_info"])
+        if "project_info" in pmodata:
+            pmo_out["project_info"] = copy.deepcopy(pmodata["project_info"])
+        if "targeted_genomes" in pmodata:
+            pmo_out["targeted_genomes"] = copy.deepcopy(pmodata["targeted_genomes"])
+        if "bioinformatics_methods_info" in pmodata:
+            pmo_out["bioinformatics_methods_info"] = copy.deepcopy(
+                pmodata["bioinformatics_methods_info"]
+            )
+        if "bioinformatics_run_info" in pmodata:
+            pmo_out["bioinformatics_run_info"] = copy.deepcopy(
+                pmodata["bioinformatics_run_info"]
+            )
         # if has optional read_counts_by_stage then add as well
         # if does contain, @todo consider updating with new counts now that a filter has been applied
 

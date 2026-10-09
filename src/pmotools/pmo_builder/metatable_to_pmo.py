@@ -157,7 +157,7 @@ def library_sample_info_table_to_pmo(
         library_prep_plate_position_col,
         meta_json,
         copy_contents,
-        "specimen_name",
+        "library_sample_name",
         "library_prep_plate_info",
     )
     meta_json = add_parasite_density_info(
@@ -166,7 +166,7 @@ def library_sample_info_table_to_pmo(
         meta_json,
         copy_contents,
         "library_sample_name",
-        entry_name="parasite_density_info",
+        entry_name="qpcr_parasite_density_info",
     )
     # listify columns that contain values that could be list, are delimited by the argument list_values_library_values_delimiter
     primitives = (int, float, str, bool, complex)
@@ -212,7 +212,7 @@ def specimen_info_table_to_pmo(
     has_travel_out_six_month_col: str = None,
     host_age_col: str = None,
     host_sex_col: str = None,
-    host_subject_id: str = None,
+    host_subject_name_col: str = None,
     lat_lon_col: str = None,
     parasite_density_col: str = None,
     parasite_density_method_col: str = None,
@@ -281,8 +281,8 @@ def specimen_info_table_to_pmo(
     :type host_age_col: str, optional
     :param host_sex_col: if the specimen is from a person, the sex of that person
     :type host_sex_col: str, optional
-    :param host_subject_id: ID for the individual a specimen was collected from
-    :type host_subject_id: str, optional
+    :param host_subject_name_col: identifier for the individual a specimen was collected from
+    :type host_subject_name_col: str, optional
     :param lat_lon_col: latitude and longitude of the collection site
     :type lat_lon_col: str, optional
     :param parasite_density_col: the parasite density in parasites per microliter
@@ -353,7 +353,7 @@ def specimen_info_table_to_pmo(
         geo_admin3_col: "geo_admin3",
         host_age_col: "host_age",
         host_sex_col: "host_sex",
-        host_subject_id: "host_subject_id",
+        host_subject_name_col: "host_subject_name",
         lat_lon_col: "lat_lon",
         specimen_accession_col: "specimen_accession",
         specimen_type_col: "specimen_type",
@@ -392,7 +392,7 @@ def specimen_info_table_to_pmo(
             geo_admin3_col,
             host_age_col,
             host_sex_col,
-            host_subject_id,
+            host_subject_name_col,
             lat_lon_col,
             specimen_accession_col,
             specimen_type_col,
@@ -487,6 +487,14 @@ def check_columns_exist(df, columns):
         )
 
 
+def _is_blank(value):
+    if value is None:
+        return True
+    if isinstance(value, str):
+        return not value.strip()
+    return bool(pd.isna(value))
+
+
 def add_plate_info(
     plate_col_col,
     plate_name_col,
@@ -494,7 +502,7 @@ def add_plate_info(
     plate_position_col,
     meta_json,
     df,
-    specimen_name_col,
+    match_col,
     entry_name="plate_info",
 ):
     if all(
@@ -516,38 +524,39 @@ def add_plate_info(
             plate_row_col = "plate_row"
             plate_col_col = "plate_col"
 
-            try:
-                df[plate_row_col] = (
-                    df[plate_position_col].str.extract(r"(?i)^([A-H])")[0].str.upper()
-                )
-                df[plate_col_col] = (
-                    df[plate_position_col]
-                    .str.extract(r"(?i)^[A-H]0*([1-9]|1[0-2])$")[0]
-                    .astype(int)
-                )
-            except (AttributeError, ValueError, IndexError, KeyError) as e:
+            positions = df[plate_position_col]
+            blank = positions.map(_is_blank)
+            parsed = (
+                positions[~blank]
+                .astype(str)
+                .str.strip()
+                .str.extract(r"(?i)^([A-H])0*([1-9]|1[0-2])$")
+            )
+            if parsed.isna().any().any():
                 raise ValueError(
                     f"Values in '{plate_position_col}' must start with a single letter A-H/a-h followed by number 1-12."
-                ) from e
+                )
+            df[plate_row_col] = None
+            df.loc[~blank, plate_row_col] = parsed[0].str.upper()
+            df[plate_col_col] = pd.Series(pd.NA, index=df.index, dtype="Int64")
+            df.loc[~blank, plate_col_col] = parsed[1].astype(int)
 
     for row in meta_json:
-        content_row = df[df[specimen_name_col] == row[specimen_name_col]]
+        content_row = df[df[match_col] == row[match_col]]
         plate_name_val = content_row[plate_name_col].iloc[0] if plate_name_col else None
-        plate_row_val = (
-            content_row[plate_row_col].iloc[0].upper() if plate_row_col else None
-        )
+        plate_row_val = content_row[plate_row_col].iloc[0] if plate_row_col else None
         plate_col_val = content_row[plate_col_col].iloc[0] if plate_col_col else None
-        if plate_col_val is not None and not pd.isna(plate_col_val):
+        if not _is_blank(plate_col_val):
             try:
                 plate_col_val = int(plate_col_val)
             except (TypeError, ValueError):
                 plate_col_val = plate_col_val
         plate_info = {}
-        if plate_name_val:
+        if not _is_blank(plate_name_val):
             plate_info["plate_name"] = plate_name_val
-        if plate_row_val:
-            plate_info["plate_row"] = plate_row_val
-        if plate_col_val is not None and not pd.isna(plate_col_val):
+        if not _is_blank(plate_row_val):
+            plate_info["plate_row"] = str(plate_row_val).strip().upper()
+        if not _is_blank(plate_col_val):
             plate_info["plate_col"] = plate_col_val
 
         if plate_info:
@@ -560,7 +569,7 @@ def add_parasite_density_info(
     parasite_density_method_col,
     meta_json,
     df,
-    specimen_name_col,
+    match_col,
     entry_name,
 ):
     density_method_pairs = []
@@ -608,7 +617,7 @@ def add_parasite_density_info(
 
     # Add parasite density info to meta_json
     for row in meta_json:
-        content_row = df[df[specimen_name_col] == row[specimen_name_col]]
+        content_row = df[df[match_col] == row[match_col]]
         density_infos = []
         for density_col, method_col in density_method_pairs:
             density_val = content_row[density_col].iloc[0] if density_col else None

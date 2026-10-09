@@ -289,9 +289,11 @@ class PMOPanelBuilder:
             if self.gene_name_col:
                 target_dict["gene_name"] = row[self.gene_name_col]
             if self.target_attributes_col:
-                target_dict["target_attributes"] = row[
-                    self.target_attributes_col
-                ].split(self.target_attributes_col_delimiter)
+                target_attributes = row[self.target_attributes_col]
+                if pd.notna(target_attributes) and str(target_attributes).strip():
+                    target_dict["target_attributes"] = str(target_attributes).split(
+                        self.target_attributes_col_delimiter
+                    )
             if self.additional_target_info_cols:
                 for col in self.additional_target_info_cols:
                     value = row[col]
@@ -332,8 +334,8 @@ class PMOPanelBuilder:
                 fwd_primer_dict["location"] = {
                     "genome_id": genome_id,
                     "chrom": row[chrom_col],
-                    "end": int(row[forward_primers_start_col]),
-                    "start": int(row[forward_primers_end_col]),
+                    "start": int(row[forward_primers_start_col]),
+                    "end": int(row[forward_primers_end_col]),
                 }
                 if strand_col and pd.notna(row[strand_col]):
                     fwd_primer_dict["location"]["strand"] = row[strand_col]

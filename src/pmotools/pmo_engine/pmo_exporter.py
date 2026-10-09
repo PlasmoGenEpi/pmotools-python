@@ -121,10 +121,14 @@ class PMOExporter(object):
         for specimen in pmodata["specimen_info"]:
             export_row = {}
             for key, value in specimen.items():
-                if "project_id" == key:
+                if "project_id" == key and "project_info" in pmodata:
                     export_row["project_name"] = pmodata["project_info"][value][
                         "project_name"
                     ]
+                elif "project_id" == key:
+                    # project_info is optional as of schema v1.1.0; keep the raw id
+                    # rather than failing to resolve a name that isn't available
+                    export_row[key] = value
                 elif PMOExporter._is_primitive(value):
                     export_row[key] = value
                 elif PMOExporter._is_primitive_list(value):
@@ -145,10 +149,14 @@ class PMOExporter(object):
         for library_sample in pmodata["library_sample_info"]:
             export_row = {}
             for key, value in library_sample.items():
-                if "sequencing_info_id" == key:
+                if "sequencing_info_id" == key and "sequencing_info" in pmodata:
                     export_row["sequencing_info_name"] = pmodata["sequencing_info"][
                         value
                     ]["sequencing_info_name"]
+                elif "sequencing_info_id" == key:
+                    # sequencing_info is optional as of schema v1.1.0; keep the raw id
+                    # rather than failing to resolve a name that isn't available
+                    export_row[key] = value
                 elif "specimen_id" == key:
                     export_row["specimen_name"] = pmodata["specimen_info"][value][
                         "specimen_name"
@@ -451,6 +459,7 @@ class PMOExporter(object):
                         ]
                     )
                 )
+                f.write("\n")
             for bed_loc in bed_locs:
                 f.write(
                     "\t".join(
@@ -540,11 +549,10 @@ class PMOExporter(object):
         :param sort_output: whether to sort output by genomic location
         :return: a list of target inserts, with named tuples with fields: chrom, start, end, name, score, strand, ref_seq, extra_info
         """
-        bed_loc_out = {}
+        bed_loc_out = []
         if select_panel_ids is None:
             select_panel_ids = list(range(len(pmodata["panel_info"])))
         for panel_id in select_panel_ids:
-            bed_loc_out_per_panel = []
             for reaction_id in range(len(pmodata["panel_info"][panel_id]["reactions"])):
                 for target_id in pmodata["panel_info"][panel_id]["reactions"][
                     reaction_id
@@ -589,7 +597,7 @@ class PMOExporter(object):
                         if "ref_seq" not in tar["insert_location"]
                         else tar["insert_location"]["ref_seq"]
                     )
-                    bed_loc_out_per_panel.append(
+                    bed_loc_out.append(
                         BedLoc(
                             tar["insert_location"]["chrom"],
                             tar["insert_location"]["start"],
@@ -602,12 +610,8 @@ class PMOExporter(object):
                             extra_info,
                         )
                     )
-                if sort_output:
-                    return sorted(
-                        bed_loc_out_per_panel,
-                        key=lambda bed: (bed.chrom, bed.start, bed.end),
-                    )
-            bed_loc_out[panel_id] = bed_loc_out_per_panel
+        if sort_output:
+            return sorted(bed_loc_out, key=lambda bed: (bed.chrom, bed.start, bed.end))
         return bed_loc_out
 
     @staticmethod
