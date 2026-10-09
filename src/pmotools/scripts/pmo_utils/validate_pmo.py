@@ -7,7 +7,7 @@ import json
 from pmotools.pmo_engine.pmo_reader import PMOReader
 from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.utils.small_utils import Utils
-from pmotools import __version__ as __pmotools_version__
+from pmotools import __schema_version__
 
 
 def get_parser_validate_pmo() -> argparse.ArgumentParser:
@@ -18,7 +18,7 @@ def get_parser_validate_pmo() -> argparse.ArgumentParser:
     parser.add_argument("--pmo", type=str, required=True, help="a pmo file to validate")
     parser.add_argument(
         "--jsonschema_version",
-        default=__pmotools_version__,
+        default=__schema_version__,
         type=str,
         required=False,
         help="version of the jsonschema to validate against (default: %(default)s)",
