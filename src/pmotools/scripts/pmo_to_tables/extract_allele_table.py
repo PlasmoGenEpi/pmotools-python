@@ -11,7 +11,7 @@ from pmotools.pmo_engine.pmo_checker import PMOChecker
 from pmotools.pmo_engine.pmo_processor import PMOProcessor
 from pmotools.pmo_engine.pmo_exporter import PMOExporter
 
-from pmotools import __version__ as __pmotools_version__
+from pmotools import __schema_version__
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -36,7 +36,7 @@ def get_parser() -> argparse.ArgumentParser:
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             ),
             "schemas/",
-            f"portable_microhaplotype_object_v{__pmotools_version__}.schema.json",
+            f"portable_microhaplotype_object_v{__schema_version__}.schema.json",
         ),
         type=str,
         required=False,
