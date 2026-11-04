@@ -13,7 +13,6 @@ dependencies = [
     "pandas>=2.2.2",
     "biopython>=1.83",
     "jsonschema>=4.23.0",
-    "pre-commit",
     "openpyxl>=3.1.5",
 ]
 
@@ -26,6 +25,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "pre-commit",
     "pytest>=8.4.1",
 ]
 
