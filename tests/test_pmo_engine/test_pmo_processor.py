@@ -19,6 +19,54 @@ def md5sum_of_fnp(filename):
         return hashlib.md5(f.read()).hexdigest()
 
 
+def make_pmo(n, targets=1):
+    """A small schema-valid v1.1.0 PMO: n specimens, one library sample each, one run."""
+    return {
+        "pmo_header": {"pmo_version": "1.1.0"},
+        "panel_info": [
+            {
+                "panel_name": "p1",
+                "reactions": [
+                    {"reaction_name": "r1", "panel_targets": list(range(targets))}
+                ],
+            }
+        ],
+        "target_info": [
+            {
+                "target_name": f"t{t}",
+                "forward_primer": {"seq": "ACGT"},
+                "reverse_primer": {"seq": "TGCA"},
+            }
+            for t in range(targets)
+        ],
+        "representative_microhaplotypes": {
+            "targets": [{"target_id": 0, "microhaplotypes": [{"seq": "AAAA"}]}]
+        },
+        "specimen_info": [{"specimen_name": f"s{i}"} for i in range(n)],
+        "library_sample_info": [
+            {"library_sample_name": f"L{i}", "specimen_id": i, "panel_id": 0}
+            for i in range(n)
+        ],
+        "detected_microhaplotypes": [
+            {
+                "bioinformatics_run_id": 0,
+                "library_samples": [
+                    {
+                        "library_sample_id": i,
+                        "target_results": [
+                            {
+                                "mhaps_target_id": 0,
+                                "mhaps": [{"mhap_id": 0, "reads": 10 + i}],
+                            }
+                        ],
+                    }
+                    for i in range(n)
+                ],
+            }
+        ],
+    }
+
+
 class TestPMOProcessor(unittest.TestCase):
     def setUp(self):
         self.working_dir = os.path.dirname(os.path.abspath(__file__))
@@ -460,6 +508,60 @@ class TestPMOProcessor(unittest.TestCase):
         # check pmo extracted against PMO schema
         checker = PMOChecker(self.pmo_jsonschema_data)
         checker.validate_pmo_json(pmo_data_select_targets)
+
+    def test_filter_pmo_by_library_sample_ids_refuses_ids_out_of_range(self):
+        # issue #114: an id equal to the length used to raise an IndexError, and a
+        # negative id was read from the end of library_sample_info
+        pmo = make_pmo(3)
+        for bad_id in [3, 4, -1, -3]:
+            with self.subTest(library_sample_id=bad_id):
+                with self.assertRaisesRegex(
+                    Exception, f"{bad_id} out of range of library_sample_info"
+                ):
+                    PMOProcessor.filter_pmo_by_library_sample_ids(pmo, {bad_id})
+        # the last valid id is still accepted
+        pmo_out = PMOProcessor.filter_pmo_by_library_sample_ids(pmo, {2})
+        self.assertEqual(
+            ["L2"], [s["library_sample_name"] for s in pmo_out["library_sample_info"]]
+        )
+
+    def test_filter_pmo_by_specimen_ids_refuses_ids_out_of_range(self):
+        # issue #114: an id equal to the length used to return an empty PMO
+        pmo = make_pmo(3)
+        for bad_id in [3, 4, -1, -3]:
+            with self.subTest(specimen_id=bad_id):
+                with self.assertRaisesRegex(
+                    Exception, f"{bad_id} out of range of specimen_info"
+                ):
+                    PMOProcessor.filter_pmo_by_specimen_ids(pmo, {bad_id})
+                with self.assertRaisesRegex(
+                    Exception, f"{bad_id} out of range of specimen_info"
+                ):
+                    PMOProcessor.get_library_ids_for_specimen_ids(pmo, {bad_id})
+        pmo_out = PMOProcessor.filter_pmo_by_specimen_ids(pmo, {2})
+        self.assertEqual(["s2"], [s["specimen_name"] for s in pmo_out["specimen_info"]])
+
+    def test_filter_pmo_by_target_ids_refuses_negative_ids(self):
+        pmo = make_pmo(3)
+        with self.assertRaisesRegex(Exception, "-1 out of range of target_info"):
+            PMOProcessor.filter_pmo_by_target_ids(pmo, {-1})
+
+    def test_filter_pmo_by_names_lists_every_unknown_name(self):
+        # issue #114: an unknown name used to raise a bare KeyError naming only the
+        # first unknown one
+        pmo = make_pmo(3)
+        cases = [
+            (PMOProcessor.filter_pmo_by_specimen_names, {"s0", "x", "y"}),
+            (PMOProcessor.filter_pmo_by_library_sample_names, {"L0", "x", "y"}),
+            (PMOProcessor.filter_pmo_by_target_names, {"t0", "x", "y"}),
+        ]
+        for filter_by_names, names in cases:
+            with self.subTest(filter=filter_by_names.__name__):
+                with self.assertRaises(KeyError) as context:
+                    filter_by_names(pmo, names)
+                message = str(context.exception)
+                self.assertIn("2 ", message)
+                self.assertIn("x, y", message)
 
     def test_extract_from_pmo_samples_with_meta_groupings(self):
         (
