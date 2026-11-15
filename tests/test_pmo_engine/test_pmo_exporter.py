@@ -556,6 +556,36 @@ class TestPMOExporter(unittest.TestCase):
         )
         assert df_pipe["additional_argument"].iloc[0] == "-e|0"
 
+    def test_ids_are_zero_based_and_join_runs_bioinformatics_methods_info(self):
+        """bioinformatics_methods_id and method_id count from 0, as the PMO does."""
+        # issue #117: the methods table numbered from 1, while the PMO and the runs
+        # table refer to methods by their 0-based index
+        pmodata = {
+            "bioinformatics_methods_info": [
+                {
+                    "methods": [
+                        {"program": "cutadapt", "program_version": "4.4"},
+                        {"program": "dada2", "program_version": "1.30"},
+                    ]
+                },
+                {"methods": [{"program": "seekdeep", "program_version": "3.0"}]},
+            ],
+            "bioinformatics_run_info": [
+                {"bioinformatics_run_name": "run1", "bioinformatics_methods_id": 1},
+                {"bioinformatics_run_name": "run2", "bioinformatics_methods_id": 0},
+            ],
+        }
+        methods = PMOExporter.export_bioinformatics_methods_info_meta_table(pmodata)
+        assert list(methods["bioinformatics_methods_id"]) == [0, 0, 1]
+        assert list(methods["method_id"]) == [0, 1, 0]
+        runs = PMOExporter.export_bioinformatics_run_info_meta_table(pmodata)
+        joined = runs.merge(methods, on="bioinformatics_methods_id")
+        assert list(zip(joined["bioinformatics_run_name"], joined["program"])) == [
+            ("run1", "seekdeep"),
+            ("run2", "cutadapt"),
+            ("run2", "dada2"),
+        ]
+
     def test_build_pmo_sheet_configs_required_sheets_always_present(self):
         """Required sheets are always included regardless of optional fields."""
         configs = PMOExporter._build_pmo_sheet_configs(self.small_example_pmo_data)
