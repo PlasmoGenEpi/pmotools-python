@@ -563,6 +563,45 @@ class TestPMOProcessor(unittest.TestCase):
                 self.assertIn("2 ", message)
                 self.assertIn("x, y", message)
 
+    def test_filter_pmo_by_specimen_names_keeps_file_order(self):
+        # issue #115: specimens and library samples came out in set order, which for
+        # ids of 32 and above is not the order of the input file
+        pmo = make_pmo(50)
+        names = [f"s{i}" for i in range(0, 50, 3)]
+        pmo_out = PMOProcessor.filter_pmo_by_specimen_names(pmo, set(names))
+        self.assertEqual(names, [s["specimen_name"] for s in pmo_out["specimen_info"]])
+        self.assertEqual(
+            [f"L{i}" for i in range(0, 50, 3)],
+            [s["library_sample_name"] for s in pmo_out["library_sample_info"]],
+        )
+        # with one library sample per specimen, the new ids line up
+        self.assertEqual(
+            list(range(len(names))),
+            [s["specimen_id"] for s in pmo_out["library_sample_info"]],
+        )
+        self.assertEqual(
+            [10 + i for i in range(0, 50, 3)],
+            [
+                sample["target_results"][0]["mhaps"][0]["reads"]
+                for sample in pmo_out["detected_microhaplotypes"][0]["library_samples"]
+            ],
+        )
+
+    def test_filter_pmo_by_library_sample_ids_keeps_file_order(self):
+        pmo = make_pmo(50)
+        library_sample_ids = [1, 33, 34, 40, 2, 49]
+        pmo_out = PMOProcessor.filter_pmo_by_library_sample_ids(
+            pmo, set(library_sample_ids)
+        )
+        self.assertEqual(
+            [f"L{i}" for i in sorted(library_sample_ids)],
+            [s["library_sample_name"] for s in pmo_out["library_sample_info"]],
+        )
+        self.assertEqual(
+            [f"s{i}" for i in sorted(library_sample_ids)],
+            [s["specimen_name"] for s in pmo_out["specimen_info"]],
+        )
+
     def test_extract_from_pmo_samples_with_meta_groupings(self):
         (
             pmo_data_select_meta,

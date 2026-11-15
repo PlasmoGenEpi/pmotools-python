@@ -695,13 +695,14 @@ class PMOProcessor:
 
         # specimen_info
         # first get the specimen_ids needed and then build
+        # iterate the ids in sorted order so records keep their order in the input
         specimen_ids = set()
         specimen_id_index_key = {}
         for library_sample_id in library_sample_ids:
             specimen_ids.add(
                 pmodata["library_sample_info"][library_sample_id]["specimen_id"]
             )
-        for specimen_id in specimen_ids:
+        for specimen_id in sorted(specimen_ids):
             specimen_id_index_key[specimen_id] = len(pmo_out["specimen_info"])
             pmo_out["specimen_info"].append(
                 copy.deepcopy(pmodata["specimen_info"][specimen_id])
@@ -709,7 +710,7 @@ class PMOProcessor:
 
         # library_sample_info
         library_id_index_key = {}
-        for library_sample_id in library_sample_ids:
+        for library_sample_id in sorted(library_sample_ids):
             library_id_index_key[library_sample_id] = len(
                 pmo_out["library_sample_info"]
             )
