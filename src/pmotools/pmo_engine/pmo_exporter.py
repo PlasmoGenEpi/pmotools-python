@@ -230,8 +230,13 @@ class PMOExporter(object):
                 method_count += 1
                 method_export_row = copy.deepcopy(export_row)
                 method_export_row["method_id"] = method_count
-                for method_key in method.keys():
-                    method_export_row[method_key] = method[method_key]
+                for method_key, method_value in method.items():
+                    if PMOExporter._is_primitive(method_value):
+                        method_export_row[method_key] = method_value
+                    elif PMOExporter._is_primitive_list(method_value):
+                        method_export_row[method_key] = separator.join(
+                            str(v) for v in method_value
+                        )
                 rows.append(method_export_row)
         return pd.DataFrame(rows)
 

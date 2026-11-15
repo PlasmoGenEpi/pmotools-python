@@ -532,6 +532,30 @@ class TestPMOExporter(unittest.TestCase):
         assert isinstance(df, pd.DataFrame)
         assert len(df) == 0
 
+    def test_list_fields_joined_with_separator_bioinformatics_methods_info(self):
+        """List fields such as additional_argument are joined with the separator."""
+        # issue #117: lists landed in one cell as a Python list, written as "['-e', '0']"
+        pmodata = {
+            "bioinformatics_methods_info": [
+                {
+                    "methods": [
+                        {
+                            "program": "cutadapt",
+                            "program_version": "4.4",
+                            "additional_argument": ["-e", "0"],
+                        }
+                    ]
+                }
+            ]
+        }
+        df_comma = PMOExporter.export_bioinformatics_methods_info_meta_table(pmodata)
+        assert df_comma["additional_argument"].iloc[0] == "-e,0"
+        assert df_comma["program"].iloc[0] == "cutadapt"
+        df_pipe = PMOExporter.export_bioinformatics_methods_info_meta_table(
+            pmodata, separator="|"
+        )
+        assert df_pipe["additional_argument"].iloc[0] == "-e|0"
+
     def test_build_pmo_sheet_configs_required_sheets_always_present(self):
         """Required sheets are always included regardless of optional fields."""
         configs = PMOExporter._build_pmo_sheet_configs(self.small_example_pmo_data)
