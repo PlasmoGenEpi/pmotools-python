@@ -223,6 +223,28 @@ class PMOProcessor:
         return ret
 
     @staticmethod
+    def _get_index_of_names(
+        name_key: dict, names: list[str], name_field: str, section: str
+    ) -> list[int]:
+        """
+        Look up the index of each name, refusing the lookup if any name is unknown
+
+        :param name_key: a dictionary of indexes keyed by name
+        :param names: the names to look up
+        :param name_field: the name of the field being looked up, used in the error message
+        :param section: the PMO section being looked up, used in the error message
+        :return: the index of each name, in the same order as names
+        :raises KeyError: listing every name not in name_key
+        """
+        unknown_names = [name for name in dict.fromkeys(names) if name not in name_key]
+        if len(unknown_names) > 0:
+            raise KeyError(
+                f"{len(unknown_names)} {name_field}(s) not found in {section}: "
+                + ", ".join(str(name) for name in unknown_names)
+            )
+        return [name_key[name] for name in names]
+
+    @staticmethod
     def get_index_of_bioinformatics_run_names(
         pmodata, bioinformatics_run_names: list[str]
     ):
@@ -236,7 +258,12 @@ class PMOProcessor:
         bioinformatics_run_key = PMOProcessor.get_index_key_of_bioinformatics_run_names(
             pmodata
         )
-        return [bioinformatics_run_key[name] for name in bioinformatics_run_names]
+        return PMOProcessor._get_index_of_names(
+            bioinformatics_run_key,
+            bioinformatics_run_names,
+            "bioinformatics_run_name",
+            "bioinformatics_run_info",
+        )
 
     @staticmethod
     def get_index_of_specimen_names(pmodata, specimen_names: list[str]):
@@ -248,7 +275,9 @@ class PMOProcessor:
         :return: the index of specimen_names in pmodata["specimen_info"] returned in the same order as specimen_names
         """
         specimen_key = PMOProcessor.get_index_key_of_specimen_names(pmodata)
-        return [specimen_key[name] for name in specimen_names]
+        return PMOProcessor._get_index_of_names(
+            specimen_key, specimen_names, "specimen_name", "specimen_info"
+        )
 
     @staticmethod
     def get_index_of_library_sample_names(pmodata, library_sample_names: list[str]):
@@ -260,7 +289,12 @@ class PMOProcessor:
         :return: the index of library_sample_names in pmodata["library_sample_info"] returned in the same order as library_sample_names
         """
         library_sample_key = PMOProcessor.get_index_key_of_library_sample_names(pmodata)
-        return [library_sample_key[name] for name in library_sample_names]
+        return PMOProcessor._get_index_of_names(
+            library_sample_key,
+            library_sample_names,
+            "library_sample_name",
+            "library_sample_info",
+        )
 
     @staticmethod
     def get_index_of_target_names(pmodata, target_names: list[str]):
@@ -272,7 +306,9 @@ class PMOProcessor:
         :return: the index of target_names in pmodata["target_info"] returned in the same order as target_names
         """
         target_key = PMOProcessor.get_index_key_of_target_names(pmodata)
-        return [target_key[name] for name in target_names]
+        return PMOProcessor._get_index_of_names(
+            target_key, target_names, "target_name", "target_info"
+        )
 
     @staticmethod
     def get_index_of_panel_names(pmodata, panel_names: list[str]):
@@ -284,7 +320,9 @@ class PMOProcessor:
         :return: the index of panel_names in pmodata["panel_info"] returned in the same order as panel_names
         """
         panel_key = PMOProcessor.get_index_key_of_panel_names(pmodata)
-        return [panel_key[name] for name in panel_names]
+        return PMOProcessor._get_index_of_names(
+            panel_key, panel_names, "panel_name", "panel_info"
+        )
 
     @staticmethod
     def get_index_of_target_in_representative_microhaplotypes(
@@ -302,7 +340,12 @@ class PMOProcessor:
                 pmodata
             )
         )
-        return [microhap_target_key[name] for name in target_names]
+        return PMOProcessor._get_index_of_names(
+            microhap_target_key,
+            target_names,
+            "target_name",
+            "representative_microhaplotypes",
+        )
 
     @staticmethod
     def get_library_ids_for_specimen_ids(pmodata, specimen_ids: set[int]):
@@ -317,10 +360,9 @@ class PMOProcessor:
         # check to make sure the supplied specimens actually exist within the data
         warnings = []
         for specimen_id in specimen_ids:
-            if specimen_id > len(pmodata["specimen_info"]):
+            if not 0 <= specimen_id < len(pmodata["specimen_info"]):
                 warnings.append(
-                    f"{specimen_id} id is beyond the length of specimen_info: "
-                    + str(len(pmodata["specimen_info"]))
+                    f"{specimen_id} out of range of specimen_info, length is {len(pmodata['specimen_info'])}"
                 )
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
@@ -616,10 +658,9 @@ class PMOProcessor:
         # check to make sure the supplied specimens actually exist within the data
         warnings = []
         for library_sample_id in library_sample_ids:
-            if library_sample_id > len(pmodata["library_sample_info"]):
+            if not 0 <= library_sample_id < len(pmodata["library_sample_info"]):
                 warnings.append(
-                    f"{library_sample_id} id is beyond the length of library_sample_info: "
-                    + str(len(pmodata["library_sample_info"]))
+                    f"{library_sample_id} out of range of library_sample_info, length is {len(pmodata['library_sample_info'])}"
                 )
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
@@ -654,13 +695,14 @@ class PMOProcessor:
 
         # specimen_info
         # first get the specimen_ids needed and then build
+        # iterate the ids in sorted order so records keep their order in the input
         specimen_ids = set()
         specimen_id_index_key = {}
         for library_sample_id in library_sample_ids:
             specimen_ids.add(
                 pmodata["library_sample_info"][library_sample_id]["specimen_id"]
             )
-        for specimen_id in specimen_ids:
+        for specimen_id in sorted(specimen_ids):
             specimen_id_index_key[specimen_id] = len(pmo_out["specimen_info"])
             pmo_out["specimen_info"].append(
                 copy.deepcopy(pmodata["specimen_info"][specimen_id])
@@ -668,7 +710,7 @@ class PMOProcessor:
 
         # library_sample_info
         library_id_index_key = {}
-        for library_sample_id in library_sample_ids:
+        for library_sample_id in sorted(library_sample_ids):
             library_id_index_key[library_sample_id] = len(
                 pmo_out["library_sample_info"]
             )
@@ -760,10 +802,9 @@ class PMOProcessor:
         # check to make sure the supplied specimens actually exist within the data
         warnings = []
         for specimen_id in specimen_ids:
-            if specimen_id > len(pmodata["specimen_info"]):
+            if not 0 <= specimen_id < len(pmodata["specimen_info"]):
                 warnings.append(
-                    f"{specimen_id} id is beyond the length of specimen_info: "
-                    + str(len(pmodata["specimen_info"]))
+                    f"{specimen_id} out of range of specimen_info, length is {len(pmodata['specimen_info'])}"
                 )
         if len(warnings) > 0:
             raise Exception("\n".join(warnings))
@@ -799,6 +840,9 @@ class PMOProcessor:
         """
         Extract out data from the PMO for only select target IDs
 
+        A target that no sample showed (no entry in representative_microhaplotypes) is
+        kept in target_info and panel_info, with no microhaplotypes.
+
         :param pmodata: the pmo to extract data from
         :param target_ids: the target_ids to extract
         :return: a new pmo with the data for only the targets supplied
@@ -808,17 +852,9 @@ class PMOProcessor:
         # check to make sure the supplied specimens actually exist within the data
         warnings = []
         for target_id in target_ids:
-            if target_id >= len(pmodata["target_info"]):
+            if not 0 <= target_id < len(pmodata["target_info"]):
                 warnings.append(
                     f"{target_id} out of range of target_info, length is {len(pmodata['target_info'])}"
-                )
-        target_ids_in_representative_microhaplotypes = []
-        for target in pmodata["representative_microhaplotypes"]["targets"]:
-            target_ids_in_representative_microhaplotypes.append(target["target_id"])
-        for target_id in target_ids:
-            if target_id not in target_ids_in_representative_microhaplotypes:
-                warnings.append(
-                    f'{target_id} not in pmodata["representative_microhaplotypes"]'
                 )
 
         if len(warnings) > 0:
@@ -961,6 +997,9 @@ class PMOProcessor:
     def filter_pmo_by_target_names(pmodata, target_names: set[str]):
         """
         Extract out data from the PMO for only select target names
+
+        A target that no sample showed (no entry in representative_microhaplotypes) is
+        kept in target_info and panel_info, with no microhaplotypes.
 
         :param pmodata: the pmo to extract data from
         :param target_names: the target_names to extract
@@ -1113,12 +1152,13 @@ class PMOProcessor:
 
         # detected_microhaplotypes
         for detected_microhaplotypes in pmodata["detected_microhaplotypes"]:
-            extracted_microhaps_for_id = {
-                "bioinformatics_run_id": detected_microhaplotypes[
+            # bioinformatics_run_id is optional as of schema v1.1.0, only copy it if present
+            extracted_microhaps_for_id = {}
+            if "bioinformatics_run_id" in detected_microhaplotypes:
+                extracted_microhaps_for_id[
                     "bioinformatics_run_id"
-                ],
-                "library_samples": [],
-            }
+                ] = detected_microhaplotypes["bioinformatics_run_id"]
+            extracted_microhaps_for_id["library_samples"] = []
             for library in detected_microhaplotypes["library_samples"]:
                 targets_for_samples = {
                     "library_sample_id": library["library_sample_id"],
