@@ -214,9 +214,11 @@ class PMOExporter(object):
         rows = []
         if "bioinformatics_methods_info" not in pmodata.keys():
             raise ValueError("no bioinformatics_methods_info found in input PMO")
-        bioinformatics_methods_id = 0
-        for bioinformatics_methods_info in pmodata["bioinformatics_methods_info"]:
-            bioinformatics_methods_id += 1
+        # ids count from 0, matching the index that bioinformatics_run_info uses to
+        # refer to bioinformatics_methods_info
+        for bioinformatics_methods_id, bioinformatics_methods_info in enumerate(
+            pmodata["bioinformatics_methods_info"]
+        ):
             export_row = {}
             for key, value in bioinformatics_methods_info.items():
                 export_row["bioinformatics_methods_id"] = bioinformatics_methods_id
@@ -225,13 +227,16 @@ class PMOExporter(object):
                 elif PMOExporter._is_primitive_list(value):
                     export_row[key] = separator.join(str(v) for v in value)
 
-            method_count = 0
-            for method in bioinformatics_methods_info["methods"]:
-                method_count += 1
+            for method_id, method in enumerate(bioinformatics_methods_info["methods"]):
                 method_export_row = copy.deepcopy(export_row)
-                method_export_row["method_id"] = method_count
-                for method_key in method.keys():
-                    method_export_row[method_key] = method[method_key]
+                method_export_row["method_id"] = method_id
+                for method_key, method_value in method.items():
+                    if PMOExporter._is_primitive(method_value):
+                        method_export_row[method_key] = method_value
+                    elif PMOExporter._is_primitive_list(method_value):
+                        method_export_row[method_key] = separator.join(
+                            str(v) for v in method_value
+                        )
                 rows.append(method_export_row)
         return pd.DataFrame(rows)
 
