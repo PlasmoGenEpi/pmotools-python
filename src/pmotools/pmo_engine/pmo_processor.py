@@ -1154,12 +1154,13 @@ class PMOProcessor:
 
         # detected_microhaplotypes
         for detected_microhaplotypes in pmodata["detected_microhaplotypes"]:
-            extracted_microhaps_for_id = {
-                "bioinformatics_run_id": detected_microhaplotypes[
+            # bioinformatics_run_id is optional as of schema v1.1.0, only copy it if present
+            extracted_microhaps_for_id = {}
+            if "bioinformatics_run_id" in detected_microhaplotypes:
+                extracted_microhaps_for_id[
                     "bioinformatics_run_id"
-                ],
-                "library_samples": [],
-            }
+                ] = detected_microhaplotypes["bioinformatics_run_id"]
+            extracted_microhaps_for_id["library_samples"] = []
             for library in detected_microhaplotypes["library_samples"]:
                 targets_for_samples = {
                     "library_sample_id": library["library_sample_id"],

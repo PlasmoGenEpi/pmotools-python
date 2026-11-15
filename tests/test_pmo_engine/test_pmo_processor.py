@@ -406,6 +406,33 @@ class TestPMOProcessor(unittest.TestCase):
         )
         checker.validate_pmo_json(pmo_data_filtered)
 
+    def test_extract_from_pmo_with_read_filter_without_bioinformatics_run_id(self):
+        # issue #116: bioinformatics_run_id is optional in v1.1.0, but the read
+        # filter read it unconditionally and failed with a KeyError
+        pmo = make_pmo(2)
+        del pmo["detected_microhaplotypes"][0]["bioinformatics_run_id"]
+        pmo_out = PMOProcessor.extract_from_pmo_with_read_filter(pmo, 11)
+        self.assertNotIn(
+            "bioinformatics_run_id", pmo_out["detected_microhaplotypes"][0]
+        )
+        # only L1 (11 reads) passes the filter; L0 has 10
+        self.assertEqual(
+            [1],
+            [
+                sample["library_sample_id"]
+                for sample in pmo_out["detected_microhaplotypes"][0]["library_samples"]
+            ],
+        )
+        checker = PMOChecker(
+            load_schema("portable_microhaplotype_object_v1.1.0.schema.json")
+        )
+        checker.validate_pmo_json(pmo_out)
+        # the id is still copied when present
+        pmo_out = PMOProcessor.extract_from_pmo_with_read_filter(make_pmo(2), 11)
+        self.assertEqual(
+            0, pmo_out["detected_microhaplotypes"][0]["bioinformatics_run_id"]
+        )
+
     def test_bioinformatics_run_name_lookups_without_run_info(self):
         # bioinformatics_run_info is optional as of v1.1.0; the run-name lookups
         # must not raise a raw KeyError on a valid PMO that omits it
