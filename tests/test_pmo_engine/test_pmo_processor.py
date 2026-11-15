@@ -573,6 +573,52 @@ class TestPMOProcessor(unittest.TestCase):
         with self.assertRaisesRegex(Exception, "-1 out of range of target_info"):
             PMOProcessor.filter_pmo_by_target_ids(pmo, {-1})
 
+    def test_filter_pmo_by_target_names_keeps_targets_without_representatives(self):
+        # issue #118: a panel target that no sample showed has no entry in
+        # representative_microhaplotypes; selecting it used to refuse the whole subset
+        pmo = make_pmo(2, targets=3)  # only t0 was seen in any sample
+        checker = PMOChecker(
+            load_schema("portable_microhaplotype_object_v1.1.0.schema.json")
+        )
+
+        pmo_out = PMOProcessor.filter_pmo_by_target_names(pmo, {"t0", "t1"})
+        checker.validate_pmo_json(pmo_out)
+        self.assertEqual(
+            ["t0", "t1"], [t["target_name"] for t in pmo_out["target_info"]]
+        )
+        self.assertEqual(
+            [0, 1], pmo_out["panel_info"][0]["reactions"][0]["panel_targets"]
+        )
+        self.assertEqual(
+            [0],
+            [
+                t["target_id"]
+                for t in pmo_out["representative_microhaplotypes"]["targets"]
+            ],
+        )
+        self.assertEqual(
+            [1, 1],
+            [
+                len(sample["target_results"])
+                for sample in pmo_out["detected_microhaplotypes"][0]["library_samples"]
+            ],
+        )
+
+        # selecting only undetected targets gives a valid PMO with no microhaplotype data
+        pmo_out = PMOProcessor.filter_pmo_by_target_names(pmo, {"t1", "t2"})
+        checker.validate_pmo_json(pmo_out)
+        self.assertEqual(
+            ["t1", "t2"], [t["target_name"] for t in pmo_out["target_info"]]
+        )
+        self.assertEqual([], pmo_out["representative_microhaplotypes"]["targets"])
+        self.assertEqual(
+            [[], []],
+            [
+                sample["target_results"]
+                for sample in pmo_out["detected_microhaplotypes"][0]["library_samples"]
+            ],
+        )
+
     def test_filter_pmo_by_names_lists_every_unknown_name(self):
         # issue #114: an unknown name used to raise a bare KeyError naming only the
         # first unknown one

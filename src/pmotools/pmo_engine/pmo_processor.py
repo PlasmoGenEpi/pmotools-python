@@ -840,6 +840,9 @@ class PMOProcessor:
         """
         Extract out data from the PMO for only select target IDs
 
+        A target that no sample showed (no entry in representative_microhaplotypes) is
+        kept in target_info and panel_info, with no microhaplotypes.
+
         :param pmodata: the pmo to extract data from
         :param target_ids: the target_ids to extract
         :return: a new pmo with the data for only the targets supplied
@@ -852,14 +855,6 @@ class PMOProcessor:
             if not 0 <= target_id < len(pmodata["target_info"]):
                 warnings.append(
                     f"{target_id} out of range of target_info, length is {len(pmodata['target_info'])}"
-                )
-        target_ids_in_representative_microhaplotypes = []
-        for target in pmodata["representative_microhaplotypes"]["targets"]:
-            target_ids_in_representative_microhaplotypes.append(target["target_id"])
-        for target_id in target_ids:
-            if target_id not in target_ids_in_representative_microhaplotypes:
-                warnings.append(
-                    f'{target_id} not in pmodata["representative_microhaplotypes"]'
                 )
 
         if len(warnings) > 0:
@@ -1002,6 +997,9 @@ class PMOProcessor:
     def filter_pmo_by_target_names(pmodata, target_names: set[str]):
         """
         Extract out data from the PMO for only select target names
+
+        A target that no sample showed (no entry in representative_microhaplotypes) is
+        kept in target_info and panel_info, with no microhaplotypes.
 
         :param pmodata: the pmo to extract data from
         :param target_names: the target_names to extract
